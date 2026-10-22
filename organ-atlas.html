@@ -191,7 +191,7 @@ h1{margin:0;font-family:var(--f-display);font-weight:800;font-size:clamp(26px,3.
       <button class="btn" id="camreset">視点を戻す</button>
       <button class="btn" id="sound" aria-pressed="true">音を出す</button>
     </div>
-    <p class="note">ドラッグで回転、右ドラッグで移動、ホイール・ピンチで拡大。流線は、風が流れている間は明るい筋が流れの向きに進み、風が満ちて止まっている所では淡い実線になります。部品にカーソルを合わせると名称（日本語・ドイツ語）を表示します。モデルの鍵・トラッカー・パレットをクリックすると鍵を押せ、ストップノブやスライダーをクリックするとストップを入れたり切ったりできます。パイプの長さは鍵盤・風箱と同じ縮尺の実寸です。パイプの太さは、1列13本を風箱に並べるため実物の約4割に細くしています。小さな部品（ばね、ネジ線など）は見やすさのため太く描いています。</p>
+    <p class="note">ドラッグで回転、右ドラッグで移動、ホイール・ピンチで拡大。流線は、風が流れている間は明るい筋が流れの向きに進み、風が満ちて止まっている所では淡い実線になります。部品にカーソルを合わせると名称（日本語・ドイツ語）を表示します。モデルの鍵・トラッカー・パレットをクリックすると鍵を押せ、ストップノブやスライダーをクリックするとストップを入れたり切ったりできます。パイプは長さ・太さとも実物の45 %の同じ縮尺で描き、実物と同じ比率にしています（Gedackt の低音だけは風箱の間隔に収めるため幅を詰めています）。小さな部品（ばね、ネジ線など）は見やすさのため太く描いています。</p>
 
     <div class="dock">
       <div class="drow">
@@ -241,12 +241,12 @@ const STOPS=[
   {name:'Vox humana 8′',ja:'ヴォックス・フマーナ（リード）'}
 ];
 const ZROW=[0,7,14,-7,-14];          // z of each stop row (front of chest = +z)
-const MIXZ=[-2.3,0,2.3];
+const MIXZ=[-2.6,0,2.6];
 const KEYNAMES=['C','Cis','D','Dis','E','F','Fis','G','Gis','A','B','H','c'];
-/* Pipe dimensions. Model scale: 1 unit = 7.8 mm (a natural key is 3 units = 23.4 mm), the same scale as chest and action.
-   Lengths are true to scale (C values, ×2^(-k/12) per semitone). Diameters follow normal scaling (Töpfer, 8′ C open = 155.5 mm,
-   halving on the 16th semitone) but are drawn at 40 % so all 13 pipes of a rank fit the 39 mm channel pitch. */
-const MM=1/7.8, DIA=0.4;
+/* Pipe dimensions. Model scale: 1 unit = 7.8 mm (a natural key is 3 units = 23.4 mm). Pipes are drawn at a uniform 45 % of real size,
+   lengths and diameters alike, so every pipe keeps its true proportions while fitting the 39 mm channel pitch.
+   Real values at C (×2^(-k/12) per semitone); diameters by normal scaling (Töpfer: 8′ C open = 155.5 mm, halving on the 16th semitone). */
+const MM=1/7.8, SC=0.45;  // every pipe drawn at 45 % of real size, length and diameter alike
 const PIPE={
   0:{body:1100},                          // Gedackt 8′, wood, stopped (~1/4 wavelength, wide scale shortens it)
   1:{body:560,chim:0.25,semi:12+3,mw:2/9,cut:1/3,ears:true},  // Rohrflöte 4′, half-stopped with chimney; 3 semitones narrower than normal
@@ -254,8 +254,8 @@ const PIPE={
   3:{body:[394,296,197],semi:[31,36,43],mw:1/4,cut:1/4}, // Mixtur III: 1 1/3′, 1′, 2/3′
   4:{body:305}                            // Vox humana 8′: short cylindrical resonator, about 1/8 length
 };
-const bodyLen=(i,k,r)=>{ const b=PIPE[i].body; return (Array.isArray(b)?b[r]:b)*Math.pow(2,-k/12)*MM; };
-const pipeR=(i,k,r)=>{ const sm=PIPE[i].semi, s0=Array.isArray(sm)?sm[r]:sm; return 155.5*Math.pow(2,-(s0+k)/16)*DIA*MM/2; };
+const bodyLen=(i,k,r)=>{ const b=PIPE[i].body; return (Array.isArray(b)?b[r]:b)*Math.pow(2,-k/12)*SC*MM; };
+const pipeR=(i,k,r)=>{ const sm=PIPE[i].semi, s0=Array.isArray(sm)?sm[r]:sm; return 155.5*Math.pow(2,-(s0+k)/16)*SC*MM/2; };
 /* pointed-arch outline of a flattened lip: half-width at height y above its base, for a lip of height H and half-width a */
 function archHW(y,H,a){ if(y<=0) return a; if(y>=H) return 0; const r=(H*H+a*a)/(2*a); return Math.max(0,Math.sqrt(r*r-y*y)-(r-a)); }
 /* metal flue pipe with a true mouth: body and foot flattened at the front into upper and lower lips, mouth cut between them */
@@ -476,18 +476,19 @@ function buildPipe(x,z,i,k,r,base){
   }
   if(i===0){
     // wooden stopped pipe: square body, turned toe, front lip (Vorschlag), stopper with handle (Spund)
-    const w=Math.min(4.3,105*Math.pow(2,-k/16)*DIA*MM*1.25), by=base+3, my=base+6.7;
+    // outside section about 100 × 125 mm at C (width × depth), same 45 % scale; the widest bass pipes are capped to fit the 39 mm pitch
+    const f=Math.pow(2,-k/16)*SC*MM, w=Math.min(4.4,110*f), dz=Math.min(6.2,135*f), hz=dz/2, by=base+3, my=base+6.7;
     const lb=LB('Gedackt 8′（'+KEYNAMES[k]+'）の木管','Holzgedackt');
     cyl(R,0.55,3,MAT.pipeWood,x,base+1.5,z,LB('木管の足（風の入口）','Fuß'));
-    box(R,w,L+3.7,w,MAT.pipeWood,x,by+(L+3.7)/2,z,lb);
-    box(R,w*0.8,Math.min(1.6,0.6+w*0.25),0.3,MAT.dark,x,my,z+w/2+0.02,LB('歌口（ここから風が吹き出して発音する）','Labium'));
-    box(R,w*0.9,2.4,0.5,MAT.pipeWoodLight,x,base+5.1,z+w/2+0.2,LB('前板（ヴォアシュラーク）','Vorschlag'));
+    box(R,w,L+3.7,dz,MAT.pipeWood,x,by+(L+3.7)/2,z,lb);
+    box(R,w*0.8,Math.min(1.6,0.6+w*0.25),0.3,MAT.dark,x,my,z+hz+0.02,LB('歌口（ここから風が吹き出して発音する）','Labium'));
+    box(R,w*0.9,2.4,0.5,MAT.pipeWoodLight,x,base+5.1,z+hz+0.2,LB('前板（ヴォアシュラーク）','Vorschlag'));
     const top=by+L+3.7;
-    box(R,w*0.86,1.4,w*0.86,MAT.pipeWoodLight,x,top+0.5,z,LB('栓（上端をふさぐ。抜き差しで調律する）','Spund'));
-    box(R,w*0.3,1.6,w*0.5,MAT.pipeWoodLight,x,top+1.9,z,LB('栓の取っ手','Spundgriff'));
-    return {reed:false,path:[V3(x,my-0.8,z),V3(x,my-0.3,z+w/2-0.15),V3(x,my+0.9,z+w/2+0.25),V3(x,my+3,z+w/2+3),V3(x,my+5,z+w/2+6)],ei:1,top:top+2.7};
+    box(R,w*0.86,1.4,dz*0.86,MAT.pipeWoodLight,x,top+0.5,z,LB('栓（上端をふさぐ。抜き差しで調律する）','Spund'));
+    box(R,w*0.3,1.6,dz*0.5,MAT.pipeWoodLight,x,top+1.9,z,LB('栓の取っ手','Spundgriff'));
+    return {reed:false,path:[V3(x,my-0.8,z),V3(x,my-0.3,z+hz-0.15),V3(x,my+0.9,z+hz+0.25),V3(x,my+3,z+hz+3),V3(x,my+5,z+hz+6)],ei:1,top:top+2.7};
   }
-  const P=PIPE[i], Rb=pipeR(i,k,r), footH=i===3?10:13, my=base+footH;
+  const P=PIPE[i], Rb=pipeR(i,k,r), footH=i===3?9:12, my=base+footH;
   const G=flueGeos(Rb,footH,Math.min(0.45,Rb*0.35),L,P.mw,P.cut); CX.own.push(G.body,G.foot,G.lang);
   const LBu=LB('上唇（平たくつぶした歌口の上側。下の縁が風を切る）','Oberlabium'), LBl=LB('下唇（足の上部をつぶした歌口の下側）','Unterlabium');
   const body=mk(G.body,MAT.metal,R,lab); body.position.set(x,my,z);
@@ -570,9 +571,9 @@ function buildChest(o){
   C.chan=[];
   for(let k=0;k<N;k++){
     const x=C.pos(k);
-    const ch=new Tube([V3(x,oy+9.5,oz+12),V3(x,oy+13.5,oz+12),V3(x,oy+19,oz+6),V3(x,oy+19,oz-17.5)],{r:0.85,density:0.7,front:o.front||36,state:()=>({open:S.kd[k]>0.22&&C.vol.fill>0.3&&S.p>4,speed:C.chanFlow[k]})});
+    const ch=new Tube([V3(x,oy+9.5,oz+12),V3(x,oy+13.5,oz+12),V3(x,oy+19,oz+6),V3(x,oy+19,oz-17.5)],{r:0.85,density:0.7,front:900,state:()=>({open:S.kd[k]>0.22&&C.vol.fill>0.3&&S.p>4,speed:C.chanFlow[k]})});
     C.chan.push(ch);
-    for(const fp of [[-1.6,2.4,16.8],[1.6,2.6,-3.8],[0,5.5,17.2]]) new Tube([V3(x+fp[0],oy+fp[1],oz+fp[2]),V3(x+fp[0]*0.4,oy+7,oz+(fp[2]+12)/2),V3(x,oy+9.5,oz+12)],{r:0.25,n:4,front:o.front||36,state:()=>({open:ch.head>0&&S.kd[k]>0.22,speed:C.chanFlow[k]*0.8})});
+    for(const fp of [[-1.6,2.4,16.8],[1.6,2.6,-3.8],[0,5.5,17.2]]) new Tube([V3(x+fp[0],oy+fp[1],oz+fp[2]),V3(x+fp[0]*0.4,oy+7,oz+(fp[2]+12)/2),V3(x,oy+9.5,oz+12)],{r:0.25,n:4,front:900,state:()=>({open:ch.head>0&&S.kd[k]>0.22,speed:C.chanFlow[k]*0.8})});
     for(let i=0;i<5;i++){
       const nr=i===3?3:1;
       for(let r=0;r<nr;r++){
@@ -580,7 +581,7 @@ function buildChest(o){
         const sp=buildPipe(x,zz,i,k,r,oy+30);
         const d=ch.nearestDist(V3(x,oy+19,zz));
         const pts=[V3(x,oy+19,zz),V3(x,oy+24.5,zz),V3(x,oy+30,zz)].concat(sp.path);
-        const tb=new Tube(pts,{r:i===3?0.22:0.3,density:0.3,front:o.front?o.front*0.8:28,state:()=>({open:ch.reached(d)&&S.sp[i]>0.85&&S.p>4,speed:20})});
+        const tb=new Tube(pts,{r:i===3?0.22:0.3,density:0.3,front:900,state:()=>({open:ch.reached(d)&&S.sp[i]>0.85&&S.p>4,speed:20})});
         tb.exitU=tb.cum[3+sp.ei]/tb.L;
         C.tubes.push({k,i,r,tb,md:tb.cum[3+sp.ei]});
         C.top=Math.max(C.top||0,sp.top);
@@ -595,7 +596,7 @@ function buildChest(o){
       C.springs[k].u.set(C.springs[k].a,V3(x-0.13,oy+11.25-0.45*Math.cos(th)-14*Math.sin(th),oz-4-0.45*Math.sin(th)+14*Math.cos(th)));
       C.chanFlow[k]=0;
     }
-    for(const t of C.tubes) if(t.tb.reached(t.md)) C.chanFlow[t.k]+=1;
+    for(const t of C.speaking()) C.chanFlow[t.k]+=1;
     for(let k=0;k<N;k++) C.chanFlow[k]=C.chanFlow[k]>0?12+2.5*C.chanFlow[k]:0;
     if(!spring){
       for(let i=0;i<5;i++){ const off=-1.8*(1-S.sp[i]); C.sliders[i].position.x=ox-5+off; for(const dd of C.holes[i]) dd.position.x=dd.userData.bx+off; C.holeMats[i].emissive.copy(COL.stop).multiplyScalar(S.sp[i]>0.85?0.9:0); }
@@ -612,7 +613,7 @@ function buildChest(o){
     }
   };
   C.pullDown=k=>V3(C.pos(k),oy-1-KPULL*S.kd[k],oz+14);
-  C.speaking=()=>{ const out=[]; if(S.p<8) return out; for(const t of C.tubes) if(t.tb.reached(t.md)) out.push(t); return out; };
+  C.speaking=()=>{ const out=[]; if(S.p<8||C.vol.fill<0.3) return out; for(const t of C.tubes) if(S.kd[t.k]>0.25&&S.sp[t.i]>0.85) out.push(t); return out; };
   return C;
 }
 
@@ -818,7 +819,7 @@ function buildBlowerMag(o){
   M.update=(dt,n)=>{
     M.n=n; M.rpm+=((M.blower?1:0)-M.rpm)*Math.min(1,dt*1.2);
     M.vo=clamp((0.82-M.h)/0.3,0,1);
-    const inflow=M.rpm*M.vo*0.45, outflow=(M.h>0.001&&n>0)?0.02+0.011*n:0;
+    const inflow=M.rpm*M.vo*0.35, outflow=(M.h>0.001&&n>0)?0.02+0.018*n:0;
     M.h=clamp(M.h+(inflow-outflow)*dt,0,1);
     const target=M.h>0.015?80:M.rpm*M.vo*20; S.p+=(target-S.p)*Math.min(1,dt*(target>S.p?6:4));
     imp.rotation.z-=M.rpm*dt*30;
@@ -837,7 +838,7 @@ function buildBlowerMag(o){
   M.blowOut=new Tube([V3(-118,5,0),V3(-114,5,0),V3(-89,5,0)],{r:1.4,density:0.75,front:o.front||40,state:()=>({open:M.rpm>0.25,speed:30*M.rpm*M.vo})});
   M.thru=new Tube([V3(-89,5,0),V3(-89,13,0),V3(-89,17.6,0),V3(-85.5,17.6,0),V3(-81,16.5,0)],{r:1.1,density:0.8,front:o.front||40,state:()=>({open:M.blowOut.full()&&M.vo>0.05,speed:30*M.rpm*M.vo})});
   M.vol=new Vol((a,b,c,out)=>{ const ty=topY(), y=11.7+b*(ty-12.4), q=(y-11)/Math.max(1,ty-11), off=(M.d||0)*(1-Math.abs(2*q-1))+1.2; out.set(lerp(-94.5+off,-55.5-off,a),y,(c-0.5)*27); },320,{state:()=>M.h>0.012?0.15+0.85*M.h:0,rate:o.front?0.5:1.4});
-  M.trunk=new Tube(o.trunkPts,{r:1.7,density:0.4,front:o.front||45,state:()=>({open:M.h>0.012&&S.p>10&&(!o.front||M.thru.full()||M.vol.fill>0.5),speed:3*M.n})});
+  M.trunk=new Tube(o.trunkPts,{r:1.7,density:0.4,front:o.front||400,state:()=>({open:M.h>0.012&&S.p>10&&(!o.front||M.thru.full()||M.vol.fill>0.5),speed:3*M.n})});
   M.reset=()=>{ M.h=0; M.rpm=0; S.p=0; for(const f of flows) f.reset(); };
   return M;
 }
@@ -866,7 +867,7 @@ const MODELS={
     duct([V3(-114,-4,-12),V3(-114,-4,12)],5,MAT.wood,LB('ふいごの出口をまとめる管','Sammelkanal'));
     const tp=[V3(-114,-4,6),V3(-40,-4,6),V3(-40,36,6),V3(-33,36,6)];
     duct(tp,6,MAT.wood,LB('風導管（ふいごから風箱へ）','Windkanal'));
-    const trunk=new Tube(tp,{r:1.7,density:0.4,front:45,state:()=>({open:S.p>10,speed:3*(chest?chest.speaking().length:0)})});
+    const trunk=new Tube(tp,{r:1.7,density:0.4,front:400,state:()=>({open:S.p>10,speed:3*(chest?chest.speaking().length:0)})});
     chest=buildChest({y:30,feed:trunk});
     const thMax=0.34, m={auto:false};
     return {chest,controls:[
@@ -875,7 +876,7 @@ const MODELS={
       {type:'hold',label:'ふいご2を踏む',down:()=>bs[1].hold=true,up:()=>bs[1].hold=false}],
       ctl:{auto:v=>m.auto=v,pump0:s=>bs[0].timer=s},
       update(dt){
-        const n=chest.speaking().length, cons=thMax*(0.004+0.0125*n);
+        const n=chest.speaking().length, cons=thMax*(0.004+0.045*n);
         bs.forEach(b=>b.timer=Math.max(0,b.timer-dt));
         if(m.auto){ bs.forEach((b,i)=>{ const o=bs[1-i]; if(!b.autoP&&b.th<0.14*thMax&&!o.autoP&&!o.pumping) b.autoP=true; if(b.autoP&&b.th>=thMax*0.97) b.autoP=false; }); } else bs.forEach(b=>b.autoP=false);
         bs.forEach(b=>{ b.pumping=b.hold||b.timer>0||b.autoP; if(b.pumping) b.th=Math.min(thMax,b.th+thMax*0.6*dt); });
@@ -957,7 +958,7 @@ const MODELS={
     {t:'鍵の前の下では、ガイドピンが鍵の溝に入って鍵の横ぶれを防ぎます。押し下げた鍵は底板のフェルトで止まります。黒鍵は鍵が短いので、手前の別のフェルトで止まります。',run:a=>{a.keys([4,6]);a.cam([16,5,50],[0,-1,27]);}},
     {t:'風箱側のつなぎ目です。トラッカーの上端は、風箱の底板を貫く引き下げ線につながります。線の通る穴は革袋（パルペーテ）でふさがれ、線が動いても風が漏れません。',run:a=>{a.xray(false);a.keys([6]);a.cam([22,31,38],[0,38.5,14]);}},
     {t:'木部を透かすと、パレットの下のV字ばねと、パレット前端の左右のガイドピンが見えます。押鍵でパレットが下に開き、離すとばねで閉じます。',run:a=>{a.xray(true);a.keys([6]);a.cam([34,47,40],[0,47,6]);}},
-    {t:'鍵Eを押します。鍵、トラッカー、パレットは同時に動き、風はその後に遅れてパイプへ届きます。',run:a=>{a.xray(false);a.keys([]);a.home();later(400,()=>{S.key[4]=true;syncKeyUI();});}},
+    {t:'鍵Eを押します。鍵、トラッカー、パレットは同時に動き、パイプもほぼ同時に鳴り始めます。',run:a=>{a.xray(false);a.keys([]);a.home();later(400,()=>{S.key[4]=true;syncKeyUI();});}},
     {t:'和音を弾きます。トラッカーは扇状に広がり、鍵盤より幅の広い風箱のパレットを同時に引きます。',run:a=>{a.keys([0,4,7,12]);a.stops([1,1,1,0,0]);}}
   ],
   build(){ const chest=buildChest({y:40}); const kb=buildKeyboard({x:0,y:0,z:34}); box(CX.root,30,8.5,61,MAT.woodDark,0,-7.75,5.5,LB('演奏台（コンソール）の台','Spieltisch')); const sus=buildSuspended(chest,kb);
@@ -1089,7 +1090,7 @@ sel.addEventListener('change',()=>load(sel.value));
 function renderNotes(def){
   let h='<div><p class="nid">'+def.id+'</p><h2>'+def.name+'</h2><p class="terms">'+def.terms+'</p></div><p>'+def.summary+'</p><h3>手順（押すとモデルが動きます）</h3><ol class="steps">';
   def.steps.forEach((s,i)=>{ h+='<li><button data-s="'+i+'"><span class="n">'+(i+1)+'</span><span>'+s.t+'</span></button></li>'; });
-  h+='</ol><p class="foot">標準構成：13鍵（C〜c）× 5ストップ。Gedackt 8′（木管）、Rohrflöte 4′、Prinzipal 2′、Mixtur III（1 1/3′・1′・2/3′）、Vox humana 8′。パイプ長（C）：Gedackt 約110 cm、Rohrflöte 約56 cm＋煙突、Prinzipal 約59 cm、Mixtur 約39・30・20 cm、Vox humana 共鳴管 約31 cm。音はモデルの風が歌口に届いた時点で鳴る簡易合成です。</p>';
+  h+='</ol><p class="foot">標準構成：13鍵（C〜c）× 5ストップ。Gedackt 8′（木管）、Rohrflöte 4′、Prinzipal 2′、Mixtur III（1 1/3′・1′・2/3′）、Vox humana 8′。実物のパイプ長（C）：Gedackt 約110 cm、Rohrflöte 約56 cm＋煙突、Prinzipal 約59 cm、Mixtur 約39・30・20 cm、Vox humana 共鳴管 約31 cm。モデルでは長さ・太さとも45 %で表示。音はパレットが開きストップが入った瞬間に鳴る簡易合成です。</p>';
   notes.innerHTML=h;
 }
 notes.addEventListener('click',e=>{ const b=e.target.closest('[data-s]'); if(!b) return; audioInit(); clearTimers(); notes.querySelectorAll('[data-s]').forEach(x=>x.removeAttribute('aria-current')); b.setAttribute('aria-current','true'); inst.def.steps[+b.dataset.s].run(api); });
