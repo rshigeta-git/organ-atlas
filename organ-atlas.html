@@ -234,7 +234,7 @@ if(!T){ wrap.insertAdjacentHTML('beforeend','<div class="nogl">3D表示用のラ
 const V3=(x,y,z)=>new T.Vector3(x,y,z);
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const lerp=(a,b,t)=>a+(b-a)*t;
-const TR={'Ventilkammer':['valve chamber','chambre de soupape'],'Doppelventil':['double valve','double soupape'],'Abstromöffnung':['exhaust port','orifice d’échappement'],'Membranbohrung':['membrane hole','trou de membrane'],'Bälgchenbrett':['bellows board','planche des soufflets'],'Relaiskanal':['relay channel','canal de relais'],'Kegel':['cone valve','soupape conique'],'Kegelsitz':['cone seat','siège du cône'],'Bälgchen':['small motor bellows','petit soufflet'],'Registerkanzelle':['stop channel','gravure de registre'],'Registerventil':['stop valve','soupape de registre'],'Kondukt':['conveyance','conduit'],'Bleirohr':['lead tube','tube de plomb'],'Spielventilkasten':['key-valve box','boîte à soupapes de touche'],'Ventilabzug':['valve pull-down','tirant de soupape'],'Windzufuhr':['wind supply','alimentation en vent'],'Membrane':['membrane','membrane'],'Membrankästchen':['membrane chamber','boîtier de membrane'],'Tonkanzelle':['key channel','gravure de note'],'Abstromventil':['exhaust valve','soupape d’échappement'],'Relaisbalg':['relay pouch','soufflet relais'],'Speisekanal':['feed duct','canal d’alimentation'],'Pfeifenbohrung':['pipe bore','trou de pied'],'Barkerbalg':['Barker motor','soufflet Barker'],'Barkerkasten':['motor wind box','laye des moteurs'],'Einlassventil':['inlet valve','soupape d’admission'],'Auslassventil':['exhaust valve','soupape d’échappement'],'Wippe':['backfall','balancier'],'Wippenbalken':['backfall rail','barre des balanciers'],'Pneumatikmotor':['pneumatic motor','moteur pneumatique'],'Schwellkasten':['swell box','boîte expressive'],'Jalousie':['shutter','jalousie'],'Jalousiehebel':['shutter arm','bras de jalousie'],'Zugstange':['connecting rod','tringle'],'Schwelltritt':['balanced expression pedal','pédale d’expression'],'Schwelltrittlager':['pedal bearing','support de pédale'],'Schwelltritthebel':['pedal arm','bras de pédale'],'Abstrakte':['tracker','vergette'],'Abzugsdraht':['pull-down wire','fil de tirage'],'Ansaugöffnung':['air intake','ouïe d’aspiration'],'Anschlagfilz':['upstop felt','feutre d’arrêt'],'Anschlagleiste':['upstop rail','barre d’arrêt'],'Anschlagleistenstütze':['upstop rail post','support de barre d’arrêt'],'Aufschnitt':['mouth (cut-up)','bouche'],'Backe':['key cheek','joue de clavier'],'Balgbock':['bellows trestle','tréteau du soufflet'],'Balghebel':['bellows lever','levier de soufflet'],'Balgkanal':['bellows outlet','porte-vent du soufflet'],'Balgstütze':['lever post','poteau du levier'],'Becher':['resonator','résonateur'],'Bohrung':['tracker hole','trou de vergette'],'Damm':['slider bearer','faux-registre'],'Deckel':['cap','calotte'],'Draht':['wire','fil'],'Drehstift':['pivot pin','axe de pivot'],'Falten':['folds','plis'],'Federleiste':['spring rail','barre à ressorts'],'Federrolle':['spring roller','rouleau à ressort'],'Federwindung':['spring coil','boucle du ressort'],'Fundamentbrett':['table','table'],'Fuß':['foot','pied'],'Fußloch':['toe hole','trou du pied'],'Führungsleiste':['guide rail','barre de guidage'],'Führungsstift':['guide pin','pointe de guidage'],'Gebläsegehäuse':['blower casing','carter du ventilateur'],'Gewicht':['weight','poids'],'Gewindedraht':['threaded wire','fil fileté'],'Holzgedackt':['stopped wood pipe','bourdon en bois'],'Hut':['cap','calotte'],'Kehle':['shallot','anche'],'Keil':['wedge','coin'],'Kern':['languid','biseau'],'Kernfase':['languid bevel','chanfrein du biseau'],'Kernstiche':['nicks','dents'],'Klaviaturboden':['key bed','fond de clavier'],'Kopf / Zunge':['block and tongue','noyau et languette'],'Krücke':['tuning wire','rasette'],'Körper':['body','corps'],'Labium':['mouth','bouche'],'Laufrad':['impeller','turbine'],'Laufradschaufel':['impeller blade','aube de turbine'],'Ledermutter':['leather nut','écrou en cuir'],'Luftblatt':['air jet','lame d’air'],'Motor':['motor','moteur'],'Nuss':['block','noyau'],'Oberlabium':['upper lip','lèvre supérieure'],'Oberplatte':['top board','table supérieure'],'Obertaste':['sharp key','feinte'],'Pfeife':['pipe','tuyau'],'Pfeifenstock':['upper board','chape'],'Pulpete':['pull-down purse','boursette'],'Rechenstäbchen':['rack slip','dent de peigne'],'Registerbalken':['stop bar','barre de registre'],'Registerbank':['stop jamb','joue de tirants'],'Registerschild':['stop label','étiquette de registre'],'Registerwelle':['stop roller','rouleau de registre'],'Registerzug':['drawknob','tirant de registre'],'Registerzugstange':['draw rod','tringle de tirant'],'Registerärmchen':['stop roller arm','bras de rouleau de registre'],'Rollenführung':['roller guide','guide du rouleau'],'Rollventilkasten':['curtain valve box','boîte de la valve à rideau'],'Röhrchen':['chimney','cheminée'],'Rückschlagventil':['non-return valve','clapet anti-retour'],'Sammelkanal':['collecting trunk','porte-vent collecteur'],'Schalldruck':['sound pressure','pression acoustique'],'Schied':['channel bar','barrage'],'Schleife':['slider','registre'],'Schleifenbohrung':['slider hole','trou de registre'],'Schleifenzug':['slider link','bielle de registre'],'Schlitz':['slot','fente'],'Schöpfventil':['intake valve','soupape d’aspiration'],'Seil':['rope','corde'],'Seitenbart':['ear','oreille'],'Spieltisch':['console','console'],'Spielventil':['pallet','soupape'],'Springventil':['spring valve','soupapette de registre'],'Spund':['stopper','tampon'],'Spundgriff':['stopper handle','poignée du tampon'],'Stecher':['sticker pin','pilote'],'Stiefel':['boot','pied (boîte)'],'Stimmschieber':['tuning slide','coulisse d’accord'],'Sägeschnitt':['saw kerf','trait de scie'],'Tastenfilz':['key felt','feutre de touche'],'Tastenhebel':['key lever','levier de touche'],'Tastenrechen':['tail rack','peigne arrière'],'Tritt':['treadle','marchepied du souffleur'],'Unterlabium':['lower lip','lèvre inférieure'],'Unterplatte':['bottom board','table inférieure'],'Untertaste':['natural key','marche'],'Ventilfeder':['pallet spring','ressort de soupape'],'Ventilführungsstift':['pallet guide pin','guide de soupape'],'Ventilöse':['pallet eye','œillet de soupape'],'Vorhang':['curtain','rideau'],'Vorhangleiste':['curtain batten','latte de rideau'],'Vorschlag':['cap (wood pipe)','lèvre inférieure rapportée'],'Welle':['roller','rouleau'],'Wellenbrett':['roller board','abrégé'],'Wellenböckchen':['roller stud','palier de rouleau'],'Wellenärmchen':['roller arm','bras de rouleau'],'Windkanal':['wind trunk','porte-vent'],'Windkasten':['pallet box','laye'],'Windleitung':['wind duct','conduit de vent'],'Winkel':['square','équerre'],'Winkelbalken':['square rail','barre d’équerres'],'Zugschnur':['pull cord','cordon'],'Zunge':['tongue','languette'],'Öse':['eye','œillet']};
+const TR={'Vorderbrett':['front board','planche de façade'],'Kanal':['wind channel','canal'],'Kernspalte':['windway','lumière'],'Spundleder':['stopper leather','cuir du tampon'],'Ventilkammer':['valve chamber','chambre de soupape'],'Doppelventil':['double valve','double soupape'],'Abstromöffnung':['exhaust port','orifice d’échappement'],'Membranbohrung':['membrane hole','trou de membrane'],'Bälgchenbrett':['bellows board','planche des soufflets'],'Relaiskanal':['relay channel','canal de relais'],'Kegel':['cone valve','soupape conique'],'Kegelsitz':['cone seat','siège du cône'],'Bälgchen':['small motor bellows','petit soufflet'],'Registerkanzelle':['stop channel','gravure de registre'],'Registerventil':['stop valve','soupape de registre'],'Kondukt':['conveyance','conduit'],'Bleirohr':['lead tube','tube de plomb'],'Spielventilkasten':['key-valve box','boîte à soupapes de touche'],'Ventilabzug':['valve pull-down','tirant de soupape'],'Windzufuhr':['wind supply','alimentation en vent'],'Membrane':['membrane','membrane'],'Membrankästchen':['membrane chamber','boîtier de membrane'],'Tonkanzelle':['key channel','gravure de note'],'Abstromventil':['exhaust valve','soupape d’échappement'],'Relaisbalg':['relay pouch','soufflet relais'],'Speisekanal':['feed duct','canal d’alimentation'],'Pfeifenbohrung':['pipe bore','trou de pied'],'Barkerbalg':['Barker motor','soufflet Barker'],'Barkerkasten':['motor wind box','laye des moteurs'],'Einlassventil':['inlet valve','soupape d’admission'],'Auslassventil':['exhaust valve','soupape d’échappement'],'Wippe':['backfall','balancier'],'Wippenbalken':['backfall rail','barre des balanciers'],'Pneumatikmotor':['pneumatic motor','moteur pneumatique'],'Schwellkasten':['swell box','boîte expressive'],'Jalousie':['shutter','jalousie'],'Jalousiehebel':['shutter arm','bras de jalousie'],'Zugstange':['connecting rod','tringle'],'Schwelltritt':['balanced expression pedal','pédale d’expression'],'Schwelltrittlager':['pedal bearing','support de pédale'],'Schwelltritthebel':['pedal arm','bras de pédale'],'Abstrakte':['tracker','vergette'],'Abzugsdraht':['pull-down wire','fil de tirage'],'Ansaugöffnung':['air intake','ouïe d’aspiration'],'Anschlagfilz':['upstop felt','feutre d’arrêt'],'Anschlagleiste':['upstop rail','barre d’arrêt'],'Anschlagleistenstütze':['upstop rail post','support de barre d’arrêt'],'Aufschnitt':['mouth (cut-up)','bouche'],'Backe':['key cheek','joue de clavier'],'Balgbock':['bellows trestle','tréteau du soufflet'],'Balghebel':['bellows lever','levier de soufflet'],'Balgkanal':['bellows outlet','porte-vent du soufflet'],'Balgstütze':['lever post','poteau du levier'],'Becher':['resonator','résonateur'],'Bohrung':['tracker hole','trou de vergette'],'Damm':['slider bearer','faux-registre'],'Deckel':['cap','calotte'],'Draht':['wire','fil'],'Drehstift':['pivot pin','axe de pivot'],'Falten':['folds','plis'],'Federleiste':['spring rail','barre à ressorts'],'Federrolle':['spring roller','rouleau à ressort'],'Federwindung':['spring coil','boucle du ressort'],'Fundamentbrett':['table','table'],'Fuß':['foot','pied'],'Fußloch':['toe hole','trou du pied'],'Führungsleiste':['guide rail','barre de guidage'],'Führungsstift':['guide pin','pointe de guidage'],'Gebläsegehäuse':['blower casing','carter du ventilateur'],'Gewicht':['weight','poids'],'Gewindedraht':['threaded wire','fil fileté'],'Holzgedackt':['stopped wood pipe','bourdon en bois'],'Hut':['cap','calotte'],'Kehle':['shallot','anche'],'Keil':['wedge','coin'],'Kern':['languid','biseau'],'Kernfase':['languid bevel','chanfrein du biseau'],'Kernstiche':['nicks','dents'],'Klaviaturboden':['key bed','fond de clavier'],'Kopf / Zunge':['block and tongue','noyau et languette'],'Krücke':['tuning wire','rasette'],'Körper':['body','corps'],'Labium':['mouth','bouche'],'Laufrad':['impeller','turbine'],'Laufradschaufel':['impeller blade','aube de turbine'],'Ledermutter':['leather nut','écrou en cuir'],'Luftblatt':['air jet','lame d’air'],'Motor':['motor','moteur'],'Nuss':['block','noyau'],'Oberlabium':['upper lip','lèvre supérieure'],'Oberplatte':['top board','table supérieure'],'Obertaste':['sharp key','feinte'],'Pfeife':['pipe','tuyau'],'Pfeifenstock':['upper board','chape'],'Pulpete':['pull-down purse','boursette'],'Rechenstäbchen':['rack slip','dent de peigne'],'Registerbalken':['stop bar','barre de registre'],'Registerbank':['stop jamb','joue de tirants'],'Registerschild':['stop label','étiquette de registre'],'Registerwelle':['stop roller','rouleau de registre'],'Registerzug':['drawknob','tirant de registre'],'Registerzugstange':['draw rod','tringle de tirant'],'Registerärmchen':['stop roller arm','bras de rouleau de registre'],'Rollenführung':['roller guide','guide du rouleau'],'Rollventilkasten':['curtain valve box','boîte de la valve à rideau'],'Röhrchen':['chimney','cheminée'],'Rückschlagventil':['non-return valve','clapet anti-retour'],'Sammelkanal':['collecting trunk','porte-vent collecteur'],'Schalldruck':['sound pressure','pression acoustique'],'Schied':['channel bar','barrage'],'Schleife':['slider','registre'],'Schleifenbohrung':['slider hole','trou de registre'],'Schleifenzug':['slider link','bielle de registre'],'Schlitz':['slot','fente'],'Schöpfventil':['intake valve','soupape d’aspiration'],'Seil':['rope','corde'],'Seitenbart':['ear','oreille'],'Spieltisch':['console','console'],'Spielventil':['pallet','soupape'],'Springventil':['spring valve','soupapette de registre'],'Spund':['stopper','tampon'],'Spundgriff':['stopper handle','poignée du tampon'],'Stecher':['sticker pin','pilote'],'Stiefel':['boot','pied (boîte)'],'Stimmschieber':['tuning slide','coulisse d’accord'],'Sägeschnitt':['saw kerf','trait de scie'],'Tastenfilz':['key felt','feutre de touche'],'Tastenhebel':['key lever','levier de touche'],'Tastenrechen':['tail rack','peigne arrière'],'Tritt':['treadle','marchepied du souffleur'],'Unterlabium':['lower lip','lèvre inférieure'],'Unterplatte':['bottom board','table inférieure'],'Untertaste':['natural key','marche'],'Ventilfeder':['pallet spring','ressort de soupape'],'Ventilführungsstift':['pallet guide pin','guide de soupape'],'Ventilöse':['pallet eye','œillet de soupape'],'Vorhang':['curtain','rideau'],'Vorhangleiste':['curtain batten','latte de rideau'],'Vorschlag':['cap (wood pipe)','lèvre inférieure rapportée'],'Welle':['roller','rouleau'],'Wellenbrett':['roller board','abrégé'],'Wellenböckchen':['roller stud','palier de rouleau'],'Wellenärmchen':['roller arm','bras de rouleau'],'Windkanal':['wind trunk','porte-vent'],'Windkasten':['pallet box','laye'],'Windleitung':['wind duct','conduit de vent'],'Winkel':['square','équerre'],'Winkelbalken':['square rail','barre d’équerres'],'Zugschnur':['pull cord','cordon'],'Zunge':['tongue','languette'],'Öse':['eye','œillet']};
 /* part names: Japanese, English, German, French */
 const LB=(ja,de)=>{ const t=TR[de]||['','']; return {ja,en:t[0],de,fr:t[1]}; };
 
@@ -881,8 +881,8 @@ const PR_FS=`uniform float ph,env,mode; uniform vec3 cHi,cLo; varying vec2 vUv;
 #include <clipping_planes_pars_fragment>
 void main(){
 #include <clipping_planes_fragment>
- float shape = mode<0.5 ? sin(3.14159*vUv.y) : cos(1.5708*vUv.y);
- float p = shape*(mode<0.5 ? sin(ph) : cos(ph))*env;
+ float shape = mode<0.5 ? sin(3.14159*vUv.y) : (mode<1.5 ? cos(1.5708*vUv.y) : sin(1.5708*vUv.y));
+ float p = shape*cos(ph)*env;
  gl_FragColor=vec4(p>0.0?cHi:cLo, min(0.75,abs(p)*0.95));
 }`;
 function pressurePlane(z0,z1,y0,y1,mode){
@@ -906,83 +906,114 @@ function buildFlueSection(){
   const d=G.d, hc=G.hc, zc=d-g/2;
   mk(G.body,MAT.metal,R,LB('胴（共鳴管。中の空気柱の長さで音の高さが決まる）','Körper'));
   mk(G.foot,MAT.metal,R,LB('足（足穴から入った風をラングイドの下にためる）','Fuß'));
-  // languid: a thick cast plate soldered inside the pipe; its underside is level with the top of the lower lip.
-  // The front edge is bevelled through the whole thickness (no vertical face), leaving a sharp lower edge;
-  // the gap between that edge and the lower lip is the windway. Fine nicks are cut into the edge.
+  // languid (thick plate, bevelled front, underside level with the lower lip)
   const LT=0.3, BW=LT/Math.tan(55*Math.PI/180), zF=d-g, zB=zF-BW, Rl=Rb*0.985;
   const LKN=LB('ラングイド（下面が下唇の上端と同じ高さの厚い板。前縁は斜めに削がれ、その下端と下唇のすき間がウインドウェイ）','Kern');
   const ls=new T.Shape(), pa=Math.acos(clamp(zB/Rl,-1,1));
   for(let j=0;j<=48;j++){ const t=pa+(2*Math.PI-2*pa)*j/48; const x=Rl*Math.sin(t), z=Rl*Math.cos(t); if(j===0) ls.moveTo(x,-z); else ls.lineTo(x,-z); } ls.closePath();
-  const lg=new T.ExtrudeGeometry(ls,{depth:LT,bevelEnabled:false}); lg.rotateX(-Math.PI/2); CX.own.push(lg);
-  mk(lg,MAT.metalDark,R,LKN);
-  const xw=Math.sqrt(Math.max(0,Rl*Rl-zF*zF)), bs=new T.Shape();
-  bs.moveTo(-zB,0); bs.lineTo(-zF,0); bs.lineTo(-zB,LT); bs.closePath();
-  const bg=new T.ExtrudeGeometry(bs,{depth:2*xw,bevelEnabled:false}); bg.rotateY(Math.PI/2); bg.translate(-xw,0,0); CX.own.push(bg);
-  mk(bg,MAT.metalDark,R,LKN);
-  // cut face on the section plane: the plate's profile with its bevelled front
+  const lg=new T.ExtrudeGeometry(ls,{depth:LT,bevelEnabled:false}); lg.rotateX(-Math.PI/2); CX.own.push(lg); mk(lg,MAT.metalDark,R,LKN);
+  const xw=Math.sqrt(Math.max(0,Rl*Rl-zF*zF)), bs=new T.Shape(); bs.moveTo(-zB,0); bs.lineTo(-zF,0); bs.lineTo(-zB,LT); bs.closePath();
+  const bg=new T.ExtrudeGeometry(bs,{depth:2*xw,bevelEnabled:false}); bg.rotateY(Math.PI/2); bg.translate(-xw,0,0); CX.own.push(bg); mk(bg,MAT.metalDark,R,LKN);
   const cs=new T.Shape(); cs.moveTo(Rl,0); cs.lineTo(-zF,0); cs.lineTo(-zB,LT); cs.lineTo(Rl,LT); cs.closePath();
   const cg=new T.ShapeGeometry(cs); cg.rotateY(Math.PI/2); cg.translate(-0.01,0,0); CX.own.push(cg);
-  const cm=mclone(MAT.metalDark); cm.side=T.DoubleSide; cm.color.multiplyScalar(0.62);
-  mk(cg,cm,R,LKN);
+  const cm=mclone(MAT.metalDark); cm.side=T.DoubleSide; cm.color.multiplyScalar(0.62); mk(cg,cm,R,LKN);
   const nk=Math.atan2(LT,BW);
   for(let j=0;j<9;j++){ const xn=-xw*0.9+j*(xw*1.8/8); const b=box(R,0.04,0.03,0.13,MAT.dark,xn,LT*0.3,zF-BW*0.35,LB('ニック（ラングイド前縁の細い刻み。発音を整える）','Kernstiche')); b.rotation.x=nk; }
   const toe=mk(G_CYL_OPEN,MAT.metal,R,LB('足穴（ここから風が入る）','Fußloch')); toe.scale.set(toeR,3,toeR); toe.position.set(0,-footH-1.5,0);
-  const F0=261.6, EC=4, m={on:false,env:0,ph:0,ext:3.5,L:H+3.5,fr:1};
-  const P=pressurePlane(-Rb*0.96,d-0.1,hc+0.4,H,0);
   const SL=8, sleeve=mk(halfShell(()=>Rb+0.16,[0,SL],null,32),MAT.metalDark,R,LB('チューニングスリーブ（胴の上端にはめた筒。上下させて管の長さを変え、音の高さを合わせる）','Stimmschieber'));
-  const freq=()=>F0*(H+3.5+EC)/(H+m.ext+EC), topPin=V3(0,H+4.5,0), slvPin=V3(0,H,-Rb-2.4);
-  // steady supply through the toe hole up the foot to the windway
-  new Tube([V3(-0.15,-footH-6,0),V3(-0.15,-footH,0),V3(-0.15,-8,0.4),V3(-0.15,-2.6,zc-0.2),V3(-0.15,-1.15,zc)],{r:0.55,density:1.2,front:60,state:()=>({open:m.env>0.05,speed:7*m.env})});
-  // foot: wind at rest under pressure
-  new Vol((a,b,c,out)=>{ const y=-footH+1+b*(footH-2.6), rc=toeR+(Rb-toeR)*(y+footH)/footH; out.set(-0.08-c*rc*0.6,y,(a*2-1)*rc*0.85); },260,{state:()=>m.env,rate:2});
-  // jet: leaves the windway, swings across the mouth, splits at the upper lip
-  const A=0.85, kap=(Math.PI/2)/hc, del=(s,t)=>A*m.env*Math.pow(Math.max(0,s)/hc,1.4)*Math.sin(m.ph-kap*s);
-  const VJ=7, TAIL=7;
-  const jet=new Field(260,(i,t,out,f)=>{
-    if(m.env<0.04) return null;
-    const r=f.r, s=f.s[i]*(hc+1.2+TAIL)-1.2;   // s: distance along the jet from the windway exit
-    const jz=(r[i*4]-0.5)*g*0.55;
-    if(s<0){ out.set(PX(),s,zc+jz); return COL.wind; }
-    if(s<=hc){ out.set(-0.06-r[i*4+1]*0.2,s,zc+jz+del(s,t)); return COL.wind; }
-    const side=f.side[i], u=s-hc;
-    if(side<0){ out.set(-0.06-r[i*4+1]*0.2,hc+u*0.75,d-0.35-u*0.32+jz); _c.copy(COL.wind); return _c; }
-    out.set(-0.06-r[i*4+1]*0.2,hc+u*0.55,d+0.25+u*0.7+jz); _c.copy(COL.wind).lerp(COL.air,Math.min(1,u/TAIL*1.4)); return _c;
-  });
-  jet.side=new Int8Array(260);
-  jet.update=dt=>{ if(m.env<0.04) return; const L=hc+1.2+TAIL; for(let i=0;i<jet.n;i++){ const s0=jet.s[i]*L-1.2; let s=s0+VJ*dt*(0.85+0.3*jet.r[i*4+2]); if(s0<=hc&&s>hc) jet.side[i]=del(hc,0)+(jet.r[i*4+3]-0.5)*0.25<0?-1:1; if(s>L-1.2){ s=-1.2; jet.side[i]=0; } jet.s[i]=(s+1.2)/L; } };
-  // the jet as a sheet (section of it): a band following the jet centreline
-  const NJ=40, jg=new T.BufferGeometry(), jp=new Float32Array((NJ+1)*2*3), ji=[]; for(let i=0;i<NJ;i++){ const a=i*2; ji.push(a,a+1,a+2,a+1,a+3,a+2); }
-  jg.setAttribute('position',new T.BufferAttribute(jp,3)); jg.setIndex(ji); CX.own.push(jg);
-  const jm=new T.MeshBasicMaterial({color:COL.wind.getHex(),transparent:true,opacity:0.35,side:T.DoubleSide,depthWrite:false}); CX.own.push(jm);
-  const sheet=new T.Mesh(jg,jm); sheet.frustumCulled=false; sheet.renderOrder=3; R.add(sheet); sheet.userData.label=LB('噴流（ウインドウェイから吹き出す薄い板状の風）','Luftblatt');
-  function sheetUpdate(){
-    sheet.visible=m.env>0.04&&SHOW.lines; if(!sheet.visible) return; jm.color.copy(COL.wind);
-    const dl=del(hc,0), inside=dl<0, w=g*0.45;
-    for(let i=0;i<=NJ;i++){
-      const s=-1.2+(hc+1.2+3.2)*i/NJ; let y,z;
-      if(s<=hc){ y=s; z=zc+del(s,0); } else { const u=s-hc, k=Math.min(1,Math.abs(dl)/(A*0.5)); y=hc+u*(inside?0.75:0.55); z=zc+dl+(inside?-0.32*u*k:0.7*u*k); }
-      jp[i*6]=-0.04; jp[i*6+1]=y; jp[i*6+2]=z-w/2; jp[i*6+3]=-0.04; jp[i*6+4]=y; jp[i*6+5]=z+w/2;
-    }
-    jg.attributes.position.needsUpdate=true; jg.computeBoundingSphere();
+
+  /* ---- wooden stopped pipe of the same body length, standing beside it (to the right in the section view) ---- */
+  const zW=-18, WI=3, WT=0.7, hx=3, zFi=zW+WI, zFo=zFi+WT, gw=0.3, zbk=zFo-gw, zcw=zFo-gw/2, hcw=1.5, LBW=LB('木管の胴（閉管。上端を栓でふさいでいる）','Holzgedackt');
+  const WD=mclone(MAT.pipeWood), WS=mclone(MAT.pipeWoodLight);
+  box(R,hx,H+6,WT,WD,-hx/2,(H-6)/2,zW-WI-WT/2,LBW);                       // back wall (cut face shows on the section)
+  box(R,WT,H+6,2*(WI+WT),WD,-hx-WT/2,(H-6)/2,zW,LBW);                      // side wall
+  box(R,hx,H-hcw-0.7,WT,WD,-hx/2,(H+hcw+0.7)/2,zFi+WT/2,LB('前板（下の縁が上唇）','Vorderbrett'));
+  const lip=new T.Shape(); lip.moveTo(-zFo,hcw); lip.lineTo(-zFo,hcw+0.7); lip.lineTo(-zFi,hcw+0.7); lip.closePath();
+  const lpg=new T.ExtrudeGeometry(lip,{depth:hx,bevelEnabled:false}); lpg.rotateY(Math.PI/2); lpg.translate(-hx,0,0); CX.own.push(lpg);
+  mk(lpg,WD,R,LB('上唇（前板の下の縁。内側を斜めに削いで鋭くしてある）','Oberlabium'));
+  box(R,hx,6,zbk-(zW-WI),WS,-hx/2,-3,(zbk+zW-WI)/2,LB('ブロック（木管の足と胴の仕切り。前面と前板のすき間がウインドウェイ）','Kern'));
+  box(R,hx,6,0.9,WS,-hx/2,-3,zFo+0.45,LB('キャップ（ブロックの前に当てた板。上の縁が下唇）','Vorschlag'));
+  box(R,0.02,0.7,WI-0.4,MAT.dark,0.004,-5.4,(zbk+zW-WI+0.6)/2+0.2,LB('ブロックの風の通り道','Kanal'));
+  box(R,0.02,5.6,gw,MAT.dark,0.004,-3.1,zcw,LB('ウインドウェイ','Kernspalte'));
+  const wf=mk(G_CYL,WS,R,LB('木管の足（ろくろで挽いた足。足穴から風が入る）','Fuß')); wf.scale.set(1.4,10,1.4); wf.position.set(0,-11,zW);
+  box(R,0.02,10,0.9,MAT.dark,0.004,-11,zW,LB('足の穴','Fußloch'));
+  const stp=new T.Group(); R.add(stp);
+  box(stp,hx,3,2*WI-0.1,WS,-hx/2,1.5,zW,LB('栓（ストッパー。上下させて管の長さを変え、音の高さを合わせる）','Spund'));
+  box(stp,hx,0.4,2*WI,MAT.leather,-hx/2,0.2,zW,LB('栓の革巻き（すき間をふさぐ）','Spundleder'));
+  box(stp,hx*0.4,3,1.2,WS,-hx*0.2,4.5,zW,LB('栓の取っ手','Spundgriff'));
+
+  const F0=261.6, F0W=130.8, EC=4, ECW=2.5, LW0=H-4;
+  const m={on:false,env:0,ext:3.5,stop:LW0,sm:true,sw:true};
+  const freqM=()=>F0*(H+3.5+EC)/(H+m.ext+EC), freqW=()=>F0W*(LW0-hcw+ECW)/(m.stop-hcw+ECW);
+  const topPin=V3(0,H+4.5,0), slvPin=V3(0,H,-Rb-2.4), stpPin=V3(0,LW0+2,zW-WI-2.4);
+
+  /* one sounding flue: jet across its mouth, air column moving in its body, pressure shading */
+  function voice(o){
+    const v={env:0,ph:0};
+    const P=pressurePlane(o.zA,o.zB,o.hc+0.4,o.top(),o.mode);
+    new Tube(o.supply,{r:0.5,density:1.2,front:60,state:()=>({open:v.env>0.05,speed:7*v.env})});
+    new Vol(o.footVol,220,{state:()=>v.env,rate:2});
+    const hc=o.hc, A=0.85, kap=(Math.PI/2)/hc, del=s=>A*v.env*Math.pow(Math.max(0,s)/hc,1.4)*Math.sin(v.ph-kap*s);
+    const VJ=7, TAIL=7, zc=o.zc, dl0=o.zl, gg=o.g;
+    const jet=new Field(220,(i,t,out,f)=>{
+      if(v.env<0.04) return null;
+      const r=f.r, s=f.s[i]*(hc+1.2+TAIL)-1.2, jz=(r[i*4]-0.5)*gg*0.55, x=-0.06-r[i*4+1]*0.2;
+      if(s<0){ out.set(x,s,zc+jz); return COL.wind; }
+      if(s<=hc){ out.set(x,s,zc+jz+del(s)); return COL.wind; }
+      const u=s-hc;
+      if(f.side[i]<0){ out.set(x,hc+u*0.75,dl0-0.35-u*0.32+jz); return COL.wind; }
+      out.set(x,hc+u*0.55,dl0+0.25+u*0.7+jz); _c.copy(COL.wind).lerp(COL.air,Math.min(1,u/TAIL*1.4)); return _c;
+    });
+    jet.side=new Int8Array(220);
+    jet.update=dt=>{ if(v.env<0.04) return; const L=hc+1.2+TAIL; for(let i=0;i<jet.n;i++){ const s0=jet.s[i]*L-1.2; let s=s0+VJ*dt*(0.85+0.3*jet.r[i*4+2]); if(s0<=hc&&s>hc) jet.side[i]=del(hc)+(jet.r[i*4+3]-0.5)*0.25<0?-1:1; if(s>L-1.2){ s=-1.2; jet.side[i]=0; } jet.s[i]=(s+1.2)/L; } };
+    const NJ=40, jg=new T.BufferGeometry(), jp=new Float32Array((NJ+1)*6), ji=[]; for(let i=0;i<NJ;i++){ const a=i*2; ji.push(a,a+1,a+2,a+1,a+3,a+2); }
+    jg.setAttribute('position',new T.BufferAttribute(jp,3)); jg.setIndex(ji); CX.own.push(jg);
+    const jm=new T.MeshBasicMaterial({color:COL.wind.getHex(),transparent:true,opacity:0.35,side:T.DoubleSide,depthWrite:false}); CX.own.push(jm);
+    const sheet=new T.Mesh(jg,jm); sheet.frustumCulled=false; sheet.renderOrder=3; R.add(sheet); sheet.userData.label=LB('噴流（ウインドウェイから吹き出す薄い板状の風）','Luftblatt');
+    const NZ=9, NY=60;
+    new Field(NZ*NY,(i,t,out,f)=>{
+      if(v.env<0.02) return null;
+      const top=o.top(), iz=i%NZ, iy=(i/NZ)|0, y0=hc+1+(top-hc-1.5)*(iy+0.5)/NY, z0=o.zA+0.3+(o.zB-o.zA-0.6)*(iz+0.5)/NZ, u=(y0-hc)/(top-hc);
+      const shape=o.mode===0?Math.cos(Math.PI*u):Math.cos(Math.PI*u/2);
+      out.set(-0.08-f.r[i*4]*0.3,y0+1.4*v.env*shape*Math.sin(v.ph),z0+(f.r[i*4+1]-0.5)*0.4); return COL.air;
+    });
+    if(o.mode===0) new Field(40,(i,t,out,f)=>{ if(v.env<0.02) return null; const top=o.top(), y0=top+0.6+f.r[i*4]*3, z0=(f.r[i*4+1]*2-1)*Rb*0.8; out.set(-0.1-f.r[i*4+2]*0.3,y0-1.4*v.env*Math.sin(v.ph)*(1-(y0-top)/4),z0); return COL.air; });
+    v.update=(dt,target,fr)=>{
+      v.env+=(target-v.env)*Math.min(1,dt*(target>v.env?1.6:2.5)); if(v.env>0.01) v.ph+=dt*OMEGA*fr;
+      P.ph.value=v.ph; P.env.value=v.env; P.mesh.scale.y=o.top()-hc-0.4;
+      sheet.visible=v.env>0.04&&SHOW.lines; if(!sheet.visible) return; jm.color.copy(COL.wind);
+      const dl=del(hc), inside=dl<0, w=gg*0.45;
+      for(let i=0;i<=NJ;i++){ const s=-1.2+(hc+1.2+3.2)*i/NJ; let y,z;
+        if(s<=hc){ y=s; z=zc+del(s); } else { const u=s-hc, k=Math.min(1,Math.abs(dl)/(A*0.5)); y=hc+u*(inside?0.75:0.55); z=zc+dl+(inside?-0.32*u*k:0.7*u*k); }
+        jp[i*6]=-0.04; jp[i*6+1]=y; jp[i*6+2]=z-w/2; jp[i*6+3]=-0.04; jp[i*6+4]=y; jp[i*6+5]=z+w/2; }
+      jg.attributes.position.needsUpdate=true; jg.computeBoundingSphere();
+    };
+    return v;
   }
-  // air column in the body: moves up and down (displacement largest at the open ends, zero in the middle)
-  const NZ=9, NY=60, body=new Field(NZ*NY,(i,t,out,f)=>{
-    if(m.env<0.02) return null;
-    const H=m.L, iz=i%NZ, iy=(i/NZ)|0, y0=hc+1+(H-hc-1.5)*(iy+0.5)/NY, z0=-Rb*0.85+(d-0.4+Rb*0.85)*(iz+0.5)/NZ;
-    const xi=1.4*m.env*Math.cos(Math.PI*(y0-hc)/(H-hc))*Math.sin(m.ph);
-    out.set(-0.08-f.r[i*4]*0.3,y0+xi,z0+(f.r[i*4+1]-0.5)*0.4); return COL.air;
-  });
-  // air just above the open top also moves in and out
-  new Field(40,(i,t,out,f)=>{ if(m.env<0.02) return null; const H=m.L, y0=H+0.6+f.r[i*4]*3, z0=(f.r[i*4+1]*2-1)*Rb*0.8; out.set(-0.1-f.r[i*4+2]*0.3,y0-1.4*m.env*Math.sin(m.ph)*(1-(y0-H)/4),z0); return COL.air; });
+  const vm=voice({zc,zl:d,g,hc,mode:0,zA:-Rb*0.96,zB:d-0.1,top:()=>H+m.ext,
+    supply:[V3(-0.15,-footH-6,0),V3(-0.15,-footH,0),V3(-0.15,-8,0.4),V3(-0.15,-2.6,zc-0.2),V3(-0.15,-1.15,zc)],
+    footVol:(a,b,c,out)=>{ const y=-footH+1+b*(footH-2.6), rc=toeR+(Rb-toeR)*(y+footH)/footH; out.set(-0.08-c*rc*0.6,y,(a*2-1)*rc*0.85); }});
+  const vw=voice({zc:zcw,zl:zFo,g:gw,hc:hcw,mode:2,zA:zW-WI+0.1,zB:zFi-0.1,top:()=>m.stop,
+    supply:[V3(-0.15,-22,zW),V3(-0.15,-16,zW),V3(-0.15,-5.4,zW),V3(-0.15,-5.4,zcw),V3(-0.15,-1.15,zcw)],
+    footVol:(a,b,c,out)=>out.set(-0.08-c*0.3,-15.5+b*9.5,zW+(a-0.5)*1.2)});
+  const fmt=(f,f0)=>{ const c=Math.round(1200*Math.log2(f/f0)); return f.toFixed(1)+' Hz（'+(c>0?'+':c<0?'−':'±')+Math.abs(c)+' セント）'; };
+  const setR=(id,v)=>{ const el=document.getElementById('rc_'+id); if(el){ el.value=v; el.dispatchEvent(new Event('input')); } };
   return {
     controls:[{type:'toggle',id:'wind',label:'風を送る',get:()=>m.on,set:v=>m.on=v},
-      {type:'range',id:'sleeve',label:'チューニングスリーブ',min:0.5,max:6.5,step:0.05,get:()=>m.ext,set:v=>m.ext=v,fmt:()=>{ const f=freq(), c=Math.round(1200*Math.log2(f/F0)); return f.toFixed(1)+' Hz（'+(c>0?'+':c<0?'−':'±')+Math.abs(c)+' セント）'; }}],
-    ctl:{wind:v=>m.on=v,sleeve:v=>{ m.ext=v; const el=document.getElementById('rc_sleeve'); if(el){ el.value=v; el.dispatchEvent(new Event('input')); } }},
-    pins:[{t:'足穴',p:V3(0,-footH-3.5,toeR+1.2)},{t:'足',p:V3(0,-11,-Rb*0.8)},{t:'ラングイド',p:V3(0,0.45,-1.2),max:45},{t:'ウインドウェイ',p:V3(0,-0.3,zc+1.7),max:45},
-          {t:'下唇',p:V3(0,-2.6,d+0.8),max:45},{t:'上唇（エッジ）',p:V3(0,hc+0.9,d+1.6),max:45},{t:'歌口',p:V3(0,hc*0.5,d+2.6),max:45},{t:'胴（空気柱）',p:V3(0,H*0.55,-Rb-1.5)},{t:'開いた上端',p:topPin},{t:'チューニングスリーブ',p:slvPin}],
-    speaking:()=>m.env>0.35?[{k:0,i:2,r:0,f:freq()}]:[],
-    update(dt){ m.L=H+m.ext; m.fr=freq()/F0; windEnv(m,dt); sleeve.position.y=m.L-SL; topPin.y=m.L+4.5; slvPin.y=m.L-3;
-      P.ph.value=m.ph; P.env.value=m.env; P.mesh.scale.y=m.L-hc-0.4; sheetUpdate(); }
+      {type:'toggle',id:'sm',label:'メタル（開管）',get:()=>m.sm,set:v=>m.sm=v},
+      {type:'toggle',id:'sw',label:'木管（閉管）',get:()=>m.sw,set:v=>m.sw=v},
+      {type:'range',id:'sleeve',label:'チューニングスリーブ',min:0.5,max:6.5,step:0.05,get:()=>m.ext,set:v=>m.ext=v,fmt:()=>fmt(freqM(),F0)},
+      {type:'range',id:'stop',label:'木管の栓',min:LW0-4,max:LW0+3,step:0.05,get:()=>m.stop,set:v=>m.stop=v,fmt:()=>fmt(freqW(),F0W)}],
+    ctl:{wind:v=>m.on=v,sm:v=>m.sm=v,sw:v=>m.sw=v,sleeve:v=>{ m.ext=v; setR('sleeve',v); },stop:v=>{ m.stop=v; setR('stop',v); }},
+    pins:[{t:'足穴',p:V3(0,-footH-3.5,toeR+1.2)},{t:'ラングイド',p:V3(0,0.45,-1.2),max:45},{t:'ウインドウェイ',p:V3(0,-0.3,zc+1.7),max:45},
+          {t:'上唇（エッジ）',p:V3(0,hc+0.9,d+1.6),max:45},{t:'メタル・開管',p:V3(0,H*0.55,Rb+2.2)},{t:'開いた上端',p:topPin},{t:'チューニングスリーブ',p:slvPin},
+          {t:'木管・閉管',p:V3(0,H*0.55,zW-WI-2.6)},{t:'栓',p:stpPin},{t:'ブロック',p:V3(0,-3,zW-1.5),max:45},{t:'キャップ',p:V3(0,-3,zFo+2.2),max:45},{t:'上唇',p:V3(0,hcw+1,zFo+1.8),max:45}],
+    speaking:()=>{ const out=[]; if(vm.env>0.35) out.push({k:0,i:2,r:0,f:freqM()}); if(vw.env>0.35) out.push({k:0,i:0,r:0,f:freqW()}); return out; },
+    update(dt){
+      S.p+=((m.on?75:0)-S.p)*Math.min(1,dt*5);
+      vm.update(dt,m.on&&m.sm?1:0,freqM()/F0); vw.update(dt,m.on&&m.sw?1:0,freqW()/F0);
+      sleeve.position.y=H+m.ext-SL; topPin.y=H+m.ext+4.5; slvPin.y=H+m.ext-3; stp.position.y=m.stop; stpPin.y=m.stop+2;
+    }
   };
 }
 
@@ -1349,17 +1380,19 @@ function buildSwell(){
 
 const MODELS={
 'a-01':{id:'A-01',name:'フルー管の発音',terms:'flue pipe · Lippenpfeife · tuyau à bouche',stops0:[0,0,0,0,0],own:true,noStops:true,noKeys:true,floor:-26,xray0:false,cut0:1,clip:[0.02,6],psize:0.32,
-  cam:{p:[150,30,60],t:[0,22,0]},
+  cam:{p:[150,30,40],t:[0,22,-9]},
   legend:'<span><i style="background:var(--wind)"></i>噴流・足の中の風</span><span><i style="background:var(--air)"></i>胴の中の空気（上下に往復）</span><span><i style="background:var(--sound)"></i>圧力が高い</span><span><i style="background:var(--wind);opacity:.6"></i>圧力が低い</span>',
-  foot:'Prinzipal 2′ の C（約262 Hz、胴の長さ 約59 cm）を想定した開管の断面です。歌口まわりは見やすさのため拡大しています。振動は実際の毎秒約262回を、約5.5回に遅くして表示しています。音は実際の高さで鳴ります。',
-  summary:'メタルのフルー管（唇管）が音を出すしくみを、縦に半分に切った断面で見ます。足穴から入った風は、ラングイドと下唇のすき間（ウインドウェイ）から薄い板状の噴流になって吹き出します。噴流は上唇の縁で管の内側と外側に交互に振れ、その往復が胴の中の空気柱を共鳴させます。',
+  foot:'左のメタルは Prinzipal 2′ の C（約262 Hz、胴の長さ 約59 cm）を想定した開管、右の木管は同じ長さの閉管（約131 Hz）です。歌口まわりは見やすさのため拡大しています。振動は実際の毎秒数百回を、メタルは約5.5回、木管は約2.8回に遅くして表示しています。音は実際の高さで鳴ります。',
+  summary:'フルー管（唇管）が音を出すしくみを、縦に半分に切った断面で見ます。左はメタルの開管、右は同じ長さの木管の閉管です。足から来た風は、ウインドウェイから薄い板状の噴流になって吹き出し、上唇の縁で管の内側と外側に交互に振れて、胴の中の空気柱を共鳴させます。閉管は同じ長さの開管より1オクターブ低く鳴り、空気柱の圧力の変化のしかたも違います。',
   steps:[
-    {t:'パイプを縦に半分に切った断面です。「風を送る」を押すと足穴から風が入ります。',run:a=>{a.ctl('wind',false);a.cut(1);a.home();}},
-    {t:'足穴から入った風は足の中にたまって圧力を持ち、ラングイドの前縁と下唇のすき間（ウインドウェイ）だけから吹き出します。',run:a=>{a.ctl('wind',true);a.cam([46,-4,16],[0,-6,1.5]);}},
+    {t:'左がメタルの開管（上端が開いている）、右が同じ長さの木管の閉管（上端を栓でふさいでいる）です。どちらも縦に半分に切った断面です。「風を送る」を押すと両方に風が入ります。',run:a=>{a.ctl('wind',false);a.ctl('sm',true);a.ctl('sw',true);a.cut(1);a.home();}},
+    {t:'足穴から入った風は足の中にたまって圧力を持ち、ラングイドの前縁と下唇のすき間（ウインドウェイ）だけから吹き出します。木管では、ブロックの前面とキャップのすき間がウインドウェイです。',run:a=>{a.ctl('wind',true);a.cam([46,-4,16],[0,-6,1.5]);}},
     {t:'吹き出した噴流は上唇の縁（エッジ）に向かい、管の内側と外側（大気側）へ交互に振れます。帯は噴流の断面、粒子は風の動きです。この往復が発音のもとになります。',run:a=>{a.ctl('wind',true);a.cam([15,2,5],[0,0.8,2]);}},
-    {t:'内側に入った風が胴の中の空気柱を押し、空気柱は上下に往復します（灰色の粒子）。風が管を流れ抜けるのではありません。色は圧力の変化で、開管では中央の圧力の変化が最も大きく、両端では空気の動きが最も大きくなります。',run:a=>{a.ctl('wind',true);a.cam([112,40,38],[0,36,0]);}},
-    {t:'空気柱の往復が歌口の噴流の振れを引き込み、管の長さで決まる高さで振動が続きます。風を止めると振動もすぐ止まります。',run:a=>{a.ctl('wind',true);a.home();}},
-    {t:'胴の上端のチューニングスリーブを上げると管が長くなって音が低く、下げると短くなって高くなります。下のスライダーで動かすと、空気柱の長さ、振動の速さ、音の高さが一緒に変わります。',run:a=>{a.ctl('wind',true);a.cam([38,70,22],[0,70,0]);a.ctl('sleeve',6.5);later(1600,()=>api.ctl('sleeve',0.5));later(3200,()=>api.ctl('sleeve',3.5));}}
+    {t:'開管：内側に入った風が空気柱を押し、空気柱は上下に往復します（灰色の粒子）。開いた両端で空気の動きが最も大きく、中央で圧力の変化（色）が最も大きくなります。',run:a=>{a.ctl('wind',true);a.cam([112,40,38],[0,36,0]);}},
+    {t:'閉管：上端の栓で空気が動けないため、栓のところで圧力の変化が最も大きく、歌口側で空気の動きが最も大きくなります。開管と色の分かれ方を比べてください。',run:a=>{a.ctl('wind',true);a.cam([112,40,20],[0,36,-18]);}},
+    {t:'閉管は、同じ長さの開管より1オクターブ低い音になります。振動の速さも半分です。「メタル（開管）」「木管（閉管）」のボタンで片方ずつ鳴らして聞き比べてください。',run:a=>{a.ctl('wind',true);a.ctl('sm',true);a.ctl('sw',false);later(1800,()=>{api.ctl('sm',false);api.ctl('sw',true);});later(3600,()=>{api.ctl('sm',true);});a.home();}},
+    {t:'メタルの胴の上端のチューニングスリーブを上げると管が長くなって音が低く、下げると短くなって高くなります。',run:a=>{a.ctl('wind',true);a.ctl('sm',true);a.cam([38,70,22],[0,70,0]);a.ctl('sleeve',6.5);later(1600,()=>api.ctl('sleeve',0.5));later(3200,()=>api.ctl('sleeve',3.5));}},
+    {t:'木管の栓を下げると管が短くなって音が高く、上げると長くなって低くなります。下のスライダーで動かすと、空気柱の長さ、振動の速さ、音の高さが一緒に変わります。',run:a=>{a.ctl('wind',true);a.ctl('sw',true);a.cam([40,66,4],[0,66,-18]);a.ctl('stop',64);later(1600,()=>api.ctl('stop',71));later(3200,()=>api.ctl('stop',68));}}
   ],
   build(){ return buildFlueSection(); }},
 'a-02':{id:'A-02',name:'リード管の発音',terms:'reed pipe · Zungenpfeife · tuyau à anche',stops0:[0,0,0,0,0],own:true,noStops:true,noKeys:true,floor:-8,xray0:false,cut0:1,clip:[0.02,6],psize:0.32,
