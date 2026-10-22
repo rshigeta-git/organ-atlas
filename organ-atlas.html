@@ -1089,7 +1089,6 @@ function pathLen(p){ let L=0; for(let i=1;i<p.length;i++) L+=p[i].distanceTo(p[i
 function buildConeChest(){
   const R=CX.root, N=13, P=5, W=N*P, oy=10, pos=k=>-W/2+P*(k+0.5), DZ=4.4;
   const yFl=oy+8, yIn0=oy+8.5, yIn1=oy+15.5, yTop=oy+16, yToe=oy+17.5, base=oy+18;
-  box(R,W+8,1,41,MAT.woodDark,0,oy+3.5,0,LB('小ふいごの台板（下から制御風が入る）','Bälgchenbrett'));
   box(R,W+8,1,41,MAT.wood,0,yFl,0,LB('ストップチャンネルの底板（円すい弁の座がある）','Fundamentbrett'));
   box(R,W+8,1,41,MAT.wood,0,yTop,0,LB('ストップチャンネルの天板','Fundamentbrett'));
   box(R,W+8,1.5,41,MAT.wood,0,oy+16.75+0.0,0,LB('上板（パイプを立てる板）','Pfeifenstock'));
@@ -1104,16 +1103,13 @@ function buildConeChest(){
   const trunkV=new Vol((a,b,c,out)=>out.set(xV-3.2+(c-0.5)*2,oy+8+b*8,(a*2-1)*20),160,{state:()=>1,rate:3});
   const chV=[]; for(let i=0;i<5;i++){ const zc=ZROW[i]; chV.push(new Vol((a,b,c,out)=>out.set(-W/2-1+a*(W+3),yIn0+0.4+b*6.2,zc+(c-0.5)*3.4),120,{state:()=>S.sp[i]>0.5?1:0,rate:1.6})); new Tube([V3(xV-3.2,oy+12,zc),V3(xV-0.5,oy+12,zc),V3(-W/2+4,oy+12,zc)],{r:0.6,density:0.6,front:200,state:()=>({open:S.sp[i]>0.5&&chV[i].fill<0.97,speed:16})}); }
   const Pk=new Float32Array(N), tubes=[], bell=[], cones=[], rods=[], pipesT=[];
-  const LB_B=LB('小ふいご（制御風でふくらみ、棒で円すい弁を押し上げる）','Bälgchen'), LB_C=LB('円すい弁（座の穴をふさぐ。押し上げられるとパイプへの道が開く）','Kegel'), LB_R=LB('押し棒','Stecher'), LB_D=LB('パイプへの導管','Kondukt');
+  const LB_B=LB('小ふいご（制御風でふくらみ、棒で円すい弁を押し上げる）','Bälgchen'), LB_C=LB('円すい弁（風に押されて座の穴をふさいでいる。持ち上がるとパイプへの道が開く）','Kegel'), LB_R=LB('押し棒','Stecher'), LB_D=LB('パイプへの導管','Kondukt');
   for(let k=0;k<N;k++){
     const x=pos(k);
     const bk=[], ck=[], rk=[];
     for(let i=0;i<5;i++){
       const zc=ZROW[i];
-      bk.push(box(R,2.6,1,2.6,MAT.leather,x,oy+4.5,zc,LB_B));
-      new Vol((a,b,c,out)=>out.set(x+(a-0.5)*2,oy+4.2+b*(0.5+1.0*Pk[k]),zc+(c-0.5)*2),7,{kind:'ctrl',state:()=>Pk[k],rate:12});
       ck.push(mk(G_KEGEL,keyMat(k),R,LB_C));
-      rk.push(rod(R,0.12,MAT.iron,LB_R));
       const hole=mk(G_DISC,MAT.dark,R,LB('円すい弁の座','Kegelsitz')); hole.rotation.x=-Math.PI/2; hole.scale.set(0.5,0.5,1); hole.position.set(x,yIn0+0.01,zc);
       box(R,1.1,0.8,3.6,MAT.woodDark,x,oy+7.0,zc+1.8,LB_D);
       box(R,1.1,10.6,1.1,MAT.woodDark,x,oy+12.3,zc+3.5,LB_D);
@@ -1128,15 +1124,13 @@ function buildConeChest(){
     bell.push(bk); cones.push(ck); rods.push(rk);
   }
   return {
-    pins:[{t:'小ふいご',p:V3(36,oy+4.5,-7)},{t:'円すい弁',p:V3(36,yIn0+1.5,-14)},{t:'パイプへの導管',p:V3(36,oy+12,17.5)},{t:'ストップチャンネル',p:V3(-W/2-1,yIn1+1.5,7)},{t:'ストップ弁',p:V3(xV-2,yIn1+2,-14)}],
+    pins:[{t:'円すい弁',p:V3(36,yIn0+1.5,-14)},{t:'パイプへの導管',p:V3(36,oy+12,17.5)},{t:'ストップチャンネル',p:V3(-W/2-1,yIn1+1.5,7)},{t:'ストップ弁',p:V3(xV-2,yIn1+2,-14)}],
     speaking:()=>S.p<8?[]:pipesT.filter(t=>Pk[t.k]>0.6&&S.sp[t.i]>0.85&&chV[t.i].fill>0.5),
     update(dt){
       for(let k=0;k<N;k++){
-        const on=S.kd[k]>0.3; Pk[k]=clamp(Pk[k]+(on?9:-11)*dt,0,1);
-        const lift=1.2*clamp((Pk[k]-0.35)/0.5,0,1);
-        for(let i=0;i<5;i++){ const zc=ZROW[i], h=0.8+1.0*Pk[k];
-          bell[k][i].scale.y=h; bell[k][i].position.y=oy+4+h/2;
-          cones[k][i].position.set(pos(k),yIn0+0.75+lift,zc); rods[k][i].set(V3(pos(k),oy+4+h,zc),V3(pos(k),yIn0+lift,zc)); }
+        Pk[k]=S.kd[k];
+        const lift=1.2*clamp((Pk[k]-0.2)/0.6,0,1);
+        for(let i=0;i<5;i++) cones[k][i].position.set(pos(k),yIn0+0.75+lift,ZROW[i]);
       }
       for(let i=0;i<5;i++) sv[i].rotation.z=-1.1*S.sp[i];
     }
@@ -1448,15 +1442,15 @@ const MODELS={
     {t:'和音を弾きます。パレットとばね弁の両方が開いたパイプだけが鳴ります。スライダーチェスト（C-01）と、止める方法の違いを比べてください。',run:a=>{a.stops([1,1,1,0,0]);a.keys([0,4,7]);}}
   ],
   build(){ const chest=buildChest({spring:true}); return {chest,update(dt){ chest.update(dt); }}; }},
-'c-03':{id:'C-03',name:'空気式コーンバルブチェスト',terms:'pneumatic cone-valve chest · pneumatische Kegellade · sommier à cônes pneumatique',stops0:[1,0,1,0,0],floor:12,legend:'ctrl',
+'c-03':{id:'C-03',name:'コーンバルブチェスト',terms:'cone-valve chest · Kegellade · sommier à cônes',stops0:[1,0,1,0,0],floor:12,
   cam:{p:[110,70,140],t:[0,22,10]},clip:[-33,34],
-  summary:'ストップごとに風箱の長さいっぱいの部屋（ストップチャンネル）があり、パイプ1本ごとに円すい弁が付いた風箱です。鍵を押すとその鍵の小ふいごに制御風が送られ、小ふいごが円すい弁を押し上げます。風のあるチャンネルのパイプだけが鳴ります。制御風が流れ込むことで動く「加圧式（流入式）」です。',
+  summary:'ストップごとに風箱の長さいっぱいの部屋（ストップチャンネル）があり、パイプ1本ごとに円すい弁が付いた風箱です。鍵を押すとその鍵の円すい弁がいっしょに持ち上がり、風のあるチャンネル（入っているストップ）のパイプだけが鳴ります。円すい弁を持ち上げる方法には、鍵の力で直接持ち上げる機械式と、小ふいごで持ち上げる空気式があります。',
   steps:[
-    {t:'空気式のコーンバルブチェストです。ストップごとに風箱の長さいっぱいの部屋（ストップチャンネル）があり、パイプ1本ごとに円すい弁があります。',run:a=>{a.xray(true);a.keys([]);a.stops([0,0,0,0,0]);a.home();}},
+    {t:'コーンバルブチェストです。ストップごとに風箱の長さいっぱいの部屋（ストップチャンネル）があり、パイプ1本ごとに円すい弁があります。',run:a=>{a.xray(true);a.keys([]);a.stops([0,0,0,0,0]);a.home();}},
     {t:'ストップを入れると、左端のストップ弁が開いて、そのストップのチャンネルにだけ風が満ちます。',run:a=>{a.keys([]);a.stops([1,0,0,0,0]);a.cam([-70,42,44],[-32,14,0]);}},
-    {t:'鍵を押すと、その鍵の5つの小ふいごに下から制御風（橙）が送られ、小ふいごがふくらみます。制御風を送る仕組みは D-03 チューブラーニューマチックで見られます。',run:a=>{a.stops([1,0,0,0,0]);a.keys([4]);a.cam([30,24,42],[-10,14,2]);}},
-    {t:'リレー管路の制御風が、5つのストップチャンネルの下にある小ふいごをふくらませ、押し棒で円すい弁を持ち上げます。風のあるチャンネル（入っているストップ）のパイプだけが鳴ります。',run:a=>{a.stops([1,0,1,0,0]);a.keys([4]);a.cam([22,30,44],[-10,11,2]);}},
-    {t:'和音を弾きます。鍵で動かすのは小さな弁だけなので、ストップを増やしても鍵の重さは変わりません。',run:a=>{a.stops([1,1,1,0,0]);a.keys([0,4,7]);a.home();}}
+    {t:'円すい弁は、チャンネルの底板の座に、風に押されて閉じています。鍵を押すと、その鍵の5つの円すい弁がいっしょに持ち上がり、座の穴が開きます。',run:a=>{a.stops([0,0,0,0,0]);a.keys([4]);a.cam([30,24,42],[-10,14,2]);}},
+    {t:'風のあるチャンネル（入っているストップ）のパイプだけが鳴ります。風は円すい弁の座から導管を通ってパイプへ届きます。',run:a=>{a.stops([1,0,1,0,0]);a.keys([4]);a.cam([22,30,44],[-10,11,2]);}},
+    {t:'和音を弾きます。円すい弁を持ち上げる方法には、鍵の力で直接持ち上げる機械式と、ストップチャンネルの下の小ふいごで持ち上げる空気式があります。',run:a=>{a.stops([1,1,1,0,0]);a.keys([0,4,7]);a.home();}}
   ],
   build(){ return buildConeChest(); }},
 'c-04':{id:'C-04',name:'メンブレンチェスト',terms:'membrane chest · Membranlade · sommier à membranes',stops0:[1,0,1,0,0],floor:-12,legend:'ctrl',
@@ -1536,7 +1530,7 @@ const MODELS={
 const INDEX=[
  {c:'A',n:'発音原理',items:[['A-01','フルー管（メタルパイプ）の発音',1],['A-02','リード管の発音',1]]},
  {c:'B',n:'送風',items:[['B-01','くさび型ふいご（人力）',1],['B-02','電動ブロワー＋マガジンふいご',1],['B-03','シュヴィンマー',3]]},
- {c:'C',n:'風箱',items:[['C-01','スライダーチェスト',1],['C-02','スプリングチェスト',1],['C-03','空気式コーンバルブチェスト',2],['C-04','メンブレンチェスト',2]]},
+ {c:'C',n:'風箱',items:[['C-01','スライダーチェスト',1],['C-02','スプリングチェスト',1],['C-03','コーンバルブチェスト',2],['C-04','メンブレンチェスト',2]]},
  {c:'D',n:'キーアクション',items:[['D-01','ローラーボード＋スクエア',1],['D-02','バーカーレバー',2],['D-03','チューブラーニューマチック',2],['D-04','ペダル鍵盤のアクション',3]]},
  {c:'E',n:'ストップアクション',items:[['E-01','機械式ストップアクション',1],['E-02','スプリングチェスト用',3],['E-03','電気式ストップアクション',3]]},
  {c:'F',n:'表現・効果装置',items:[['F-01','スウェルボックス',2],['F-02','トレモラント',3],['F-03','ツィンベルシュテルン',3]]},
