@@ -1414,7 +1414,10 @@ function buildTremulant(){
   pt.exitU=pt.cum[1+sp.ei]/pt.L;
   /* Wippfedertremulant */
   const WX=-24, WL=10, WW=5.4, yTop=yT+TH/2+0.8, wg=new T.Group(); wg.position.set(WX-WL/2,yTop,0); R.add(wg);
-  const WIP=new T.Group(); R.add(WIP);
+  // the Bock tremulant is mounted on the SIDE of the trunk: built as if on top, then turned 90° about the trunk axis
+  const WPV=new T.Group(); WPV.position.set(0,yT,0); WPV.rotation.x=Math.PI/2; R.add(WPV);
+  const WIP=new T.Group(); WIP.position.y=-yT; WPV.add(WIP);
+  const side=(x,y,z)=>V3(x,yT-z,y-yT);
   box(WIP,WL+1,0.6,WW+1,MAT.wood,WX,yTop+0.3,0,LB('小ふいごの台（風導管の穴の上）','Balgbrett'));
   box(wg,WL,0.5,WW,MAT.wood,WL/2,0.25,0,LB('小ふいごの上板（動く板）','Oberplatte')); wg.position.y=yTop+0.6; WIP.add(wg);
   const wsides=[-1,1].map(s=>{ const t=mk(G_TRI,MAT.leather,WIP,LB('小ふいごのひだ（革）','Falten')); t.position.set(WX-WL/2,yTop+0.6,s*WW/2); return t; });
@@ -1425,7 +1428,7 @@ function buildTremulant(){
   const wgt=box(vh,1.4,1.4,1.4,MAT.weight,-5.5,1.6,0,LB('おもり（腕の位置で揺れの速さが変わる）','Gewicht'));
   const stop=box(WIP,1,6,1,MAT.woodDark,WX+WL/2-1,yTop+3.6,-WW/2-1.2,LB('ストッパー（小ふいごが上がりきる位置）','Anschlag'));
   box(WIP,1.6,0.8,WW-0.6,MAT.woodDark,WX+WL/2-1,yTop+6.8,-WW/2-1.2+WW/2,LB('ストッパー','Anschlag'));
-  const esc=new Tube([V3(WX+WL/2-1.5,yTop+2,0),V3(WX+WL/2-1.2,yTop+5,0.5),V3(WX+WL/2+1,yTop+9,1.5)],{kind:'air',r:0.8,density:1.6,front:200,state:()=>({open:m.type==='wipp'&&m.trem&&m.vOpen>0.25,speed:16})});
+  const esc=new Tube([side(WX+WL/2-1.5,yTop+2,0),side(WX+WL/2-1.2,yTop+5,0.5),side(WX+WL/2+1,yTop+9,1.5)],{kind:'air',r:0.8,density:1.6,front:200,state:()=>({open:m.type==='wipp'&&m.trem&&m.vOpen>0.25,speed:16})});
   /* tremblant doux */
   const DX=-2, DOU=new T.Group(); R.add(DOU);
   const fl=new T.Group(); fl.position.set(DX,yT+TH/2-0.1,0); DOU.add(fl);
@@ -1445,7 +1448,7 @@ function buildTremulant(){
       {type:'range',id:'hz',label:'揺れの速さ',min:3.5,max:8,step:0.1,get:()=>m.hz,set:v=>m.hz=v,fmt:()=>'毎秒 '+m.hz.toFixed(1)+' 回'}],
     ctl:{play:v=>m.play=v,trem:v=>m.trem=v,type:v=>{ m.type=v; setVis(); },hz:v=>m.hz=v},
     pins:[{t:'リザーバー',p:V3(-56,16,0)},{t:'風導管',p:V3(-36,yT+5,4)},{t:'パイプ',p:V3(x1+6,yT+40,3)},
-          {t:'小ふいご（ヴィップフェーダー型）',p:V3(WX,yTop+9,0)},{t:'フラップ（トランブラン・ドゥ）',p:V3(DX,yT+TH/2+3,-2)}],
+          {t:'小ふいご（ヴィップフェーダー型）',p:side(WX,yTop+9,0)},{t:'フラップ（トランブラン・ドゥ）',p:V3(DX,yT+TH/2+3,-2)}],
     speaking:()=>m.on&&m.play&&m.env>0.35?[{k:0,i:2,r:0}]:[],
     update(dt){
       m.env+=((m.on?1:0)-m.env)*Math.min(1,dt*4);
@@ -1609,7 +1612,7 @@ const MODELS={
   summary:'トレムラントは、パイプへ送る風の圧力を周期的に揺らして、音に波打つような揺れを付ける装置です。風導管の小ふいごの弁から風を逃がして揺らすヴィップフェーダー・トレムラント（Bock）と、風導管の中の重い板で流れを揺らすトランブラン・ドゥの、2つの型を切り替えて見られます。',
   steps:[
     {t:'リザーバーから風導管を通って、パイプの風箱へ風が送られています。まずトレムラントを切った状態で音を聞いてください。風圧（右上の水柱計）は一定です。',run:a=>{a.xray(true);a.ctl('play',true);a.ctl('trem',false);a.home();}},
-    {t:'ヴィップフェーダー・トレムラント（Bock）：風導管の上の小ふいごが風でふくらみ、ストッパーまで上がると、おもりの慣性で弁が開いて風が外へ逃げます。小ふいごがしぼむとおもりが弁を閉じ、これを繰り返します。',run:a=>{a.ctl('type','wipp');a.ctl('trem',true);a.cam([-6,30,30],[-24,16,0]);}},
+    {t:'ヴィップフェーダー・トレムラント（Bock）：風導管の横に付けた小ふいごが風でふくらみ、ストッパーまで上がると、おもりの慣性で弁が開いて風が外へ逃げます。小ふいごがしぼむとおもりが弁を閉じ、これを繰り返します。',run:a=>{a.ctl('type','wipp');a.ctl('trem',true);a.cam([-8,26,34],[-24,10,8]);}},
     {t:'弁から風が逃げるたびに風導管の風圧が下がり、パイプの音の強さと高さがわずかに揺れます。揺れははっきりしていて、強めの効果になります。',run:a=>{a.ctl('type','wipp');a.ctl('trem',true);a.home();}},
     {t:'トランブラン・ドゥ：風導管の中に、外のおもりで重くした木の板（フラップ）があります。流れる風に押されて板が開閉し、風の流れを周期的に弱めます。風を外へ逃がさないので、揺れは穏やかです。',run:a=>{a.ctl('type','doux');a.ctl('trem',true);a.cam([14,22,26],[-2,11,0]);}},
     {t:'どちらの型も、おもりの位置で揺れの速さが変わります。下のスライダーで速さを変え、「ヴィップフェーダー型」と「トランブラン・ドゥ」を切り替えて聞き比べてください。',run:a=>{a.ctl('trem',true);a.home();}}
