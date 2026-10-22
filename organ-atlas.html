@@ -1422,10 +1422,12 @@ function buildTremulant(){
   box(wg,WL,0.5,WW,MAT.wood,WL/2,0.25,0,LB('小ふいごの上板（動く板）','Oberplatte')); wg.position.y=yTop+0.6; WIP.add(wg);
   const wsides=[-1,1].map(s=>{ const t=mk(G_TRI,MAT.leather,WIP,LB('小ふいごのひだ（革）','Falten')); t.position.set(WX-WL/2,yTop+0.6,s*WW/2); return t; });
   const wfront=box(WIP,0.3,1,WW,MAT.leather,WX+WL/2,yTop+0.6,0,LB('小ふいごのひだ（革）','Falten'));
-  const vh=new T.Group(); vh.position.set(WL-2.6,0.5,0); wg.add(vh);
-  box(vh,2.2,0.25,2.4,MAT.leather,1.1,0.12,0,LB('弁（上板の穴をふさぐ。開くと風が外へ逃げる）','Tremulantventil'));
-  rod(vh,0.12,MAT.iron,LB('弁の腕','Ventilarm')).set(V3(0,0.2,0),V3(-5.5,1.6,0));
-  const wgt=box(vh,1.4,1.4,1.4,MAT.weight,-5.5,1.6,0,LB('おもり（腕の位置で揺れの速さが変わる）','Gewicht'));
+  // valve: hinged on a horizontal axis (local x = world horizontal); the flap covers the hole above the hinge, the arm
+  // hangs DOWN past the edge of the bellows plate (local +z = world down) and its weight keeps the valve shut
+  const vh=new T.Group(); vh.position.set(WL-2.6,0.5,0.9); wg.add(vh);
+  box(vh,2.4,0.25,2.4,MAT.leather,0,0.12,-1.2,LB('弁（上板の穴をふさぐ。開くと風が外へ逃げる）','Tremulantventil'));
+  rod(vh,0.12,MAT.iron,LB('弁の腕（下へ垂れ、先におもりがある）','Ventilarm')).set(V3(0,0.25,0),V3(0,0.5,6));
+  const wgt=box(vh,1.4,1.4,1.4,MAT.weight,0,0.5,4.5,LB('おもり（腕の上の位置で揺れの速さが変わる）','Gewicht'));
   const stop=box(WIP,1,6,1,MAT.woodDark,WX+WL/2-1,yTop+3.6,-WW/2-1.2,LB('ストッパー（小ふいごが上がりきる位置）','Anschlag'));
   box(WIP,1.6,0.8,WW-0.6,MAT.woodDark,WX+WL/2-1,yTop+6.8,-WW/2-1.2+WW/2,LB('ストッパー','Anschlag'));
   const esc=new Tube([side(WX+WL/2-1.5,yTop+2,0),side(WX+WL/2-1.2,yTop+5,0.5),side(WX+WL/2+1,yTop+9,1.5)],{kind:'air',r:0.8,density:1.6,front:200,state:()=>({open:m.type==='wipp'&&m.trem&&m.vOpen>0.25,speed:16})});
@@ -1459,9 +1461,9 @@ function buildTremulant(){
         const th=m.trem?0.11+0.1*s:0.0; wg.rotation.z=th;
         const h=WL*Math.sin(th); wsides.forEach(t=>t.scale.set(WL*Math.cos(th),Math.max(0.01,h),1));
         wfront.scale.y=Math.max(0.05,h); wfront.position.set(WX-WL/2+WL*Math.cos(th),yTop+0.6+h/2,0);
-        m.vOpen=m.trem?Math.max(0,-c):0; vh.rotation.z=0.75*m.vOpen;
+        m.vOpen=m.trem?Math.max(0,-c):0; vh.rotation.x=0.75*m.vOpen;
         m.dip=0.11*Math.max(0,-c)+0.03;
-        wgt.position.x=-3.5-(8-m.hz)*0.7; 
+        wgt.position.z=2.6+(8-m.hz)*0.75; 
       } else {
         fl.rotation.z=(m.trem?0.42+0.25*s:1.3); lv.rotation.z=fl.rotation.z;
         m.dip=0.035*(0.5+0.5*s)+0.01; m.vOpen=0;
