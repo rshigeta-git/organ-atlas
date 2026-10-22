@@ -1395,10 +1395,10 @@ function buildSwell(){
    swings in the flow and periodically throttles it; no wind escapes. Real tremulant speeds (about 4-8 per second). */
 function buildTremulant(){
   const R=CX.root, m={on:true,play:true,trem:false,type:'wipp',hz:5.5,ph:0,amt:0,env:0};
-  const yT=10, TH=6, x0=-46, x1=22, zc=0;
+  const yT=17, TH=6, x0=-46, x1=22, zc=0;
   // reservoir (simplified) and wind trunk
-  box(R,18,10,18,MAT.wood,-56,5,0,LB('リザーバー（マガジンふいご）','Magazinbalg'));
-  box(R,19,1.2,19,MAT.wood,-56,10.6,0,LB('リザーバーの上板','Oberplatte')); box(R,8,3,8,MAT.weight,-56,12.7,0,LB('おもり','Gewicht'));
+  box(R,18,yT+3,18,MAT.wood,-56,(yT+3)/2,0,LB('リザーバー（マガジンふいご）','Magazinbalg'));
+  box(R,19,1.2,19,MAT.wood,-56,yT+3.6,0,LB('リザーバーの上板','Oberplatte')); box(R,8,3,8,MAT.weight,-56,yT+5.7,0,LB('おもり','Gewicht'));
   const LK=LB('風導管（リザーバーからパイプの風箱へ）','Windkanal');
   box(R,x1-x0,0.8,TH+1.6,MAT.wood,(x0+x1)/2,yT-TH/2-0.4,zc,LK); box(R,x1-x0,0.8,TH+1.6,MAT.wood,(x0+x1)/2,yT+TH/2+0.4,zc,LK);
   box(R,x1-x0,TH,0.8,MAT.wood,(x0+x1)/2,yT,zc-TH/2-0.4,LK); box(R,x1-x0,TH,0.8,MAT.wood,(x0+x1)/2,yT,zc+TH/2+0.4,LK);
@@ -1407,7 +1407,7 @@ function buildTremulant(){
   const sp=buildPipe(x1+6,0,2,0,0,yT+6);
   const press=()=>m.env*(1-m.amt*m.dip);
   m.dip=0;
-  new Vol((a,b,c,out)=>out.set(-64+a*16,1+b*8,-8+c*16),120,{state:()=>m.on?1:0,rate:2});
+  new Vol((a,b,c,out)=>out.set(-64+a*16,1+b*(yT+1),-8+c*16),140,{state:()=>m.on?1:0,rate:2});
   new Vol((a,b,c,out)=>out.set(x1+1+a*10,yT-5+b*10,-5+c*10),80,{state:()=>m.on?1:0,rate:2});
   new Tube([V3(-47,yT,0),V3(-30,yT,0),V3(-14,yT,0),V3(0,yT,0),V3(x1+2,yT,0)],{r:2.2,density:0.6,front:200,state:()=>({open:m.on,speed:m.play?6+10*(1-m.dip*m.amt*4):0})});
   const pt=new Tube([V3(x1+6,yT+3,0),V3(x1+6,yT+6,0)].concat(sp.path.slice(1)),{r:0.3,density:0.3,front:900,state:()=>({open:m.on&&m.play,speed:20})});
@@ -1424,13 +1424,18 @@ function buildTremulant(){
   const wfront=box(WIP,0.3,1,WW,MAT.leather,WX+WL/2,yTop+0.6,0,LB('小ふいごのひだ（革）','Falten'));
   // valve: hinged on a horizontal axis (local x = world horizontal); the flap covers the hole above the hinge, the arm
   // hangs DOWN past the edge of the bellows plate (local +z = world down) and its weight keeps the valve shut
-  const vh=new T.Group(); vh.position.set(WL-2.6,0.5,0.9); wg.add(vh);
-  box(vh,2.4,0.25,2.4,MAT.leather,0,0.12,-1.2,LB('弁（上板の穴をふさぐ。開くと風が外へ逃げる）','Tremulantventil'));
-  rod(vh,0.12,MAT.iron,LB('弁の腕（下へ垂れ、先におもりがある）','Ventilarm')).set(V3(0,0.25,0),V3(0,0.5,6));
-  const wgt=box(vh,1.4,1.4,1.4,MAT.weight,0,0.5,4.5,LB('おもり（腕の上の位置で揺れの速さが変わる）','Gewicht'));
+  // bellows hangs with its hinge at the top; the valve is hinged across the plate near the lower (free) end, its flap
+  // above the hinge covers the hole, and its arm runs on past the free end and hangs down with the weight
+  const vh=new T.Group(); vh.position.set(WL-1.6,0.5,0); wg.add(vh);
+  box(vh,2.4,0.25,2.4,MAT.leather,-1.2,0.12,0,LB('弁（上板の穴をふさぐ。開くと風が外へ逃げる）','Tremulantventil'));
+  rod(vh,0.12,MAT.iron,LB('弁の腕（下へ垂れ、先におもりがある）','Ventilarm')).set(V3(0,0.25,0),V3(6,0.5,0));
+  const wgt=box(vh,1.4,1.4,1.4,MAT.weight,4.5,0.5,0,LB('おもり（腕の上の位置で揺れの速さが変わる）','Gewicht'));
   const stop=box(WIP,1,6,1,MAT.woodDark,WX+WL/2-1,yTop+3.6,-WW/2-1.2,LB('ストッパー（小ふいごが上がりきる位置）','Anschlag'));
   box(WIP,1.6,0.8,WW-0.6,MAT.woodDark,WX+WL/2-1,yTop+6.8,-WW/2-1.2+WW/2,LB('ストッパー','Anschlag'));
-  const esc=new Tube([side(WX+WL/2-1.5,yTop+2,0),side(WX+WL/2-1.2,yTop+5,0.5),side(WX+WL/2+1,yTop+9,1.5)],{kind:'air',r:0.8,density:1.6,front:200,state:()=>({open:m.type==='wipp'&&m.trem&&m.vOpen>0.25,speed:16})});
+  const WROT=new T.Group(); WROT.position.set(WX,0,0); WROT.rotation.y=-Math.PI/2; const WIN=new T.Group(); WIN.position.set(-WX,0,0);
+  [...WIP.children].forEach(c=>WIN.add(c)); WROT.add(WIN); WIP.add(WROT); WPV.updateMatrixWorld(true);
+  const wl=(x,y,z)=>WIN.localToWorld(V3(x,y,z));
+  const esc=new Tube([wl(WX+WL/2-2.8,yTop+1.5,0),wl(WX+WL/2-2.6,yTop+4.5,0.4),wl(WX+WL/2-2.2,yTop+8.5,1.2)],{kind:'air',r:0.8,density:1.6,front:200,state:()=>({open:m.type==='wipp'&&m.trem&&m.vOpen>0.25,speed:16})});
   /* tremblant doux */
   const DX=-2, DOU=new T.Group(); R.add(DOU);
   const fl=new T.Group(); fl.position.set(DX,yT+TH/2-0.1,0); DOU.add(fl);
@@ -1449,8 +1454,8 @@ function buildTremulant(){
       {type:'toggle',id:'doux',label:'トランブラン・ドゥ',get:()=>m.type==='doux',set:v=>{ m.type='doux'; setVis(); renderControls(); }},
       {type:'range',id:'hz',label:'揺れの速さ',min:3.5,max:8,step:0.1,get:()=>m.hz,set:v=>m.hz=v,fmt:()=>'毎秒 '+m.hz.toFixed(1)+' 回'}],
     ctl:{play:v=>m.play=v,trem:v=>m.trem=v,type:v=>{ m.type=v; setVis(); },hz:v=>m.hz=v},
-    pins:[{t:'リザーバー',p:V3(-56,16,0)},{t:'風導管',p:V3(-36,yT+5,4)},{t:'パイプ',p:V3(x1+6,yT+40,3)},
-          {t:'小ふいご（ヴィップフェーダー型）',p:side(WX,yTop+9,0)},{t:'フラップ（トランブラン・ドゥ）',p:V3(DX,yT+TH/2+3,-2)}],
+    pins:[{t:'リザーバー',p:V3(-56,yT+9,0)},{t:'風導管',p:V3(-36,yT+5,4)},{t:'パイプ',p:V3(x1+6,yT+40,3)},
+          {t:'小ふいご（ヴィップフェーダー型）',p:wl(WX,yTop+9,0)},{t:'フラップ（トランブラン・ドゥ）',p:V3(DX,yT+TH/2+3,-2)}],
     speaking:()=>m.on&&m.play&&m.env>0.35?[{k:0,i:2,r:0}]:[],
     update(dt){
       m.env+=((m.on?1:0)-m.env)*Math.min(1,dt*4);
@@ -1461,9 +1466,9 @@ function buildTremulant(){
         const th=m.trem?0.11+0.1*s:0.0; wg.rotation.z=th;
         const h=WL*Math.sin(th); wsides.forEach(t=>t.scale.set(WL*Math.cos(th),Math.max(0.01,h),1));
         wfront.scale.y=Math.max(0.05,h); wfront.position.set(WX-WL/2+WL*Math.cos(th),yTop+0.6+h/2,0);
-        m.vOpen=m.trem?Math.max(0,-c):0; vh.rotation.x=0.75*m.vOpen;
+        m.vOpen=m.trem?Math.max(0,-c):0; vh.rotation.z=-0.75*m.vOpen;
         m.dip=0.11*Math.max(0,-c)+0.03;
-        wgt.position.z=2.6+(8-m.hz)*0.75; 
+        wgt.position.x=2.6+(8-m.hz)*0.75; 
       } else {
         fl.rotation.z=(m.trem?0.42+0.25*s:1.3); lv.rotation.z=fl.rotation.z;
         m.dip=0.035*(0.5+0.5*s)+0.01; m.vOpen=0;
@@ -1609,14 +1614,14 @@ const MODELS={
   ],
   build(){ return buildMembraneChest(); }},
 'f-02':{id:'F-02',name:'トレムラント',terms:'tremulant · Tremulant · tremblant',stops0:[0,0,0,0,0],own:true,noStops:true,noKeys:true,floor:-2,
-  cam:{p:[30,40,90],t:[-14,16,0]},clip:[-12,12],
+  cam:{p:[30,46,90],t:[-14,22,0]},clip:[-12,12],
   foot:'1本のパイプ（Prinzipal 2′ の C）と、それに風を送る風導管だけの模型です。トレムラントの揺れの速さは実際と同じ（毎秒約4〜8回）で、音も実際の速さで揺れます。右上の水柱計で風圧の揺れが見えます。',
   summary:'トレムラントは、パイプへ送る風の圧力を周期的に揺らして、音に波打つような揺れを付ける装置です。風導管の小ふいごの弁から風を逃がして揺らすヴィップフェーダー・トレムラント（Bock）と、風導管の中の重い板で流れを揺らすトランブラン・ドゥの、2つの型を切り替えて見られます。',
   steps:[
     {t:'リザーバーから風導管を通って、パイプの風箱へ風が送られています。まずトレムラントを切った状態で音を聞いてください。風圧（右上の水柱計）は一定です。',run:a=>{a.xray(true);a.ctl('play',true);a.ctl('trem',false);a.home();}},
-    {t:'ヴィップフェーダー・トレムラント（Bock）：風導管の横に付けた小ふいごが風でふくらみ、ストッパーまで上がると、おもりの慣性で弁が開いて風が外へ逃げます。小ふいごがしぼむとおもりが弁を閉じ、これを繰り返します。',run:a=>{a.ctl('type','wipp');a.ctl('trem',true);a.cam([-8,26,34],[-24,10,8]);}},
+    {t:'ヴィップフェーダー・トレムラント（Bock）：風導管の横に付けた小ふいごが風でふくらみ、ストッパーまで上がると、おもりの慣性で弁が開いて風が外へ逃げます。小ふいごがしぼむとおもりが弁を閉じ、これを繰り返します。',run:a=>{a.ctl('type','wipp');a.ctl('trem',true);a.cam([-6,30,38],[-24,17,8]);}},
     {t:'弁から風が逃げるたびに風導管の風圧が下がり、パイプの音の強さと高さがわずかに揺れます。揺れははっきりしていて、強めの効果になります。',run:a=>{a.ctl('type','wipp');a.ctl('trem',true);a.home();}},
-    {t:'トランブラン・ドゥ：風導管の中に、外のおもりで重くした木の板（フラップ）があります。流れる風に押されて板が開閉し、風の流れを周期的に弱めます。風を外へ逃がさないので、揺れは穏やかです。',run:a=>{a.ctl('type','doux');a.ctl('trem',true);a.cam([14,22,26],[-2,11,0]);}},
+    {t:'トランブラン・ドゥ：風導管の中に、外のおもりで重くした木の板（フラップ）があります。流れる風に押されて板が開閉し、風の流れを周期的に弱めます。風を外へ逃がさないので、揺れは穏やかです。',run:a=>{a.ctl('type','doux');a.ctl('trem',true);a.cam([14,29,26],[-2,18,0]);}},
     {t:'どちらの型も、おもりの位置で揺れの速さが変わります。下のスライダーで速さを変え、「ヴィップフェーダー型」と「トランブラン・ドゥ」を切り替えて聞き比べてください。',run:a=>{a.ctl('trem',true);a.home();}}
   ],
   build(){ return buildTremulant(); }},
