@@ -1414,7 +1414,7 @@ const MODELS={
         chest.update(dt); bs.forEach(b=>b.update());
       }};
   }},
-'b-03':{id:'B-03',name:'電動ブロワー＋マガジンふいご',terms:'blower + reservoir · Gebläse + Magazinbalg · ventilateur + réservoir',stops0:[1,0,1,0,0],own:true,floor:0,
+'b-02':{id:'B-02',name:'電動ブロワー＋マガジンふいご',terms:'blower + reservoir · Gebläse + Magazinbalg · ventilateur + réservoir',stops0:[1,0,1,0,0],own:true,floor:0,
   cam:{p:[15,105,230],t:[-52,38,0]},clip:[-135,34],
   summary:'電動の送風機（ブロワー）が連続して風を送り、マガジンふいご（リザーバー）が上板のおもりで風圧を一定に保ちます。上板が上がると、上板から吊ったひもがカーテン弁のローラーを引き上げ、カーテンが入口のスリットを下からふさいで入る風を絞ります。上板が下がるとローラーも下がり、ばねの力でカーテンが巻き取られてスリットが開く、という自動調整です。',
   steps:[
@@ -1455,7 +1455,7 @@ const MODELS={
     {t:'和音を弾きます。パレットとばね弁の両方が開いたパイプだけが鳴ります。スライダーチェスト（C-01）と、止める方法の違いを比べてください。',run:a=>{a.stops([1,1,1,0,0]);a.keys([0,4,7]);}}
   ],
   build(){ const chest=buildChest({spring:true}); return {chest,update(dt){ chest.update(dt); }}; }},
-'c-05':{id:'C-05',name:'空気式コーンバルブチェスト',terms:'pneumatic cone-valve chest · pneumatische Kegellade · sommier à cônes pneumatique',stops0:[1,0,1,0,0],floor:-12,legend:'ctrl',
+'c-03':{id:'C-03',name:'空気式コーンバルブチェスト',terms:'pneumatic cone-valve chest · pneumatische Kegellade · sommier à cônes pneumatique',stops0:[1,0,1,0,0],floor:-12,legend:'ctrl',
   cam:{p:[110,70,140],t:[0,22,10]},clip:[-33,34],
   summary:'ストップごとに風箱の長さいっぱいの部屋（ストップチャンネル）があり、パイプ1本ごとに円すい弁が付いた風箱です。鍵を押すと制御風が導管で送られ、小ふいごが円すい弁を押し上げます。風のあるチャンネルのパイプだけが鳴ります。制御風が流れ込むことで動く「加圧式（流入式）」です。',
   steps:[
@@ -1466,7 +1466,7 @@ const MODELS={
     {t:'和音を弾きます。鍵で動かすのは小さな弁だけなので、ストップを増やしても鍵の重さは変わりません。',run:a=>{a.stops([1,1,1,0,0]);a.keys([0,4,7]);a.home();}}
   ],
   build(){ return buildConeChest(); }},
-'c-06':{id:'C-06',name:'メンブレンチェスト',terms:'membrane chest · Membranlade · sommier à membranes',stops0:[1,0,1,0,0],floor:-12,legend:'ctrl',
+'c-04':{id:'C-04',name:'メンブレンチェスト',terms:'membrane chest · Membranlade · sommier à membranes',stops0:[1,0,1,0,0],floor:-12,legend:'ctrl',
   cam:{p:[110,70,140],t:[0,22,10]},clip:[-33,34],
   summary:'パイプの穴を、後ろから制御風で押された革の膜でふさぐ風箱です。鍵を押すと、その鍵の音のチャンネルの風が抜け、ストップチャンネルの風が膜を押し下げて穴が開きます。風が抜けることで動く「排気式」です。',
   steps:[
@@ -1477,7 +1477,7 @@ const MODELS={
     {t:'鍵を離すと排気弁が閉じます。供給路から細い穴を通って音のチャンネルに再び風がたまり、膜がふくらんで穴をふさぎます。',run:a=>{a.keys([]);a.home();}}
   ],
   build(){ return buildMembraneChest(); }},
-'d-03':{id:'D-03',name:'バーカーレバー',terms:'Barker lever · Barkerhebel · machine Barker',stops0:[1,0,1,0,0],floor:-26,
+'d-02':{id:'D-02',name:'バーカーレバー',terms:'Barker lever · Barkerhebel · machine Barker',stops0:[1,0,1,0,0],floor:-26,
   cam:{p:[110,40,100],t:[0,16,6]},clip:[-40,40],
   summary:'重い機械式アクションを風の力で助ける装置です。鍵が動かすのは小さな弁だけで、その弁が開くと風箱の風が鍵ごとの小ふいごに入り、ふくらむ力で重いトラッカーとパレットを動かします。19世紀の大オルガンで、カプラーをつないだ鍵盤を軽くするために使われました。',
   steps:[
@@ -1488,7 +1488,7 @@ const MODELS={
     {t:'和音を弾きます。指で動かすのは小さな弁だけなので、ストップを増やしたり鍵盤をつないだりしても鍵は軽いままです。',run:a=>{a.stops([1,1,1,1,0]);a.keys([0,4,7,12]);a.home();}}
   ],
   build(){ return buildBarker(); }},
-'d-04':{id:'D-04',name:'チューブラーニューマチックアクション',terms:'tubular-pneumatic action · pneumatische Traktur · traction tubulaire pneumatique',stops0:[1,0,1,0,0],floor:-26,legend:'ctrl',
+'d-03':{id:'D-03',name:'チューブラーニューマチックアクション',terms:'tubular-pneumatic action · pneumatische Traktur · traction tubulaire pneumatique',stops0:[1,0,1,0,0],floor:-26,legend:'ctrl',
   cam:{p:[150,60,170],t:[0,10,45]},clip:[-40,40],
   summary:'鍵の動きを、鉛管の中の制御風で風箱へ伝えるアクションです。鍵の弁が制御風を送り（加圧式）または抜き（排気式）、風箱側のリレーが空気式モーターを動かしてパレットを開けます。導管が長いほど、鍵を押してから鳴るまでに遅れが出ます。',
   steps:[
@@ -1510,7 +1510,7 @@ const MODELS={
     {t:'下のスライダーで開き具合を変えながら弾いてみてください。',run:a=>{a.home();}}
   ],
   build(){ return buildSwell(); }},
-'d-02':{id:'D-02',name:'ローラーボード＋スクエア',terms:'roller board & squares · Wellenbrett & Winkel · abrégé et équerres',stops0:[1,0,1,0,0],floor:-12,
+'d-01':{id:'D-01',name:'ローラーボード＋スクエア',terms:'roller board & squares · Wellenbrett & Winkel · abrégé et équerres',stops0:[1,0,1,0,0],floor:-12,
   cam:{p:[135,100,155],t:[0,46,-20]},clip:[-50,50],
   summary:'鍵盤の幅や音の並びは、風箱のパレットの位置と一致しないことがよくあります。ローラーボードは横軸の棒（ローラー）を回して引く位置を左右に移し、スクエア（L字形の腕木）は引く向きを90度変えます。この風箱は大きいパイプを両端に置く「C側・Cis側」配置です。',
   steps:[
@@ -1542,11 +1542,11 @@ const MODELS={
 
 const INDEX=[
  {c:'A',n:'発音原理',items:[['A-01','フルー管（メタルパイプ）の発音',1],['A-02','リード管の発音',1]]},
- {c:'B',n:'送風',items:[['B-01','くさび型ふいご（人力）',1],['B-03','電動ブロワー＋マガジンふいご',1],['B-05','シュヴィンマー',3]]},
- {c:'C',n:'風箱',items:[['C-01','スライダーチェスト',1],['C-02','スプリングチェスト',1],['C-05','空気式コーンバルブチェスト',2],['C-06','メンブレンチェスト',2]]},
- {c:'D',n:'キーアクション',items:[['D-02','ローラーボード＋スクエア',1],['D-03','バーカーレバー',2],['D-04','チューブラーニューマチック',2],['D-07','ペダル鍵盤のアクション',3]]},
- {c:'E',n:'ストップアクション',items:[['E-01','機械式ストップアクション',1],['E-02','スプリングチェスト用',3],['E-04','電気式ストップアクション',3]]},
- {c:'F',n:'表現・効果装置',items:[['F-01','スウェルボックス',2],['F-05','トレモラント',3],['F-06','ツィンベルシュテルン',3]]},
+ {c:'B',n:'送風',items:[['B-01','くさび型ふいご（人力）',1],['B-02','電動ブロワー＋マガジンふいご',1],['B-03','シュヴィンマー',3]]},
+ {c:'C',n:'風箱',items:[['C-01','スライダーチェスト',1],['C-02','スプリングチェスト',1],['C-03','空気式コーンバルブチェスト',2],['C-04','メンブレンチェスト',2]]},
+ {c:'D',n:'キーアクション',items:[['D-01','ローラーボード＋スクエア',1],['D-02','バーカーレバー',2],['D-03','チューブラーニューマチック',2],['D-04','ペダル鍵盤のアクション',3]]},
+ {c:'E',n:'ストップアクション',items:[['E-01','機械式ストップアクション',1],['E-02','スプリングチェスト用',3],['E-03','電気式ストップアクション',3]]},
+ {c:'F',n:'表現・効果装置',items:[['F-01','スウェルボックス',2],['F-02','トレモラント',3],['F-03','ツィンベルシュテルン',3]]},
  {c:'G',n:'補助機構',items:[['G-01','カプラー',3]]},
  {c:'H',n:'総合モデル',items:[['H-01','バロックオルガン',3],['H-02','19世紀ロマン派オルガン',3],['H-03','現代オルガン',3]]}
 ];
