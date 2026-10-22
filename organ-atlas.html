@@ -85,6 +85,7 @@ h1{margin:0;font-family:var(--f-display);font-weight:800;font-size:clamp(26px,3.
 .btn[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .field{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--muted)}
 .field input[type=range]{width:150px;accent-color:var(--accent)}
+.field.rng>span{display:inline-block;min-width:10.5em}
 .field.rng output{font-family:var(--f-mono);font-size:12.5px;color:var(--ink);font-variant-numeric:tabular-nums;min-width:15ch}
 .field select{border:1px solid var(--line);background:var(--panel);border-radius:7px;padding:5px 8px;font-size:13.5px;color:var(--ink)}
 .note{font-size:12px;color:var(--muted);margin:0}
@@ -923,33 +924,33 @@ function buildFlueSection(){
   const SL=8, sleeve=mk(halfShell(()=>Rb+0.16,[0,SL],null,32),MAT.metalDark,R,LB('チューニングスリーブ（胴の上端にはめた筒。上下させて管の長さを変え、音の高さを合わせる）','Stimmschieber'));
 
   /* ---- wooden stopped pipe of the same body length, standing beside it (to the right in the section view) ---- */
-  const zW=-18, WI=3, WT=0.7, hx=3, zFi=zW+WI, zFo=zFi+WT, gw=0.3, zbk=zFo-gw, zcw=zFo-gw/2, hcw=1.5, LBW=LB('木管の胴（閉管。上端を栓でふさいでいる）','Holzgedackt');
+  const zW=-18, WI=3, WT=0.7, hx=3, zFi=zW+WI, zFo=zFi+WT, gw=0.3, zcw=zFi, zbk=zFi-gw/2, zCi=zFi+gw/2, hcw=1.5, LBW=LB('木管の胴（閉管。上端を栓でふさいでいる）','Holzgedackt');
   const WD=mclone(MAT.pipeWood), WS=mclone(MAT.pipeWoodLight);
-  box(R,hx,H+7.3,WT,WD,-hx/2,(H-7.3)/2,zW-WI-WT/2,LBW);                       // back wall (cut face shows on the section)
-  box(R,WT,H+7.3,2*(WI+WT),WD,-hx-WT/2,(H-7.3)/2,zW,LBW);                      // side wall
-  box(R,hx,H-hcw-0.7,WT,WD,-hx/2,(H+hcw+0.7)/2,zFi+WT/2,LB('前板（下の縁が上唇）','Vorderbrett'));
-  const lip=new T.Shape(); lip.moveTo(-zFo,hcw); lip.lineTo(-zFo,hcw+0.7); lip.lineTo(-zFi,hcw+0.7); lip.closePath();
-  const lpg=new T.ExtrudeGeometry(lip,{depth:hx,bevelEnabled:false}); lpg.rotateY(Math.PI/2); lpg.translate(-hx,0,0); CX.own.push(lpg);
-  mk(lpg,WD,R,LB('上唇（前板の下の縁。内側を斜めに削いで鋭くしてある）','Oberlabium'));
-  // section after the classic drawings: the foot opens into a small foot chamber under the block. The block's front is
-  // chamfered, and the cap, a flat rectangular plate screwed onto the front of the pipe below the mouth, closes it:
-  // between the chamfer and the cap's flat inner face a wedge-shaped space narrows upward to the windway slit.
+  // the pipe is built as two mirrored halves (x<0 and x>0): cut on x=0 the left half shows its section faces,
+  // with the cut slider at zero both halves together show the whole pipe
+  const SG=[-1,1];
+  const prism=(pts,mat,label,w)=>{ w=w||hx; SG.forEach(sg=>{ const sh=new T.Shape(); pts.forEach((p,i)=>i?sh.lineTo(-p[0],p[1]):sh.moveTo(-p[0],p[1])); sh.closePath();
+    const g=new T.ExtrudeGeometry(sh,{depth:w,bevelEnabled:false}); g.rotateY(Math.PI/2); g.translate(sg<0?-w:0,0,0); CX.own.push(g); mk(g,mat,R,label); }); };
+  const box2=(w,h,dz,mat,y,z,label,par)=>SG.forEach(sg=>box(par||R,w,h,dz,mat,sg*w/2,y,z,label));
+  box2(hx,H+7.3,WT,WD,(H-7.3)/2,zW-WI-WT/2,LBW);                                       // back wall
+  SG.forEach(sg=>box(R,WT,H+7.3,2*(WI+WT),WD,sg*(hx+WT/2),(H-7.3)/2,zW,LBW));          // side walls
+  box2(hx,H-hcw-3.5,WT,WD,(H+hcw+3.5)/2,zFi+WT/2,LB('前板（下の縁が上唇）','Vorderbrett'));
+  // upper lip: the front board's lower edge, bevelled on the OUTSIDE so the sharp edge is at the inner face, in line with the windway
+  prism([[zFi,hcw],[zFi,hcw+3.5],[zFo,hcw+3.5]],WD,LB('上唇（前板の下の縁。外側を斜めに削いで、内面側の縁を鋭くしてある）','Oberlabium'));
+  // foot chamber under the block; the block's front is chamfered; the cap, a flat rectangular plate as wide as the pipe,
+  // closes the front below the mouth: between chamfer and cap a wedge-shaped space narrows upward to the windway slit
   const yT=-4.3, yC=-6.5, yBt=-7.3, sl=1.8, capT=0.9;
-  const prism=(pts,mat,label)=>{ const sh=new T.Shape(); pts.forEach((p,i)=>i?sh.lineTo(-p[0],p[1]):sh.moveTo(-p[0],p[1])); sh.closePath();
-    const g=new T.ExtrudeGeometry(sh,{depth:hx,bevelEnabled:false}); g.rotateY(Math.PI/2); g.translate(-hx,0,0); CX.own.push(g); return mk(g,mat,R,label); };
   prism([[zW-WI,yT],[zbk-sl,yT],[zbk,0],[zW-WI,0]],WS,LB('ブロック（足と胴の仕切り。前を斜めに削いであり、キャップとのあいだにくさび形の空間ができる）','Kern'));
   const LBB=LB('底の部材（足の風室を囲む）','Kernboden');
   prism([[zW-WI,yBt],[zW-0.45,yBt],[zW-0.45,yC],[zW-1.8,yC],[zW-1.8,yT],[zW-WI,yT]],WS,LBB);
-  prism([[zW+0.45,yBt],[zFo,yBt],[zFo,yC],[zW+0.45,yC]],WS,LBB);
-  const LCP=LB('キャップ（歌口の下で管の前面にねじ止めした直方体の板。平らな内面とブロックの面取りのあいだがウインドウェイ。上の縁が下唇）','Vorschlag');
-  box(R,hx,-yBt,capT,WS,-hx/2,yBt/2,zFo+capT/2,LCP);
-  for(const yy of [yBt+1.2,-2.2]){ const sc=mk(G_CYL,MAT.metalDark,R,LB('キャップを留めるねじ','Schraube')); sc.rotation.x=Math.PI/2; sc.scale.set(0.22,0.12,0.22); sc.position.set(-hx*0.5,yy,zFo+capT+0.05); }
+  prism([[zW+0.45,yBt],[zCi,yBt],[zCi,yC],[zW+0.45,yC]],WS,LBB);
+  box2(hx+WT,-yBt,capT,WS,yBt/2,zCi+capT/2,LB('キャップ（歌口の下で管の前面に取り付けた、管と同じ幅の直方体の板。平らな内面とブロックの面取りのあいだがウインドウェイ。上の縁が下唇）','Vorschlag'));
   const wf=mk(G_CYL,WS,R,LB('木管の足（ろくろで挽いた足。足穴から風が入る）','Fuß')); wf.scale.set(1.4,10,1.4); wf.position.set(0,-12.3,zW);
   box(R,0.02,10,0.9,MAT.dark,0.004,-12.3,zW,LB('足の穴','Fußloch'));
   const stp=new T.Group(); R.add(stp);
-  box(stp,hx,3,2*WI-0.1,WS,-hx/2,1.5,zW,LB('栓（ストッパー。上下させて管の長さを変え、音の高さを合わせる）','Spund'));
-  box(stp,hx,0.4,2*WI,MAT.leather,-hx/2,0.2,zW,LB('栓の革巻き（すき間をふさぐ）','Spundleder'));
-  box(stp,hx*0.4,3,1.2,WS,-hx*0.2,4.5,zW,LB('栓の取っ手','Spundgriff'));
+  box2(hx,3,2*WI-0.1,WS,1.5,zW,LB('栓（ストッパー。上下させて管の長さを変え、音の高さを合わせる）','Spund'),stp);
+  box2(hx,0.4,2*WI,MAT.leather,0.2,zW,LB('栓の革巻き（すき間をふさぐ）','Spundleder'),stp);
+  box(stp,hx*0.8,3,1.2,WS,0,4.5,zW,LB('栓の取っ手','Spundgriff'));
 
   const F0=261.6, F0W=130.8, EC=4, ECW=2.5, LW0=H-4;
   const m={on:false,env:0,ext:3.5,stop:LW0,sm:true,sw:true};
@@ -1002,9 +1003,9 @@ function buildFlueSection(){
   const vm=voice({zc,zl:d,g,hc,mode:0,zA:-Rb*0.96,zB:d-0.1,top:()=>H+m.ext,
     supply:[V3(-0.15,-footH-6,0),V3(-0.15,-footH,0),V3(-0.15,-8,0.4),V3(-0.15,-2.6,zc-0.2),V3(-0.15,-1.15,zc)],
     footVol:(a,b,c,out)=>{ const y=-footH+1+b*(footH-2.6), rc=toeR+(Rb-toeR)*(y+footH)/footH; out.set(-0.08-c*rc*0.6,y,(a*2-1)*rc*0.85); }});
-  const vw=voice({zc:zcw,zl:zFo,g:gw,hc:hcw,mode:2,zA:zW-WI+0.1,zB:zFi-0.1,top:()=>m.stop,
-    supply:[V3(-0.15,-23,zW),V3(-0.15,-17,zW),V3(-0.15,-6.6,zW),V3(-0.15,-5.4,zW+0.9),V3(-0.15,-5.0,zFo-0.6),V3(-0.15,-3.6,zFo-0.75),V3(-0.15,-1.2,zcw)],
-    footVol:(a,b,c,out)=>{ if(a<0.55) out.set(-0.08-c*0.3,-16.5+b*9.6,zW+(a/0.55-0.5)*0.8); else out.set(-0.08-c*0.3,yC+0.2+b*(yT-yC-0.4),zW-1.6+((a-0.55)/0.45)*(zFo-0.2-zW+1.6)); }});
+  const vw=voice({zc:zcw,zl:zFi,g:gw,hc:hcw,mode:2,zA:zW-WI+0.1,zB:zFi-0.1,top:()=>m.stop,
+    supply:[V3(-0.15,-23,zW),V3(-0.15,-17,zW),V3(-0.15,-6.6,zW),V3(-0.15,-5.4,zW+0.9),V3(-0.15,-5.0,zCi-0.6),V3(-0.15,-3.6,zCi-0.75),V3(-0.15,-1.2,zcw)],
+    footVol:(a,b,c,out)=>{ if(a<0.55) out.set(-0.08-c*0.3,-16.5+b*9.6,zW+(a/0.55-0.5)*0.8); else out.set(-0.08-c*0.3,yC+0.2+b*(yT-yC-0.4),zW-1.6+((a-0.55)/0.45)*(zCi-0.2-zW+1.6)); }});
   const fmt=(f,f0)=>{ const c=Math.round(1200*Math.log2(f/f0)); return f.toFixed(1)+' Hz（'+(c>0?'+':c<0?'−':'±')+Math.abs(c)+' セント）'; };
   const setR=(id,v)=>{ const el=document.getElementById('rc_'+id); if(el){ el.value=v; el.dispatchEvent(new Event('input')); } };
   return {
@@ -1016,7 +1017,7 @@ function buildFlueSection(){
     ctl:{wind:v=>m.on=v,sm:v=>m.sm=v,sw:v=>m.sw=v,sleeve:v=>{ m.ext=v; setR('sleeve',v); },stop:v=>{ m.stop=v; setR('stop',v); }},
     pins:[{t:'足穴',p:V3(0,-footH-3.5,toeR+1.2)},{t:'ラングイド',p:V3(0,0.45,-1.2),max:45},{t:'ウインドウェイ',p:V3(0,-0.3,zc+1.7),max:45},
           {t:'上唇（エッジ）',p:V3(0,hc+0.9,d+1.6),max:45},{t:'メタル・開管',p:V3(0,H*0.55,Rb+2.2)},{t:'開いた上端',p:topPin},{t:'チューニングスリーブ',p:slvPin},
-          {t:'木管・閉管',p:V3(0,H*0.55,zW-WI-2.6)},{t:'栓',p:stpPin},{t:'ブロック',p:V3(0,-2,zW-1.5),max:45},{t:'キャップ',p:V3(0,-4,zFo+capT+1.6),max:45},{t:'くさび形の空間',p:V3(0,-3.4,zbk-2.2),max:30},{t:'足の風室',p:V3(0,-5.4,zW-0.4),max:30},{t:'ウインドウェイ',p:V3(0,-2.2,zbk+1.8),max:30},{t:'上唇',p:V3(0,hcw+1,zFo+1.8),max:45}],
+          {t:'木管・閉管',p:V3(0,H*0.55,zW-WI-2.6)},{t:'栓',p:stpPin},{t:'ブロック',p:V3(0,-2,zW-1.5),max:45},{t:'キャップ',p:V3(0,-4,zCi+capT+1.6),max:45},{t:'くさび形の空間',p:V3(0,-3.4,zbk-2.2),max:30},{t:'足の風室',p:V3(0,-5.4,zW-0.4),max:30},{t:'ウインドウェイ',p:V3(0,-2.2,zbk+1.8),max:30},{t:'上唇',p:V3(0,hcw+1.2,zFo+1.6),max:45}],
     speaking:()=>{ const out=[]; if(vm.env>0.35) out.push({k:0,i:2,r:0,f:freqM()}); if(vw.env>0.35) out.push({k:0,i:0,r:0,f:freqW()}); return out; },
     update(dt){
       S.p+=((m.on?75:0)-S.p)*Math.min(1,dt*5);
@@ -1552,7 +1553,7 @@ const MODELS={
 };
 
 const INDEX=[
- {c:'A',n:'発音原理',items:[['A-01','フルー管（メタルパイプ）の発音',1],['A-02','リード管の発音',1]]},
+ {c:'A',n:'発音原理',items:[['A-01','フルー管の発音',1],['A-02','リード管の発音',1]]},
  {c:'B',n:'送風',items:[['B-01','くさび型ふいご（人力）',1],['B-02','電動ブロワー＋マガジンふいご',1],['B-03','シュヴィンマー',3]]},
  {c:'C',n:'風箱',items:[['C-01','スライダーチェスト',1],['C-02','スプリングチェスト',1],['C-03','コーンバルブチェスト',2],['C-04','メンブレンチェスト',2]]},
  {c:'D',n:'キーアクション',items:[['D-01','ローラーボード＋スクエア',1],['D-02','バーカーレバー',2],['D-03','チューブラーニューマチック',2],['D-04','ペダル鍵盤のアクション',3]]},
