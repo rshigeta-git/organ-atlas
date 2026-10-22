@@ -67,6 +67,9 @@ h1{margin:0;font-family:var(--f-display);font-weight:800;font-size:clamp(26px,3.
 .tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);padding:6px 9px;border-radius:6px;font-size:13px;line-height:1.4;max-width:260px;z-index:3}
 .tip b{display:block;font-weight:500}
 .tip span{font-family:var(--f-mono);font-size:11.5px;opacity:.75}
+.tip dl{display:grid;grid-template-columns:auto 1fr;gap:0 7px;margin:3px 0 0;font-size:12px}
+.tip dt{font-family:var(--f-mono);font-size:10.5px;opacity:.6;padding-top:1px}
+.tip dd{margin:0}
 .tip em{display:block;font-style:normal;font-size:12px;margin-top:3px;opacity:.9}
 .pin{position:absolute;transform:translate(-50%,-50%);pointer-events:none;display:flex;align-items:center;gap:5px;font-size:12px;white-space:nowrap;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:1px 9px 1px 2px}
 .pin b{display:inline-grid;place-items:center;width:19px;height:19px;border-radius:50%;background:var(--wind);color:var(--onink);font-family:var(--f-mono);font-size:11px;font-weight:500}
@@ -192,7 +195,7 @@ h1{margin:0;font-family:var(--f-display);font-weight:800;font-size:clamp(26px,3.
       <button class="btn" id="camreset">視点を戻す</button>
       <button class="btn" id="sound" aria-pressed="true">音を出す</button>
     </div>
-    <p class="note">ドラッグで回転、右ドラッグで移動、ホイール・ピンチで拡大。流線は、風が流れている間は明るい筋が流れの向きに進み、風が満ちて止まっている所では淡い実線になります。部品にカーソルを合わせると名称（日本語・ドイツ語）を表示します。モデルの鍵・トラッカー・パレットをクリックすると鍵を押せ、ストップノブやスライダーをクリックするとストップを入れたり切ったりできます。パイプは長さ・太さとも実物の45 %の同じ縮尺で描き、実物と同じ比率にしています（Gedackt の低音だけは風箱の間隔に収めるため幅を詰めています）。小さな部品（ばね、ネジ線など）は見やすさのため太く描いています。</p>
+    <p class="note">ドラッグで回転、右ドラッグで移動、ホイール・ピンチで拡大。流線は、風が流れている間は明るい筋が流れの向きに進み、風が満ちて止まっている所では淡い実線になります。部品にカーソルを合わせると名称（日本語・英語・ドイツ語・フランス語）を表示します。モデルの鍵・トラッカー・パレットをクリックすると鍵を押せ、ストップノブやスライダーをクリックするとストップを入れたり切ったりできます。パイプは長さ・太さとも実物の45 %の同じ縮尺で描き、実物と同じ比率にしています（Gedackt の低音だけは風箱の間隔に収めるため幅を詰めています）。小さな部品（ばね、ネジ線など）は見やすさのため太く描いています。</p>
 
     <div class="dock">
       <div class="drow">
@@ -231,7 +234,9 @@ if(!T){ wrap.insertAdjacentHTML('beforeend','<div class="nogl">3D表示用のラ
 const V3=(x,y,z)=>new T.Vector3(x,y,z);
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const lerp=(a,b,t)=>a+(b-a)*t;
-const LB=(ja,de)=>({ja,de});
+const TR={'Abstrakte':['tracker','vergette'],'Abzugsdraht':['pull-down wire','fil de tirage'],'Ansaugöffnung':['air intake','ouïe d’aspiration'],'Anschlagfilz':['upstop felt','feutre d’arrêt'],'Anschlagleiste':['upstop rail','barre d’arrêt'],'Anschlagleistenstütze':['upstop rail post','support de barre d’arrêt'],'Aufschnitt':['mouth (cut-up)','bouche'],'Backe':['key cheek','joue de clavier'],'Balgbock':['bellows trestle','tréteau du soufflet'],'Balghebel':['bellows lever','levier de soufflet'],'Balgkanal':['bellows outlet','porte-vent du soufflet'],'Balgstütze':['lever post','poteau du levier'],'Becher':['resonator','résonateur'],'Bohrung':['tracker hole','trou de vergette'],'Damm':['slider bearer','faux-registre'],'Deckel':['cap','calotte'],'Draht':['wire','fil'],'Drehstift':['pivot pin','axe de pivot'],'Falten':['folds','plis'],'Federleiste':['spring rail','barre à ressorts'],'Federrolle':['spring roller','rouleau à ressort'],'Federwindung':['spring coil','boucle du ressort'],'Fundamentbrett':['table','table'],'Fuß':['foot','pied'],'Fußloch':['toe hole','trou du pied'],'Führungsleiste':['guide rail','barre de guidage'],'Führungsstift':['guide pin','pointe de guidage'],'Gebläsegehäuse':['blower casing','carter du ventilateur'],'Gewicht':['weight','poids'],'Gewindedraht':['threaded wire','fil fileté'],'Holzgedackt':['stopped wood pipe','bourdon en bois'],'Hut':['cap','calotte'],'Kehle':['shallot','anche'],'Keil':['wedge','coin'],'Kern':['languid','biseau'],'Kernfase':['languid bevel','chanfrein du biseau'],'Kernstiche':['nicks','dents'],'Klaviaturboden':['key bed','fond de clavier'],'Kopf / Zunge':['block and tongue','noyau et languette'],'Krücke':['tuning wire','rasette'],'Körper':['body','corps'],'Labium':['mouth','bouche'],'Laufrad':['impeller','turbine'],'Laufradschaufel':['impeller blade','aube de turbine'],'Ledermutter':['leather nut','écrou en cuir'],'Luftblatt':['air jet','lame d’air'],'Motor':['motor','moteur'],'Nuss':['block','noyau'],'Oberlabium':['upper lip','lèvre supérieure'],'Oberplatte':['top board','table supérieure'],'Obertaste':['sharp key','feinte'],'Pfeife':['pipe','tuyau'],'Pfeifenstock':['upper board','chape'],'Pulpete':['pull-down purse','boursette'],'Rechenstäbchen':['rack slip','dent de peigne'],'Registerbalken':['stop bar','barre de registre'],'Registerbank':['stop jamb','joue de tirants'],'Registerschild':['stop label','étiquette de registre'],'Registerwelle':['stop roller','rouleau de registre'],'Registerzug':['drawknob','tirant de registre'],'Registerzugstange':['draw rod','tringle de tirant'],'Registerärmchen':['stop roller arm','bras de rouleau de registre'],'Rollenführung':['roller guide','guide du rouleau'],'Rollventilkasten':['curtain valve box','boîte de la valve à rideau'],'Röhrchen':['chimney','cheminée'],'Rückschlagventil':['non-return valve','clapet anti-retour'],'Sammelkanal':['collecting trunk','porte-vent collecteur'],'Schalldruck':['sound pressure','pression acoustique'],'Schied':['channel bar','barrage'],'Schleife':['slider','registre'],'Schleifenbohrung':['slider hole','trou de registre'],'Schleifenzug':['slider link','bielle de registre'],'Schlitz':['slot','fente'],'Schöpfventil':['intake valve','soupape d’aspiration'],'Seil':['rope','corde'],'Seitenbart':['ear','oreille'],'Spieltisch':['console','console'],'Spielventil':['pallet','soupape'],'Springventil':['spring valve','soupapette de registre'],'Spund':['stopper','tampon'],'Spundgriff':['stopper handle','poignée du tampon'],'Stecher':['sticker pin','pilote'],'Stiefel':['boot','pied (boîte)'],'Stimmschieber':['tuning slide','coulisse d’accord'],'Sägeschnitt':['saw kerf','trait de scie'],'Tastenfilz':['key felt','feutre de touche'],'Tastenhebel':['key lever','levier de touche'],'Tastenrechen':['tail rack','peigne arrière'],'Tritt':['treadle','marchepied du souffleur'],'Unterlabium':['lower lip','lèvre inférieure'],'Unterplatte':['bottom board','table inférieure'],'Untertaste':['natural key','marche'],'Ventilfeder':['pallet spring','ressort de soupape'],'Ventilführungsstift':['pallet guide pin','guide de soupape'],'Ventilöse':['pallet eye','œillet de soupape'],'Vorhang':['curtain','rideau'],'Vorhangleiste':['curtain batten','latte de rideau'],'Vorschlag':['cap (wood pipe)','lèvre inférieure rapportée'],'Welle':['roller','rouleau'],'Wellenbrett':['roller board','abrégé'],'Wellenböckchen':['roller stud','palier de rouleau'],'Wellenärmchen':['roller arm','bras de rouleau'],'Windkanal':['wind trunk','porte-vent'],'Windkasten':['pallet box','laye'],'Windleitung':['wind duct','conduit de vent'],'Winkel':['square','équerre'],'Winkelbalken':['square rail','barre d’équerres'],'Zugschnur':['pull cord','cordon'],'Zunge':['tongue','languette'],'Öse':['eye','œillet']};
+/* part names: Japanese, English, German, French */
+const LB=(ja,de)=>{ const t=TR[de]||['','']; return {ja,en:t[0],de,fr:t[1]}; };
 
 /* ---------------- data ---------------- */
 const STOPS=[
@@ -323,6 +328,7 @@ const G_CONE=new T.CylinderGeometry(1,0.18,1,20,1,true);
 const G_ROD=new T.CylinderGeometry(1,1,1,7);
 const G_DISC=new T.CircleGeometry(1,20);
 const G_COIL=new T.TorusGeometry(0.45,0.075,6,18);
+const G_SPH=new T.SphereGeometry(1,10,8);
 const G_TRI=new T.BufferGeometry(); G_TRI.setAttribute('position',new T.Float32BufferAttribute([0,0,0,1,0,0,1,1,0],3)); G_TRI.computeVertexNormals();
 function std(c,ro,me,x){ return new T.MeshStandardMaterial(Object.assign({color:c,roughness:ro,metalness:me},x||{})); }
 const MAT={
@@ -820,7 +826,7 @@ function buildBlowerMag(o){
   M.update=(dt,n)=>{
     M.n=n; M.rpm+=((M.blower?1:0)-M.rpm)*Math.min(1,dt*1.2);
     M.vo=clamp((0.82-M.h)/0.3,0,1);
-    const inflow=M.rpm*M.vo*0.35, outflow=(M.h>0.001&&n>0)?0.02+0.018*n:0;
+    const inflow=M.rpm*1.9*Math.pow(M.vo,2.2), outflow=(M.h>0.001&&n>0)?0.02+0.018*n:0;
     M.h=clamp(M.h+(inflow-outflow)*dt,0,1);
     const target=M.h>0.015?80:M.rpm*M.vo*20; S.p+=(target-S.p)*Math.min(1,dt*(target>S.p?6:4));
     imp.rotation.z-=M.rpm*dt*30;
@@ -894,13 +900,31 @@ function windEnv(m,dt){ const on=m.on; m.env+=((on?1:0)-m.env)*Math.min(1,dt*(on
 
 /* ---------- A-01: flue pipe ---------- */
 function buildFlueSection(){
-  const R=CX.root, Rb=3.3, footH=18, toeR=0.8, H=72, g=0.5;
+  const R=CX.root, Rb=3.3, footH=18, toeR=0.8, H=72, g=0.25;
   const G=flueGeos(Rb,footH,toeR,H,1/4,1/4,g); CX.own.push(G.body,G.foot,G.lang);
   const d=G.d, hc=G.hc, zc=d-g/2;
   mk(G.body,MAT.metal,R,LB('胴（共鳴管。中の空気柱の長さで音の高さが決まる）','Körper'));
   mk(G.foot,MAT.metal,R,LB('足（足穴から入った風をラングイドの下にためる）','Fuß'));
-  const lg=new T.ExtrudeGeometry(G.sh,{depth:1.1,bevelEnabled:false}); lg.rotateX(-Math.PI/2); lg.translate(0,-1.1,0); CX.own.push(lg);
-  mk(lg,MAT.metalDark,R,LB('ラングイド（足と胴の仕切り板。前縁と下唇のすき間がウインドウェイ）','Kern'));
+  // languid: a thick cast plate soldered inside the pipe; its underside is level with the top of the lower lip.
+  // The front edge is bevelled through the whole thickness (no vertical face), leaving a sharp lower edge;
+  // the gap between that edge and the lower lip is the windway. Fine nicks are cut into the edge.
+  const LT=0.3, BW=LT/Math.tan(55*Math.PI/180), zF=d-g, zB=zF-BW, Rl=Rb*0.985;
+  const LKN=LB('ラングイド（下面が下唇の上端と同じ高さの厚い板。前縁は斜めに削がれ、その下端と下唇のすき間がウインドウェイ）','Kern');
+  const ls=new T.Shape(), pa=Math.acos(clamp(zB/Rl,-1,1));
+  for(let j=0;j<=48;j++){ const t=pa+(2*Math.PI-2*pa)*j/48; const x=Rl*Math.sin(t), z=Rl*Math.cos(t); if(j===0) ls.moveTo(x,-z); else ls.lineTo(x,-z); } ls.closePath();
+  const lg=new T.ExtrudeGeometry(ls,{depth:LT,bevelEnabled:false}); lg.rotateX(-Math.PI/2); CX.own.push(lg);
+  mk(lg,MAT.metalDark,R,LKN);
+  const xw=Math.sqrt(Math.max(0,Rl*Rl-zF*zF)), bs=new T.Shape();
+  bs.moveTo(-zB,0); bs.lineTo(-zF,0); bs.lineTo(-zB,LT); bs.closePath();
+  const bg=new T.ExtrudeGeometry(bs,{depth:2*xw,bevelEnabled:false}); bg.rotateY(Math.PI/2); bg.translate(-xw,0,0); CX.own.push(bg);
+  mk(bg,MAT.metalDark,R,LKN);
+  // cut face on the section plane: the plate's profile with its bevelled front
+  const cs=new T.Shape(); cs.moveTo(Rl,0); cs.lineTo(-zF,0); cs.lineTo(-zB,LT); cs.lineTo(Rl,LT); cs.closePath();
+  const cg=new T.ShapeGeometry(cs); cg.rotateY(Math.PI/2); cg.translate(-0.01,0,0); CX.own.push(cg);
+  const cm=mclone(MAT.metalDark); cm.side=T.DoubleSide; cm.color.multiplyScalar(0.62);
+  mk(cg,cm,R,LKN);
+  const nk=Math.atan2(LT,BW);
+  for(let j=0;j<9;j++){ const xn=-xw*0.9+j*(xw*1.8/8); const b=box(R,0.04,0.03,0.13,MAT.dark,xn,LT*0.3,zF-BW*0.35,LB('ニック（ラングイド前縁の細い刻み。発音を整える）','Kernstiche')); b.rotation.x=nk; }
   const toe=mk(G_CYL_OPEN,MAT.metal,R,LB('足穴（ここから風が入る）','Fußloch')); toe.scale.set(toeR,3,toeR); toe.position.set(0,-footH-1.5,0);
   const F0=261.6, EC=4, m={on:false,env:0,ph:0,ext:3.5,L:H+3.5,fr:1};
   const P=pressurePlane(-Rb*0.96,d-0.1,hc+0.4,H,0);
@@ -953,7 +977,7 @@ function buildFlueSection(){
     controls:[{type:'toggle',id:'wind',label:'風を送る',get:()=>m.on,set:v=>m.on=v},
       {type:'range',id:'sleeve',label:'チューニングスリーブ',min:0.5,max:6.5,step:0.05,get:()=>m.ext,set:v=>m.ext=v,fmt:()=>{ const f=freq(), c=Math.round(1200*Math.log2(f/F0)); return f.toFixed(1)+' Hz（'+(c>0?'+':c<0?'−':'±')+Math.abs(c)+' セント）'; }}],
     ctl:{wind:v=>m.on=v,sleeve:v=>{ m.ext=v; const el=document.getElementById('rc_sleeve'); if(el){ el.value=v; el.dispatchEvent(new Event('input')); } }},
-    pins:[{t:'足穴',p:V3(0,-footH-3.5,toeR+1.2)},{t:'足',p:V3(0,-11,-Rb*0.8)},{t:'ラングイド',p:V3(0,-0.6,-1.2),max:45},{t:'ウインドウェイ',p:V3(0,-0.6,zc+1.6),max:45},
+    pins:[{t:'足穴',p:V3(0,-footH-3.5,toeR+1.2)},{t:'足',p:V3(0,-11,-Rb*0.8)},{t:'ラングイド',p:V3(0,0.45,-1.2),max:45},{t:'ウインドウェイ',p:V3(0,-0.3,zc+1.7),max:45},
           {t:'下唇',p:V3(0,-2.6,d+0.8),max:45},{t:'上唇（エッジ）',p:V3(0,hc+0.9,d+1.6),max:45},{t:'歌口',p:V3(0,hc*0.5,d+2.6),max:45},{t:'胴（空気柱）',p:V3(0,H*0.55,-Rb-1.5)},{t:'開いた上端',p:topPin},{t:'チューニングスリーブ',p:slvPin}],
     speaking:()=>m.env>0.35?[{k:0,i:2,r:0,f:freq()}]:[],
     update(dt){ m.L=H+m.ext; m.fr=freq()/F0; windEnv(m,dt); sleeve.position.y=m.L-SL; topPin.y=m.L+4.5; slvPin.y=m.L-3;
@@ -963,7 +987,7 @@ function buildFlueSection(){
 
 /* ---------- A-02: reed pipe ---------- */
 function buildReedSection(){
-  const R=CX.root, yB=30, yK=33.6, yRT=yK+18, rS=0.9, z0=rS+0.07, yTip=19.6, yC=24, yClamp=31.4, g0=1.0;
+  const R=CX.root, yB=30, yK=33.6, yRT=yK+18, rS=0.9, zFace=rS*0.62, z0=zFace+0.07, yTip=19.6, yC=24, yClamp=31.4, g0=0.5;
   const F0=130.8, m={on:false,env:0,ph:0,gap:g0,yc:yC,fr:1}, LV0=yC-yTip;
   const freq=()=>F0*Math.pow(LV0/(m.yc-yTip),0.6), wirePin=V3(0,yC+5,3.4);
   const bootR=y=>y<24?0.8+(3.4-0.8)*y/24:3.4;
@@ -978,8 +1002,10 @@ function buildReedSection(){
   sectionFace(-3.6,-0.95,yB,yK,SEC,LK); sectionFace(2.05,3.6,yB,yK,SEC,LK); sectionFace(0.95,1.55,yClamp+0.2,yK,SEC,LK);
   // shallot: tube closed at the bottom, with an opening in its front face under the tongue
   const LS=LB('シャロット（下を閉じた管。前面の開口を舌が覆う）','Kehle');
-  mk(halfShell(()=>rS,[yTip-0.6,20.3,28,yClamp+0.1],(y0,y1,t)=>y0>=20.3-1e-3&&y1<=28+1e-3&&Math.cos(t)>0.45,24),BR,R,LS);
-  const sb=new T.CircleGeometry(rS,16,Math.PI/2,Math.PI); sb.rotateX(-Math.PI/2); sb.translate(0,yTip-0.6,0); CX.own.push(sb); mk(sb,BR,R,LS);
+  // shallot section: round at the back, flat face at the front where the tongue lies; the opening is cut in that face
+  const flatten=g=>{ const a=g.attributes.position; for(let i=0;i<a.count;i++) if(a.getZ(i)>zFace) a.setZ(i,zFace); a.needsUpdate=true; g.computeVertexNormals(); return g; };
+  mk(flatten(halfShell(()=>rS,[yTip-0.6,20.3,28,yClamp+0.1],(y0,y1,t)=>y0>=20.3-1e-3&&y1<=28+1e-3&&rS*Math.cos(t)>zFace+0.05,48)),BR,R,LS);
+  const sb=new T.CircleGeometry(rS,24,Math.PI/2,Math.PI); sb.rotateX(-Math.PI/2); sb.translate(0,yTip-0.6,0); flatten(sb); CX.own.push(sb); mk(sb,BR,R,LS);
   // wedge
   box(R,1.3,yClamp-27.6,0.42,MAT.woodPale,0,(yClamp+27.6)/2,z0+0.3,LB('くさび（舌をシャロットに押さえて留める）','Keil'));
   // tongue: brass strip, flat above the tuning wire, curved below it
@@ -988,14 +1014,21 @@ function buildReedSection(){
   const tz=(y,gap)=>y>=m.yc?z0:z0+gap*Math.pow((m.yc-y)/(m.yc-yTip),2);
   // tuning wire (Krücke)
   const LW=LB('チューニングワイヤー（舌を押さえる位置で、振動する長さと音の高さが決まる）','Krücke');
-  const w1=rod(R,0.13,MAT.iron,LW), w2=rod(R,0.13,MAT.iron,LW);
+  // tuning wire: comes down in front of the tongue, is cranked toward it, and its foot is bent into a straight bar
+  // lying across the full width of the tongue, so it bears on the tongue along a line
+  const WR=0.11, WX=-0.62, wseg=[]; for(let i=0;i<6;i++) wseg.push(rod(R,WR,MAT.iron,LW));
+  const wknee=[]; for(let i=0;i<4;i++){ const sph=mk(G_SPH,MAT.iron,R,LW); sph.scale.set(WR,WR,WR); wknee.push(sph); }
   // resonator (Vox humana: short cylinder, half-covered top)
   const LR=LB('共鳴管（短い円筒。上を半分ふさいだVox humana型）','Becher');
   mk(halfShell(()=>1.15,[yK,yRT]),MAT.metal,R,LR); mk(halfRing(0.55,1.15,yRT),MAT.metalDark,R,LB('共鳴管の上の半ぶた','Deckel'));
   const P=pressurePlane(-1.05,1.05,yK,yRT,1);
   // boot full of wind under pressure
   new Tube([V3(-0.15,-7,0),V3(-0.15,0,0),V3(-0.15,9,0)],{r:0.5,density:1.2,front:60,state:()=>({open:m.env>0.05,speed:6*m.env})});
-  new Vol((a,b,c,out)=>{ const y=1+b*(yB-1.6), r=bootR(y)*0.88; let z=(a*2-1)*r; if(y>yTip-0.8&&z>-rS-0.25&&z<z0+1.3) z=z<0.2?-rS-0.25-a*0.6:z0+1.3+a*0.6; out.set(-0.08-c*0.4,y,Math.max(-r,Math.min(r,z))); },300,{state:()=>m.env,rate:2});
+  new Vol((a,b,c,out)=>{
+    const y=1+b*(yB-1.6), r=bootR(y)*0.82, xo=Math.min(0.35,r*0.3)*c; let z;
+    if(y>yTip-0.8){ const back=-rS-0.2, front=z0+0.45; z=a<0.5? -r+(back+r)*(a*2) : front+(r-front)*((a-0.5)*2); }
+    else z=(a*2-1)*Math.sqrt(Math.max(0,r*r-xo*xo));
+    out.set(-0.08-xo,y,z); },300,{state:()=>m.env,rate:2});
   // air drawn through the gap into the shallot and up the resonator, in pulses
   const flow=()=>m.env*m.gap/g0;
   const path=[V3(0,yTip+0.2,z0+0.9),V3(0,yTip+1.2,z0+0.25),V3(0,21.5,0.25),V3(0,yClamp,0),V3(0,yK,0),V3(0,yRT,0),V3(0,yRT+5,0)];
@@ -1005,7 +1038,7 @@ function buildReedSection(){
     if(m.env<0.04) return null;
     const r=f.r, s=f.s[i]*(PL+4)-4;
     if(s<0){ // approaching the gap from the boot
-      const k=-s/4; out.set(-0.08-r[i*4]*0.3,yTip+0.2-k*(3+r[i*4+1]*6),z0+0.9+k*(0.6+r[i*4+2]*1.2)); return COL.wind; }
+      const k=-s/4, y=Math.max(1.5,yTip+0.2-k*(2+r[i*4+1]*7)), rb=bootR(y)*0.8; out.set(-0.08-r[i*4]*0.2,y,Math.min(rb,z0+0.6+k*r[i*4+2]*2)); return COL.wind; }
     at(s,out); const sp=s<cum[3]?0.25:s<cum[5]?0.4:0.4+(s-cum[5])*0.5;
     out.x=-0.08-r[i*4]*0.25; out.z+=(r[i*4+1]-0.5)*sp; out.y+=(r[i*4+2]-0.5)*0.3;
     if(s>cum[5]){ _c.copy(COL.wind).lerp(COL.air,Math.min(1,(s-cum[5])/5)); return _c; }
@@ -1021,7 +1054,8 @@ function buildReedSection(){
     speaking:()=>m.env>0.35?[{k:12,i:4,r:0,f:freq()}]:[],
     update(dt){
       m.fr=freq()/F0; windEnv(m,dt);
-      w1.set(V3(0,yRT-4,1.78),V3(0,m.yc+0.15,1.78)); w2.set(V3(0,m.yc+0.15,1.78),V3(0,m.yc,z0+0.12)); wirePin.y=m.yc+5;
+      { const yc=m.yc, zb=z0+0.085+WR, pts=[V3(WX,yRT-4,1.78),V3(WX,yc+0.75,1.78),V3(WX,yc+0.12,zb+0.18),V3(WX,yc,zb),V3(-WX,yc,zb),V3(-WX,yc+0.35,zb+0.05)];
+        for(let i=0;i<5;i++) wseg[i].set(pts[i],pts[i+1]); wseg[5].visible=false; for(let i=0;i<4;i++) wknee[i].position.copy(pts[i+1]); wirePin.y=yc+5; }
       const osc=Math.min(1,Math.max(0,0.45+0.75*Math.cos(m.ph)));   // beating: closed for part of each cycle
       m.gap=g0*((1-m.env)+m.env*osc);
       const yc=m.yc, ys=[]; ys.push(yClamp); for(let i=0;i<=3;i++) ys.push(yClamp-(yClamp-yc)*(i+1)/4); for(let i=1;i<=NT;i++) ys.push(yc-(yc-yTip)*i/NT);
@@ -1032,7 +1066,7 @@ function buildReedSection(){
 }
 
 const MODELS={
-'a-01':{id:'A-01',name:'フルー管の発音',terms:'Lippenpfeife · flue pipe',stops0:[0,0,0,0,0],own:true,noStops:true,noKeys:true,floor:-26,xray0:false,cut0:1,clip:[0.02,6],psize:0.32,
+'a-01':{id:'A-01',name:'フルー管の発音',terms:'flue pipe · Lippenpfeife · tuyau à bouche',stops0:[0,0,0,0,0],own:true,noStops:true,noKeys:true,floor:-26,xray0:false,cut0:1,clip:[0.02,6],psize:0.32,
   cam:{p:[150,30,60],t:[0,22,0]},
   legend:'<span><i style="background:var(--wind)"></i>噴流・足の中の風</span><span><i style="background:var(--air)"></i>胴の中の空気（上下に往復）</span><span><i style="background:var(--sound)"></i>圧力が高い</span><span><i style="background:var(--wind);opacity:.6"></i>圧力が低い</span>',
   foot:'Prinzipal 2′ の C（約262 Hz、胴の長さ 約59 cm）を想定した開管の断面です。歌口まわりは見やすさのため拡大しています。振動は実際の毎秒約262回を、約5.5回に遅くして表示しています。音は実際の高さで鳴ります。',
@@ -1046,7 +1080,7 @@ const MODELS={
     {t:'胴の上端のチューニングスリーブを上げると管が長くなって音が低く、下げると短くなって高くなります。下のスライダーで動かすと、空気柱の長さ、振動の速さ、音の高さが一緒に変わります。',run:a=>{a.ctl('wind',true);a.cam([38,70,22],[0,70,0]);a.ctl('sleeve',6.5);later(1600,()=>api.ctl('sleeve',0.5));later(3200,()=>api.ctl('sleeve',3.5));}}
   ],
   build(){ return buildFlueSection(); }},
-'a-02':{id:'A-02',name:'リード管の発音',terms:'Zungenpfeife · reed pipe',stops0:[0,0,0,0,0],own:true,noStops:true,noKeys:true,floor:-8,xray0:false,cut0:1,clip:[0.02,6],psize:0.32,
+'a-02':{id:'A-02',name:'リード管の発音',terms:'reed pipe · Zungenpfeife · tuyau à anche',stops0:[0,0,0,0,0],own:true,noStops:true,noKeys:true,floor:-8,xray0:false,cut0:1,clip:[0.02,6],psize:0.32,
   cam:{p:[120,30,40],t:[0,24,0]},
   legend:'<span><i style="background:var(--wind)"></i>風</span><span><i style="background:var(--air)"></i>共鳴管から出た風</span><span><i style="background:var(--sound)"></i>圧力が高い</span><span><i style="background:var(--wind);opacity:.6"></i>圧力が低い</span>',
   foot:'Vox humana 8′ の c（約131 Hz）を想定した断面です。舌とシャロットのまわりは見やすさのため拡大し、舌の開きも誇張しています。振動は実際の毎秒約131回を、約5.5回に遅くして表示しています。音は実際の高さで鳴ります。',
@@ -1060,15 +1094,15 @@ const MODELS={
     {t:'チューニングワイヤーが舌を押さえる位置で、舌の振動する長さが決まります。ワイヤーを下げると振動する部分が短くなって音が高く、上げると長くなって低くなります。下のスライダーで動かしてください。',run:a=>{a.ctl('wind',true);a.cam([17,24,13],[0,23.5,1]);a.ctl('wire',yWire(-0.9));later(1600,()=>api.ctl('wire',yWire(0.9)));later(3200,()=>api.ctl('wire',yWire(0)));}}
   ],
   build(){ return buildReedSection(); }},
-'b-01':{id:'B-01',name:'くさび型ふいご（人力）',terms:'Keilbalg · wedge bellows',stops0:[1,0,1,0,0],own:true,floor:-7,
+'b-01':{id:'B-01',name:'くさび型ふいご（人力）',terms:'wedge bellows · Keilbalg · soufflet cunéiforme',stops0:[1,0,1,0,0],own:true,floor:-7,
   cam:{p:[15,115,240],t:[-58,38,0]},clip:[-160,34],
   summary:'片側を蝶番で留めた上板が扇のように開閉するふいごです。カルカント（ふいご踏み）がレバーを踏んで上板を持ち上げ、離すと上板のおもりの重さで風が押し出されます。2台を交互に踏むことで風を途切れさせません。',
   steps:[
-    {t:'両方のふいごに風が入った状態から始めます。上板に載ったおもりの重さが、風に一定の圧力（約75 mm）をかけています。',run:a=>{a.keys([]);a.ctl('auto',false);}},
+    {t:'両方のふいごに風が入った状態から始めます。上板に載ったおもりの重さが、風に一定の圧力（約75 mm）をかけています。「カルカント自動」が入っていると、ふいごが減るとカルカントが踏み足し、たくさん弾くほど速く踏みます。',run:a=>{a.keys([]);a.ctl('auto',true);}},
     {t:'和音を弾くと、ふいごの風が風導管を通って風箱へ流れ、上板が少しずつ下がっていきます。',run:a=>{a.stops([1,1,1,0,0]);a.keys([0,4,7]);}},
     {t:'ふいご1を踏みます。上板が持ち上がる間は吸気弁が開いて外気（灰色の粒子）が入り、出口の逆止弁は閉じます。その間はふいご2だけが風を送ります。',run:a=>a.ctl('pump0',2.4)},
     {t:'誰も踏まずにいると、両方が空になったところで水柱計が下がり、音程が下がって音が弱まります。',run:a=>{a.ctl('auto',false);a.keys([0,4,7,12]);a.stops([1,1,1,1,0]);}},
-    {t:'「カルカント自動」を入れると、空に近いふいごから交互に踏まれ、風が途切れなくなります。',run:a=>a.ctl('auto',true)}
+    {t:'「カルカント自動」を入れて、全部のストップで大きな和音を弾きます。減ったふいごから交互に踏まれ、たくさん弾くほど速く踏むので、風が途切れません。',run:a=>{a.ctl('auto',true);a.stops([1,1,1,1,1]);a.keys([0,2,4,5,7,9,11,12]);}}
   ],
   build(){
     let chest=null;
@@ -1080,7 +1114,7 @@ const MODELS={
     duct(tp,6,MAT.wood,LB('風導管（ふいごから風箱へ）','Windkanal'));
     const trunk=new Tube(tp,{r:1.7,density:0.4,front:400,state:()=>({open:S.p>10,speed:3*(chest?chest.speaking().length:0)})});
     chest=buildChest({y:30,feed:trunk});
-    const thMax=0.34, m={auto:false};
+    const thMax=0.34, m={auto:true};
     return {chest,controls:[
       {type:'toggle',id:'auto',label:'カルカント自動',get:()=>m.auto,set:v=>m.auto=v},
       {type:'hold',label:'ふいご1を踏む',down:()=>bs[0].hold=true,up:()=>bs[0].hold=false},
@@ -1089,8 +1123,9 @@ const MODELS={
       update(dt){
         const n=chest.speaking().length, cons=thMax*(0.004+0.045*n);
         bs.forEach(b=>b.timer=Math.max(0,b.timer-dt));
-        if(m.auto){ bs.forEach((b,i)=>{ const o=bs[1-i]; if(!b.autoP&&b.th<0.14*thMax&&!o.autoP&&!o.pumping) b.autoP=true; if(b.autoP&&b.th>=thMax*0.97) b.autoP=false; }); } else bs.forEach(b=>b.autoP=false);
-        bs.forEach(b=>{ b.pumping=b.hold||b.timer>0||b.autoP; if(b.pumping) b.th=Math.min(thMax,b.th+thMax*0.6*dt); });
+        if(m.auto){ bs.forEach((b,i)=>{ const o=bs[1-i]; if(!b.autoP&&b.th<0.42*thMax&&!o.autoP) b.autoP=true; if(b.autoP&&b.th>=thMax*0.97) b.autoP=false; }); } else bs.forEach(b=>b.autoP=false);
+        const pumpRate=Math.max(thMax*0.6,cons*2.6);   // the calcant treads faster as consumption rises
+        bs.forEach(b=>{ b.pumping=b.hold||b.timer>0||b.autoP; if(b.pumping) b.th=Math.min(thMax,b.th+(b.autoP?pumpRate:thMax*0.6)*dt); });
         const sup=bs.filter(b=>!b.pumping&&b.th>0.003);
         bs.forEach(b=>{ b.supplying=sup.includes(b); b.flow=2.5*n; });
         sup.forEach(b=>b.th=Math.max(0,b.th-cons/sup.length*dt));
@@ -1099,14 +1134,14 @@ const MODELS={
         chest.update(dt); bs.forEach(b=>b.update());
       }};
   }},
-'b-03':{id:'B-03',name:'電動ブロワー＋マガジンふいご',terms:'Gebläse + Magazinbalg · blower + reservoir',stops0:[1,0,1,0,0],own:true,floor:0,
+'b-03':{id:'B-03',name:'電動ブロワー＋マガジンふいご',terms:'blower + reservoir · Gebläse + Magazinbalg · ventilateur + réservoir',stops0:[1,0,1,0,0],own:true,floor:0,
   cam:{p:[15,105,230],t:[-52,38,0]},clip:[-135,34],
   summary:'電動の送風機（ブロワー）が連続して風を送り、マガジンふいご（リザーバー）が上板のおもりで風圧を一定に保ちます。上板が上がると、上板から吊ったひもがカーテン弁のローラーを引き上げ、カーテンが入口のスリットを下からふさいで入る風を絞ります。上板が下がるとローラーも下がり、ばねの力でカーテンが巻き取られてスリットが開く、という自動調整です。',
   steps:[
     {t:'送風機を止めた状態です。ふいごは空で、風箱にも風がありません。',run:a=>{a.keys([]);a.ctl('reset');a.ctl('blower',false);}},
     {t:'送風機を回します。羽根車が外気を吸い込み、カーテン弁を通ってふいごへ風が入り、上板が持ち上がります。',run:a=>a.ctl('blower',true)},
     {t:'上板が上がるとひもがローラーを引き上げ、カーテンがスリットをふさいで流入が絞られます。流入と消費がつり合った高さで上板が止まり、風圧は約80 mmに保たれます。',run:a=>{a.xray(true);a.cam([-62,27,34],[-87,16,0]);}},
-    {t:'たくさんの鍵とストップを使うと消費が増えて上板が下がり、カーテンが開いて流入が増えます。',run:a=>{a.stops([1,1,1,1,1]);a.keys([0,4,7,12,2]);}},
+    {t:'たくさんの鍵とストップを使うと消費が増えて上板が下がり、カーテンが大きく開いて流入が増えます。上板は消費に応じた高さで止まり、風が尽きることはありません。',run:a=>{a.stops([1,1,1,1,1]);a.keys([0,4,7,12,2]);}},
     {t:'送風機を止めて弾き続けると、上板が下がりきったところで風圧が失われます。',run:a=>{a.ctl('blower',false);a.stops([1,1,1,1,1]);a.keys([0,4,7,12,2]);}}
   ],
   build(){
@@ -1117,7 +1152,7 @@ const MODELS={
       ctl:{blower:v=>M.blower=v,reset:()=>M.reset()},
       update(dt){ M.update(dt,chest.speaking().length); chest.update(dt); }};
   }},
-'c-01':{id:'C-01',name:'スライダーチェスト',terms:'Schleiflade · slider chest',stops0:[1,0,1,0,0],floor:-8,
+'c-01':{id:'C-01',name:'スライダーチェスト',terms:'slider chest · Schleiflade · sommier à gravures',stops0:[1,0,1,0,0],floor:-8,
   cam:{p:[80,74,112],t:[0,36,0]},clip:[-33,34],
   summary:'鍵ごとに「トーンチャンネル」と呼ばれる細長い部屋があり、押鍵でその下のパレットが開きます。部屋の上を横切るスライダー（ストップごとの細長い板）の穴が、上下の穴と一致したストップのパイプだけが鳴ります。機械式オルガンで最も広く使われてきた風箱です。',
   steps:[
@@ -1129,7 +1164,7 @@ const MODELS={
     {t:'断面でFisのチャンネルを切り、鍵を押します。パレット・チャンネル・スライダー・上板・パイプの縦の関係がわかります。',run:a=>{a.xray(false);a.cut(0.5);a.stops([1,1,1,1,1]);a.keys([6]);a.cam([95,50,0],[0,34,0]);}}
   ],
   build(){ const chest=buildChest({}); return {chest,update(dt){ chest.update(dt); }}; }},
-'c-02':{id:'C-02',name:'スプリングチェスト',terms:'Springlade · spring chest',stops0:[1,0,1,0,0],floor:-8,
+'c-02':{id:'C-02',name:'スプリングチェスト',terms:'spring chest · Springlade · sommier à ressorts',stops0:[1,0,1,0,0],floor:-8,
   cam:{p:[80,74,112],t:[0,36,0]},clip:[-33,34],
   summary:'スライダーの代わりに、パイプごとにばねで閉じた小さな弁（ばね弁）をチャンネルの天井に持つ風箱です。ストップを入れるとストップバーが下がり、ピンでそのストップの弁をまとめて押し開けます。16〜17世紀のオランダや北ドイツ、19世紀までのイタリアなどで使われました。',
   steps:[
@@ -1140,7 +1175,7 @@ const MODELS={
     {t:'和音を弾きます。パレットとばね弁の両方が開いたパイプだけが鳴ります。スライダーチェスト（C-01）と、止める方法の違いを比べてください。',run:a=>{a.stops([1,1,1,0,0]);a.keys([0,4,7]);}}
   ],
   build(){ const chest=buildChest({spring:true}); return {chest,update(dt){ chest.update(dt); }}; }},
-'d-01':{id:'D-01',name:'サスペンデッド・トラッカーアクション',terms:'hängende Traktur · suspended tracker action',stops0:[1,0,1,0,0],floor:-12,
+'d-01':{id:'D-01',name:'サスペンデッド・トラッカーアクション',terms:'suspended tracker action · hängende Traktur · traction suspendue',stops0:[1,0,1,0,0],floor:-12,
   cam:{p:[92,58,150],t:[0,26,10]},clip:[-33,34],
   summary:'鍵のレバーは奥端を尾部のラックのピンで支え、白鍵・黒鍵の後ろの位置からトラッカー（薄い木の棒）で風箱のパレットに吊り下げられています。つなぎ目はネジ線と革ナットで長さを調整でき、引き下げ線は革袋（パルペーテ）を通って風箱に入ります。押鍵がそのままパレットを引き下げるので、弁が開く瞬間が指先に伝わります。',
   steps:[
@@ -1154,7 +1189,7 @@ const MODELS={
   ],
   build(){ const chest=buildChest({y:40}); const kb=buildKeyboard({x:0,y:0,z:34}); box(CX.root,30,8.5,61,MAT.woodDark,0,-7.75,5.5,LB('演奏台（コンソール）の台','Spieltisch')); const sus=buildSuspended(chest,kb);
     return {chest,update(dt){ chest.update(dt); kb.update(); sus.update(); }}; }},
-'d-02':{id:'D-02',name:'ローラーボード＋スクエア',terms:'Wellenbrett & Winkel · roller board & squares',stops0:[1,0,1,0,0],floor:-12,
+'d-02':{id:'D-02',name:'ローラーボード＋スクエア',terms:'roller board & squares · Wellenbrett & Winkel · abrégé et équerres',stops0:[1,0,1,0,0],floor:-12,
   cam:{p:[135,100,155],t:[0,46,-20]},clip:[-50,50],
   summary:'鍵盤の幅や音の並びは、風箱のパレットの位置と一致しないことがよくあります。ローラーボードは横軸の棒（ローラー）を回して引く位置を左右に移し、スクエア（L字形の腕木）は引く向きを90度変えます。この風箱は大きいパイプを両端に置く「C側・Cis側」配置です。',
   steps:[
@@ -1171,7 +1206,7 @@ const MODELS={
     const rs=buildRollerSquare(chest,kb);
     return {chest,update(dt){ chest.update(dt); kb.update(); rs.update(); }};
   }},
-'e-01':{id:'E-01',name:'機械式ストップアクション',terms:'mechanische Registertraktur · mechanical stop action',stops0:[0,0,0,0,0],floor:-8,
+'e-01':{id:'E-01',name:'機械式ストップアクション',terms:'mechanical stop action · mechanische Registertraktur · tirage mécanique des jeux',stops0:[0,0,0,0,0],floor:-8,
   cam:{p:[55,62,125],t:[-20,30,8]},clip:[-60,34],
   summary:'ストップノブを引くと、ノブの軸が縦のローラーを回し、上の腕がスライダーを横に動かして穴を一致させます。ノブの引き量とスライダーの移動量は、ローラーの腕の長さの比で決まります。',
   steps:[
@@ -1337,7 +1372,7 @@ function doHover(){
   canvas.style.cursor=hit&&(hit.key!=null||hit.stop!=null)?'pointer':'';
   if(!hit||!hit.lab){ tip.hidden=true; return; }
   const act=hit.key!=null?'クリックで鍵 '+KEYNAMES[hit.key]+' を押す':hit.stop!=null?'クリックで '+STOPS[hit.stop].name+' を'+(S.stop[hit.stop]?'切る':'入れる'):'';
-  tip.innerHTML='<b>'+hit.lab.ja+'</b><span>'+hit.lab.de+'</span>'+(act?'<em>'+act+'</em>':''); tip.hidden=false;
+  const L=hit.lab; tip.innerHTML='<b>'+L.ja+'</b><dl><dt>EN</dt><dd>'+L.en+'</dd><dt>DE</dt><dd>'+L.de+'</dd><dt>FR</dt><dd>'+L.fr+'</dd></dl>'+(act?'<em>'+act+'</em>':''); tip.hidden=false;
   const r=hit.r, x=e.clientX-r.left+14, y=e.clientY-r.top+14; tip.style.left=Math.min(x,r.width-tip.offsetWidth-8)+'px'; tip.style.top=Math.min(y,r.height-tip.offsetHeight-8)+'px';
 }
 /* clicking parts of the model: keys, levers, trackers, pallets play the key; stop knobs, sliders, stop bars toggle the stop */
