@@ -29,6 +29,7 @@ html,body{background:var(--bg)}
 body{color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased}
 button,select,input{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pin[hidden],.tip[hidden]{display:none!important}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 .mast{padding-block:22px 14px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));border-bottom:1px solid var(--line)}
@@ -140,7 +141,7 @@ h1{margin:0;font-family:var(--f-display);font-weight:800;font-size:clamp(26px,3.
 
 <header class="mast">
   <div class="mast-in">
-    <p class="eyebrow">ORGELBAU-ATLAS · 第1段階 · 8モデル公開</p>
+    <p class="eyebrow">ORGELBAU-ATLAS · 第1段階 · 10モデル公開</p>
     <h1>パイプオルガン機構図鑑</h1>
     <p class="lede">送風から発音まで、風がどの部品を通って音になるかを動く3Dで見る図鑑です。鍵盤とストップを操作し、青い粒子で風の流れを追ってください。</p>
   </div>
@@ -173,7 +174,7 @@ h1{margin:0;font-family:var(--f-display);font-weight:800;font-size:clamp(26px,3.
         </svg>
         <span class="gv" id="gv">75 mm</span>
       </div>
-      <div class="legend" aria-hidden="true">
+      <div class="legend" id="legend" aria-hidden="true">
         <span><i style="background:var(--wind)"></i>加圧された風</span>
         <span><i style="background:var(--air)"></i>外気（吸気）</span>
         <span><i style="background:var(--sound)"></i>歌口・管から出る風（発音）</span>
@@ -259,7 +260,7 @@ const pipeR=(i,k,r)=>{ const sm=PIPE[i].semi, s0=Array.isArray(sm)?sm[r]:sm; ret
 /* pointed-arch outline of a flattened lip: half-width at height y above its base, for a lip of height H and half-width a */
 function archHW(y,H,a){ if(y<=0) return a; if(y>=H) return 0; const r=(H*H+a*a)/(2*a); return Math.max(0,Math.sqrt(r*r-y*y)-(r-a)); }
 /* metal flue pipe with a true mouth: body and foot flattened at the front into upper and lower lips, mouth cut between them */
-function flueGeos(Rb,footH,toeR,bodyL,mw,cut){
+function flueGeos(Rb,footH,toeR,bodyL,mw,cut,gOv){
   const w=Math.min(1.9*Rb,mw*2*Math.PI*Rb), a=w/2, phi=Math.asin(a/Rb), hc=w*cut, HU=w*0.8, HL=w*0.95;
   let ang=[]; const NA=56; for(let j=0;j<NA;j++) ang.push(j/NA*2*Math.PI-Math.PI); ang.push(-phi,phi); ang=[...new Set(ang.map(v=>+v.toFixed(5)))].sort((p,q)=>p-q); ang.push(ang[0]+2*Math.PI);
   function strip(ys,radAt,hwAt,skip){
@@ -276,12 +277,12 @@ function flueGeos(Rb,footH,toeR,bodyL,mw,cut){
   const fy=[-footH]; const lo=Math.min(HL,footH*0.9); for(let i=0;i<=10;i++) fy.push(-lo+lo*i/10);
   const rc=y=>toeR+(Rb-toeR)*(y+footH)/footH;
   const foot=strip(fy,rc,y=>{ const hw=archHW(-y,lo,a); return Math.min(hw,rc(y)*0.98); },null);
-  const d=Math.sqrt(Rb*Rb-a*a), g=Math.max(0.05,Rb*0.06);
+  const d=Math.sqrt(Rb*Rb-a*a), g=gOv||Math.max(0.05,Rb*0.06);
   const sh=new T.Shape(), pL=Math.acos(clamp((d-g)/Rb,-1,1));
   for(let j=0;j<=40;j++){ const t=pL+(2*Math.PI-2*pL)*j/40; const x=Rb*0.985*Math.sin(t), z=Rb*0.985*Math.cos(t); if(j===0) sh.moveTo(x,-z); else sh.lineTo(x,-z); }
   sh.closePath();
   const lang=new T.ShapeGeometry(sh); lang.rotateX(-Math.PI/2);
-  return {body,foot,lang,w,hc,d,HU};
+  return {body,foot,lang,w,hc,d,HU,sh};
 }
 
 const S={key:new Array(13).fill(false),kd:new Float32Array(13),stop:[false,false,false,false,false],sp:new Float32Array(5),p:75,latch:false,speed:1,xray:false,cut:0,time:0};
@@ -848,8 +849,209 @@ let TIMERS=[];
 function later(ms,fn){ TIMERS.push(setTimeout(fn,ms)); }
 function clearTimers(){ TIMERS.forEach(clearTimeout); TIMERS=[]; }
 
+/* ================= Chapter A: how a pipe speaks (cross-section models) =================
+   Both models are cut on the plane x = 0 (the half x ≤ 0 is kept) and viewed from +x.
+   The oscillation is shown far slower than real (a pipe vibrates hundreds of times a second). */
+const VIS_HZ=0.55, OMEGA=2*Math.PI*VIS_HZ;
+const PX=()=>-0.06-Math.random()*0.25;           // particles sit just behind the cut face
+function halfShell(radAt,ys,skip,NA){
+  NA=NA||32; const ang=[]; for(let j=0;j<=NA;j++) ang.push(Math.PI+Math.PI*j/NA);
+  const P=[],I=[],nA=ang.length;
+  for(const y of ys){ const r=radAt(y); for(const t of ang) P.push(r*Math.sin(t),y,r*Math.cos(t)); }
+  for(let i=0;i<ys.length-1;i++) for(let j=0;j<nA-1;j++){ const tm=(ang[j]+ang[j+1])/2; if(skip&&skip(ys[i],ys[i+1],tm)) continue; const a0=i*nA+j,a1=a0+1,b0=a0+nA,b1=b0+1; I.push(a0,b0,a1,a1,b0,b1); }
+  const g=new T.BufferGeometry(); g.setAttribute('position',new T.Float32BufferAttribute(P,3)); g.setIndex(I); g.computeVertexNormals(); CX.own.push(g); return g;
+}
+function halfRing(ri,ro,y){ const g=new T.RingGeometry(ri,ro,24,1,Math.PI/2,Math.PI); g.rotateX(-Math.PI/2); g.translate(0,y,0); CX.own.push(g); return g; }
+function sectionFace(z0,z1,y0,y1,mat,label){ return box(CX.root,0.04,y1-y0,z1-z0,mat,-0.02,(y0+y1)/2,(z0+z1)/2,label); }
+/* acoustic pressure in the cut plane: orange = above average, blue = below */
+const PR_VS=`varying vec2 vUv;
+#include <clipping_planes_pars_vertex>
+void main(){ vUv=uv; vec4 mvPosition=modelViewMatrix*vec4(position,1.0); gl_Position=projectionMatrix*mvPosition;
+#include <clipping_planes_vertex>
+}`;
+const PR_FS=`uniform float ph,env,mode; uniform vec3 cHi,cLo; varying vec2 vUv;
+#include <clipping_planes_pars_fragment>
+void main(){
+#include <clipping_planes_fragment>
+ float shape = mode<0.5 ? sin(3.14159*vUv.y) : cos(1.5708*vUv.y);
+ float p = shape*(mode<0.5 ? sin(ph) : cos(ph))*env;
+ gl_FragColor=vec4(p>0.0?cHi:cLo, min(0.75,abs(p)*0.95));
+}`;
+function pressurePlane(z0,z1,y0,y1,mode){
+  const g=new T.PlaneGeometry(z1-z0,y1-y0); g.rotateY(-Math.PI/2); g.translate(-0.12,(y0+y1)/2,(z0+z1)/2); CX.own.push(g);
+  const m=new T.ShaderMaterial({vertexShader:PR_VS,fragmentShader:PR_FS,transparent:true,depthWrite:false,side:T.DoubleSide,clipping:true,
+    uniforms:{ph:{value:0},env:{value:0},mode:{value:mode},cHi:{value:COL.sound},cLo:{value:COL.wind}}}); CX.own.push(m);
+  const pl=new T.Mesh(g,m); pl.renderOrder=1; CX.root.add(pl); pl.userData.label=LB('空気柱の圧力の変化（橙＝高い、青＝低い）','Schalldruck'); return m.uniforms;
+}
+/* generic particle set driven by a callback: fn(i, t, out) → returns false to hide, sets out position and color */
+class Field{
+  constructor(n,fn){ this.n=n; this.fn=fn; this.r=new Float32Array(n*4); for(let i=0;i<n*4;i++) this.r[i]=Math.random(); this.s=new Float32Array(n); for(let i=0;i<n;i++) this.s[i]=Math.random(); flows.push(this); }
+  reset(){} update(){}
+  write(pos,col,base,t){ for(let i=0;i<this.n;i++){ const o=(base+i)*3; const c=this.fn(i,t,_v,this); if(!c){ pos[o]=0; pos[o+1]=-1e5; pos[o+2]=0; continue; } pos[o]=_v.x; pos[o+1]=_v.y; pos[o+2]=_v.z; col[o]=c.r; col[o+1]=c.g; col[o+2]=c.b; } }
+}
+function windEnv(m,dt){ const on=m.on||S.key.some(Boolean); m.env+=((on?1:0)-m.env)*Math.min(1,dt*(on?1.6:2.5)); S.p+=((on?75:0)-S.p)*Math.min(1,dt*5); if(on||m.env>0.01) m.ph+=dt*OMEGA; return m.env; }
+
+/* ---------- A-01: flue pipe ---------- */
+function buildFlueSection(){
+  const R=CX.root, Rb=3.3, footH=18, toeR=0.8, H=72, g=0.5;
+  const G=flueGeos(Rb,footH,toeR,H,1/4,1/4,g); CX.own.push(G.body,G.foot,G.lang);
+  const d=G.d, hc=G.hc, zc=d-g/2;
+  mk(G.body,MAT.metal,R,LB('胴（共鳴管。中の空気柱の長さで音の高さが決まる）','Körper'));
+  mk(G.foot,MAT.metal,R,LB('足（足穴から入った風をラングイドの下にためる）','Fuß'));
+  const lg=new T.ExtrudeGeometry(G.sh,{depth:1.1,bevelEnabled:false}); lg.rotateX(-Math.PI/2); lg.translate(0,-1.1,0); CX.own.push(lg);
+  mk(lg,MAT.metalDark,R,LB('ラングイド（足と胴の仕切り板。前縁と下唇のすき間がウインドウェイ）','Kern'));
+  const toe=mk(G_CYL_OPEN,MAT.metal,R,LB('足穴（ここから風が入る）','Fußloch')); toe.scale.set(toeR,3,toeR); toe.position.set(0,-footH-1.5,0);
+  const m={on:false,env:0,ph:0};
+  const P=pressurePlane(-Rb*0.96,d-0.1,hc+0.4,H,0);
+  // steady supply through the toe hole up the foot to the windway
+  new Tube([V3(-0.15,-footH-6,0),V3(-0.15,-footH,0),V3(-0.15,-8,0.4),V3(-0.15,-2.6,zc-0.2),V3(-0.15,-1.15,zc)],{r:0.55,density:1.2,front:60,state:()=>({open:m.env>0.05,speed:7*m.env})});
+  // foot: wind at rest under pressure
+  new Vol((a,b,c,out)=>{ const y=-footH+1+b*(footH-2.6), rc=toeR+(Rb-toeR)*(y+footH)/footH; out.set(-0.08-c*rc*0.6,y,(a*2-1)*rc*0.85); },260,{state:()=>m.env,rate:2});
+  // jet: leaves the windway, swings across the mouth, splits at the upper lip
+  const A=0.85, kap=(Math.PI/2)/hc, del=(s,t)=>A*m.env*Math.pow(Math.max(0,s)/hc,1.4)*Math.sin(m.ph-kap*s);
+  const VJ=3.2, TAIL=7;
+  const jet=new Field(260,(i,t,out,f)=>{
+    if(m.env<0.04) return null;
+    const r=f.r, s=f.s[i]*(hc+1.2+TAIL)-1.2;   // s: distance along the jet from the windway exit
+    const jz=(r[i*4]-0.5)*g*0.55;
+    if(s<0){ out.set(PX(),s,zc+jz); return COL.wind; }
+    if(s<=hc){ out.set(-0.06-r[i*4+1]*0.2,s,zc+jz+del(s,t)); return COL.wind; }
+    const side=f.side[i], u=s-hc;
+    if(side<0){ out.set(-0.06-r[i*4+1]*0.2,hc+u*0.75,d-0.35-u*0.32+jz); _c.copy(COL.wind); return _c; }
+    out.set(-0.06-r[i*4+1]*0.2,hc+u*0.55,d+0.25+u*0.7+jz); _c.copy(COL.wind).lerp(COL.air,Math.min(1,u/TAIL*1.4)); return _c;
+  });
+  jet.side=new Int8Array(260);
+  jet.update=dt=>{ if(m.env<0.04) return; const L=hc+1.2+TAIL; for(let i=0;i<jet.n;i++){ const s0=jet.s[i]*L-1.2; let s=s0+VJ*dt*(0.85+0.3*jet.r[i*4+2]); if(s0<=hc&&s>hc) jet.side[i]=del(hc,0)+(jet.r[i*4+3]-0.5)*0.25<0?-1:1; if(s>L-1.2){ s=-1.2; jet.side[i]=0; } jet.s[i]=(s+1.2)/L; } };
+  // the jet as a sheet (section of it): a band following the jet centreline
+  const NJ=40, jg=new T.BufferGeometry(), jp=new Float32Array((NJ+1)*2*3), ji=[]; for(let i=0;i<NJ;i++){ const a=i*2; ji.push(a,a+1,a+2,a+1,a+3,a+2); }
+  jg.setAttribute('position',new T.BufferAttribute(jp,3)); jg.setIndex(ji); CX.own.push(jg);
+  const jm=new T.MeshBasicMaterial({color:COL.wind.getHex(),transparent:true,opacity:0.35,side:T.DoubleSide,depthWrite:false}); CX.own.push(jm);
+  const sheet=new T.Mesh(jg,jm); sheet.frustumCulled=false; sheet.renderOrder=3; R.add(sheet); sheet.userData.label=LB('噴流（ウインドウェイから吹き出す薄い板状の風）','Luftblatt');
+  function sheetUpdate(){
+    sheet.visible=m.env>0.04&&SHOW.lines; if(!sheet.visible) return; jm.color.copy(COL.wind);
+    const dl=del(hc,0), inside=dl<0, w=g*0.45;
+    for(let i=0;i<=NJ;i++){
+      const s=-1.2+(hc+1.2+3.2)*i/NJ; let y,z;
+      if(s<=hc){ y=s; z=zc+del(s,0); } else { const u=s-hc, k=Math.min(1,Math.abs(dl)/(A*0.5)); y=hc+u*(inside?0.75:0.55); z=zc+dl+(inside?-0.32*u*k:0.7*u*k); }
+      jp[i*6]=-0.04; jp[i*6+1]=y; jp[i*6+2]=z-w/2; jp[i*6+3]=-0.04; jp[i*6+4]=y; jp[i*6+5]=z+w/2;
+    }
+    jg.attributes.position.needsUpdate=true; jg.computeBoundingSphere();
+  }
+  // air column in the body: moves up and down (displacement largest at the open ends, zero in the middle)
+  const NZ=9, NY=60, body=new Field(NZ*NY,(i,t,out,f)=>{
+    if(m.env<0.02) return null;
+    const iz=i%NZ, iy=(i/NZ)|0, y0=hc+1+(H-hc-1.5)*(iy+0.5)/NY, z0=-Rb*0.85+(d-0.4+Rb*0.85)*(iz+0.5)/NZ;
+    const xi=1.4*m.env*Math.cos(Math.PI*(y0-hc)/(H-hc))*Math.sin(m.ph);
+    out.set(-0.08-f.r[i*4]*0.3,y0+xi,z0+(f.r[i*4+1]-0.5)*0.4); return COL.air;
+  });
+  // air just above the open top also moves in and out
+  new Field(40,(i,t,out,f)=>{ if(m.env<0.02) return null; const y0=H+0.6+f.r[i*4]*3, z0=(f.r[i*4+1]*2-1)*Rb*0.8; out.set(-0.1-f.r[i*4+2]*0.3,y0-1.4*m.env*Math.sin(m.ph)*(1-(y0-H)/4),z0); return COL.air; });
+  return {
+    controls:[{type:'toggle',id:'wind',label:'風を送る',get:()=>m.on,set:v=>m.on=v}],
+    ctl:{wind:v=>m.on=v},
+    pins:[{t:'足穴',p:V3(0,-footH-3.5,toeR+1.2)},{t:'足',p:V3(0,-11,-Rb*0.8)},{t:'ラングイド',p:V3(0,-0.6,-1.2),max:45},{t:'ウインドウェイ',p:V3(0,-0.6,zc+1.6),max:45},
+          {t:'下唇',p:V3(0,-2.6,d+0.8),max:45},{t:'上唇（エッジ）',p:V3(0,hc+0.9,d+1.6),max:45},{t:'歌口',p:V3(0,hc*0.5,d+2.6),max:45},{t:'胴（空気柱）',p:V3(0,H*0.55,-Rb-1.5)},{t:'開いた上端',p:V3(0,H+4.5,0)}],
+    speaking:()=>m.env>0.35?[{k:0,i:2,r:0}]:[],
+    update(dt){ windEnv(m,dt); P.ph.value=m.ph; P.env.value=m.env; sheetUpdate(); }
+  };
+}
+
+/* ---------- A-02: reed pipe ---------- */
+function buildReedSection(){
+  const R=CX.root, yB=30, yK=33.6, yRT=yK+18, rS=0.9, z0=rS+0.07, yTip=19.6, yC=24, yClamp=31.4, g0=1.0;
+  const m={on:false,env:0,ph:0,gap:g0};
+  const bootR=y=>y<24?0.8+(3.4-0.8)*y/24:3.4;
+  mk(halfShell(bootR,[0,6,12,18,24,yB]),MAT.metal,R,LB('ブーツ（足。中に風をためる）','Stiefel'));
+  const toe=mk(G_CYL_OPEN,MAT.metal,R,LB('足穴（ここから風が入る）','Fußloch')); toe.scale.set(0.8,3,0.8); toe.position.set(0,-1.5,0);
+  // block (Nuss) with its cut face
+  const BR=mclone(MAT.brass); BR.side=T.DoubleSide; BR.color.multiplyScalar(1.15);
+  const SEC=mclone(BR); SEC.color.multiplyScalar(0.72);
+  const LK=LB('ナット（頭部の金属の塊。シャロットと共鳴管を支える）','Nuss');
+  mk(halfShell(()=>3.6,[yB,yK]),BR,R,LK);
+  mk(halfRing(0.95,3.6,yK),BR,R,LK); mk(halfRing(0.95,3.6,yB),BR,R,LK);
+  sectionFace(-3.6,-0.95,yB,yK,SEC,LK); sectionFace(2.05,3.6,yB,yK,SEC,LK); sectionFace(0.95,1.55,yClamp+0.2,yK,SEC,LK);
+  // shallot: tube closed at the bottom, with an opening in its front face under the tongue
+  const LS=LB('シャロット（下を閉じた管。前面の開口を舌が覆う）','Kehle');
+  mk(halfShell(()=>rS,[yTip-0.6,20.3,28,yClamp+0.1],(y0,y1,t)=>y0>=20.3-1e-3&&y1<=28+1e-3&&Math.cos(t)>0.45,24),BR,R,LS);
+  const sb=new T.CircleGeometry(rS,16,Math.PI/2,Math.PI); sb.rotateX(-Math.PI/2); sb.translate(0,yTip-0.6,0); CX.own.push(sb); mk(sb,BR,R,LS);
+  // wedge
+  box(R,1.3,yClamp-27.6,0.42,MAT.woodPale,0,(yClamp+27.6)/2,z0+0.3,LB('くさび（舌をシャロットに押さえて留める）','Keil'));
+  // tongue: brass strip, flat above the tuning wire, curved below it
+  const LT=LB('舌（真鍮の薄板。振動してシャロットに打ち付ける）','Zunge');
+  const NT=16, tsegs=[]; for(let i=0;i<NT+4;i++) tsegs.push(plank(R,1.4,0.17,BR,LT));
+  const tz=(y,gap)=>y>=yC?z0:z0+gap*Math.pow((yC-y)/(yC-yTip),2);
+  // tuning wire (Krücke)
+  const LW=LB('チューニングワイヤー（舌を押さえる位置で、振動する長さと音の高さが決まる）','Krücke');
+  rod(R,0.13,MAT.iron,LW).set(V3(0,yRT-4,1.78),V3(0,yC+0.15,1.78));
+  rod(R,0.13,MAT.iron,LW).set(V3(0,yC+0.15,1.78),V3(0,yC,z0+0.12));
+  // resonator (Vox humana: short cylinder, half-covered top)
+  const LR=LB('共鳴管（短い円筒。上を半分ふさいだVox humana型）','Becher');
+  mk(halfShell(()=>1.15,[yK,yRT]),MAT.metal,R,LR); mk(halfRing(0.55,1.15,yRT),MAT.metalDark,R,LB('共鳴管の上の半ぶた','Deckel'));
+  const P=pressurePlane(-1.05,1.05,yK,yRT,1);
+  // boot full of wind under pressure
+  new Tube([V3(-0.15,-7,0),V3(-0.15,0,0),V3(-0.15,9,0)],{r:0.5,density:1.2,front:60,state:()=>({open:m.env>0.05,speed:6*m.env})});
+  new Vol((a,b,c,out)=>{ const y=1+b*(yB-1.6), r=bootR(y)*0.88; let z=(a*2-1)*r; if(y>yTip-0.8&&z>-rS-0.25&&z<z0+1.3) z=z<0.2?-rS-0.25-a*0.6:z0+1.3+a*0.6; out.set(-0.08-c*0.4,y,Math.max(-r,Math.min(r,z))); },300,{state:()=>m.env,rate:2});
+  // air drawn through the gap into the shallot and up the resonator, in pulses
+  const flow=()=>m.env*m.gap/g0;
+  const path=[V3(0,yTip+0.2,z0+0.9),V3(0,yTip+1.2,z0+0.25),V3(0,21.5,0.25),V3(0,yClamp,0),V3(0,yK,0),V3(0,yRT,0),V3(0,yRT+5,0)];
+  const cum=[0]; for(let i=1;i<path.length;i++) cum.push(cum[i-1]+path[i].distanceTo(path[i-1])); const PL=cum[cum.length-1];
+  const at=(s,out)=>{ let i=1; while(i<cum.length-1&&cum[i]<s) i++; return out.lerpVectors(path[i-1],path[i],(s-cum[i-1])/((cum[i]-cum[i-1])||1)); };
+  const puff=new Field(240,(i,t,out,f)=>{
+    if(m.env<0.04) return null;
+    const r=f.r, s=f.s[i]*(PL+4)-4;
+    if(s<0){ // approaching the gap from the boot
+      const k=-s/4; out.set(-0.08-r[i*4]*0.3,yTip+0.2-k*(3+r[i*4+1]*6),z0+0.9+k*(0.6+r[i*4+2]*1.2)); return COL.wind; }
+    at(s,out); const sp=s<cum[3]?0.25:s<cum[5]?0.4:0.4+(s-cum[5])*0.5;
+    out.x=-0.08-r[i*4]*0.25; out.z+=(r[i*4+1]-0.5)*sp; out.y+=(r[i*4+2]-0.5)*0.3;
+    if(s>cum[5]){ _c.copy(COL.wind).lerp(COL.air,Math.min(1,(s-cum[5])/5)); return _c; }
+    return COL.wind;
+  });
+  puff.update=dt=>{ if(m.env<0.04) return; const L=PL+4, v=9*flow(); for(let i=0;i<puff.n;i++){ let s=puff.s[i]*L+v*dt*(0.8+0.4*puff.r[i*4+3]); if(s>L) s-=L; puff.s[i]=s/L; } };
+  return {
+    controls:[{type:'toggle',id:'wind',label:'風を送る',get:()=>m.on,set:v=>m.on=v}],
+    ctl:{wind:v=>m.on=v},
+    pins:[{t:'足穴',p:V3(0,-3.5,2)},{t:'ブーツ',p:V3(0,12,-3.4)},{t:'シャロット',p:V3(0,26,-2.4),max:60},{t:'舌',p:V3(0,21,z0+2.6),max:60},{t:'くさび',p:V3(0,29.2,z0+1.7),max:50},
+          {t:'チューニングワイヤー',p:V3(0,yC+5,3.4),max:60},{t:'ナット',p:V3(0,yK-1.8,-4.7)},{t:'共鳴管',p:V3(0,yK+12,-2.6)}],
+    speaking:()=>m.env>0.35?[{k:12,i:4,r:0}]:[],
+    update(dt){
+      windEnv(m,dt);
+      const osc=Math.min(1,Math.max(0,0.45+0.75*Math.cos(m.ph)));   // beating: closed for part of each cycle
+      m.gap=g0*((1-m.env)+m.env*osc);
+      const ys=[]; ys.push(yClamp); for(let i=0;i<=3;i++) ys.push(yClamp-(yClamp-yC)*(i+1)/4); for(let i=1;i<=NT;i++) ys.push(yC-(yC-yTip)*i/NT);
+      for(let i=0;i<tsegs.length&&i<ys.length-1;i++) tsegs[i].set(V3(0,ys[i],tz(ys[i],m.gap)),V3(0,ys[i+1],tz(ys[i+1],m.gap)));
+      P.ph.value=m.ph; P.env.value=m.env;
+    }
+  };
+}
+
 const MODELS={
-'a-01':{id:'A-01',name:'くさび型ふいご（人力）',terms:'Keilbalg · wedge bellows',stops0:[1,0,1,0,0],own:true,floor:-7,
+'a-01':{id:'A-01',name:'フルー管の発音',terms:'Lippenpfeife · flue pipe',stops0:[0,0,0,0,0],own:true,noStops:true,floor:-26,xray0:false,cut0:1,clip:[0.02,6],psize:0.32,
+  cam:{p:[150,30,60],t:[0,22,0]},
+  legend:'<span><i style="background:var(--wind)"></i>噴流・足の中の風</span><span><i style="background:var(--air)"></i>胴の中の空気（上下に往復）</span><span><i style="background:var(--sound)"></i>圧力が高い</span><span><i style="background:var(--wind);opacity:.6"></i>圧力が低い</span>',
+  foot:'Prinzipal 2′ の C（約262 Hz、胴の長さ 約59 cm）を想定した開管の断面です。歌口まわりは見やすさのため拡大しています。振動は実際の毎秒約262回を、約0.5回に遅くして表示しています。音は実際の高さで鳴ります。',
+  summary:'メタルのフルー管（唇管）が音を出すしくみを、縦に半分に切った断面で見ます。足穴から入った風は、ラングイドと下唇のすき間（ウインドウェイ）から薄い板状の噴流になって吹き出します。噴流は上唇の縁で管の内側と外側に交互に振れ、その往復が胴の中の空気柱を共鳴させます。',
+  steps:[
+    {t:'パイプを縦に半分に切った断面です。「風を送る」を押すか、鍵盤のどれかを押すと足穴から風が入ります。',run:a=>{a.ctl('wind',false);a.cut(1);a.home();}},
+    {t:'足穴から入った風は足の中にたまって圧力を持ち、ラングイドの前縁と下唇のすき間（ウインドウェイ）だけから吹き出します。',run:a=>{a.ctl('wind',true);a.cam([46,-4,16],[0,-6,1.5]);}},
+    {t:'吹き出した噴流は上唇の縁（エッジ）に向かい、管の内側と外側（大気側）へ交互に振れます。帯は噴流の断面、粒子は風の動きです。この往復が発音のもとになります。',run:a=>{a.ctl('wind',true);a.cam([15,2,5],[0,0.8,2]);}},
+    {t:'内側に入った風が胴の中の空気柱を押し、空気柱は上下に往復します（灰色の粒子）。風が管を流れ抜けるのではありません。色は圧力の変化で、開管では中央の圧力の変化が最も大きく、両端では空気の動きが最も大きくなります。',run:a=>{a.ctl('wind',true);a.cam([112,40,38],[0,36,0]);}},
+    {t:'空気柱の往復が歌口の噴流の振れを引き込み、管の長さで決まる高さで振動が続きます。風を止めると振動もすぐ止まります。',run:a=>{a.ctl('wind',true);a.home();}}
+  ],
+  build(){ return buildFlueSection(); }},
+'a-02':{id:'A-02',name:'リード管の発音',terms:'Zungenpfeife · reed pipe',stops0:[0,0,0,0,0],own:true,noStops:true,floor:-8,xray0:false,cut0:1,clip:[0.02,6],psize:0.32,
+  cam:{p:[120,30,40],t:[0,24,0]},
+  legend:'<span><i style="background:var(--wind)"></i>風</span><span><i style="background:var(--air)"></i>共鳴管から出た風</span><span><i style="background:var(--sound)"></i>圧力が高い</span><span><i style="background:var(--wind);opacity:.6"></i>圧力が低い</span>',
+  foot:'Vox humana 8′ の c（約131 Hz）を想定した断面です。舌とシャロットのまわりは見やすさのため拡大し、舌の開きも誇張しています。振動は実際の毎秒約131回を、約0.5回に遅くして表示しています。音は実際の高さで鳴ります。',
+  summary:'リード管（舌管）が音を出すしくみを、縦に半分に切った断面で見ます。足穴から入った風はブーツを満たし、舌とシャロットのすき間からシャロットの中へ流れ込みます。舌は風に引き込まれてシャロットに打ち付け、開口をふさぎ、自分のばねの力で戻ります。この開閉で風が脈動になり、共鳴管が音色を整えます。',
+  steps:[
+    {t:'リード管を縦に半分に切った断面です。「風を送る」を押すか、鍵盤のどれかを押すと足穴から風が入ります。',run:a=>{a.ctl('wind',false);a.cut(1);a.home();}},
+    {t:'足穴から入った風はブーツの中を満たします。風の出口は、舌とシャロットのすき間だけです。',run:a=>{a.ctl('wind',true);a.cam([70,14,10],[0,15,0]);}},
+    {t:'シャロットの前面の開口は真鍮の舌で覆われています。舌は先がわずかに反っていて、そのすき間から風がシャロットの中へ流れ込みます。',run:a=>{a.ctl('wind',false);a.cam([17,22,13],[0,22.5,1]);}},
+    {t:'風を送ると、流れ込む風で舌が引き込まれてシャロットに打ち付け、開口をふさぎます。舌は自分のばねの力で戻って再び開きます。この繰り返しで、風はとぎれとぎれの脈動になってシャロットから共鳴管へ送られます。',run:a=>{a.ctl('wind',true);a.cam([17,22,13],[0,22.5,1]);}},
+    {t:'チューニングワイヤーが舌を押さえる位置で、舌の振動する長さ（音の高さ）が決まります。共鳴管の中では圧力の変化が上下に伝わり、音色と音量を整えます。',run:a=>{a.ctl('wind',true);a.home();}}
+  ],
+  build(){ return buildReedSection(); }},
+'b-01':{id:'B-01',name:'くさび型ふいご（人力）',terms:'Keilbalg · wedge bellows',stops0:[1,0,1,0,0],own:true,floor:-7,
   cam:{p:[15,115,240],t:[-58,38,0]},clip:[-160,34],
   summary:'片側を蝶番で留めた上板が扇のように開閉するふいごです。カルカント（ふいご踏み）がレバーを踏んで上板を持ち上げ、離すと上板のおもりの重さで風が押し出されます。2台を交互に踏むことで風を途切れさせません。',
   steps:[
@@ -888,7 +1090,7 @@ const MODELS={
         chest.update(dt); bs.forEach(b=>b.update());
       }};
   }},
-'a-03':{id:'A-03',name:'電動ブロワー＋マガジンふいご',terms:'Gebläse + Magazinbalg · blower + reservoir',stops0:[1,0,1,0,0],own:true,floor:0,
+'b-03':{id:'B-03',name:'電動ブロワー＋マガジンふいご',terms:'Gebläse + Magazinbalg · blower + reservoir',stops0:[1,0,1,0,0],own:true,floor:0,
   cam:{p:[15,105,230],t:[-52,38,0]},clip:[-135,34],
   summary:'電動の送風機（ブロワー）が連続して風を送り、マガジンふいご（リザーバー）が上板のおもりで風圧を一定に保ちます。上板が上がると、上板から吊ったひもがカーテン弁のローラーを引き上げ、カーテンが入口のスリットを下からふさいで入る風を絞ります。上板が下がるとローラーも下がり、ばねの力でカーテンが巻き取られてスリットが開く、という自動調整です。',
   steps:[
@@ -906,7 +1108,7 @@ const MODELS={
       ctl:{blower:v=>M.blower=v,reset:()=>M.reset()},
       update(dt){ M.update(dt,chest.speaking().length); chest.update(dt); }};
   }},
-'a-06':{id:'A-06',name:'風路全体',terms:'Windversorgung · wind system',stops0:[1,0,1,0,0],own:true,floor:0,
+'b-06':{id:'B-06',name:'風路全体',terms:'Windversorgung · wind system',stops0:[1,0,1,0,0],own:true,floor:0,
   cam:{p:[40,150,315],t:[-48,62,0]},clip:[-135,34],
   summary:'送風機から調整弁、マガジンふいご、風導管、風箱を経てパイプに至るまでの風の通り道を、1台の楽器として通して見ます。番号は風が届く順番です。',
   steps:[
@@ -926,7 +1128,7 @@ const MODELS={
       pins:[{n:'1',t:'送風機',p:V3(-122,20,0)},{n:'2',t:'カーテン弁',p:V3(-89,22,8)},{n:'3',t:'マガジンふいご',p:V3(-75,44,0)},{n:'4',t:'風導管',p:V3(-40,40,9)},{n:'5',t:'風箱',p:V3(10,62,22)},{n:'6',t:'パイプ',p:V3(-20,165,10)},{t:'鍵盤',p:V3(0,25,30)},{t:'ストップノブ',p:V3(-44.5,18,32)}],
       update(dt){ M.update(dt,chest.speaking().length); chest.update(dt); kb.update(); sus.update(); sa.update(); }};
   }},
-'b-01':{id:'B-01',name:'スライダーチェスト',terms:'Schleiflade · slider chest',stops0:[1,0,1,0,0],floor:-8,
+'c-01':{id:'C-01',name:'スライダーチェスト',terms:'Schleiflade · slider chest',stops0:[1,0,1,0,0],floor:-8,
   cam:{p:[80,74,112],t:[0,36,0]},clip:[-33,34],
   summary:'鍵ごとに「トーンチャンネル」と呼ばれる細長い部屋があり、押鍵でその下のパレットが開きます。部屋の上を横切るスライダー（ストップごとの細長い板）の穴が、上下の穴と一致したストップのパイプだけが鳴ります。機械式オルガンで最も広く使われてきた風箱です。',
   steps:[
@@ -938,7 +1140,7 @@ const MODELS={
     {t:'断面でFisのチャンネルを切り、鍵を押します。パレット・チャンネル・スライダー・上板・パイプの縦の関係がわかります。',run:a=>{a.xray(false);a.cut(0.5);a.stops([1,1,1,1,1]);a.keys([6]);a.cam([95,50,0],[0,34,0]);}}
   ],
   build(){ const chest=buildChest({}); return {chest,update(dt){ chest.update(dt); }}; }},
-'b-02':{id:'B-02',name:'スプリングチェスト',terms:'Springlade · spring chest',stops0:[1,0,1,0,0],floor:-8,
+'c-02':{id:'C-02',name:'スプリングチェスト',terms:'Springlade · spring chest',stops0:[1,0,1,0,0],floor:-8,
   cam:{p:[80,74,112],t:[0,36,0]},clip:[-33,34],
   summary:'スライダーの代わりに、パイプごとにばねで閉じた小さな弁（ばね弁）をチャンネルの天井に持つ風箱です。ストップを入れるとストップバーが下がり、ピンでそのストップの弁をまとめて押し開けます。16〜17世紀のオランダや北ドイツ、19世紀までのイタリアなどで使われました。',
   steps:[
@@ -946,10 +1148,10 @@ const MODELS={
     {t:'鍵Eを押します。チャンネルに風が入りますが、ばね弁が閉じているので止まります。',run:a=>{a.stops([0,0,0,0,0]);a.keys([4]);}},
     {t:'Gedackt 8′ を入れます。ストップバーが下がり、ピンがこのストップの13個の弁をまとめて押し開けます。',run:a=>{a.stops([1,0,0,0,0]);a.keys([4]);}},
     {t:'鍵を離しても、ばね弁は開いたままです。ストップが入っていても、パレットが開かない限り鳴りません。実物ではストップレバーをフックに掛けて、この位置に保ちます。',run:a=>a.keys([])},
-    {t:'和音を弾きます。パレットとばね弁の両方が開いたパイプだけが鳴ります。スライダーチェスト（B-01）と、止める方法の違いを比べてください。',run:a=>{a.stops([1,1,1,0,0]);a.keys([0,4,7]);}}
+    {t:'和音を弾きます。パレットとばね弁の両方が開いたパイプだけが鳴ります。スライダーチェスト（C-01）と、止める方法の違いを比べてください。',run:a=>{a.stops([1,1,1,0,0]);a.keys([0,4,7]);}}
   ],
   build(){ const chest=buildChest({spring:true}); return {chest,update(dt){ chest.update(dt); }}; }},
-'c-01':{id:'C-01',name:'サスペンデッド・トラッカーアクション',terms:'hängende Traktur · suspended tracker action',stops0:[1,0,1,0,0],floor:-12,
+'d-01':{id:'D-01',name:'サスペンデッド・トラッカーアクション',terms:'hängende Traktur · suspended tracker action',stops0:[1,0,1,0,0],floor:-12,
   cam:{p:[92,58,150],t:[0,26,10]},clip:[-33,34],
   summary:'鍵のレバーは奥端を尾部のラックのピンで支え、白鍵・黒鍵の後ろの位置からトラッカー（薄い木の棒）で風箱のパレットに吊り下げられています。つなぎ目はネジ線と革ナットで長さを調整でき、引き下げ線は革袋（パルペーテ）を通って風箱に入ります。押鍵がそのままパレットを引き下げるので、弁が開く瞬間が指先に伝わります。',
   steps:[
@@ -963,7 +1165,7 @@ const MODELS={
   ],
   build(){ const chest=buildChest({y:40}); const kb=buildKeyboard({x:0,y:0,z:34}); box(CX.root,30,8.5,61,MAT.woodDark,0,-7.75,5.5,LB('演奏台（コンソール）の台','Spieltisch')); const sus=buildSuspended(chest,kb);
     return {chest,update(dt){ chest.update(dt); kb.update(); sus.update(); }}; }},
-'c-02':{id:'C-02',name:'ローラーボード＋スクエア',terms:'Wellenbrett & Winkel · roller board & squares',stops0:[1,0,1,0,0],floor:-12,
+'d-02':{id:'D-02',name:'ローラーボード＋スクエア',terms:'Wellenbrett & Winkel · roller board & squares',stops0:[1,0,1,0,0],floor:-12,
   cam:{p:[135,100,155],t:[0,46,-20]},clip:[-50,50],
   summary:'鍵盤の幅や音の並びは、風箱のパレットの位置と一致しないことがよくあります。ローラーボードは横軸の棒（ローラー）を回して引く位置を左右に移し、スクエア（L字形の腕木）は引く向きを90度変えます。この風箱は大きいパイプを両端に置く「C側・Cis側」配置です。',
   steps:[
@@ -980,7 +1182,7 @@ const MODELS={
     const rs=buildRollerSquare(chest,kb);
     return {chest,update(dt){ chest.update(dt); kb.update(); rs.update(); }};
   }},
-'d-01':{id:'D-01',name:'機械式ストップアクション',terms:'mechanische Registertraktur · mechanical stop action',stops0:[0,0,0,0,0],floor:-8,
+'e-01':{id:'E-01',name:'機械式ストップアクション',terms:'mechanische Registertraktur · mechanical stop action',stops0:[0,0,0,0,0],floor:-8,
   cam:{p:[55,62,125],t:[-20,30,8]},clip:[-60,34],
   summary:'ストップノブを引くと、ノブの軸が縦のローラーを回し、上の腕がスライダーを横に動かして穴を一致させます。ノブの引き量とスライダーの移動量は、ローラーの腕の長さの比で決まります。',
   steps:[
@@ -994,13 +1196,14 @@ const MODELS={
 };
 
 const INDEX=[
- {c:'A',n:'送風',items:[['A-01','くさび型ふいご（人力）',1],['A-02','マガジンふいご＋フィーダー',3],['A-03','電動ブロワー＋マガジンふいご',1],['A-04','ブロワー＋くさび型リザーバー',3],['A-05','シュヴィンマー',3],['A-06','風路全体',1],['A-07','コンカッションふいご',3]]},
- {c:'B',n:'風箱',items:[['B-01','スライダーチェスト',1],['B-02','スプリングチェスト',1],['B-03','ストップチャンネルチェスト',3],['B-04','機械式コーンバルブチェスト',3],['B-05','空気式コーンバルブチェスト',2],['B-06','メンブレンチェスト',2],['B-07','ポーチチェスト',3],['B-08','ピットマンチェスト',3],['B-09','電気直動チェスト',3]]},
- {c:'C',n:'キーアクション',items:[['C-01','サスペンデッド・トラッカー',1],['C-02','ローラーボード＋スクエア',1],['C-03','バーカーレバー',2],['C-04','チューブラーニューマチック',2],['C-05','エレクトロニューマチック',3],['C-06','電気直動アクション',3],['C-07','ペダル鍵盤のアクション',3]]},
- {c:'D',n:'ストップアクション',items:[['D-01','機械式ストップアクション',1],['D-02','スプリングチェスト用',3],['D-03','空気式ストップアクション',3],['D-04','電気式ストップアクション',3]]},
- {c:'E',n:'表現・効果装置',items:[['E-01','スウェルボックス',2],['E-02','バランス式ペダル',3],['E-03','フックダウン式ペダル',3],['E-04','クレッシェンドペダル',3],['E-05','トレモラント',3],['E-06','ツィンベルシュテルン',3]]},
- {c:'F',n:'補助機構',items:[['F-01','カプラー',3],['F-02','コンビネーション',3],['F-03','シュペルヴェンティル',3]]},
- {c:'G',n:'総合モデル',items:[['G-01','バロックオルガン',3],['G-02','19世紀ロマン派オルガン',3],['G-03','現代オルガン',3]]}
+ {c:'A',n:'発音原理',items:[['A-01','フルー管（メタルパイプ）の発音',1],['A-02','リード管の発音',1]]},
+ {c:'B',n:'送風',items:[['B-01','くさび型ふいご（人力）',1],['B-02','マガジンふいご＋フィーダー',3],['B-03','電動ブロワー＋マガジンふいご',1],['B-04','ブロワー＋くさび型リザーバー',3],['B-05','シュヴィンマー',3],['B-06','風路全体',1],['B-07','コンカッションふいご',3]]},
+ {c:'C',n:'風箱',items:[['C-01','スライダーチェスト',1],['C-02','スプリングチェスト',1],['C-03','ストップチャンネルチェスト',3],['C-04','機械式コーンバルブチェスト',3],['C-05','空気式コーンバルブチェスト',2],['C-06','メンブレンチェスト',2],['C-07','ポーチチェスト',3],['C-08','ピットマンチェスト',3],['C-09','電気直動チェスト',3]]},
+ {c:'D',n:'キーアクション',items:[['D-01','サスペンデッド・トラッカー',1],['D-02','ローラーボード＋スクエア',1],['D-03','バーカーレバー',2],['D-04','チューブラーニューマチック',2],['D-05','エレクトロニューマチック',3],['D-06','電気直動アクション',3],['D-07','ペダル鍵盤のアクション',3]]},
+ {c:'E',n:'ストップアクション',items:[['E-01','機械式ストップアクション',1],['E-02','スプリングチェスト用',3],['E-03','空気式ストップアクション',3],['E-04','電気式ストップアクション',3]]},
+ {c:'F',n:'表現・効果装置',items:[['F-01','スウェルボックス',2],['F-02','バランス式ペダル',3],['F-03','フックダウン式ペダル',3],['F-04','クレッシェンドペダル',3],['F-05','トレモラント',3],['F-06','ツィンベルシュテルン',3]]},
+ {c:'G',n:'補助機構',items:[['G-01','カプラー',3],['G-02','コンビネーション',3],['G-03','シュペルヴェンティル',3]]},
+ {c:'H',n:'総合モデル',items:[['H-01','バロックオルガン',3],['H-02','19世紀ロマン派オルガン',3],['H-03','現代オルガン',3]]}
 ];
 
 /* ---------------- audio ---------------- */
@@ -1090,7 +1293,7 @@ sel.addEventListener('change',()=>load(sel.value));
 function renderNotes(def){
   let h='<div><p class="nid">'+def.id+'</p><h2>'+def.name+'</h2><p class="terms">'+def.terms+'</p></div><p>'+def.summary+'</p><h3>手順（押すとモデルが動きます）</h3><ol class="steps">';
   def.steps.forEach((s,i)=>{ h+='<li><button data-s="'+i+'"><span class="n">'+(i+1)+'</span><span>'+s.t+'</span></button></li>'; });
-  h+='</ol><p class="foot">標準構成：13鍵（C〜c）× 5ストップ。Gedackt 8′（木管）、Rohrflöte 4′、Prinzipal 2′、Mixtur III（1 1/3′・1′・2/3′）、Vox humana 8′。実物のパイプ長（C）：Gedackt 約110 cm、Rohrflöte 約56 cm＋煙突、Prinzipal 約59 cm、Mixtur 約39・30・20 cm、Vox humana 共鳴管 約31 cm。モデルでは長さ・太さとも45 %で表示。音はパレットが開きストップが入った瞬間に鳴る簡易合成です。</p>';
+  h+='</ol><p class="foot">'+(def.foot||'標準構成：13鍵（C〜c）× 5ストップ。Gedackt 8′（木管）、Rohrflöte 4′、Prinzipal 2′、Mixtur III（1 1/3′・1′・2/3′）、Vox humana 8′。実物のパイプ長（C）：Gedackt 約110 cm、Rohrflöte 約56 cm＋煙突、Prinzipal 約59 cm、Mixtur 約39・30・20 cm、Vox humana 共鳴管 約31 cm。モデルでは長さ・太さとも45 %で表示。音はパレットが開きストップが入った瞬間に鳴る簡易合成です。')+'</p>';
   notes.innerHTML=h;
 }
 notes.addEventListener('click',e=>{ const b=e.target.closest('[data-s]'); if(!b) return; audioInit(); clearTimers(); notes.querySelectorAll('[data-s]').forEach(x=>x.removeAttribute('aria-current')); b.setAttribute('aria-current','true'); inst.def.steps[+b.dataset.s].run(api); });
@@ -1106,9 +1309,10 @@ function renderControls(){
 }
 
 const pinsEl=$('pins'); let pinEls=[];
-function setupPins(){ pinsEl.innerHTML=''; pinEls=(inst.pins||[]).map(p=>{ const d=document.createElement('div'); d.className='pin'+(p.n?'':' plain'); d.innerHTML=(p.n?'<b>'+p.n+'</b>':'')+p.t; pinsEl.appendChild(d); return {d,p:p.p}; }); }
+const LEGEND0=document.getElementById('legend').innerHTML;
+function setupPins(){ pinsEl.innerHTML=''; pinEls=(inst.pins||[]).map(p=>{ const d=document.createElement('div'); d.className='pin'+(p.n?'':' plain'); d.innerHTML=(p.n?'<b>'+p.n+'</b>':'')+p.t; pinsEl.appendChild(d); return {d,p:p.p,max:p.max}; }); }
 const _pp=V3(0,0,0);
-function pinsUpdate(){ if(!pinEls.length) return; const w=wrap.clientWidth,h=wrap.clientHeight; for(const q of pinEls){ _pp.copy(q.p).project(camera); const vis=_pp.z<1&&Math.abs(_pp.x)<1.05&&Math.abs(_pp.y)<1.05; q.d.hidden=!vis; if(vis){ q.d.style.left=((_pp.x+1)/2*w)+'px'; q.d.style.top=((1-_pp.y)/2*h)+'px'; } } }
+function pinsUpdate(){ if(!pinEls.length) return; const w=wrap.clientWidth,h=wrap.clientHeight; for(const q of pinEls){ _pp.copy(q.p).project(camera); const vis=_pp.z<1&&Math.abs(_pp.x)<1.05&&Math.abs(_pp.y)<1.05&&(!q.max||camera.position.distanceTo(q.p)<q.max); q.d.hidden=!vis; if(vis){ q.d.style.left=((_pp.x+1)/2*w)+'px'; q.d.style.top=((1-_pp.y)/2*h)+'px'; } } }
 
 const gwl=$('gwl'), gwr=$('gwr'), gv=$('gv'); let gLast=-1;
 function gaugeUpdate(){ const p=Math.round(S.p); const d=clamp(S.p,0,110)*0.225; gwl.setAttribute('y',60+d); gwl.setAttribute('height',64-d); gwr.setAttribute('y',60-d); gwr.setAttribute('height',64+d); if(p!==gLast){ gv.textContent=p+' mm'; gLast=p; } }
@@ -1161,7 +1365,8 @@ function load(id){
   S.key.fill(false); S.kd.fill(0); def.stops0.forEach((v,i)=>{ S.stop[i]=!!v; S.sp[i]=v?1:0; }); S.p=75;
   inst=def.build(); inst.def=def; grid.position.y=def.floor;
   CX.root.traverse(ob=>{ if(!ob.isMesh) return; const k=CX.keyMats.indexOf(ob.material); if(k>=0&&ob.userData.key==null) ob.userData.key=k; const i=CX.stopMats.indexOf(ob.material); if(i>=0&&ob.userData.stop==null) ob.userData.stop=i; });
-  setXray(def.xray0!==false); setCut(0); camHome();
+  setXray(def.xray0!==false); setCut(def.cut0||0); pMat.size=def.psize||1.8; camHome();
+  $('stops').closest('.drow').hidden=!!def.noStops; $('legend').innerHTML=def.legend||LEGEND0;
   $('tag').innerHTML='<span class="tid">'+def.id+'</span><span class="tnm">'+def.name+'</span><span class="tde">'+def.terms+'</span>';
   renderNotes(def); renderControls(); renderIndex(id); syncKeyUI(); syncStopUI(); setupPins();
   curId=id; try{ if(location.hash!=='#'+id) history.replaceState(null,'','#'+id); }catch(e){}
@@ -1179,11 +1384,11 @@ function frame(now){
   for(const f of flows) f.update(dt);
   CX.keyMats.forEach((m,k)=>{ if(m) m.emissive.copy(COL.key).multiplyScalar(0.6*S.kd[k]); });
   CX.stopMats.forEach((m,i)=>{ if(m) m.emissive.copy(COL.stop).multiplyScalar(0.5*S.sp[i]); });
-  writeParticles(); audioSync(inst.chest?inst.chest.speaking():[]); gaugeUpdate(); pinsUpdate();
+  writeParticles(); audioSync(inst.speaking?inst.speaking():inst.chest?inst.chest.speaking():[]); gaugeUpdate(); pinsUpdate();
   controls.update(); renderer.render(scene,camera);
 }
 const start=(location.hash||'').replace('#','').toLowerCase();
-load(MODELS[start]?start:'b-01');
+load(MODELS[start]?start:'a-01');
 requestAnimationFrame(frame);
 window.addEventListener('hashchange',()=>{ const h=location.hash.replace('#','').toLowerCase(); if(MODELS[h]&&h!==curId) load(h); });
 })();
