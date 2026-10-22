@@ -146,7 +146,7 @@ h1{margin:0;font-family:var(--f-display);font-weight:800;font-size:clamp(26px,3.
 
 <header class="mast">
   <div class="mast-in">
-    <p class="eyebrow">ORGELBAU-ATLAS · 第2段階 · 13モデル公開</p>
+    <p class="eyebrow">ORGELBAU-ATLAS · 第2段階 · 14モデル公開</p>
     <h1>パイプオルガン機構図鑑</h1>
   </div>
 </header>
@@ -235,7 +235,7 @@ if(!T){ wrap.insertAdjacentHTML('beforeend','<div class="nogl">3D表示用のラ
 const V3=(x,y,z)=>new T.Vector3(x,y,z);
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const lerp=(a,b,t)=>a+(b-a)*t;
-const TR={'Schraube':['screw','vis'],'Kernboden':['block base','fond du bloc'],'Vorderbrett':['front board','planche de façade'],'Kanal':['wind channel','canal'],'Kernspalte':['windway','lumière'],'Spundleder':['stopper leather','cuir du tampon'],'Ventilkammer':['valve chamber','chambre de soupape'],'Doppelventil':['double valve','double soupape'],'Abstromöffnung':['exhaust port','orifice d’échappement'],'Membranbohrung':['membrane hole','trou de membrane'],'Bälgchenbrett':['bellows board','planche des soufflets'],'Relaiskanal':['relay channel','canal de relais'],'Kegel':['cone valve','soupape conique'],'Kegelsitz':['cone seat','siège du cône'],'Bälgchen':['small motor bellows','petit soufflet'],'Registerkanzelle':['stop channel','gravure de registre'],'Registerventil':['stop valve','soupape de registre'],'Kondukt':['conveyance','conduit'],'Bleirohr':['lead tube','tube de plomb'],'Spielventilkasten':['key-valve box','boîte à soupapes de touche'],'Ventilabzug':['valve pull-down','tirant de soupape'],'Windzufuhr':['wind supply','alimentation en vent'],'Membrane':['membrane','membrane'],'Membrankästchen':['membrane chamber','boîtier de membrane'],'Tonkanzelle':['key channel','gravure de note'],'Abstromventil':['exhaust valve','soupape d’échappement'],'Relaisbalg':['relay pouch','soufflet relais'],'Speisekanal':['feed duct','canal d’alimentation'],'Pfeifenbohrung':['pipe bore','trou de pied'],'Barkerbalg':['Barker motor','soufflet Barker'],'Barkerkasten':['motor wind box','laye des moteurs'],'Einlassventil':['inlet valve','soupape d’admission'],'Auslassventil':['exhaust valve','soupape d’échappement'],'Wippe':['backfall','balancier'],'Wippenbalken':['backfall rail','barre des balanciers'],'Pneumatikmotor':['pneumatic motor','moteur pneumatique'],'Schwellkasten':['swell box','boîte expressive'],'Jalousie':['shutter','jalousie'],'Jalousiehebel':['shutter arm','bras de jalousie'],'Zugstange':['connecting rod','tringle'],'Schwelltritt':['balanced expression pedal','pédale d’expression'],'Schwelltrittlager':['pedal bearing','support de pédale'],'Schwelltritthebel':['pedal arm','bras de pédale'],'Abstrakte':['tracker','vergette'],'Abzugsdraht':['pull-down wire','fil de tirage'],'Ansaugöffnung':['air intake','ouïe d’aspiration'],'Anschlagfilz':['upstop felt','feutre d’arrêt'],'Anschlagleiste':['upstop rail','barre d’arrêt'],'Anschlagleistenstütze':['upstop rail post','support de barre d’arrêt'],'Aufschnitt':['mouth (cut-up)','bouche'],'Backe':['key cheek','joue de clavier'],'Balgbock':['bellows trestle','tréteau du soufflet'],'Balghebel':['bellows lever','levier de soufflet'],'Balgkanal':['bellows outlet','porte-vent du soufflet'],'Balgstütze':['lever post','poteau du levier'],'Becher':['resonator','résonateur'],'Bohrung':['tracker hole','trou de vergette'],'Damm':['slider bearer','faux-registre'],'Deckel':['cap','calotte'],'Draht':['wire','fil'],'Drehstift':['pivot pin','axe de pivot'],'Falten':['folds','plis'],'Federleiste':['spring rail','barre à ressorts'],'Federrolle':['spring roller','rouleau à ressort'],'Federwindung':['spring coil','boucle du ressort'],'Fundamentbrett':['table','table'],'Fuß':['foot','pied'],'Fußloch':['toe hole','trou du pied'],'Führungsleiste':['guide rail','barre de guidage'],'Führungsstift':['guide pin','pointe de guidage'],'Gebläsegehäuse':['blower casing','carter du ventilateur'],'Gewicht':['weight','poids'],'Gewindedraht':['threaded wire','fil fileté'],'Holzgedackt':['stopped wood pipe','bourdon en bois'],'Hut':['cap','calotte'],'Kehle':['shallot','anche'],'Keil':['wedge','coin'],'Kern':['languid','biseau'],'Kernfase':['languid bevel','chanfrein du biseau'],'Kernstiche':['nicks','dents'],'Klaviaturboden':['key bed','fond de clavier'],'Kopf / Zunge':['block and tongue','noyau et languette'],'Krücke':['tuning wire','rasette'],'Körper':['body','corps'],'Labium':['mouth','bouche'],'Laufrad':['impeller','turbine'],'Laufradschaufel':['impeller blade','aube de turbine'],'Ledermutter':['leather nut','écrou en cuir'],'Luftblatt':['air jet','lame d’air'],'Motor':['motor','moteur'],'Nuss':['block','noyau'],'Oberlabium':['upper lip','lèvre supérieure'],'Oberplatte':['top board','table supérieure'],'Obertaste':['sharp key','feinte'],'Pfeife':['pipe','tuyau'],'Pfeifenstock':['upper board','chape'],'Pulpete':['pull-down purse','boursette'],'Rechenstäbchen':['rack slip','dent de peigne'],'Registerbalken':['stop bar','barre de registre'],'Registerbank':['stop jamb','joue de tirants'],'Registerschild':['stop label','étiquette de registre'],'Registerwelle':['stop roller','rouleau de registre'],'Registerzug':['drawknob','tirant de registre'],'Registerzugstange':['draw rod','tringle de tirant'],'Registerärmchen':['stop roller arm','bras de rouleau de registre'],'Rollenführung':['roller guide','guide du rouleau'],'Rollventilkasten':['curtain valve box','boîte de la valve à rideau'],'Röhrchen':['chimney','cheminée'],'Rückschlagventil':['non-return valve','clapet anti-retour'],'Sammelkanal':['collecting trunk','porte-vent collecteur'],'Schalldruck':['sound pressure','pression acoustique'],'Schied':['channel bar','barrage'],'Schleife':['slider','registre'],'Schleifenbohrung':['slider hole','trou de registre'],'Schleifenzug':['slider link','bielle de registre'],'Schlitz':['slot','fente'],'Schöpfventil':['intake valve','soupape d’aspiration'],'Seil':['rope','corde'],'Seitenbart':['ear','oreille'],'Spieltisch':['console','console'],'Spielventil':['pallet','soupape'],'Springventil':['spring valve','soupapette de registre'],'Spund':['stopper','tampon'],'Spundgriff':['stopper handle','poignée du tampon'],'Stecher':['sticker pin','pilote'],'Stiefel':['boot','pied (boîte)'],'Stimmschieber':['tuning slide','coulisse d’accord'],'Sägeschnitt':['saw kerf','trait de scie'],'Tastenfilz':['key felt','feutre de touche'],'Tastenhebel':['key lever','levier de touche'],'Tastenrechen':['tail rack','peigne arrière'],'Tritt':['treadle','marchepied du souffleur'],'Unterlabium':['lower lip','lèvre inférieure'],'Unterplatte':['bottom board','table inférieure'],'Untertaste':['natural key','marche'],'Ventilfeder':['pallet spring','ressort de soupape'],'Ventilführungsstift':['pallet guide pin','guide de soupape'],'Ventilöse':['pallet eye','œillet de soupape'],'Vorhang':['curtain','rideau'],'Vorhangleiste':['curtain batten','latte de rideau'],'Vorschlag':['cap (wood pipe)','lèvre inférieure rapportée'],'Welle':['roller','rouleau'],'Wellenbrett':['roller board','abrégé'],'Wellenböckchen':['roller stud','palier de rouleau'],'Wellenärmchen':['roller arm','bras de rouleau'],'Windkanal':['wind trunk','porte-vent'],'Windkasten':['pallet box','laye'],'Windleitung':['wind duct','conduit de vent'],'Winkel':['square','équerre'],'Winkelbalken':['square rail','barre d’équerres'],'Zugschnur':['pull cord','cordon'],'Zunge':['tongue','languette'],'Öse':['eye','œillet']};
+const TR={'Magazinbalg':['reservoir','réservoir'],'Windlade':['windchest','sommier'],'Balgbrett':['bellows board','planche du soufflet'],'Tremulantventil':['tremulant valve','soupape du tremblant'],'Ventilarm':['valve arm','bras de soupape'],'Anschlag':['stop block','butée'],'Tremulantklappe':['tremulant flap','clapet du tremblant'],'Achse':['axle','axe'],'Gewichtsarm':['weight arm','bras du poids'],'Schraube':['screw','vis'],'Kernboden':['block base','fond du bloc'],'Vorderbrett':['front board','planche de façade'],'Kanal':['wind channel','canal'],'Kernspalte':['windway','lumière'],'Spundleder':['stopper leather','cuir du tampon'],'Ventilkammer':['valve chamber','chambre de soupape'],'Doppelventil':['double valve','double soupape'],'Abstromöffnung':['exhaust port','orifice d’échappement'],'Membranbohrung':['membrane hole','trou de membrane'],'Bälgchenbrett':['bellows board','planche des soufflets'],'Relaiskanal':['relay channel','canal de relais'],'Kegel':['cone valve','soupape conique'],'Kegelsitz':['cone seat','siège du cône'],'Bälgchen':['small motor bellows','petit soufflet'],'Registerkanzelle':['stop channel','gravure de registre'],'Registerventil':['stop valve','soupape de registre'],'Kondukt':['conveyance','conduit'],'Bleirohr':['lead tube','tube de plomb'],'Spielventilkasten':['key-valve box','boîte à soupapes de touche'],'Ventilabzug':['valve pull-down','tirant de soupape'],'Windzufuhr':['wind supply','alimentation en vent'],'Membrane':['membrane','membrane'],'Membrankästchen':['membrane chamber','boîtier de membrane'],'Tonkanzelle':['key channel','gravure de note'],'Abstromventil':['exhaust valve','soupape d’échappement'],'Relaisbalg':['relay pouch','soufflet relais'],'Speisekanal':['feed duct','canal d’alimentation'],'Pfeifenbohrung':['pipe bore','trou de pied'],'Barkerbalg':['Barker motor','soufflet Barker'],'Barkerkasten':['motor wind box','laye des moteurs'],'Einlassventil':['inlet valve','soupape d’admission'],'Auslassventil':['exhaust valve','soupape d’échappement'],'Wippe':['backfall','balancier'],'Wippenbalken':['backfall rail','barre des balanciers'],'Pneumatikmotor':['pneumatic motor','moteur pneumatique'],'Schwellkasten':['swell box','boîte expressive'],'Jalousie':['shutter','jalousie'],'Jalousiehebel':['shutter arm','bras de jalousie'],'Zugstange':['connecting rod','tringle'],'Schwelltritt':['balanced expression pedal','pédale d’expression'],'Schwelltrittlager':['pedal bearing','support de pédale'],'Schwelltritthebel':['pedal arm','bras de pédale'],'Abstrakte':['tracker','vergette'],'Abzugsdraht':['pull-down wire','fil de tirage'],'Ansaugöffnung':['air intake','ouïe d’aspiration'],'Anschlagfilz':['upstop felt','feutre d’arrêt'],'Anschlagleiste':['upstop rail','barre d’arrêt'],'Anschlagleistenstütze':['upstop rail post','support de barre d’arrêt'],'Aufschnitt':['mouth (cut-up)','bouche'],'Backe':['key cheek','joue de clavier'],'Balgbock':['bellows trestle','tréteau du soufflet'],'Balghebel':['bellows lever','levier de soufflet'],'Balgkanal':['bellows outlet','porte-vent du soufflet'],'Balgstütze':['lever post','poteau du levier'],'Becher':['resonator','résonateur'],'Bohrung':['tracker hole','trou de vergette'],'Damm':['slider bearer','faux-registre'],'Deckel':['cap','calotte'],'Draht':['wire','fil'],'Drehstift':['pivot pin','axe de pivot'],'Falten':['folds','plis'],'Federleiste':['spring rail','barre à ressorts'],'Federrolle':['spring roller','rouleau à ressort'],'Federwindung':['spring coil','boucle du ressort'],'Fundamentbrett':['table','table'],'Fuß':['foot','pied'],'Fußloch':['toe hole','trou du pied'],'Führungsleiste':['guide rail','barre de guidage'],'Führungsstift':['guide pin','pointe de guidage'],'Gebläsegehäuse':['blower casing','carter du ventilateur'],'Gewicht':['weight','poids'],'Gewindedraht':['threaded wire','fil fileté'],'Holzgedackt':['stopped wood pipe','bourdon en bois'],'Hut':['cap','calotte'],'Kehle':['shallot','anche'],'Keil':['wedge','coin'],'Kern':['languid','biseau'],'Kernfase':['languid bevel','chanfrein du biseau'],'Kernstiche':['nicks','dents'],'Klaviaturboden':['key bed','fond de clavier'],'Kopf / Zunge':['block and tongue','noyau et languette'],'Krücke':['tuning wire','rasette'],'Körper':['body','corps'],'Labium':['mouth','bouche'],'Laufrad':['impeller','turbine'],'Laufradschaufel':['impeller blade','aube de turbine'],'Ledermutter':['leather nut','écrou en cuir'],'Luftblatt':['air jet','lame d’air'],'Motor':['motor','moteur'],'Nuss':['block','noyau'],'Oberlabium':['upper lip','lèvre supérieure'],'Oberplatte':['top board','table supérieure'],'Obertaste':['sharp key','feinte'],'Pfeife':['pipe','tuyau'],'Pfeifenstock':['upper board','chape'],'Pulpete':['pull-down purse','boursette'],'Rechenstäbchen':['rack slip','dent de peigne'],'Registerbalken':['stop bar','barre de registre'],'Registerbank':['stop jamb','joue de tirants'],'Registerschild':['stop label','étiquette de registre'],'Registerwelle':['stop roller','rouleau de registre'],'Registerzug':['drawknob','tirant de registre'],'Registerzugstange':['draw rod','tringle de tirant'],'Registerärmchen':['stop roller arm','bras de rouleau de registre'],'Rollenführung':['roller guide','guide du rouleau'],'Rollventilkasten':['curtain valve box','boîte de la valve à rideau'],'Röhrchen':['chimney','cheminée'],'Rückschlagventil':['non-return valve','clapet anti-retour'],'Sammelkanal':['collecting trunk','porte-vent collecteur'],'Schalldruck':['sound pressure','pression acoustique'],'Schied':['channel bar','barrage'],'Schleife':['slider','registre'],'Schleifenbohrung':['slider hole','trou de registre'],'Schleifenzug':['slider link','bielle de registre'],'Schlitz':['slot','fente'],'Schöpfventil':['intake valve','soupape d’aspiration'],'Seil':['rope','corde'],'Seitenbart':['ear','oreille'],'Spieltisch':['console','console'],'Spielventil':['pallet','soupape'],'Springventil':['spring valve','soupapette de registre'],'Spund':['stopper','tampon'],'Spundgriff':['stopper handle','poignée du tampon'],'Stecher':['sticker pin','pilote'],'Stiefel':['boot','pied (boîte)'],'Stimmschieber':['tuning slide','coulisse d’accord'],'Sägeschnitt':['saw kerf','trait de scie'],'Tastenfilz':['key felt','feutre de touche'],'Tastenhebel':['key lever','levier de touche'],'Tastenrechen':['tail rack','peigne arrière'],'Tritt':['treadle','marchepied du souffleur'],'Unterlabium':['lower lip','lèvre inférieure'],'Unterplatte':['bottom board','table inférieure'],'Untertaste':['natural key','marche'],'Ventilfeder':['pallet spring','ressort de soupape'],'Ventilführungsstift':['pallet guide pin','guide de soupape'],'Ventilöse':['pallet eye','œillet de soupape'],'Vorhang':['curtain','rideau'],'Vorhangleiste':['curtain batten','latte de rideau'],'Vorschlag':['cap (wood pipe)','lèvre inférieure rapportée'],'Welle':['roller','rouleau'],'Wellenbrett':['roller board','abrégé'],'Wellenböckchen':['roller stud','palier de rouleau'],'Wellenärmchen':['roller arm','bras de rouleau'],'Windkanal':['wind trunk','porte-vent'],'Windkasten':['pallet box','laye'],'Windleitung':['wind duct','conduit de vent'],'Winkel':['square','équerre'],'Winkelbalken':['square rail','barre d’équerres'],'Zugschnur':['pull cord','cordon'],'Zunge':['tongue','languette'],'Öse':['eye','œillet']};
 /* part names: Japanese, English, German, French */
 const LB=(ja,de)=>{ const t=TR[de]||['','']; return {ja,en:t[0],de,fr:t[1]}; };
 
@@ -1388,6 +1388,87 @@ function buildSwell(){
   };
 }
 
+/* ---------- F-02: tremulant, two types on one wind trunk feeding a single pipe ----------
+   Wippfedertremulant (Bock): a small wedge bellows on top of the trunk; on its moving plate a valve is held shut by a
+   weight on an arm. Wind inflates the bellows to its stop, the weight's inertia lets the valve open, wind escapes, the
+   bellows falls, the weight shuts the valve, and so on. Tremblant doux: a weighted wooden flap inside the trunk
+   swings in the flow and periodically throttles it; no wind escapes. Real tremulant speeds (about 4-8 per second). */
+function buildTremulant(){
+  const R=CX.root, m={on:true,play:true,trem:false,type:'wipp',hz:5.5,ph:0,amt:0,env:0};
+  const yT=10, TH=6, x0=-46, x1=22, zc=0;
+  // reservoir (simplified) and wind trunk
+  box(R,18,10,18,MAT.wood,-56,5,0,LB('リザーバー（マガジンふいご）','Magazinbalg'));
+  box(R,19,1.2,19,MAT.wood,-56,10.6,0,LB('リザーバーの上板','Oberplatte')); box(R,8,3,8,MAT.weight,-56,12.7,0,LB('おもり','Gewicht'));
+  const LK=LB('風導管（リザーバーからパイプの風箱へ）','Windkanal');
+  box(R,x1-x0,0.8,TH+1.6,MAT.wood,(x0+x1)/2,yT-TH/2-0.4,zc,LK); box(R,x1-x0,0.8,TH+1.6,MAT.wood,(x0+x1)/2,yT+TH/2+0.4,zc,LK);
+  box(R,x1-x0,TH,0.8,MAT.wood,(x0+x1)/2,yT,zc-TH/2-0.4,LK); box(R,x1-x0,TH,0.8,MAT.wood,(x0+x1)/2,yT,zc+TH/2+0.4,LK);
+  // small chest and one pipe
+  box(R,12,12,12,MAT.wood,x1+6,yT,0,LB('風箱','Windlade'));
+  const sp=buildPipe(x1+6,0,2,0,0,yT+6);
+  const press=()=>m.env*(1-m.amt*m.dip);
+  m.dip=0;
+  new Vol((a,b,c,out)=>out.set(-64+a*16,1+b*8,-8+c*16),120,{state:()=>m.on?1:0,rate:2});
+  new Vol((a,b,c,out)=>out.set(x1+1+a*10,yT-5+b*10,-5+c*10),80,{state:()=>m.on?1:0,rate:2});
+  new Tube([V3(-47,yT,0),V3(-30,yT,0),V3(-14,yT,0),V3(0,yT,0),V3(x1+2,yT,0)],{r:2.2,density:0.6,front:200,state:()=>({open:m.on,speed:m.play?6+10*(1-m.dip*m.amt*4):0})});
+  const pt=new Tube([V3(x1+6,yT+3,0),V3(x1+6,yT+6,0)].concat(sp.path.slice(1)),{r:0.3,density:0.3,front:900,state:()=>({open:m.on&&m.play,speed:20})});
+  pt.exitU=pt.cum[1+sp.ei]/pt.L;
+  /* Wippfedertremulant */
+  const WX=-24, WL=10, WW=5.4, yTop=yT+TH/2+0.8, wg=new T.Group(); wg.position.set(WX-WL/2,yTop,0); R.add(wg);
+  const WIP=new T.Group(); R.add(WIP);
+  box(WIP,WL+1,0.6,WW+1,MAT.wood,WX,yTop+0.3,0,LB('小ふいごの台（風導管の穴の上）','Balgbrett'));
+  box(wg,WL,0.5,WW,MAT.wood,WL/2,0.25,0,LB('小ふいごの上板（動く板）','Oberplatte')); wg.position.y=yTop+0.6; WIP.add(wg);
+  const wsides=[-1,1].map(s=>{ const t=mk(G_TRI,MAT.leather,WIP,LB('小ふいごのひだ（革）','Falten')); t.position.set(WX-WL/2,yTop+0.6,s*WW/2); return t; });
+  const wfront=box(WIP,0.3,1,WW,MAT.leather,WX+WL/2,yTop+0.6,0,LB('小ふいごのひだ（革）','Falten'));
+  const vh=new T.Group(); vh.position.set(WL-2.6,0.5,0); wg.add(vh);
+  box(vh,2.2,0.25,2.4,MAT.leather,1.1,0.12,0,LB('弁（上板の穴をふさぐ。開くと風が外へ逃げる）','Tremulantventil'));
+  rod(vh,0.12,MAT.iron,LB('弁の腕','Ventilarm')).set(V3(0,0.2,0),V3(-5.5,1.6,0));
+  const wgt=box(vh,1.4,1.4,1.4,MAT.weight,-5.5,1.6,0,LB('おもり（腕の位置で揺れの速さが変わる）','Gewicht'));
+  const stop=box(WIP,1,6,1,MAT.woodDark,WX+WL/2-1,yTop+3.6,-WW/2-1.2,LB('ストッパー（小ふいごが上がりきる位置）','Anschlag'));
+  box(WIP,1.6,0.8,WW-0.6,MAT.woodDark,WX+WL/2-1,yTop+6.8,-WW/2-1.2+WW/2,LB('ストッパー','Anschlag'));
+  const esc=new Tube([V3(WX+WL/2-1.5,yTop+2,0),V3(WX+WL/2-1.2,yTop+5,0.5),V3(WX+WL/2+1,yTop+9,1.5)],{kind:'air',r:0.8,density:1.6,front:200,state:()=>({open:m.type==='wipp'&&m.trem&&m.vOpen>0.25,speed:16})});
+  /* tremblant doux */
+  const DX=-2, DOU=new T.Group(); R.add(DOU);
+  const fl=new T.Group(); fl.position.set(DX,yT+TH/2-0.1,0); DOU.add(fl);
+  box(fl,0.5,TH*0.82,TH-0.4,MAT.woodPale,0,-TH*0.41,0,LB('フラップ（おもりで重くした木の板。風の流れで開閉して風を揺らす）','Tremulantklappe'));
+  const ax=mk(G_CYL,MAT.iron,DOU,LB('フラップの軸（風導管の壁を貫いて外のおもりにつながる）','Achse')); ax.rotation.x=Math.PI/2; ax.scale.set(0.25,TH+3,0.25); ax.position.set(DX,yT+TH/2-0.1,0);
+  const lv=new T.Group(); lv.position.set(DX,yT+TH/2-0.1,TH/2+1.6); DOU.add(lv);
+  rod(lv,0.18,MAT.iron,LB('おもりの腕','Gewichtsarm')).set(V3(0,0,0),V3(-0.5,-5,0));
+  const dw=box(lv,1.5,1.5,1.5,MAT.weight,-0.5,-5,0,LB('おもり（位置で揺れの速さが変わる）','Gewicht'));
+  const LBL=label=>label;
+  const setVis=()=>{ WIP.visible=m.type==='wipp'; DOU.visible=m.type==='doux'; };
+  setVis();
+  return {
+    controls:[{type:'toggle',id:'play',label:'パイプを鳴らす',get:()=>m.play,set:v=>m.play=v},
+      {type:'toggle',id:'trem',label:'トレムラント',get:()=>m.trem,set:v=>m.trem=v},
+      {type:'toggle',id:'wipp',label:'ヴィップフェーダー型',get:()=>m.type==='wipp',set:v=>{ m.type='wipp'; setVis(); renderControls(); }},
+      {type:'toggle',id:'doux',label:'トランブラン・ドゥ',get:()=>m.type==='doux',set:v=>{ m.type='doux'; setVis(); renderControls(); }},
+      {type:'range',id:'hz',label:'揺れの速さ',min:3.5,max:8,step:0.1,get:()=>m.hz,set:v=>m.hz=v,fmt:()=>'毎秒 '+m.hz.toFixed(1)+' 回'}],
+    ctl:{play:v=>m.play=v,trem:v=>m.trem=v,type:v=>{ m.type=v; setVis(); },hz:v=>m.hz=v},
+    pins:[{t:'リザーバー',p:V3(-56,16,0)},{t:'風導管',p:V3(-36,yT+5,4)},{t:'パイプ',p:V3(x1+6,yT+40,3)},
+          {t:'小ふいご（ヴィップフェーダー型）',p:V3(WX,yTop+9,0)},{t:'フラップ（トランブラン・ドゥ）',p:V3(DX,yT+TH/2+3,-2)}],
+    speaking:()=>m.on&&m.play&&m.env>0.35?[{k:0,i:2,r:0}]:[],
+    update(dt){
+      m.env+=((m.on?1:0)-m.env)*Math.min(1,dt*4);
+      m.amt+=((m.trem&&m.play?1:0)-m.amt)*Math.min(1,dt*3);
+      if(m.trem) m.ph+=dt*2*Math.PI*m.hz*(m.type==='doux'?1:1);
+      const c=Math.cos(m.ph), s=Math.sin(m.ph);
+      if(m.type==='wipp'){
+        const th=m.trem?0.11+0.1*s:0.0; wg.rotation.z=th;
+        const h=WL*Math.sin(th); wsides.forEach(t=>t.scale.set(WL*Math.cos(th),Math.max(0.01,h),1));
+        wfront.scale.y=Math.max(0.05,h); wfront.position.set(WX-WL/2+WL*Math.cos(th),yTop+0.6+h/2,0);
+        m.vOpen=m.trem?Math.max(0,-c):0; vh.rotation.z=0.75*m.vOpen;
+        m.dip=0.11*Math.max(0,-c)+0.03;
+        wgt.position.x=-3.5-(8-m.hz)*0.7; 
+      } else {
+        fl.rotation.z=(m.trem?0.42+0.25*s:1.3); lv.rotation.z=fl.rotation.z;
+        m.dip=0.035*(0.5+0.5*s)+0.01; m.vOpen=0;
+        dw.position.y=-3.2-(8-m.hz)*0.6;
+      }
+      S.p=75*press();
+    }
+  };
+}
+
 const MODELS={
 'a-01':{id:'A-01',name:'フルー管の発音',terms:'flue pipe · Lippenpfeife · tuyau à bouche',stops0:[0,0,0,0,0],own:true,noStops:true,noKeys:true,floor:-26,xray0:false,cut0:1,clip:[0.02,6],psize:0.32,
   cam:{p:[150,30,40],t:[0,22,-9]},
@@ -1522,6 +1603,18 @@ const MODELS={
     {t:'鍵を離すと二重弁が元の位置に上がって排気口が閉じ、弁室Dから再び制御風が送られます。膜が押し上げられ、パイプへの風が止まります。',run:a=>{a.keys([]);a.cam([4,10,40],[-10,10,20]);}}
   ],
   build(){ return buildMembraneChest(); }},
+'f-02':{id:'F-02',name:'トレムラント',terms:'tremulant · Tremulant · tremblant',stops0:[0,0,0,0,0],own:true,noStops:true,noKeys:true,floor:-2,
+  cam:{p:[30,40,90],t:[-14,16,0]},clip:[-12,12],
+  foot:'1本のパイプ（Prinzipal 2′ の C）と、それに風を送る風導管だけの模型です。トレムラントの揺れの速さは実際と同じ（毎秒約4〜8回）で、音も実際の速さで揺れます。右上の水柱計で風圧の揺れが見えます。',
+  summary:'トレムラントは、パイプへ送る風の圧力を周期的に揺らして、音に波打つような揺れを付ける装置です。風導管の小ふいごの弁から風を逃がして揺らすヴィップフェーダー・トレムラント（Bock）と、風導管の中の重い板で流れを揺らすトランブラン・ドゥの、2つの型を切り替えて見られます。',
+  steps:[
+    {t:'リザーバーから風導管を通って、パイプの風箱へ風が送られています。まずトレムラントを切った状態で音を聞いてください。風圧（右上の水柱計）は一定です。',run:a=>{a.xray(true);a.ctl('play',true);a.ctl('trem',false);a.home();}},
+    {t:'ヴィップフェーダー・トレムラント（Bock）：風導管の上の小ふいごが風でふくらみ、ストッパーまで上がると、おもりの慣性で弁が開いて風が外へ逃げます。小ふいごがしぼむとおもりが弁を閉じ、これを繰り返します。',run:a=>{a.ctl('type','wipp');a.ctl('trem',true);a.cam([-6,30,30],[-24,16,0]);}},
+    {t:'弁から風が逃げるたびに風導管の風圧が下がり、パイプの音の強さと高さがわずかに揺れます。揺れははっきりしていて、強めの効果になります。',run:a=>{a.ctl('type','wipp');a.ctl('trem',true);a.home();}},
+    {t:'トランブラン・ドゥ：風導管の中に、外のおもりで重くした木の板（フラップ）があります。流れる風に押されて板が開閉し、風の流れを周期的に弱めます。風を外へ逃がさないので、揺れは穏やかです。',run:a=>{a.ctl('type','doux');a.ctl('trem',true);a.cam([14,22,26],[-2,11,0]);}},
+    {t:'どちらの型も、おもりの位置で揺れの速さが変わります。下のスライダーで速さを変え、「ヴィップフェーダー型」と「トランブラン・ドゥ」を切り替えて聞き比べてください。',run:a=>{a.ctl('trem',true);a.home();}}
+  ],
+  build(){ return buildTremulant(); }},
 'd-01':{id:'D-01',name:'ローラーボード＋スクエア',terms:'roller board & squares · Wellenbrett & Winkel · abrégé et équerres',stops0:[1,0,1,0,0],floor:-12,
   cam:{p:[135,100,155],t:[0,46,-20]},clip:[-50,50],
   summary:'鍵盤の幅や音の並びは、風箱のパレットの位置と一致しないことがよくあります。ローラーボードは横軸の棒（ローラー）を回して引く位置を左右に移し、スクエア（L字形の腕木）は引く向きを90度変えます。この風箱は大きいパイプを両端に置く「C側・Cis側」配置です。',
