@@ -1395,25 +1395,25 @@ function buildSwell(){
    swings in the flow and periodically throttles it; no wind escapes. Real tremulant speeds (about 4-8 per second). */
 function buildTremulant(){
   const R=CX.root, m={on:true,play:true,trem:false,type:'wipp',hz:5.5,ph:0,amt:0,env:0};
-  const yT=17, TH=6, x0=-46, x1=22, zc=0;
+  const yT=17, TH=12, TD=6, x0=-46, x1=22, zc=0;   // trunk: 12 high (as tall as the tremulant bellows), 6 deep
   // reservoir (simplified) and wind trunk
   box(R,18,yT+3,18,MAT.wood,-56,(yT+3)/2,0,LB('リザーバー（マガジンふいご）','Magazinbalg'));
   box(R,19,1.2,19,MAT.wood,-56,yT+3.6,0,LB('リザーバーの上板','Oberplatte')); box(R,8,3,8,MAT.weight,-56,yT+5.7,0,LB('おもり','Gewicht'));
   const LK=LB('風導管（リザーバーからパイプの風箱へ）','Windkanal');
-  box(R,x1-x0,0.8,TH+1.6,MAT.wood,(x0+x1)/2,yT-TH/2-0.4,zc,LK); box(R,x1-x0,0.8,TH+1.6,MAT.wood,(x0+x1)/2,yT+TH/2+0.4,zc,LK);
-  box(R,x1-x0,TH,0.8,MAT.wood,(x0+x1)/2,yT,zc-TH/2-0.4,LK); box(R,x1-x0,TH,0.8,MAT.wood,(x0+x1)/2,yT,zc+TH/2+0.4,LK);
+  box(R,x1-x0,0.8,TD+1.6,MAT.wood,(x0+x1)/2,yT-TH/2-0.4,zc,LK); box(R,x1-x0,0.8,TD+1.6,MAT.wood,(x0+x1)/2,yT+TH/2+0.4,zc,LK);
+  box(R,x1-x0,TH,0.8,MAT.wood,(x0+x1)/2,yT,zc-TD/2-0.4,LK); box(R,x1-x0,TH,0.8,MAT.wood,(x0+x1)/2,yT,zc+TD/2+0.4,LK);
   // small chest and one pipe
-  box(R,12,12,12,MAT.wood,x1+6,yT,0,LB('風箱','Windlade'));
-  const sp=buildPipe(x1+6,0,2,0,0,yT+6);
+  box(R,12,TH+1.6,12,MAT.wood,x1+6,yT,0,LB('風箱','Windlade'));
+  const sp=buildPipe(x1+6,0,2,0,0,yT+TH/2+0.8);
   const press=()=>m.env*(1-m.amt*m.dip);
   m.dip=0;
   new Vol((a,b,c,out)=>out.set(-64+a*16,1+b*(yT+1),-8+c*16),140,{state:()=>m.on?1:0,rate:2});
-  new Vol((a,b,c,out)=>out.set(x1+1+a*10,yT-5+b*10,-5+c*10),80,{state:()=>m.on?1:0,rate:2});
+  new Vol((a,b,c,out)=>out.set(x1+1+a*10,yT-TH/2+b*TH,-5+c*10),90,{state:()=>m.on?1:0,rate:2});
   new Tube([V3(-47,yT,0),V3(-30,yT,0),V3(-14,yT,0),V3(0,yT,0),V3(x1+2,yT,0)],{r:2.2,density:0.6,front:200,state:()=>({open:m.on,speed:m.play?6+10*(1-m.dip*m.amt*4):0})});
-  const pt=new Tube([V3(x1+6,yT+3,0),V3(x1+6,yT+6,0)].concat(sp.path.slice(1)),{r:0.3,density:0.3,front:900,state:()=>({open:m.on&&m.play,speed:20})});
+  const pt=new Tube([V3(x1+6,yT+3,0),V3(x1+6,yT+TH/2+0.8,0)].concat(sp.path.slice(1)),{r:0.3,density:0.3,front:900,state:()=>({open:m.on&&m.play,speed:20})});
   pt.exitU=pt.cum[1+sp.ei]/pt.L;
   /* Wippfedertremulant */
-  const WX=-24, WL=10, WW=5.4, yTop=yT+TH/2+0.8, wg=new T.Group(); wg.position.set(WX-WL/2,yTop,0); R.add(wg);
+  const WX=-24, WL=10, WW=5.4, yTop=yT+TD/2+0.8, wg=new T.Group(); wg.position.set(WX-WL/2,yTop,0); R.add(wg);
   // the Bock tremulant is mounted on the SIDE of the trunk: built as if on top, then turned 90° about the trunk axis
   const WPV=new T.Group(); WPV.position.set(0,yT,0); WPV.rotation.x=Math.PI/2; R.add(WPV);
   const WIP=new T.Group(); WIP.position.y=-yT; WPV.add(WIP);
@@ -1439,9 +1439,9 @@ function buildTremulant(){
   /* tremblant doux */
   const DX=-2, DOU=new T.Group(); R.add(DOU);
   const fl=new T.Group(); fl.position.set(DX,yT+TH/2-0.1,0); DOU.add(fl);
-  box(fl,0.5,TH*0.82,TH-0.4,MAT.woodPale,0,-TH*0.41,0,LB('フラップ（おもりで重くした木の板。風の流れで開閉して風を揺らす）','Tremulantklappe'));
-  const ax=mk(G_CYL,MAT.iron,DOU,LB('フラップの軸（風導管の壁を貫いて外のおもりにつながる）','Achse')); ax.rotation.x=Math.PI/2; ax.scale.set(0.25,TH+3,0.25); ax.position.set(DX,yT+TH/2-0.1,0);
-  const lv=new T.Group(); lv.position.set(DX,yT+TH/2-0.1,TH/2+1.6); DOU.add(lv);
+  box(fl,0.5,TH*0.82,TD-0.4,MAT.woodPale,0,-TH*0.41,0,LB('フラップ（おもりで重くした木の板。風の流れで開閉して風を揺らす）','Tremulantklappe'));
+  const ax=mk(G_CYL,MAT.iron,DOU,LB('フラップの軸（風導管の壁を貫いて外のおもりにつながる）','Achse')); ax.rotation.x=Math.PI/2; ax.scale.set(0.25,TD+3,0.25); ax.position.set(DX,yT+TH/2-0.1,0);
+  const lv=new T.Group(); lv.position.set(DX,yT+TH/2-0.1,TD/2+1.6); DOU.add(lv);
   rod(lv,0.18,MAT.iron,LB('おもりの腕','Gewichtsarm')).set(V3(0,0,0),V3(-0.5,-5,0));
   const dw=box(lv,1.5,1.5,1.5,MAT.weight,-0.5,-5,0,LB('おもり（位置で揺れの速さが変わる）','Gewicht'));
   const LBL=label=>label;
