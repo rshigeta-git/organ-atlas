@@ -1,0 +1,1097 @@
+<title>パイプオルガン機構図鑑</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Shippori+Mincho+B1:wght@600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+/* Layout: organ-builder's atlas — chapter index | live 3D plate with a playing console under it | plate notes */
+:root{
+  --bg:#e6e9e4; --panel:#f2f4f0; --ink:#1c231f; --muted:#59645d; --line:#c3cbc4; --chip:#dbe1da;
+  --stage:#d8ddd6; --gridc:#a3ada5; --wind:#2867ad; --air:#6f7d8a; --sound:#c98a00; --keyglow:#e0a200; --stopc:#2a8457; --accent:#2867ad;
+  --keyw:#f7f5ef; --keyb:#2b2725; --onink:#ffffff;
+  --f-display:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho",serif;
+  --f-body:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121614; --panel:#191e1b; --ink:#e2e7e3; --muted:#97a29a; --line:#2e3631; --chip:#242b27;
+    --stage:#0e1210; --gridc:#36413b; --wind:#62a4e8; --air:#c9d3dc; --sound:#f0bf4c; --keyglow:#f2b928; --stopc:#4fc283; --accent:#62a4e8;
+    --keyw:#e4e0d7; --keyb:#151312; --onink:#0e1210; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121614; --panel:#191e1b; --ink:#e2e7e3; --muted:#97a29a; --line:#2e3631; --chip:#242b27;
+  --stage:#0e1210; --gridc:#36413b; --wind:#62a4e8; --air:#c9d3dc; --sound:#f0bf4c; --keyglow:#f2b928; --stopc:#4fc283; --accent:#62a4e8;
+  --keyw:#e4e0d7; --keyb:#151312; --onink:#0e1210; color-scheme:dark;
+}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.mast{padding-block:22px 14px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));border-bottom:1px solid var(--line)}
+.mast-in{max-width:1600px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 28px}
+.eyebrow{flex-basis:100%;margin:0;font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;color:var(--muted)}
+h1{margin:0;font-family:var(--f-display);font-weight:800;font-size:clamp(26px,3.2vw,38px);letter-spacing:.05em;line-height:1.25;text-wrap:balance}
+.lede{margin:0;max-width:60ch;color:var(--muted);font-size:14px}
+
+.layout{max-width:1600px;margin:0 auto;display:grid;grid-template-columns:232px minmax(0,1fr) 340px;gap:22px;padding-block:18px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.index{min-width:0}
+.index select{display:none;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+.chap{margin:0 0 14px}
+.chap h2{margin:0 0 3px;font-family:var(--f-display);font-weight:600;font-size:15px;letter-spacing:.05em;display:flex;gap:8px;align-items:baseline}
+.chap h2 .cl{font-family:var(--f-mono);font-size:12px;color:var(--muted);font-weight:400}
+.item{display:grid;grid-template-columns:42px 1fr;gap:4px;width:100%;text-align:left;padding:5px 8px;border:0;background:transparent;border-radius:6px;cursor:pointer;font-size:13.5px;line-height:1.45}
+.item .id{font-family:var(--f-mono);font-size:12px;color:var(--muted);padding-top:1px}
+.item .stg{display:block;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.item:hover{background:var(--chip)}
+.item[aria-current="true"]{background:var(--ink);color:var(--bg)}
+.item[aria-current="true"] .id{color:inherit;opacity:.7}
+.item:disabled{cursor:default;color:var(--muted)}
+.item:disabled:hover{background:transparent}
+
+.center{min-width:0;display:flex;flex-direction:column;gap:12px}
+.stagewrap{position:relative;height:clamp(380px,64vh,760px);border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--stage);touch-action:none}
+#stage{display:block;width:100%;height:100%}
+.tag{position:absolute;left:14px;top:10px;pointer-events:none;display:flex;flex-direction:column;line-height:1.3}
+.tag .tid{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.tag .tnm{font-family:var(--f-display);font-weight:600;font-size:21px}
+.tag .tde{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.gauge{position:absolute;right:12px;top:12px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 10px 6px;background:var(--panel);border:1px solid var(--line);border-radius:8px;pointer-events:none}
+.gauge .gl{font-size:11px;color:var(--muted);letter-spacing:.04em}
+.gauge .gv{font-family:var(--f-mono);font-size:15px;font-weight:500;font-variant-numeric:tabular-nums}
+.gauge svg{display:block}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);padding:6px 9px;border-radius:6px;font-size:13px;line-height:1.4;max-width:260px;z-index:3}
+.tip b{display:block;font-weight:500}
+.tip span{font-family:var(--f-mono);font-size:11.5px;opacity:.75}
+.pin{position:absolute;transform:translate(-50%,-50%);pointer-events:none;display:flex;align-items:center;gap:5px;font-size:12px;white-space:nowrap;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:1px 9px 1px 2px}
+.pin b{display:inline-grid;place-items:center;width:19px;height:19px;border-radius:50%;background:var(--wind);color:var(--onink);font-family:var(--f-mono);font-size:11px;font-weight:500}
+.pin.plain{padding:1px 9px}
+.legend{position:absolute;left:14px;bottom:10px;display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted);pointer-events:none}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.legend i.ln{width:18px;height:2px;border-radius:0;vertical-align:3px;background:linear-gradient(90deg,transparent,var(--wind))}
+.nogl{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center;color:var(--muted)}
+
+.tools{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:7px;padding:6px 12px;font-size:13.5px;cursor:pointer;line-height:1.4}
+.btn:hover{border-color:var(--muted)}
+.btn[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.field{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--muted)}
+.field input[type=range]{width:150px;accent-color:var(--accent)}
+.field select{border:1px solid var(--line);background:var(--panel);border-radius:7px;padding:5px 8px;font-size:13.5px;color:var(--ink)}
+.note{font-size:12px;color:var(--muted);margin:0}
+
+.dock{display:grid;gap:10px;padding:14px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+.drow{display:grid;grid-template-columns:84px minmax(0,1fr);gap:10px;align-items:center}
+.dlabel{font-size:12.5px;color:var(--muted);line-height:1.35}
+.dlabel small{display:block;font-family:var(--f-mono);font-size:11px}
+.kwrap{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.kbd{position:relative;display:flex;flex:1 1 300px;max-width:520px;height:118px;--bkw:7.4%;user-select:none;-webkit-user-select:none;touch-action:none}
+.wk{flex:1;border:1px solid var(--line);border-radius:0 0 6px 6px;background:var(--keyw);display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px;cursor:pointer;color:#5a5650}
+.wk span,.bk span{font-family:var(--f-mono);font-size:11px;pointer-events:none}
+.bk{position:absolute;top:0;width:var(--bkw);height:62%;background:var(--keyb);border:1px solid var(--keyb);border-radius:0 0 4px 4px;z-index:2;display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px;cursor:pointer;color:#b9b2a8}
+.wk.on{background:var(--keyglow);color:#2a2000}
+.bk.on{background:var(--keyglow);border-color:var(--keyglow);color:#2a2000}
+.kside{display:flex;flex-direction:column;gap:6px}
+.stops{display:flex;flex-wrap:wrap;gap:8px}
+.knob{display:flex;flex-direction:column;align-items:flex-start;gap:0;min-width:118px;padding:6px 12px 6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);cursor:pointer;text-align:left;line-height:1.35}
+.knob b{font-weight:500;font-size:14px;font-family:var(--f-display)}
+.knob span{font-size:11.5px;color:var(--muted)}
+.knob[aria-pressed="true"]{background:var(--stopc);border-color:var(--stopc);color:var(--onink)}
+.knob[aria-pressed="true"] span{color:inherit;opacity:.85}
+.mctl{display:flex;flex-wrap:wrap;gap:8px}
+.hint{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+
+.notes{min-width:0;display:flex;flex-direction:column;gap:14px}
+.notes .nid{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin:0}
+.notes h2{margin:0;font-family:var(--f-display);font-weight:800;font-size:27px;line-height:1.3;text-wrap:balance}
+.notes .terms{margin:2px 0 0;font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
+.notes p{margin:0}
+.notes h3{margin:4px 0 0;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--muted)}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.steps button{display:grid;grid-template-columns:24px 1fr;gap:6px;width:100%;text-align:left;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--panel);cursor:pointer;font-size:14px;line-height:1.65}
+.steps button:hover{border-color:var(--muted)}
+.steps .n{font-family:var(--f-mono);color:var(--accent);font-weight:500}
+.steps button[aria-current="true"]{border-color:var(--accent);background:var(--chip)}
+.foot{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+
+@media (max-width:1180px){
+  .layout{grid-template-columns:minmax(0,1fr) 320px}
+  .index{grid-column:1/-1}
+  .index select{display:block}
+  #indexList{display:none}
+}
+@media (max-width:860px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .stagewrap{height:clamp(320px,58vh,560px)}
+}
+@media (max-width:520px){
+  .drow{grid-template-columns:1fr;gap:6px}
+  .gauge{transform:scale(.82);transform-origin:top right}
+  .tag .tnm{font-size:17px}
+  .knob{min-width:0;flex:1 1 40%}
+  .kbd{height:104px}
+}
+@media (prefers-reduced-motion: reduce){ *{scroll-behavior:auto} }
+</style>
+
+<header class="mast">
+  <div class="mast-in">
+    <p class="eyebrow">ORGELBAU-ATLAS · 第1段階 · 8モデル公開</p>
+    <h1>パイプオルガン機構図鑑</h1>
+    <p class="lede">送風から発音まで、風がどの部品を通って音になるかを動く3Dで見る図鑑です。鍵盤とストップを操作し、青い粒子で風の流れを追ってください。</p>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="index" aria-label="モデル一覧">
+    <label class="sr" for="modelSelect">モデルを選ぶ</label>
+    <select id="modelSelect"></select>
+    <div id="indexList"></div>
+  </nav>
+
+  <main class="center">
+    <div class="stagewrap" id="stagewrap">
+      <canvas id="stage" aria-label="3Dモデル。ドラッグで回転、ホイールやピンチで拡大"></canvas>
+      <div class="tag" id="tag"></div>
+      <div class="gauge" aria-live="off">
+        <span class="gl">風圧（水柱計）</span>
+        <svg viewBox="0 0 84 136" width="70" height="114" aria-hidden="true">
+          <rect id="gwl" x="22" y="60" width="8" height="64" fill="var(--wind)" opacity=".55"/>
+          <rect id="gwr" x="54" y="60" width="8" height="64" fill="var(--wind)" opacity=".55"/>
+          <rect x="22" y="116" width="40" height="8" fill="var(--wind)" opacity=".55"/>
+          <path d="M21 8 V118 a11 11 0 0 0 11 11 H52 a11 11 0 0 0 11 -11 V8 M31 8 V114 a3 3 0 0 0 3 3 H50 a3 3 0 0 0 3 -3 V8" fill="none" stroke="var(--muted)" stroke-width="1.3"/>
+          <g font-family="IBM Plex Mono, monospace" font-size="8" fill="var(--muted)">
+            <line x1="66" y1="60" x2="71" y2="60" stroke="var(--muted)"/><text x="73" y="63">0</text>
+            <line x1="66" y1="37.5" x2="71" y2="37.5" stroke="var(--muted)"/><text x="73" y="40">50</text>
+            <line x1="66" y1="15" x2="71" y2="15" stroke="var(--muted)"/><text x="73" y="18">100</text>
+          </g>
+          <text x="10" y="10" font-size="7" fill="var(--muted)" font-family="IBM Plex Mono, monospace">風</text>
+        </svg>
+        <span class="gv" id="gv">75 mm</span>
+      </div>
+      <div class="legend" aria-hidden="true">
+        <span><i style="background:var(--wind)"></i>加圧された風</span>
+        <span><i style="background:var(--air)"></i>外気（吸気）</span>
+        <span><i style="background:var(--sound)"></i>歌口・管から出る風（発音）</span>
+        <span><i class="ln"></i>流線（明るい筋が進む向き＝流れの向き）</span>
+      </div>
+      <div class="tip" id="tip" hidden></div>
+      <div id="pins"></div>
+    </div>
+
+    <div class="tools">
+      <button class="btn" id="tPts" aria-pressed="true">粒子</button>
+      <button class="btn" id="tLines" aria-pressed="true">流線</button>
+      <button class="btn" id="xray" aria-pressed="false">木部を透かす</button>
+      <label class="field" for="cut">断面<input id="cut" type="range" min="0" max="100" value="0"></label>
+      <label class="field" for="speed">速度
+        <select id="speed"><option value="1">等速</option><option value="0.25">1/4</option><option value="0.1">1/10</option><option value="0.05">1/20</option></select>
+      </label>
+      <button class="btn" id="camreset">視点を戻す</button>
+      <button class="btn" id="sound" aria-pressed="true">音を出す</button>
+    </div>
+    <p class="note">ドラッグで回転、右ドラッグで移動、ホイール・ピンチで拡大。流線は、風が流れている間は明るい筋が流れの向きに進み、風が満ちて止まっている所では淡い実線になります。部品にカーソルを合わせると名称（日本語・ドイツ語）を表示します。寸法は見やすさのため誇張し、パイプの長さは実寸を対数的に縮めています。</p>
+
+    <div class="dock">
+      <div class="drow">
+        <div class="dlabel">鍵盤<small>C – c, 13鍵</small></div>
+        <div class="kwrap">
+          <div class="kbd" id="kbd" role="group" aria-label="鍵盤"></div>
+          <div class="kside">
+            <button class="btn" id="latch" aria-pressed="false">押したまま保持</button>
+            <button class="btn" id="release">全部離す</button>
+            <span class="hint">PCキー A W S E D F T G Y H U J K</span>
+          </div>
+        </div>
+      </div>
+      <div class="drow">
+        <div class="dlabel">ストップ<small>5 stops</small></div>
+        <div class="stops" id="stops"></div>
+      </div>
+      <div class="drow" id="mctlRow" hidden>
+        <div class="dlabel">送風</div>
+        <div class="mctl" id="mctl"></div>
+      </div>
+    </div>
+  </main>
+
+  <aside class="notes" id="notes"></aside>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function(){
+'use strict';
+const T = window.THREE;
+const wrap = document.getElementById('stagewrap');
+if(!T){ wrap.insertAdjacentHTML('beforeend','<div class="nogl">3D表示用のライブラリを読み込めませんでした。ページを再読み込みしてください。</div>'); return; }
+const V3=(x,y,z)=>new T.Vector3(x,y,z);
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const LB=(ja,de)=>({ja,de});
+
+/* ---------------- data ---------------- */
+const STOPS=[
+  {name:'Gedackt 8′',   ja:'ゲダクト（木管・閉管）'},
+  {name:'Rohrflöte 4′', ja:'ロールフレーテ（半閉管）'},
+  {name:'Prinzipal 2′', ja:'プリンツィパル（開管）'},
+  {name:'Mixtur III',   ja:'ミクスチュア 3列'},
+  {name:'Vox humana 8′',ja:'ヴォックス・フマーナ（リード）'}
+];
+const ZROW=[0,7,14,-7,-14];          // z of each stop row (front of chest = +z)
+const MIXZ=[-1.8,0,1.8];
+const KEYNAMES=['C','Cis','D','Dis','E','F','Fis','G','Gis','A','B','H','c'];
+function realLen(i,k,r){ const f=Math.pow(2,-k/12); return [122,34,61,[40.6,30.5,20.3][r],16][i]*f; }
+function disp(L){ return 5+2.4*Math.pow(L,0.6); }
+
+const S={key:new Array(13).fill(false),kd:new Float32Array(13),stop:[false,false,false,false,false],sp:new Float32Array(5),p:75,latch:false,speed:1,xray:false,cut:0,time:0};
+
+/* ---------------- renderer ---------------- */
+const canvas=document.getElementById('stage');
+let renderer;
+try{ renderer=new T.WebGLRenderer({canvas,antialias:true}); }catch(e){ wrap.insertAdjacentHTML('beforeend','<div class="nogl">このブラウザではWebGL（3D表示）が使えません。</div>'); return; }
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+const scene=new T.Scene();
+const camera=new T.PerspectiveCamera(36,1,1,4000);
+const controls=new T.OrbitControls(camera,canvas);
+controls.enableDamping=true; controls.dampingFactor=0.08; controls.minDistance=15; controls.maxDistance=700;
+scene.add(new T.HemisphereLight(0xffffff,0x56606b,0.9));
+const dl=new T.DirectionalLight(0xffffff,0.8); dl.position.set(80,160,120); scene.add(dl);
+const dl2=new T.DirectionalLight(0xdfe8ff,0.35); dl2.position.set(-140,60,-90); scene.add(dl2);
+const grid=new T.GridHelper(520,52); grid.material.vertexColors=false; grid.material.transparent=true; grid.material.opacity=0.5; scene.add(grid);
+const clipPlane=new T.Plane(V3(-1,0,0),1e5);
+renderer.clippingPlanes=[clipPlane];
+function resize(){ const w=wrap.clientWidth||600,h=wrap.clientHeight||400; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); }
+new ResizeObserver(resize).observe(wrap); resize();
+
+const COL={wind:new T.Color(),air:new T.Color(),sound:new T.Color(),key:new T.Color(),stop:new T.Color()};
+function readTheme(){
+  const cs=getComputedStyle(document.documentElement); const g=n=>(cs.getPropertyValue(n)||'').trim()||'#888888';
+  COL.wind.set(g('--wind')); COL.air.set(g('--air')); COL.sound.set(g('--sound')); COL.key.set(g('--keyglow')); COL.stop.set(g('--stopc'));
+  scene.background=new T.Color(g('--stage')); grid.material.color.set(g('--gridc')); grid.material.needsUpdate=true;
+}
+readTheme();
+try{ matchMedia('(prefers-color-scheme: dark)').addEventListener('change',readTheme); }catch(e){}
+new MutationObserver(readTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+/* ---------------- shared geometry & materials ---------------- */
+const G_BOX=new T.BoxGeometry(1,1,1);
+const G_CYL=new T.CylinderGeometry(1,1,1,20);
+const G_CYL_OPEN=new T.CylinderGeometry(1,1,1,20,1,true);
+const G_CONE=new T.CylinderGeometry(1,0.18,1,20,1,true);
+const G_ROD=new T.CylinderGeometry(1,1,1,7);
+const G_DISC=new T.CircleGeometry(1,20);
+const G_TRI=new T.BufferGeometry(); G_TRI.setAttribute('position',new T.Float32BufferAttribute([0,0,0,1,0,0,1,1,0],3)); G_TRI.computeVertexNormals();
+function std(c,ro,me,x){ return new T.MeshStandardMaterial(Object.assign({color:c,roughness:ro,metalness:me},x||{})); }
+const MAT={
+  wood:std(0xb98b5c,.78,0), woodDark:std(0x8a6340,.8,0), woodPale:std(0xd8bb8f,.7,0), leather:std(0xcdae86,.92,0,{side:T.DoubleSide}),
+  metal:std(0xd9dde0,.42,.18,{side:T.DoubleSide}), metalDark:std(0xa3aab0,.5,.2), iron:std(0x4f555b,.5,.45), dark:std(0x18191b,.9,0,{side:T.DoubleSide}),
+  casing:std(0x6d7d89,.55,.25), ivory:std(0xf0ebe0,.45,0), ebony:std(0x2a2522,.5,0), brass:std(0xb8913f,.35,.65),
+  weight:std(0x3a3e43,.6,.4), pipeWood:std(0xa9784a,.7,0), pipeWoodLight:std(0xc9a172,.7,0), cloth:std(0x9a8f7c,.95,0,{side:T.DoubleSide})
+};
+const XRAY=[MAT.wood,MAT.woodDark,MAT.leather,MAT.casing,MAT.cloth];
+
+let CX=null;
+function mclone(m){ const c=m.clone(); CX.own.push(c); return c; }
+function keyMat(k){ return CX.keyMats[k]||(CX.keyMats[k]=mclone(MAT.woodPale)); }
+function stopMat(i){ return CX.stopMats[i]||(CX.stopMats[i]=mclone(MAT.woodPale)); }
+function mk(geo,mat,parent,label){ const m=new T.Mesh(geo,mat); (parent||CX.root).add(m); if(label) m.userData.label=label; return m; }
+function box(p,w,h,d,mat,x,y,z,label){ const m=mk(G_BOX,mat,p,label); m.scale.set(w,h,d); m.position.set(x,y,z); return m; }
+function cyl(p,r,h,mat,x,y,z,label,geo){ const m=mk(geo||G_CYL,mat,p,label); m.scale.set(r,h,r); m.position.set(x,y,z); return m; }
+const UP=V3(0,1,0), _d=V3(0,0,0), _v=V3(0,0,0), _c=new T.Color();
+function rod(p,r,mat,label){ const m=mk(G_ROD,mat,p,label); m.set=function(a,b){ _d.subVectors(b,a); const L=_d.length()||1e-4; m.position.copy(a).addScaledVector(_d,.5); m.scale.set(r,L,r); m.quaternion.setFromUnitVectors(UP,_d.divideScalar(L)); }; return m; }
+function plank(p,sx,sz,mat,label){ const m=mk(G_BOX,mat,p,label); m.set=function(a,b){ _d.subVectors(b,a); const L=_d.length()||1e-4; m.position.copy(a).addScaledVector(_d,.5); m.scale.set(sx,L,sz); m.quaternion.setFromUnitVectors(UP,_d.divideScalar(L)); }; return m; }
+function duct(pts,s,mat,label){ for(let i=1;i<pts.length;i++){ const a=pts[i-1],b=pts[i]; const m=mk(G_BOX,mat,CX.root,label); const L=a.distanceTo(b); m.position.addVectors(a,b).multiplyScalar(.5); m.scale.set(s,s,L+s); m.lookAt(b); } }
+
+/* ---------------- wind particles ---------------- */
+const flows=[];
+const MAXP=7000;
+const pGeo=new T.BufferGeometry();
+const pAttr=new T.BufferAttribute(new Float32Array(MAXP*3),3); pAttr.setUsage(T.DynamicDrawUsage);
+const cAttr=new T.BufferAttribute(new Float32Array(MAXP*3),3); cAttr.setUsage(T.DynamicDrawUsage);
+pGeo.setAttribute('position',pAttr); pGeo.setAttribute('color',cAttr);
+const dc=document.createElement('canvas'); dc.width=dc.height=64; const g2=dc.getContext('2d');
+const gr=g2.createRadialGradient(32,32,0,32,32,32); gr.addColorStop(0,'rgba(255,255,255,1)'); gr.addColorStop(.5,'rgba(255,255,255,.9)'); gr.addColorStop(1,'rgba(255,255,255,0)'); g2.fillStyle=gr; g2.fillRect(0,0,64,64);
+const pMat=new T.PointsMaterial({size:1.8,map:new T.CanvasTexture(dc),vertexColors:true,transparent:true,depthWrite:false,sizeAttenuation:true});
+const points=new T.Points(pGeo,pMat); points.frustumCulled=false; scene.add(points);
+
+
+/* ---------------- streamlines ---------------- */
+const SHOW={pts:true,lines:true};
+const SL_VS=`varying float vU;
+#include <clipping_planes_pars_vertex>
+void main(){ vU=uv.x; vec4 mvPosition=modelViewMatrix*vec4(position,1.0); gl_Position=projectionMatrix*mvPosition;
+#include <clipping_planes_vertex>
+}`;
+const SL_FS=`uniform float head,tail,phase,moving,exitU,len,alpha; uniform vec3 c0,c1; varying float vU;
+#include <clipping_planes_pars_fragment>
+void main(){
+#include <clipping_planes_fragment>
+ if(vU<tail||vU>head) discard;
+ vec3 col=c0; if(vU>exitU) col=mix(c0,c1,clamp((vU-exitU)/max(0.001,1.0-exitU)*2.5,0.0,1.0));
+ float d=fract(vU*len/6.0-phase);
+ float dash=0.15+0.85*pow(d,2.5);
+ float a=mix(0.5,dash,moving);
+ float f=clamp((head-vU)*len/1.5,0.0,1.0);
+ gl_FragColor=vec4(col,a*alpha*(0.35+0.65*f));
+}`;
+/* Each streamline is a thin tube swept along the flow path; K parallel lines for wide passages. */
+function makeStream(tb){
+  if(tb.L<0.5) return null;
+  const curve=tb.p.length>2?new T.CatmullRomCurve3(tb.p,false,'centripetal'):new T.LineCurve3(tb.p[0],tb.p[1]);
+  const ns=Math.max(2,Math.min(300,Math.round(tb.L/0.6)));
+  const sp=curve.getSpacedPoints(ns);
+  const K=tb.r>=0.8?3:tb.r>=0.4?2:1, rr=tb.r*0.6, rad=tb.r>=1?0.22:tb.r>=0.5?0.16:0.12;
+  const t_=V3(0,0,0),n1=V3(0,0,0),n2=V3(0,0,0),ref=V3(0,0,0);
+  const P=[],UV=[],I=[];
+  for(let q=0;q<K;q++){
+    const ph=q/K*6.283+0.5, ca=K>1?Math.cos(ph)*rr:0, sa=K>1?Math.sin(ph)*rr:0, pts=[];
+    for(let i=0;i<=ns;i++){
+      t_.subVectors(sp[Math.min(ns,i+1)],sp[Math.max(0,i-1)]).normalize();
+      ref.set(0,1,0); if(Math.abs(t_.y)>0.9) ref.set(1,0,0);
+      n1.crossVectors(t_,ref).normalize(); n2.crossVectors(t_,n1);
+      pts.push(sp[i].clone().addScaledVector(n1,ca).addScaledVector(n2,sa));
+    }
+    const g=new T.TubeGeometry(new T.CatmullRomCurve3(pts,false,'catmullrom',0.1),ns,rad,4,false);
+    const off=P.length/3, pa=g.attributes.position.array, ua=g.attributes.uv.array, ia=g.index.array;
+    for(let i=0;i<pa.length;i++) P.push(pa[i]); for(let i=0;i<ua.length;i++) UV.push(ua[i]); for(let i=0;i<ia.length;i++) I.push(ia[i]+off);
+    g.dispose();
+  }
+  const g=new T.BufferGeometry(); g.setAttribute('position',new T.Float32BufferAttribute(P,3)); g.setAttribute('uv',new T.Float32BufferAttribute(UV,2)); g.setIndex(I);
+  const air=tb.kind==='air';
+  const m=new T.ShaderMaterial({vertexShader:SL_VS,fragmentShader:SL_FS,transparent:true,depthWrite:false,clipping:true,
+    uniforms:{head:{value:0},tail:{value:0},phase:{value:Math.random()},moving:{value:0},exitU:{value:2},len:{value:tb.L},alpha:{value:air?0.8:0.95},c0:{value:air?COL.air:COL.wind},c1:{value:COL.sound}}});
+  const L=new T.Mesh(g,m); L.frustumCulled=false; L.visible=false; L.renderOrder=2; CX.root.add(L); CX.own.push(g,m);
+  return L;
+}
+
+class Tube{
+  constructor(pts,o){
+    this.p=pts.map(a=>a.isVector3?a.clone():V3(a[0],a[1],a[2]));
+    this.cum=[0]; for(let i=1;i<this.p.length;i++) this.cum.push(this.cum[i-1]+this.p[i].distanceTo(this.p[i-1]));
+    this.L=this.cum[this.cum.length-1];
+    this.n=o.n||Math.max(4,Math.round(this.L*(o.density||0.45)));
+    this.r=o.r==null?0.5:o.r; this.kind=o.kind||'wind'; this.exitU=o.exitU; this.state=o.state; this.front=o.front||40;
+    this.head=0; this.tail=0; this.spd=0;
+    this.s=new Float32Array(this.n); this.j=new Float32Array(this.n*4);
+    for(let i=0;i<this.n;i++){ this.s[i]=Math.random()*this.L; this.j[i*4]=Math.random()*2-1; this.j[i*4+1]=Math.random()*2-1; this.j[i*4+2]=Math.random()*2-1; this.j[i*4+3]=Math.random(); }
+    flows.push(this);
+    if(CX&&o.stream!==false) this.sl=makeStream(this);
+  }
+  reset(){ this.head=0; this.tail=0; }
+  update(dt){
+    const st=this.state();
+    if(st.open){ this.tail=0; this.head=Math.min(this.L,this.head+this.front*dt); }
+    else if(this.head>0){ this.tail=Math.min(this.head,this.tail+this.front*1.3*dt); if(this.tail>=this.head-1e-3){ this.head=0; this.tail=0; } }
+    this.spd=st.speed||0;
+    if(this.sl){ const U=this.sl.material.uniforms; U.head.value=this.head/this.L; U.tail.value=this.tail/this.L; U.exitU.value=this.exitU==null?2:this.exitU; U.phase.value=(U.phase.value+dt*this.spd/6)%1; U.moving.value+=((this.spd>0.5?1:0)-U.moving.value)*Math.min(1,dt*4); this.sl.visible=SHOW.lines&&this.head>0; }
+    if(this.spd>0){ const v=this.spd*dt; for(let i=0;i<this.n;i++){ let s=this.s[i]+v*(0.75+0.5*this.j[i*4+3]); if(s>this.L) s-=this.L; this.s[i]=s; } }
+  }
+  reached(d){ return this.head>0 && this.head>=d-1e-3 && this.tail<=d+1e-3; }
+  full(){ return this.reached(this.L); }
+  at(s,out){ let i=1; while(i<this.cum.length-1&&this.cum[i]<s) i++; const seg=(this.cum[i]-this.cum[i-1])||1; return out.lerpVectors(this.p[i-1],this.p[i],(s-this.cum[i-1])/seg); }
+  nearestDist(q){ let best=1e9,bd=0; for(let i=1;i<this.p.length;i++){ const a=this.p[i-1],b=this.p[i]; const ab=V3(0,0,0).subVectors(b,a); const l2=ab.lengthSq()||1; const t=clamp(V3(0,0,0).subVectors(q,a).dot(ab)/l2,0,1); const pt=a.clone().addScaledVector(ab,t); const dd=pt.distanceTo(q); if(dd<best){best=dd; bd=this.cum[i-1]+t*Math.sqrt(l2);} } return bd; }
+  write(pos,col,base,t){
+    const show=this.head>0, c0=this.kind==='air'?COL.air:COL.wind, still=this.spd<=0.01, r=this.r;
+    for(let i=0;i<this.n;i++){
+      const o=(base+i)*3, s=this.s[i];
+      if(!show||s<this.tail||s>this.head){ pos[o]=0; pos[o+1]=-1e5; pos[o+2]=0; continue; }
+      this.at(s,_v); const j=i*4; let jx=this.j[j]*r, jy=this.j[j+1]*r, jz=this.j[j+2]*r;
+      if(still){ const ph=this.j[j+3]*6.283; jx+=Math.sin(t*3.1+ph)*.22*r; jy+=Math.cos(t*2.7+ph*1.3)*.22*r; jz+=Math.sin(t*2.3+ph*.7)*.22*r; }
+      pos[o]=_v.x+jx; pos[o+1]=_v.y+jy; pos[o+2]=_v.z+jz;
+      let c=c0; if(this.exitU!=null){ const u=s/this.L; if(u>this.exitU){ _c.copy(c0).lerp(COL.sound,Math.min(1,(u-this.exitU)/(1-this.exitU)*2.5)); c=_c; } }
+      col[o]=c.r; col[o+1]=c.g; col[o+2]=c.b;
+    }
+  }
+}
+class Vol{
+  constructor(fn,n,o){ this.fn=fn; this.n=n; this.state=o.state; this.kind=o.kind||'wind'; this.rate=o.rate||1.4; this.fill=0; this.sd=new Float32Array(n*4); for(let i=0;i<n*4;i++) this.sd[i]=Math.random(); flows.push(this); }
+  reset(){ this.fill=0; }
+  update(dt){ const t=clamp(this.state(),0,1); this.fill+=clamp(t-this.fill,-this.rate*dt,this.rate*dt); }
+  write(pos,col,base,t){
+    const m=Math.round(this.fill*this.n), c=this.kind==='air'?COL.air:COL.wind;
+    for(let i=0;i<this.n;i++){
+      const o=(base+i)*3; if(i>=m){ pos[o]=0; pos[o+1]=-1e5; pos[o+2]=0; continue; }
+      const j=i*4, ph=this.sd[j+3]*6.283;
+      this.fn(clamp(this.sd[j]+Math.sin(t*.9+ph)*.035,0,1),clamp(this.sd[j+1]+Math.cos(t*.8+ph*1.7)*.035,0,1),clamp(this.sd[j+2]+Math.sin(t*.7+ph*2.1)*.035,0,1),_v);
+      pos[o]=_v.x; pos[o+1]=_v.y; pos[o+2]=_v.z; col[o]=c.r; col[o+1]=c.g; col[o+2]=c.b;
+    }
+  }
+}
+function writeParticles(){ points.visible=SHOW.pts; let base=0; const pos=pAttr.array,col=cAttr.array; for(const f of flows){ if(base+f.n>MAXP) break; f.write(pos,col,base,S.time); base+=f.n; } pGeo.setDrawRange(0,base); pAttr.needsUpdate=true; cAttr.needsUpdate=true; }
+
+/* ---------------- pipes ---------------- */
+function buildPipe(x,z,i,k,r,base){
+  const d=disp(realLen(i,k,r)), R=CX.root;
+  const lab=LB(STOPS[i].name+(i===3?' 第'+(r+1)+'列':'')+'（'+KEYNAMES[k]+'）のパイプ','Pfeife');
+  if(i===4){
+    const rad=0.75;
+    const cone=mk(G_CONE,MAT.metal,R,LB('ブーツ（リードを囲む足部）','Stiefel')); cone.scale.set(1.15,8,1.15); cone.position.set(x,base+4,z);
+    cyl(R,0.95,1.4,MAT.brass,x,base+8.2,z,LB('頭部（中でリードが振動して発音する）','Kopf / Zunge'));
+    const b=mk(G_CYL_OPEN,MAT.metal,R,LB('共鳴管（短い管：Vox humana）','Becher')); b.scale.set(rad,d,rad); b.position.set(x,base+8.9+d/2,z);
+    cyl(R,rad+0.12,0.5,MAT.metalDark,x,base+8.9+d,z,LB('半分ふさいだ共鳴管の上端','Deckel'));
+    return {reed:true,rad,mouthY:base+8.2,topY:base+8.9+d};
+  }
+  if(i===0){
+    // wooden stopped pipe: square body, turned toe, front lip (Vorschlag), stopper with handle (Spund)
+    const w=Math.min(4.2,1.6+0.05*d), body=d+3, by=base+3;
+    const lb=LB('Gedackt 8′（'+KEYNAMES[k]+'）の木管','Holzgedackt');
+    cyl(R,0.55,3,MAT.pipeWood,x,base+1.5,z,LB('木管の足（風の入口）','Fuß'));
+    box(R,w,body,w,MAT.pipeWood,x,by+body/2,z,lb);
+    box(R,w*0.8,Math.min(1.6,0.6+w*0.25),0.3,MAT.dark,x,base+6.7,z+w/2+0.02,LB('歌口（ここから風が吹き出して発音する）','Labium'));
+    box(R,w*0.9,2.4,0.5,MAT.pipeWoodLight,x,base+5.1,z+w/2+0.2,LB('前板（ヴォアシュラーク）','Vorschlag'));
+    box(R,w*0.86,1.4,w*0.86,MAT.pipeWoodLight,x,by+body+0.5,z,LB('栓（上端をふさぐ。抜き差しで調律する）','Spund'));
+    box(R,w*0.3,1.6,w*0.5,MAT.pipeWoodLight,x,by+body+1.9,z,LB('栓の取っ手','Spundgriff'));
+    return {reed:false,rad:w/2,mouthY:base+6.7,topY:by+body};
+  }
+  const rad=i===1?0.7+0.03*d:i===2?0.5+0.03*d:0.45+0.022*d;
+  const foot=i===3?4:6;
+  const cone=mk(G_CONE,MAT.metal,R,lab); cone.scale.set(rad,foot,rad); cone.position.set(x,base+foot/2,z);
+  const b=mk(G_CYL_OPEN,MAT.metal,R,lab); b.scale.set(rad,d,rad); b.position.set(x,base+foot+d/2,z);
+  box(R,rad*1.1,Math.min(1.5,0.6+rad*0.4),0.3,MAT.dark,x,base+foot+0.7,z+rad*0.97,LB('歌口（ここから風が吹き出して発音する）','Labium'));
+  if(i===1){ cyl(R,rad+0.15,1.6,MAT.metalDark,x,base+foot+d-0.2,z,LB('蓋（半閉管）','Hut')); cyl(R,rad*0.32,d*0.3,MAT.metal,x,base+foot+d+0.6+d*0.15,z,LB('煙突（Rohr。名前の由来）','Röhrchen')); }
+  return {reed:false,rad,mouthY:base+foot+0.7,topY:base+foot+d};
+}
+
+/* ---------------- windchest (slider / spring) ---------------- */
+function buildChest(o){
+  const R=CX.root, ox=o.x||0, oy=o.y||0, oz=o.z||0, P=5, N=13, W=N*P, spring=!!o.spring;
+  const order=o.order||[0,1,2,3,4,5,6,7,8,9,10,11,12];
+  const cxj=j=>ox-W/2+P*(j+0.5);
+  const C={ox,oy,oz,W,P,spring,pos:k=>cxj(order[k]),tubes:[],chanFlow:new Float32Array(N),pal:[],wires:[],sliders:[],holes:[],holeMats:[],bars:[],valves:[],pins:[],eyes:[],springs:[]};
+  const L1=LB('パレットボックス（風箱の下部。常に風で満たされている）','Windkasten');
+  box(R,W+2,1,24,MAT.wood,ox,oy+0.5,oz+6,L1);
+  box(R,W+2,11,1,MAT.wood,ox,oy+6.5,oz+17.5,LB('パレットボックスの前板（点検のため外せる）','Spund'));
+  box(R,W+2,11,1,MAT.wood,ox,oy+6.5,oz-5.5,L1);
+  box(R,1,11,24,MAT.wood,ox-W/2-0.5,oy+6.5,oz+6,L1);
+  box(R,1,11,24,MAT.wood,ox+W/2+0.5,oy+6.5,oz+6,L1);
+  const LC=LB('チャンネルの仕切り（鍵ごとの部屋＝トーンチャンネルを分ける）','Schied');
+  for(let j=0;j<=N;j++) box(R,1.2,12,38.4,MAT.woodDark,ox-W/2+P*j,oy+18,oz,LC);
+  box(R,W+1.2,12,1.2,MAT.woodDark,ox,oy+18,oz+18.6,LC);
+  box(R,W+1.2,12,1.2,MAT.woodDark,ox,oy+18,oz-18.6,LC);
+  box(R,W+1.2,1,13.2,MAT.woodDark,ox,oy+12.5,oz-12.6,LC);
+  box(R,W+2,1.5,38.4,MAT.wood,ox,oy+24.75,oz,LB('テーブル（チャンネルの天板。パイプごとに穴がある）','Fundamentbrett'));
+  if(!spring){
+    for(const zz of [-17.5,-10.5,-3.5,3.5,10.5,17.5]) box(R,W+2,1,3,MAT.wood,ox,oy+26,oz+zz,LB('ダム（スライダーの間の固定材）','Damm'));
+  }
+  for(let i=0;i<5;i++){
+    const z=oz+ZROW[i], st=STOPS[i];
+    if(!spring){
+      C.sliders.push(box(R,W+14,1,4,MAT.woodPale,ox-5,oy+26,z,LB('スライダー：'+st.name+'（左右に動いて穴を合わせる）','Schleife')));
+      const hm=mclone(MAT.dark); C.holeMats.push(hm); const hs=[];
+      for(let k=0;k<N;k++){ const nr=i===3?3:1; for(let r=0;r<nr;r++){ const dd=mk(G_DISC,hm,R,LB('スライダーの穴','Schleifenbohrung')); dd.rotation.x=-Math.PI/2; const s=i===3?0.45:0.65; dd.scale.set(s,s,s); dd.position.set(C.pos(k),oy+26.53,z+(i===3?MIXZ[r]:0)); dd.userData.bx=C.pos(k); hs.push(dd); } }
+      C.holes.push(hs);
+      box(R,W+1,3.5,6,MAT.wood,ox,oy+28.25,z,LB('上板：'+st.name+'（パイプを立てる台）','Pfeifenstock'));
+    } else {
+      box(R,W+1,4.5,3.6,MAT.wood,ox,oy+27.75,z+0.9,LB('上板：'+st.name,'Pfeifenstock'));
+      const sm=stopMat(i);
+      C.bars.push(box(R,W+1,1.4,1.2,sm,ox,oy+27.6,z-1.6,LB('ストップバー：'+st.name+'（下がるとピンで弁を押し開ける）','Registerbalken')));
+      const vs=[],ps=[];
+      for(let k=0;k<N;k++){
+        const x=C.pos(k); const pv=new T.Group(); pv.position.set(x,oy+23.6,z+2.2); R.add(pv);
+        box(pv,P-2.2,0.7,4,sm,0,0,-2,LB('ばね弁（'+st.name+' / '+KEYNAMES[k]+'。ばねで閉じている）','Springventil'));
+        vs.push(pv); ps.push(rod(R,0.13,MAT.iron,LB('ピン（ストップバーが弁を押す）','Stecher')));
+      }
+      C.valves.push(vs); C.pins.push(ps);
+    }
+  }
+  for(let k=0;k<N;k++){
+    const x=C.pos(k); const pv=new T.Group(); pv.position.set(x,oy+11.25,oz-4); R.add(pv);
+    box(pv,P-1.7,1.4,20,keyMat(k),0,0,10,LB('パレット（'+KEYNAMES[k]+'の弁。押鍵で下に開く）','Spielventil'));
+    C.pal.push(pv); C.wires.push(rod(R,0.1,MAT.metalDark,LB('引き下げ線（パレットの前端から底板を貫いて下へ出る）','Abzugsdraht')));
+    const eye=mk(G_CYL,MAT.brass,R,LB('パレットの目金（引き下げ線を掛ける）','Ventilöse')); eye.scale.set(0.3,0.5,0.3); C.eyes.push(eye);
+    const purse=mk(G_CONE,MAT.leather,R,LB('パルペーテ（引き下げ線が底板を通る穴をふさぐ革袋）','Pulpete')); purse.scale.set(0.75,1.1,0.75); purse.position.set(x,oy-0.55,oz+14);
+    const sx=(P-1.7)/2+0.3;
+    for(const s of [-1,1]) rod(R,0.1,MAT.brass,LB('パレットのガイドピン（パレットが横にずれないよう案内する）','Ventilführungsstift')).set(V3(x+s*sx,oy+12.5,oz+13.2),V3(x+s*sx,oy+8.4,oz+13.2));
+    const bend=V3(x,oy+1.9,oz-2.6);
+    rod(R,0.1,MAT.brass,LB('パレットばね（V字のばね。パレットを押し上げて閉じる）','Ventilfeder')).set(bend,V3(x,oy+1.15,oz+7.5));
+    C.springs.push({u:rod(R,0.1,MAT.brass,LB('パレットばね（V字のばね。パレットを押し上げて閉じる）','Ventilfeder')),bend});
+  }
+  box(R,W,1,1.4,MAT.woodDark,ox,oy+1.5,oz-2.6,LB('ばね受けの桟（ばねの付け根を差し込む）','Federleiste'));
+  C.vol=new Vol((a,b,c,out)=>out.set(ox-W/2+1+a*(W-2),oy+1.8+b*8.6,oz-4.4+c*21.4),o.volN||380,{state:()=>(S.p>4&&(!o.feed||o.feed.full()))?clamp(0.35+0.65*S.p/75,0,1):0});
+  C.chan=[];
+  for(let k=0;k<N;k++){
+    const x=C.pos(k);
+    const ch=new Tube([V3(x,oy+9.5,oz+12),V3(x,oy+13.5,oz+12),V3(x,oy+19,oz+6),V3(x,oy+19,oz-17.5)],{r:0.85,density:0.7,front:o.front||36,state:()=>({open:S.kd[k]>0.22&&C.vol.fill>0.3&&S.p>4,speed:C.chanFlow[k]})});
+    C.chan.push(ch);
+    for(const fp of [[-1.6,2.4,16.8],[1.6,2.6,-3.8],[0,5.5,17.2]]) new Tube([V3(x+fp[0],oy+fp[1],oz+fp[2]),V3(x+fp[0]*0.4,oy+7,oz+(fp[2]+12)/2),V3(x,oy+9.5,oz+12)],{r:0.25,n:4,front:o.front||36,state:()=>({open:ch.head>0&&S.kd[k]>0.22,speed:C.chanFlow[k]*0.8})});
+    for(let i=0;i<5;i++){
+      const nr=i===3?3:1;
+      for(let r=0;r<nr;r++){
+        const zz=oz+ZROW[i]+(i===3?MIXZ[r]:0);
+        const sp=buildPipe(x,zz,i,k,r,oy+30);
+        const d=ch.nearestDist(V3(x,oy+19,zz));
+        const pts=sp.reed
+          ?[V3(x,oy+19,zz),V3(x,oy+24.5,zz),V3(x,oy+30,zz),V3(x,sp.mouthY,zz),V3(x,sp.topY,zz),V3(x,sp.topY+6,zz)]
+          :[V3(x,oy+19,zz),V3(x,oy+24.5,zz),V3(x,oy+30,zz),V3(x,sp.mouthY,zz),V3(x,sp.mouthY+0.8,zz+sp.rad+1.6),V3(x,sp.mouthY+4.5,zz+sp.rad+6)];
+        const tb=new Tube(pts,{r:i===3?0.25:0.35,density:0.3,front:o.front?o.front*0.8:28,state:()=>({open:ch.reached(d)&&S.sp[i]>0.85&&S.p>4,speed:20})});
+        tb.exitU=tb.cum[3]/tb.L;
+        C.tubes.push({k,i,r,tb,md:tb.cum[3]});
+      }
+    }
+  }
+  C.update=function(){
+    for(let k=0;k<N;k++){
+      const th=Math.asin(clamp(KPULL*S.kd[k]/18,0,1)), x=C.pos(k); C.pal[k].rotation.x=th;
+      const ey=oy+11.25-0.7*Math.cos(th)-18*Math.sin(th);
+      C.wires[k].set(V3(x,ey,oz+14),V3(x,oy-1-KPULL*S.kd[k],oz+14)); C.eyes[k].position.set(x,ey-0.1,oz+14);
+      C.springs[k].u.set(C.springs[k].bend,V3(x,oy+11.25-0.7*Math.cos(th)-9*Math.sin(th),oz-4-0.7*Math.sin(th)+9*Math.cos(th)));
+      C.chanFlow[k]=0;
+    }
+    for(const t of C.tubes) if(t.tb.reached(t.md)) C.chanFlow[t.k]+=1;
+    for(let k=0;k<N;k++) C.chanFlow[k]=C.chanFlow[k]>0?12+2.5*C.chanFlow[k]:0;
+    if(!spring){
+      for(let i=0;i<5;i++){ const off=-1.8*(1-S.sp[i]); C.sliders[i].position.x=ox-5+off; for(const dd of C.holes[i]) dd.position.x=dd.userData.bx+off; C.holeMats[i].emissive.copy(COL.stop).multiplyScalar(S.sp[i]>0.85?0.9:0); }
+    } else {
+      for(let i=0;i<5;i++){
+        const dy=0.8*S.sp[i], z=oz+ZROW[i]; C.bars[i].position.y=oy+27.6-dy;
+        const ph=-Math.asin(clamp(dy/3.8,0,1));
+        for(let k=0;k<N;k++){
+          const pv=C.valves[i][k]; pv.rotation.x=ph;
+          const ey=0.35*Math.cos(ph)+3.8*Math.sin(ph), ez=0.35*Math.sin(ph)-3.8*Math.cos(ph);
+          const x=C.pos(k); C.pins[i][k].set(V3(x,oy+26.9-dy,z-1.6),V3(x,pv.position.y+ey,pv.position.z+ez));
+        }
+      }
+    }
+  };
+  C.pullDown=k=>V3(C.pos(k),oy-1-KPULL*S.kd[k],oz+14);
+  C.speaking=()=>{ const out=[]; if(S.p<8) return out; for(const t of C.tubes) if(t.tb.reached(t.md)) out.push(t); return out; };
+  return C;
+}
+
+/* ---------------- keyboard & key actions ---------------- */
+const SLOT={0:0,2:1,4:2,5:3,7:4,9:5,11:6,12:7}, BPOS={1:.5,3:1.5,6:3.5,8:4.5,10:5.5};
+/* Suspended keyboard (hängende Klaviatur): each key lever is pivoted on a pin in the tail rack and hangs from its tracker,
+   which is attached behind the sharps. Pull at the tracker = 1.35 × key depth (same as the pallet pull-down travel). */
+const KLEN=56, KATT=20, KPULL=1.35, KH=2.4, TAILP=1.75;
+function buildKeyboard(o){
+  const R=CX.root, KB={piv:[]}, zt=o.z-KLEN, y0=o.y+KH/2, dA=KLEN-KATT;
+  const xp=k=>o.x+((k in SLOT?SLOT[k]:BPOS[k])-3.5)*3;
+  KB.kx=k=>o.x+(k-6)*TAILP;
+  KB.th=k=>KPULL*S.kd[k]/dA;
+  // frame
+  box(R,30,1,KLEN+6,MAT.woodDark,o.x,o.y-3,zt+KLEN/2-1,LB('鍵盤の底板','Klaviaturboden'));
+  box(R,26,0.4,1.6,MAT.cloth,o.x,o.y-KPULL*KLEN/dA-0.2,o.z-1.4,LB('下止めのフェルト（白鍵の深さを決める）','Tastenfilz'));
+  box(R,26,0.4,1.4,MAT.cloth,o.x,o.y-KPULL*(KLEN-7)/dA-0.2,o.z-7.5,LB('下止めのフェルト（黒鍵の深さを決める）','Tastenfilz'));
+  box(R,26,0.6,1.4,MAT.wood,o.x,o.y-2.2,o.z-10,LB('ガイドピンの桟','Führungsleiste'));
+  for(let k=0;k<13;k++){ const g=rod(R,0.12,MAT.brass,LB('前のガイドピン（鍵の下の溝に入り、鍵が左右に振れないよう案内する）','Führungsstift')); g.set(V3(xp(k),o.y-2.2,o.z-10),V3(xp(k),o.y+0.8,o.z-10)); }
+  const rw=13*TAILP+3;
+  box(R,rw,KH+3.5,2.4,MAT.wood,o.x,o.y-0.75,zt-1.6,LB('尾部のラック（鍵の支点）','Tastenrechen'));
+  for(let j=0;j<=13;j++) box(R,0.22,KH+2,3.2,MAT.woodDark,o.x+(j-6.5)*TAILP,y0+0.3,zt+0.6,LB('ラックの仕切り（鍵の奥端を1本ずつ案内する）','Rechenstäbchen'));
+  const pr=mk(G_ROD,MAT.iron,R,LB('支点のピン（鍵の奥端を貫く）','Drehstift')); pr.rotation.z=Math.PI/2; pr.scale.set(0.16,rw,0.16); pr.position.set(o.x,y0,zt+0.4);
+  for(const s of [-1,1]){ box(R,1.4,7,19,MAT.wood,o.x+s*13.6,o.y+0.5,o.z-9,LB('鍵盤の側板','Backe')); box(R,1.4,KH+4.5,2,MAT.wood,o.x+s*13.6,o.y+0.75,o.z-26,LB('上止めの桟の支柱','Anschlagleistenstütze')); }
+  box(R,28.6,1.2,2,MAT.wood,o.x,o.y+KH+0.75,o.z-26,LB('上止めの桟（鍵が戻る高さを決める）','Anschlagleiste'));
+  box(R,26,0.3,2,MAT.cloth,o.x,o.y+KH+0.05,o.z-26,LB('上止めのフェルト','Anschlagfilz'));
+  // keys
+  for(let k=0;k<13;k++){
+    const w=(k in SLOT), pv=new T.Group(); pv.position.set(0,y0,zt); R.add(pv);
+    const lm=keyMat(k), xt=KB.kx(k), xk=xp(k), hm=mclone(w?MAT.ivory:MAT.ebony);
+    const lab=LB('鍵のレバー（'+KEYNAMES[k]+'。奥端のピンを支点に上下する）','Tastenhebel');
+    box(pv,1.45,KH,KLEN-19.5,lm,xt,0,(KLEN-19.5)/2,lab);
+    const cr=plank(pv,1.45,KH,lm,lab); cr.set(V3(xt,0,KLEN-19.6),V3(xk,0,KLEN-16.9));
+    const fEnd=w?KLEN:KLEN-6;
+    box(pv,1.45,KH,fEnd-(KLEN-17),lm,xk,0,(fEnd+KLEN-17)/2,lab);
+    if(w){
+      box(pv,2.75,0.6,6,hm,xk,KH/2+0.3,KLEN-3,LB('鍵 '+KEYNAMES[k]+'（白鍵の表面）','Untertaste'));
+      const L=(k-1>=0&&!(k-1 in SLOT))?xp(k-1)+0.85:xk-1.4, Rr=(k+1<13&&!(k+1 in SLOT))?xp(k+1)-0.85:xk+1.4;
+      box(pv,Rr-L,0.6,11.1,hm,(L+Rr)/2,KH/2+0.3,KLEN-11.5,LB('鍵 '+KEYNAMES[k]+'（白鍵の表面）','Untertaste'));
+    } else {
+      box(pv,1.6,2,11,hm,xk,KH/2+1,KLEN-11.5,LB('鍵 '+KEYNAMES[k]+'（黒鍵）','Obertaste'));
+    }
+    const hole=mk(G_DISC,MAT.dark,pv,LB('トラッカーを通す穴','Bohrung')); hole.rotation.x=-Math.PI/2; hole.scale.set(0.28,0.28,0.28); hole.position.set(xt,KH/2+0.01,dA);
+    KB.piv.push({pv,hm,xt});
+  }
+  const toW=(k,ly,lz)=>{ const t=KB.th(k); return V3(KB.piv[k].xt,y0+ly*Math.cos(t)-lz*Math.sin(t),zt+ly*Math.sin(t)+lz*Math.cos(t)); };
+  KB.attach=k=>toW(k,KH/2,dA);
+  KB.update=()=>{ for(let k=0;k<13;k++){ const q=KB.piv[k]; q.pv.rotation.x=KB.th(k); q.hm.emissive.copy(COL.key).multiplyScalar(0.35*S.kd[k]); } };
+  return KB;
+}
+/* A tracker as built: thin flat wooden strip, a threaded wire at each end, a leather nut where it meets a key or arm. */
+function makeTracker(m,label){
+  const R=CX.root;
+  const wTop=rod(R,0.07,MAT.iron,LB('ワイヤー（トラッカーの上端）','Draht'));
+  const wBot=rod(R,0.07,MAT.iron,LB('ネジ線（鍵や腕の穴を通る）','Gewindedraht'));
+  const wood=plank(R,0.9,0.22,m,label);
+  const nTop=mk(G_CYL,MAT.leather,R,LB('革ナット（回して長さを調整する）','Ledermutter')); nTop.scale.set(0.42,0.3,0.42);
+  const nBot=mk(G_CYL,MAT.leather,R,LB('革ナット（鍵や腕の下で受ける。回して長さを調整する）','Ledermutter')); nBot.scale.set(0.45,0.34,0.45);
+  const B=V3(0,0,0),Cc=V3(0,0,0),D=V3(0,0,0),dir=V3(0,0,0);
+  return {set(top,bottom,thick){
+    dir.subVectors(bottom,top); const L=dir.length()||1e-3; dir.divideScalar(L);
+    B.copy(top).addScaledVector(dir,Math.min(3,L*0.18)); Cc.copy(bottom).addScaledVector(dir,-Math.min(3.2,L*0.2)); D.copy(bottom).addScaledVector(dir,thick+0.25);
+    wTop.set(top,B); wood.set(B,Cc); wBot.set(Cc,D);
+    nTop.position.copy(top).addScaledVector(dir,-0.15); nTop.quaternion.setFromUnitVectors(UP,dir);
+    nBot.position.copy(D).addScaledVector(dir,-0.05); nBot.quaternion.setFromUnitVectors(UP,dir);
+  }};
+}
+function buildSuspended(chest,kb){
+  const trs=[]; for(let k=0;k<13;k++) trs.push(makeTracker(keyMat(k),LB('トラッカー（'+KEYNAMES[k]+'。鍵を風箱のパレットに吊る薄い木の棒）','Abstrakte')));
+  return {update(){ for(let k=0;k<13;k++) trs[k].set(chest.pullDown(k),kb.attach(k),KH); }};
+}
+function buildRollerSquare(chest,kb){
+  const R=CX.root, items=[], zr=11, a=3, ys1=34, zs2=chest.oz+14-a;
+  const xs=[]; for(let k=0;k<13;k++){ xs.push(kb.kx(k),chest.pos(k)); }
+  const xmin=Math.min(...xs)-3, xmax=Math.max(...xs)+3;
+  box(R,xmax-xmin,20,0.8,MAT.wood,(xmin+xmax)/2,21.5,zr-1.1,LB('ローラーボード（ローラーを支える板）','Wellenbrett'));
+  box(R,xmax-xmin,1.2,1.2,MAT.woodDark,(xmin+xmax)/2,ys1,zr-0.9,LB('スクエアの軸受け','Winkelbalken'));
+  box(R,chest.W+4,1.2,1.2,MAT.woodDark,chest.ox,ys1,zs2-0.9,LB('スクエアの軸受け','Winkelbalken'));
+  for(let k=0;k<13;k++){
+    const x1=kb.kx(k), x2=chest.pos(k), yk=13.5+k*1.25, m=keyMat(k);
+    const roll=mk(G_CYL,m,R,LB('ローラー（'+KEYNAMES[k]+'。回転して引く位置を左右に移す）','Welle')); roll.rotation.z=Math.PI/2; roll.scale.set(0.42,Math.abs(x2-x1)+1.4,0.42); roll.position.set((x1+x2)/2,yk,zr);
+    for(const xx of [Math.min(x1,x2)-0.9,Math.max(x1,x2)+0.9]) box(R,0.7,1.6,1.4,MAT.woodDark,xx,yk,zr-0.4,LB('ローラーの軸受け（ローラーの両端のピンを受ける）','Wellenböckchen'));
+    const it={k,x1,x2,yk,m,
+      t1:makeTracker(m,LB('トラッカー（鍵→ローラー）','Abstrakte')),
+      a1:rod(R,0.32,m,LB('ローラーの腕','Wellenärmchen')), a2:rod(R,0.32,m,LB('ローラーの腕','Wellenärmchen')),
+      t2:makeTracker(m,LB('トラッカー（ローラー→スクエア）','Abstrakte')),
+      sa:rod(R,0.32,m,LB('スクエア（L字の腕木。引く向きを90度変える）','Winkel')), sb:rod(R,0.32,m,LB('スクエア','Winkel')),
+      t3:makeTracker(m,LB('水平のトラッカー','Abstrakte')),
+      sc:rod(R,0.32,m,LB('スクエア（風箱側）','Winkel')), sd:rod(R,0.32,m,LB('スクエア（風箱側）','Winkel')),
+      t4:makeTracker(m,LB('トラッカー（スクエア→パレット）','Abstrakte'))};
+    items.push(it);
+  }
+  return {update(){
+    for(const it of items){
+      const dy=KPULL*S.kd[it.k]; const ph=Math.asin(clamp(dy/a,0,1));
+      const c=Math.cos(ph), s=Math.sin(ph);
+      const tip1=V3(it.x1,it.yk-a*s,zr+a*c), tip2=V3(it.x2,it.yk-a*s,zr+a*c);
+      it.t1.set(tip1,kb.attach(it.k),KH); it.a1.set(V3(it.x1,it.yk,zr),tip1); it.a2.set(V3(it.x2,it.yk,zr),tip2);
+      const piv1=V3(it.x2,ys1,zr), saT=V3(it.x2,ys1-a*s,zr+a*c), sbT=V3(it.x2,ys1+a*c,zr+a*s);
+      it.t2.set(saT,tip2,0.6); it.sa.set(piv1,saT); it.sb.set(piv1,sbT);
+      const piv2=V3(it.x2,ys1,zs2), sdT=V3(it.x2,ys1-a*s,zs2+a*c), scT=V3(it.x2,ys1+a*c,zs2+a*s);
+      it.t3.set(sbT,scT,0.6); it.sc.set(piv2,scT); it.sd.set(piv2,sdT);
+      it.t4.set(chest.pullDown(it.k),sdT,0.6);
+    }
+  }};
+}
+function buildStopAction(chest,o){
+  const R=CX.root, a1=8, a2=4, xr=chest.ox-chest.W/2-20, xk=xr+a1, yTop=chest.oy+26;
+  box(R,5,26,3,MAT.wood,xk,o.ky0+8,o.kz-1.6,LB('ストップノブの板（ストップジャム）','Registerbank'));
+  const its=[];
+  for(let i=0;i<5;i++){
+    const yk=o.ky0+i*4, zs=chest.oz+ZROW[i], zr=zs+a2, m=stopMat(i);
+    const knob=mk(G_CYL,MAT.ebony,R,LB('ストップノブ：'+STOPS[i].name+'（手前に引くと入る）','Registerzug')); knob.rotation.x=Math.PI/2; knob.scale.set(1.3,2.2,1.3);
+    const face=mk(G_CYL,MAT.ivory,R,LB('ストップ名の札：'+STOPS[i].name,'Registerschild')); face.rotation.x=Math.PI/2; face.scale.set(0.95,0.25,0.95);
+    const roller=cyl(R,0.6,yTop-yk,m,xr,(yTop+yk)/2,zr,LB('ストップのローラー（縦軸で回る）','Registerwelle'));
+    its.push({i,yk,zs,zr,m,knob,face,roller,
+      shaft:rod(R,0.35,m,LB('ノブの軸（トレース）','Registerzugstange')),
+      arm1:rod(R,0.4,m,LB('ローラーの下の腕（8）','Registerärmchen')),
+      arm2:rod(R,0.4,m,LB('ローラーの上の腕（4）','Registerärmchen')),
+      link:rod(R,0.35,m,LB('スライダーへのつなぎ棒','Schleifenzug'))});
+  }
+  return {update(){
+    for(const it of its){
+      const sp=S.sp[it.i], ps=-Math.asin(clamp(3.6*sp/a1,0,1));
+      const tip1=V3(xr+a1*Math.cos(ps),it.yk,it.zr-a1*Math.sin(ps));
+      const tip2=V3(xr-a2*Math.sin(ps),yTop,it.zr-a2*Math.cos(ps));
+      const kz=o.kz+3.6*sp;
+      it.knob.position.set(xk,it.yk,kz+1.1); it.face.position.set(xk,it.yk,kz+2.3);
+      it.shaft.set(V3(xk,it.yk,kz),tip1); it.arm1.set(V3(xr,it.yk,it.zr),tip1); it.arm2.set(V3(xr,yTop,it.zr),tip2);
+      it.link.set(tip2,V3(chest.ox-chest.W/2-12-1.8*(1-sp),yTop,it.zs));
+    }
+  }};
+}
+
+/* ---------------- wind supply ---------------- */
+function buildWedge(x,z,th0){
+  const R=CX.root, L=40, Wd=20, B={th:th0,hold:false,timer:0,autoP:false,pumping:false,supplying:false,x,z,L};
+  box(R,L+2,1.5,Wd+2,MAT.wood,x+L/2,0.75,z,LB('下板（固定）','Unterplatte'));
+  const top=new T.Group(); top.position.set(x,1.5,z); R.add(top);
+  box(top,L+2,1.5,Wd+2,MAT.wood,L/2,0.75,0,LB('上板（奥の蝶番を中心に開閉する）','Oberplatte'));
+  const WL=LB('おもり（この重さが風圧になる）','Gewicht');
+  box(top,7,3,7,MAT.weight,L-7,3,-5,WL); box(top,7,3,7,MAT.weight,L-7,3,5,WL); box(top,7,3,7,MAT.weight,L-15,3,0,WL);
+  const sides=[-1,1].map(s=>{ const m=mk(G_TRI,MAT.leather,R,LB('ひだ（革と板で風を封じる）','Falten')); m.position.set(x,1.5,z+s*(Wd/2+0.6)); return m; });
+  const front=box(R,0.4,1,Wd+1.2,MAT.leather,x+L,1.5,z,LB('ひだ（前面）','Falten'));
+  const inf=new T.Group(); inf.position.set(x+L-14,1.55,z); R.add(inf);
+  box(inf,6,0.4,7,MAT.leather,3,0.2,0,LB('吸気弁（ふいごを持ち上げる間だけ開いて外気を吸う）','Schöpfventil'));
+  const ofl=new T.Group(); ofl.position.set(x+1,-0.3,z); R.add(ofl);
+  box(ofl,5,0.4,7,MAT.leather,2.5,0,0,LB('逆止弁（風導管へ送る間だけ開く）','Rückschlagventil'));
+  box(R,2,46,2,MAT.woodDark,x-20,23,z,LB('レバーの支柱','Balgstütze'));
+  const lever=rod(R,0.8,MAT.woodDark,LB('ふいごレバー（カルカントが左端を踏む）','Balghebel'));
+  const rope=rod(R,0.15,MAT.cloth,LB('引き綱','Seil'));
+  const step=box(R,6,0.8,5,MAT.wood,x-40,40,z,LB('踏み板（カルカントがここを踏む）','Tritt'));
+  B.update=()=>{
+    const th=B.th, h=L*Math.sin(th);
+    top.rotation.z=th;
+    sides.forEach(m=>m.scale.set(L*Math.cos(th),Math.max(0.01,h),1));
+    front.scale.y=Math.max(0.05,h); front.position.set(x+L*Math.cos(th),1.5+h/2,z);
+    inf.rotation.z=B.pumping?0.55:0; ofl.rotation.z=B.supplying?-0.5:0;
+    const fx=x+(L-2)*Math.cos(th), fy=1.5+(L-2)*Math.sin(th)+1.5;
+    const sinp=clamp((fy+30-45)/58,-1,1), p=Math.asin(sinp);
+    const rt=V3(x-20+58*Math.cos(p),45+58*sinp,z), lt=V3(x-20-20*Math.cos(p),45-20*sinp,z);
+    lever.set(lt,rt); rope.set(rt,V3(fx,fy,z)); step.position.set(lt.x,lt.y-0.8,z);
+  };
+  // particles
+  new Tube([V3(x+L-11,-7,z),V3(x+L-11,3,z),V3(x+L-20,5,z)],{kind:'air',r:1.2,density:0.6,state:()=>({open:B.pumping,speed:24})});
+  new Vol((a,b,c,out)=>{ const u=0.1+0.86*a, X=u*L*Math.cos(B.th); out.set(x+X,1.5+0.9+b*Math.max(0,u*L*Math.sin(B.th)-1.6),z+(c-0.5)*17); },170,{state:()=>B.th>0.004?0.15+0.85*B.th/0.34:0,rate:3});
+  B.out=new Tube([V3(x+5,2,z),V3(x+3,-1,z),V3(x-4,-1,z),V3(x-4,-4,z),V3(x-4,-4,6)],{r:0.9,density:0.6,state:()=>({open:B.supplying,speed:B.flow||6})});
+  return B;
+}
+function buildBlowerMag(o){
+  const R=CX.root, M={h:o.h0==null?0.8:o.h0,blower:o.on!==false,rpm:o.on===false?0:1,vo:0,n:0};
+  box(R,16,16,16,MAT.casing,-122,8,0,LB('送風機のケース','Gebläsegehäuse'));
+  const imp=new T.Group(); imp.position.set(-122,8,1); R.add(imp);
+  const hub=mk(G_CYL,MAT.iron,imp,LB('羽根車（回転して風を起こす）','Laufrad')); hub.scale.set(6.6,1.2,6.6); hub.rotation.x=Math.PI/2; hub.position.z=-1.6;
+  for(let b=0;b<8;b++){ const bl=box(imp,0.6,6.2,3,MAT.metalDark,0,0,0,LB('羽根車の羽根','Laufradschaufel')); const an=b/8*Math.PI*2; bl.position.set(Math.cos(an)*3.8,Math.sin(an)*3.8,0); bl.rotation.z=an-Math.PI/2+0.35; }
+  const mot=mk(G_CYL,MAT.iron,R,LB('電動モーター','Motor')); mot.rotation.x=Math.PI/2; mot.scale.set(4.5,8,4.5); mot.position.set(-122,8,-12);
+  const ring=mk(G_CYL_OPEN,MAT.iron,R,LB('吸気口','Ansaugöffnung')); ring.rotation.x=Math.PI/2; ring.scale.set(4.2,2,4.2); ring.position.set(-122,8,9);
+  duct([V3(-114,5,0),V3(-92,5,0)],5,MAT.casing,LB('送風管','Windleitung'));
+  box(R,14,10,12,MAT.wood,-85,5,0,LB('調整弁の箱（カーテン弁）','Rollvorhangventil'));
+  const rl=mk(G_CYL,MAT.woodPale,R,LB('カーテンの巻き取り軸','Rolle')); rl.rotation.x=Math.PI/2; rl.scale.set(0.6,11,0.6); rl.position.set(-90,9.4,0);
+  const curtain=box(R,0.2,1,10,MAT.cloth,-90,8,0,LB('カーテン（下りると送風の入口をふさぐ）','Vorhang'));
+  const LG=LB('ふいごの脚','Balgbock');
+  for(const [lx,lz] of [[-94,-14],[-94,14],[-56,-14],[-56,14]]) box(R,2,10,2,MAT.woodDark,lx,5,lz,LG);
+  box(R,40,1,30,MAT.wood,-75,10.5,0,LB('マガジンふいごの下板','Unterplatte'));
+  const top=new T.Group(); R.add(top);
+  box(top,42,1.2,32,MAT.wood,0,0.6,0,LB('マガジンふいごの上板（上下に平行移動する）','Oberplatte'));
+  const WL=LB('おもり（この重さで風圧が決まる）','Gewicht');
+  box(top,10,4,8,MAT.weight,-10,3.2,-7,WL); box(top,10,4,8,MAT.weight,10,3.2,7,WL); box(top,10,4,8,MAT.weight,10,3.2,-7,WL);
+  const RL=LB('リブ（折りたたまれる板と革のひだ）','Falten');
+  const ribs={f1:plank(R,40,0.5,MAT.leather,RL),f2:plank(R,40,0.5,MAT.leather,RL),b1:plank(R,40,0.5,MAT.leather,RL),b2:plank(R,40,0.5,MAT.leather,RL),
+              l1:plank(R,0.5,30,MAT.leather,RL),l2:plank(R,0.5,30,MAT.leather,RL),r1:plank(R,0.5,30,MAT.leather,RL),r2:plank(R,0.5,30,MAT.leather,RL)};
+  const pul=mk(G_CYL,MAT.brass,R,LB('滑車','Rolle')); pul.rotation.x=Math.PI/2; pul.scale.set(1.2,1,1.2); pul.position.set(-99,46,0);
+  const c1=rod(R,0.12,MAT.cloth,LB('ひも（上板の高さをカーテンに伝える）','Schnur')), c2=rod(R,0.12,MAT.cloth,LB('ひも','Schnur'));
+  duct(o.trunkPts,6,MAT.wood,LB('風導管（ふいごから風箱へ）','Windkanal'));
+  const topY=()=>13+22*M.h;
+  M.update=(dt,n)=>{
+    M.n=n; M.rpm+=((M.blower?1:0)-M.rpm)*Math.min(1,dt*1.2);
+    M.vo=clamp((0.82-M.h)/0.3,0,1);
+    const inflow=M.rpm*M.vo*0.45, outflow=M.h>0.001?0.02+0.011*n:0;
+    M.h=clamp(M.h+(inflow-outflow)*dt,0,1);
+    const target=M.h>0.015?80:M.rpm*M.vo*20; S.p+=(target-S.p)*Math.min(1,dt*(target>S.p?6:4));
+    imp.rotation.z-=M.rpm*dt*30;
+    const ty=topY(); top.position.set(-75,ty,0);
+    const H=ty-11, hf=H/2, d=Math.sqrt(Math.max(0,169-hf*hf));
+    ribs.f1.set(V3(-75,11,15),V3(-75,11+hf,15+d)); ribs.f2.set(V3(-75,11+hf,15+d),V3(-75,ty,15));
+    ribs.b1.set(V3(-75,11,-15),V3(-75,11+hf,-15-d)); ribs.b2.set(V3(-75,11+hf,-15-d),V3(-75,ty,-15));
+    ribs.l1.set(V3(-94.5,11,0),V3(-94.5+d,11+hf,0)); ribs.l2.set(V3(-94.5+d,11+hf,0),V3(-94.5,ty,0));
+    ribs.r1.set(V3(-55.5,11,0),V3(-55.5-d,11+hf,0)); ribs.r2.set(V3(-55.5-d,11+hf,0),V3(-55.5,ty,0));
+    M.d=d;
+    const cl=8*(1-M.vo); curtain.scale.y=Math.max(0.05,cl); curtain.position.y=9.4-cl/2;
+    c1.set(V3(-94,ty+1.2,0),V3(-99,46,0)); c2.set(V3(-99,46,0),V3(-90,9.4-cl,0));
+  };
+  M.intake=new Tube([V3(-122,8,26),V3(-122,8,8)],{kind:'air',r:1.6,density:0.8,front:o.front||40,state:()=>({open:M.rpm>0.15,speed:30*M.rpm})});
+  M.blowOut=new Tube([V3(-118,5,0),V3(-114,5,0),V3(-92,5,0)],{r:1.4,density:0.75,front:o.front||40,state:()=>({open:M.rpm>0.25,speed:4+30*M.rpm*M.vo})});
+  M.thru=new Tube([V3(-91,5,0),V3(-86,5,0),V3(-84,8,0),V3(-84,12.5,0)],{r:1.1,density:0.8,front:o.front||40,state:()=>({open:M.blowOut.full()&&M.vo>0.05,speed:30*M.rpm*M.vo})});
+  M.vol=new Vol((a,b,c,out)=>{ const ty=topY(), y=11.7+b*(ty-12.4), q=(y-11)/Math.max(1,ty-11), off=(M.d||0)*(1-Math.abs(2*q-1))+1.2; out.set(lerp(-94.5+off,-55.5-off,a),y,(c-0.5)*27); },320,{state:()=>M.h>0.012?0.15+0.85*M.h:0,rate:o.front?0.5:1.4});
+  M.trunk=new Tube(o.trunkPts,{r:1.7,density:0.4,front:o.front||45,state:()=>({open:M.h>0.012&&S.p>10&&(!o.front||M.thru.full()||M.vol.fill>0.5),speed:8+3*M.n})});
+  M.reset=()=>{ M.h=0; M.rpm=0; S.p=0; for(const f of flows) f.reset(); };
+  return M;
+}
+
+/* ---------------- model definitions ---------------- */
+let TIMERS=[];
+function later(ms,fn){ TIMERS.push(setTimeout(fn,ms)); }
+function clearTimers(){ TIMERS.forEach(clearTimeout); TIMERS=[]; }
+
+const MODELS={
+'a-01':{id:'A-01',name:'くさび型ふいご（人力）',terms:'Keilbalg · wedge bellows',stops0:[1,0,1,0,0],own:true,floor:-7,
+  cam:{p:[15,115,240],t:[-58,38,0]},clip:[-160,34],
+  summary:'片側を蝶番で留めた上板が扇のように開閉するふいごです。カルカント（ふいご踏み）がレバーを踏んで上板を持ち上げ、離すと上板のおもりの重さで風が押し出されます。2台を交互に踏むことで風を途切れさせません。',
+  steps:[
+    {t:'両方のふいごに風が入った状態から始めます。上板に載ったおもりの重さが、風に一定の圧力（約75 mm）をかけています。',run:a=>{a.keys([]);a.ctl('auto',false);}},
+    {t:'和音を弾くと、ふいごの風が風導管を通って風箱へ流れ、上板が少しずつ下がっていきます。',run:a=>{a.stops([1,1,1,0,0]);a.keys([0,4,7]);}},
+    {t:'ふいご1を踏みます。上板が持ち上がる間は吸気弁が開いて外気（灰色の粒子）が入り、出口の逆止弁は閉じます。その間はふいご2だけが風を送ります。',run:a=>a.ctl('pump0',2.4)},
+    {t:'誰も踏まずにいると、両方が空になったところで水柱計が下がり、音程が下がって音が弱まります。',run:a=>{a.ctl('auto',false);a.keys([0,4,7,12]);a.stops([1,1,1,1,0]);}},
+    {t:'「カルカント自動」を入れると、空に近いふいごから交互に踏まれ、風が途切れなくなります。',run:a=>a.ctl('auto',true)}
+  ],
+  build(){
+    let chest=null;
+    const bs=[buildWedge(-110,-12,0.30),buildWedge(-110,12,0.21)];
+    duct([V3(-107,-1,-12),V3(-114,-1,-12),V3(-114,-4,-12)],4,MAT.wood,LB('ふいごの出口','Balgkanal'));
+    duct([V3(-107,-1,12),V3(-114,-1,12),V3(-114,-4,12)],4,MAT.wood,LB('ふいごの出口','Balgkanal'));
+    duct([V3(-114,-4,-12),V3(-114,-4,12)],5,MAT.wood,LB('ふいごの出口をまとめる管','Sammelkanal'));
+    const tp=[V3(-114,-4,6),V3(-40,-4,6),V3(-40,36,6),V3(-33,36,6)];
+    duct(tp,6,MAT.wood,LB('風導管（ふいごから風箱へ）','Windkanal'));
+    const trunk=new Tube(tp,{r:1.7,density:0.4,front:45,state:()=>({open:S.p>10,speed:8+3*(chest?chest.speaking().length:0)})});
+    chest=buildChest({y:30,feed:trunk});
+    const thMax=0.34, m={auto:false};
+    return {chest,controls:[
+      {type:'toggle',id:'auto',label:'カルカント自動',get:()=>m.auto,set:v=>m.auto=v},
+      {type:'hold',label:'ふいご1を踏む',down:()=>bs[0].hold=true,up:()=>bs[0].hold=false},
+      {type:'hold',label:'ふいご2を踏む',down:()=>bs[1].hold=true,up:()=>bs[1].hold=false}],
+      ctl:{auto:v=>m.auto=v,pump0:s=>bs[0].timer=s},
+      update(dt){
+        const n=chest.speaking().length, cons=thMax*(0.004+0.0125*n);
+        bs.forEach(b=>b.timer=Math.max(0,b.timer-dt));
+        if(m.auto){ bs.forEach((b,i)=>{ const o=bs[1-i]; if(!b.autoP&&b.th<0.14*thMax&&!o.autoP&&!o.pumping) b.autoP=true; if(b.autoP&&b.th>=thMax*0.97) b.autoP=false; }); } else bs.forEach(b=>b.autoP=false);
+        bs.forEach(b=>{ b.pumping=b.hold||b.timer>0||b.autoP; if(b.pumping) b.th=Math.min(thMax,b.th+thMax*0.6*dt); });
+        const sup=bs.filter(b=>!b.pumping&&b.th>0.003);
+        bs.forEach(b=>{ b.supplying=sup.includes(b); b.flow=6+2.5*n; });
+        sup.forEach(b=>b.th=Math.max(0,b.th-cons/sup.length*dt));
+        const target=sup.length?74+3*(sup[0].th/thMax):0;
+        S.p+=(target-S.p)*Math.min(1,dt*(target>S.p?8:4));
+        chest.update(dt); bs.forEach(b=>b.update());
+      }};
+  }},
+'a-03':{id:'A-03',name:'電動ブロワー＋マガジンふいご',terms:'Gebläse + Magazinbalg · blower + reservoir',stops0:[1,0,1,0,0],own:true,floor:0,
+  cam:{p:[15,105,230],t:[-52,38,0]},clip:[-135,34],
+  summary:'電動の送風機（ブロワー）が連続して風を送り、マガジンふいご（リザーバー）が上板のおもりで風圧を一定に保ちます。上板が上がりすぎるとひもでカーテン弁が下り、入る風が絞られます。下がれば再び開く、という自動調整です。',
+  steps:[
+    {t:'送風機を止めた状態です。ふいごは空で、風箱にも風がありません。',run:a=>{a.keys([]);a.ctl('reset');a.ctl('blower',false);}},
+    {t:'送風機を回します。羽根車が外気を吸い込み、カーテン弁を通ってふいごへ風が入り、上板が持ち上がります。',run:a=>a.ctl('blower',true)},
+    {t:'上板が上がるとひもでカーテンが下り、流入が絞られます。流入と消費がつり合った高さで上板が止まり、風圧は約80 mmに保たれます。',run:()=>{}},
+    {t:'たくさんの鍵とストップを使うと消費が増えて上板が下がり、カーテンが開いて流入が増えます。',run:a=>{a.stops([1,1,1,1,1]);a.keys([0,4,7,12,2]);}},
+    {t:'送風機を止めて弾き続けると、上板が下がりきったところで風圧が失われます。',run:a=>{a.ctl('blower',false);a.stops([1,1,1,1,1]);a.keys([0,4,7,12,2]);}}
+  ],
+  build(){
+    let chest=null;
+    const M=buildBlowerMag({trunkPts:[V3(-60,11.5,6),V3(-60,6,6),V3(-40,6,6),V3(-40,36,6),V3(-33,36,6)]});
+    chest=buildChest({y:30,feed:M.trunk});
+    return {chest,controls:[{type:'toggle',id:'blower',label:'送風機',get:()=>M.blower,set:v=>M.blower=v}],
+      ctl:{blower:v=>M.blower=v,reset:()=>M.reset()},
+      update(dt){ M.update(dt,chest.speaking().length); chest.update(dt); }};
+  }},
+'a-06':{id:'A-06',name:'風路全体',terms:'Windversorgung · wind system',stops0:[1,0,1,0,0],own:true,floor:0,
+  cam:{p:[40,150,315],t:[-48,62,0]},clip:[-135,34],
+  summary:'送風機から調整弁、マガジンふいご、風導管、風箱を経てパイプに至るまでの風の通り道を、1台の楽器として通して見ます。番号は風が届く順番です。スロー再生にすると、風の先端が進む様子がよくわかります。',
+  steps:[
+    {t:'送風機を止め、楽器の中の風をすべて抜いた状態にします。',run:a=>{a.keys([]);a.ctl('reset');a.ctl('blower',false);a.speed(1);}},
+    {t:'1/4のスローで送風機を回します。風が①から⑤へ、番号の順に満ちていきます。',run:a=>{a.speed(0.25);a.ctl('blower',true);}},
+    {t:'風箱が満ちたら等速に戻して鍵Cを押します。風は⑤の風箱から⑥のパイプへ抜けて音になります。',run:a=>{a.speed(1);a.keys([0]);}},
+    {t:'ストップノブを引くとスライダーが動き、同じ鍵でも鳴るパイプが増えます。',run:a=>{a.stops([1,1,1,1,0]);a.keys([0,7]);}},
+    {t:'和音を弾きながら、ふいごの上板とカーテン弁の動きを見ます。',run:a=>{a.stops([1,1,1,1,1]);a.keys([0,4,7,12]);a.cam([-40,70,150],[-75,25,0]);}}
+  ],
+  build(){
+    const M=buildBlowerMag({front:16,trunkPts:[V3(-60,11.5,6),V3(-60,6,6),V3(-40,6,6),V3(-40,66,6),V3(-33,66,6)]});
+    const chest=buildChest({y:60,feed:M.trunk,front:16});
+    const kb=buildKeyboard({x:0,y:20,z:34}); box(CX.root,30,16.5,61,MAT.woodDark,0,8.25,5.5,LB('演奏台（コンソール）の台','Spieltisch'));
+    const sus=buildSuspended(chest,kb), sa=buildStopAction(chest,{ky0:24,kz:26});
+    return {chest,controls:[{type:'toggle',id:'blower',label:'送風機',get:()=>M.blower,set:v=>M.blower=v}],
+      ctl:{blower:v=>M.blower=v,reset:()=>M.reset()},
+      pins:[{n:'1',t:'送風機',p:V3(-122,20,0)},{n:'2',t:'調整弁',p:V3(-85,2,8)},{n:'3',t:'マガジンふいご',p:V3(-75,44,0)},{n:'4',t:'風導管',p:V3(-40,40,9)},{n:'5',t:'風箱',p:V3(10,62,22)},{n:'6',t:'パイプ',p:V3(0,132,0)},{t:'鍵盤',p:V3(0,25,30)},{t:'ストップノブ',p:V3(-44.5,18,32)}],
+      update(dt){ M.update(dt,chest.speaking().length); chest.update(dt); kb.update(); sus.update(); sa.update(); }};
+  }},
+'b-01':{id:'B-01',name:'スライダーチェスト',terms:'Schleiflade · slider chest',stops0:[1,0,1,0,0],floor:-8,
+  cam:{p:[80,74,112],t:[0,36,0]},clip:[-33,34],
+  summary:'鍵ごとに「トーンチャンネル」と呼ばれる細長い部屋があり、押鍵でその下のパレットが開きます。部屋の上を横切るスライダー（ストップごとの細長い板）の穴が、上下の穴と一致したストップのパイプだけが鳴ります。機械式オルガンで最も広く使われてきた風箱です。',
+  steps:[
+    {t:'木部を透かします。風箱の下半分（パレットボックス）には、送風機から来た風が常に満ちています。',run:a=>{a.xray(true);a.cut(0);a.keys([]);a.stops([0,0,0,0,0]);}},
+    {t:'ストップを入れずに鍵Eを押します（1/4スロー）。Eのパレットが下に開いてチャンネルに風が入りますが、スライダーの穴がずれているので風は止まり、音は出ません。',run:a=>{a.speed(0.25);a.stops([0,0,0,0,0]);a.keys([4]);}},
+    {t:'Prinzipal 2′ を入れます。スライダーが横に動いて穴が一致し（緑）、そのパイプにだけ風が抜けて鳴ります。',run:a=>{a.stops([0,0,1,0,0]);a.keys([4]);}},
+    {t:'Gedackt 8′ と Mixtur も入れます。1つのチャンネルの風が、穴の開いたすべてのパイプへ分かれます。Mixturは1鍵で3本が同時に鳴ります。',run:a=>{a.speed(1);a.stops([1,0,1,1,0]);a.keys([4]);}},
+    {t:'鍵を離すとパレットが閉じ、チャンネル内の風はパイプから抜けて止まります。',run:a=>a.keys([])},
+    {t:'断面でFisのチャンネルを切り、鍵を押します。パレット・チャンネル・スライダー・上板・パイプの縦の関係がわかります。',run:a=>{a.xray(false);a.cut(0.5);a.stops([1,1,1,1,1]);a.keys([6]);a.cam([95,50,0],[0,34,0]);}}
+  ],
+  build(){ const chest=buildChest({}); return {chest,update(dt){ chest.update(dt); }}; }},
+'b-02':{id:'B-02',name:'スプリングチェスト',terms:'Springlade · spring chest',stops0:[1,0,1,0,0],floor:-8,
+  cam:{p:[80,74,112],t:[0,36,0]},clip:[-33,34],
+  summary:'スライダーの代わりに、パイプごとにばねで閉じた小さな弁（ばね弁）をチャンネルの天井に持つ風箱です。ストップを入れるとストップバーが下がり、ピンでそのストップの弁をまとめて押し開けます。16〜17世紀のオランダや北ドイツ、19世紀までのイタリアなどで使われました。',
+  steps:[
+    {t:'木部を透かします。チャンネルの天井に、ストップごと・鍵ごとのばね弁が並び、ばねで閉じています。',run:a=>{a.xray(true);a.cut(0);a.keys([]);a.stops([0,0,0,0,0]);}},
+    {t:'鍵Eを押します。チャンネルに風が入りますが、ばね弁が閉じているので止まります。',run:a=>{a.stops([0,0,0,0,0]);a.keys([4]);}},
+    {t:'Gedackt 8′ を入れます。ストップバーが下がり、ピンがこのストップの13個の弁をまとめて押し開けます。',run:a=>{a.stops([1,0,0,0,0]);a.keys([4]);}},
+    {t:'鍵を離しても、ばね弁は開いたままです。ストップが入っていても、パレットが開かない限り鳴りません。実物ではストップレバーをフックに掛けて、この位置に保ちます。',run:a=>a.keys([])},
+    {t:'和音を弾きます。パレットとばね弁の両方が開いたパイプだけが鳴ります。スライダーチェスト（B-01）と、止める方法の違いを比べてください。',run:a=>{a.stops([1,1,1,0,0]);a.keys([0,4,7]);}}
+  ],
+  build(){ const chest=buildChest({spring:true}); return {chest,update(dt){ chest.update(dt); }}; }},
+'c-01':{id:'C-01',name:'サスペンデッド・トラッカーアクション',terms:'hängende Traktur · suspended tracker action',stops0:[1,0,1,0,0],floor:-12,
+  cam:{p:[92,58,150],t:[0,26,10]},clip:[-33,34],
+  summary:'鍵のレバーは奥端を尾部のラックのピンで支え、白鍵・黒鍵の後ろの位置からトラッカー（薄い木の棒）で風箱のパレットに吊り下げられています。つなぎ目はネジ線と革ナットで長さを調整でき、引き下げ線は革袋（パルペーテ）を通って風箱に入ります。押鍵がそのままパレットを引き下げるので、弁が開く瞬間が指先に伝わります。',
+  steps:[
+    {t:'鍵のレバーは奥端（尾部のラック）のピンを支点にしています。鍵はトラッカーでパレットに吊られ、パレットのばねに引き上げられて、上止めの桟のフェルトに当たって止まっています。',run:a=>{a.xray(false);a.cut(0);a.keys([]);a.speed(1);a.cam([92,58,150],[0,26,10]);}},
+    {t:'鍵とトラッカーのつなぎ目です。トラッカーの下端のネジ線が鍵の穴を通り、鍵の下の革ナットで受けています。ナットを回すと長さが変わり、鍵の高さをそろえられます。',run:a=>{a.xray(false);a.keys([6]);a.cam([25,4,11.5],[-4,-0.3,14.5]);}},
+    {t:'鍵の前の下では、ガイドピンが鍵の溝に入って鍵の横ぶれを防ぎます。押し下げた鍵は底板のフェルトで止まります。黒鍵は鍵が短いので、手前の別のフェルトで止まります。',run:a=>{a.keys([4,6]);a.cam([16,5,50],[0,-1,27]);}},
+    {t:'風箱側のつなぎ目です。トラッカーの上端は、風箱の底板を貫く引き下げ線につながります。線の通る穴は革袋（パルペーテ）でふさがれ、線が動いても風が漏れません。',run:a=>{a.xray(false);a.keys([6]);a.cam([22,31,38],[0,38.5,14]);}},
+    {t:'木部を透かすと、パレットの下のV字ばねと、パレット前端の左右のガイドピンが見えます。押鍵でパレットが下に開き、離すとばねで閉じます。',run:a=>{a.xray(true);a.keys([6]);a.cam([34,47,40],[0,47,6]);}},
+    {t:'1/10のスローで鍵Eを押します。鍵、トラッカー、パレットは同時に動き、風はその後に遅れてパイプへ届きます。',run:a=>{a.xray(false);a.keys([]);a.speed(0.1);a.cam([92,58,150],[0,26,10]);later(400,()=>{S.key[4]=true;syncKeyUI();});}},
+    {t:'和音を弾きます。トラッカーは扇状に広がり、鍵盤より幅の広い風箱のパレットを同時に引きます。',run:a=>{a.speed(1);a.keys([0,4,7,12]);a.stops([1,1,1,0,0]);}}
+  ],
+  build(){ const chest=buildChest({y:40}); const kb=buildKeyboard({x:0,y:0,z:34}); box(CX.root,30,8.5,61,MAT.woodDark,0,-7.75,5.5,LB('演奏台（コンソール）の台','Spieltisch')); const sus=buildSuspended(chest,kb);
+    return {chest,update(dt){ chest.update(dt); kb.update(); sus.update(); }}; }},
+'c-02':{id:'C-02',name:'ローラーボード＋スクエア',terms:'Wellenbrett & Winkel · roller board & squares',stops0:[1,0,1,0,0],floor:-12,
+  cam:{p:[135,100,155],t:[0,46,-20]},clip:[-50,50],
+  summary:'鍵盤の幅や音の並びは、風箱のパレットの位置と一致しないことがよくあります。ローラーボードは横軸の棒（ローラー）を回して引く位置を左右に移し、スクエア（L字形の腕木）は引く向きを90度変えます。この風箱は大きいパイプを両端に置く「C側・Cis側」配置です。',
+  steps:[
+    {t:'鍵盤 → ローラーボード → スクエア → 水平のトラッカー → スクエア → 風箱、と伝わります。風箱は手前の鍵盤より奥・上にあります。',run:a=>{a.keys([]);a.speed(1);a.cam([135,100,155],[0,46,-20]);}},
+    {t:'鍵Cを押します。ローラーが回って引く位置を左端へ移し、スクエアで向きを変えて奥の風箱へ伝えます。',run:a=>{a.stops([1,0,1,0,0]);a.keys([0]);}},
+    {t:'鍵Cisを押します。今度は右端のパレットが開きます。C側とCis側に交互に振り分けられています。',run:a=>a.keys([1])},
+    {t:'鍵とローラーの腕のつなぎ目です。トラッカーの下端のネジ線が鍵の穴を、上端がローラーの腕の穴を通り、革ナットで受けています。ローラーの両端のピンは軸受けで支えられています。',run:a=>{a.keys([0]);a.cam([22,14,40],[-9,7,13]);}},
+    {t:'半音階で順に押すと、開くパレットが左右に振れながら中央へ寄っていきます。',run:a=>{a.keys([]);for(let k=0;k<13;k++) later(k*420,()=>{S.key.fill(false);S.key[k]=true;syncKeyUI();}); later(13*420,()=>{S.key.fill(false);syncKeyUI();});}},
+    {t:'1/10のスローで、縦 → 横 → 縦と力の向きが変わる様子を見ます。',run:a=>{a.keys([]);a.speed(0.1);later(400,()=>{S.key[5]=true;syncKeyUI();});a.cam([95,40,-10],[-10,30,-15]);}}
+  ],
+  build(){
+    const seq=[0,2,4,6,8,10,12,11,9,7,5,3,1], order=[]; seq.forEach((k,j)=>order[k]=j);
+    const chest=buildChest({y:48,z:-50,order}); const kb=buildKeyboard({x:0,y:0,z:34}); box(CX.root,30,8.5,61,MAT.woodDark,0,-7.75,5.5,LB('演奏台（コンソール）の台','Spieltisch'));
+    const rs=buildRollerSquare(chest,kb);
+    return {chest,update(dt){ chest.update(dt); kb.update(); rs.update(); }};
+  }},
+'d-01':{id:'D-01',name:'機械式ストップアクション',terms:'mechanische Registertraktur · mechanical stop action',stops0:[0,0,0,0,0],floor:-8,
+  cam:{p:[55,62,125],t:[-20,30,8]},clip:[-60,34],
+  summary:'ストップノブを引くと、ノブの軸が縦のローラーを回し、上の腕がスライダーを横に動かして穴を一致させます。ノブの引き量とスライダーの移動量は、ローラーの腕の長さの比で決まります。',
+  steps:[
+    {t:'木部を透かします。左のノブ5本が、それぞれ縦のローラーを介して1本のスライダーにつながっています。',run:a=>{a.xray(true);a.keys([]);a.stops([0,0,0,0,0]);}},
+    {t:'Gedackt 8′ を引きます。ノブの軸が手前に動き、ローラーが回って上の腕がスライダーを右へ押します。緑に光るのがストップの伝達経路です。',run:a=>a.stops([1,0,0,0,0])},
+    {t:'ノブの移動 約36 mm に対して、スライダーは約18 mm 動きます。下の腕と上の腕の長さが 8：4 なので、スライダーを押す力はノブを引く力の約2倍になります。',run:()=>{}},
+    {t:'スライダーの穴が上下と一致したので、鍵を押すとこのストップが鳴ります。',run:a=>{a.stops([1,0,0,0,0]);a.keys([0,4,7]);}},
+    {t:'全部のストップを入れてから、まとめて切ります。',run:a=>{a.keys([0,4,7]);a.stops([1,1,1,1,1]);later(2200,()=>{api.stops([0,0,0,0,0]);});}}
+  ],
+  build(){ const chest=buildChest({y:30}); const sa=buildStopAction(chest,{ky0:6,kz:30}); return {chest,update(dt){ chest.update(dt); sa.update(); }}; }}
+};
+
+const INDEX=[
+ {c:'A',n:'送風',items:[['A-01','くさび型ふいご（人力）',1],['A-02','マガジンふいご＋フィーダー',3],['A-03','電動ブロワー＋マガジンふいご',1],['A-04','ブロワー＋くさび型リザーバー',3],['A-05','シュヴィンマー',3],['A-06','風路全体',1],['A-07','コンカッションふいご',3]]},
+ {c:'B',n:'風箱',items:[['B-01','スライダーチェスト',1],['B-02','スプリングチェスト',1],['B-03','ストップチャンネルチェスト',3],['B-04','機械式コーンバルブチェスト',3],['B-05','空気式コーンバルブチェスト',2],['B-06','メンブレンチェスト',2],['B-07','ポーチチェスト',3],['B-08','ピットマンチェスト',3],['B-09','電気直動チェスト',3]]},
+ {c:'C',n:'キーアクション',items:[['C-01','サスペンデッド・トラッカー',1],['C-02','ローラーボード＋スクエア',1],['C-03','バーカーレバー',2],['C-04','チューブラーニューマチック',2],['C-05','エレクトロニューマチック',3],['C-06','電気直動アクション',3],['C-07','ペダル鍵盤のアクション',3]]},
+ {c:'D',n:'ストップアクション',items:[['D-01','機械式ストップアクション',1],['D-02','スプリングチェスト用',3],['D-03','空気式ストップアクション',3],['D-04','電気式ストップアクション',3]]},
+ {c:'E',n:'表現・効果装置',items:[['E-01','スウェルボックス',2],['E-02','バランス式ペダル',3],['E-03','フックダウン式ペダル',3],['E-04','クレッシェンドペダル',3],['E-05','トレモラント',3],['E-06','ツィンベルシュテルン',3]]},
+ {c:'F',n:'補助機構',items:[['F-01','カプラー',3],['F-02','コンビネーション',3],['F-03','シュペルヴェンティル',3]]},
+ {c:'G',n:'総合モデル',items:[['G-01','バロックオルガン',3],['G-02','19世紀ロマン派オルガン',3],['G-03','現代オルガン',3]]}
+];
+
+/* ---------------- audio ---------------- */
+const AU={ctx:null,out:null,on:true,v:new Map(),waves:null};
+function audioInit(){
+  if(AU.ctx||!AU.on) return; const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return;
+  try{ AU.ctx=new AC(); }catch(e){ return; }
+  const comp=AU.ctx.createDynamicsCompressor(); AU.out=AU.ctx.createGain(); AU.out.gain.value=0.2; AU.out.connect(comp); comp.connect(AU.ctx.destination);
+  const pw=h=>AU.ctx.createPeriodicWave(new Float32Array(h.length),new Float32Array(h));
+  AU.waves=[pw([0,1,.02,.14,.01,.05]),pw([0,1,.3,.12,.06,.04]),pw([0,1,.55,.36,.24,.16,.1,.07,.05,.03]),pw([0,1,.25,.12,.05]),pw([0,.5,.85,.75,.62,.55,.48,.42,.34,.28,.22,.17,.12,.08])];
+}
+const GAINS=[.42,.3,.24,.09,.26], MULT=[[1],[2],[4],[6,8,12],[1]];
+function audioSync(list){
+  if(!AU.ctx) return; if(AU.ctx.state==='suspended') AU.ctx.resume().catch(()=>{});
+  const now=AU.ctx.currentTime, seen=new Set(), pf=Math.pow(Math.max(S.p,1)/75,0.12), pg=clamp(S.p/75,0,1.1);
+  if(AU.on) for(const e of list){
+    const id=e.k*100+e.i*10+e.r; seen.add(id); let v=AU.v.get(id);
+    if(!v){ const f=65.406*Math.pow(2,e.k/12)*MULT[e.i][e.r]; const o=AU.ctx.createOscillator(); o.setPeriodicWave(AU.waves[e.i]); o.frequency.value=f*pf; const g=AU.ctx.createGain(); g.gain.value=0; o.connect(g); g.connect(AU.out); o.start(); v={o,g,f}; AU.v.set(id,v); }
+    v.g.gain.setTargetAtTime(GAINS[e.i]*pg,now,e.i===4?0.012:0.025); v.o.frequency.setTargetAtTime(v.f*pf,now,0.05);
+  }
+  for(const [id,v] of AU.v){ if(!seen.has(id)){ v.g.gain.setTargetAtTime(0,now,0.04); try{ v.o.stop(now+0.4); }catch(e){} AU.v.delete(id); } }
+}
+
+/* ---------------- UI ---------------- */
+const $=id=>document.getElementById(id);
+const kbd=$('kbd'), stopsEl=$('stops');
+const WH=[0,2,4,5,7,9,11,12], BLK={1:0,3:1,6:3,8:4,10:5};
+WH.forEach(k=>{ const b=document.createElement('button'); b.className='wk'; b.dataset.k=k; b.setAttribute('aria-label','鍵 '+KEYNAMES[k]); b.innerHTML='<span>'+KEYNAMES[k]+'</span>'; kbd.appendChild(b); });
+Object.keys(BLK).forEach(k=>{ const b=document.createElement('button'); b.className='bk'; b.dataset.k=k; b.setAttribute('aria-label','鍵 '+KEYNAMES[k]); b.style.left='calc('+((BLK[k]+1)/8*100)+'% - var(--bkw) / 2)'; b.innerHTML='<span>'+KEYNAMES[k]+'</span>'; kbd.appendChild(b); });
+function syncKeyUI(){ kbd.querySelectorAll('[data-k]').forEach(b=>b.classList.toggle('on',S.key[+b.dataset.k])); }
+kbd.addEventListener('pointerdown',e=>{ const b=e.target.closest('[data-k]'); if(!b) return; e.preventDefault(); audioInit(); const k=+b.dataset.k; if(S.latch) S.key[k]=!S.key[k]; else { S.key[k]=true; try{ b.setPointerCapture(e.pointerId); }catch(_){} } syncKeyUI(); });
+const kup=e=>{ if(S.latch) return; const b=e.target.closest('[data-k]'); if(!b) return; S.key[+b.dataset.k]=false; syncKeyUI(); };
+kbd.addEventListener('pointerup',kup); kbd.addEventListener('pointercancel',kup);
+kbd.addEventListener('keydown',e=>{ if(e.key===' '||e.key==='Enter'){ const b=e.target.closest('[data-k]'); if(b){ e.preventDefault(); audioInit(); const k=+b.dataset.k; S.key[k]=!S.key[k]; syncKeyUI(); } } });
+const PCK='awsedftgyhujk';
+window.addEventListener('keydown',e=>{ if(e.repeat||e.metaKey||e.ctrlKey||e.altKey) return; const tg=e.target; if(tg&&(tg.tagName==='INPUT'||tg.tagName==='SELECT'||tg.tagName==='TEXTAREA')) return; const k=PCK.indexOf(e.key.toLowerCase()); if(k<0) return; audioInit(); if(S.latch) S.key[k]=!S.key[k]; else S.key[k]=true; syncKeyUI(); });
+window.addEventListener('keyup',e=>{ if(S.latch) return; const k=PCK.indexOf((e.key||'').toLowerCase()); if(k<0) return; S.key[k]=false; syncKeyUI(); });
+window.addEventListener('blur',()=>{ if(!S.latch){ S.key.fill(false); syncKeyUI(); } });
+$('latch').addEventListener('click',e=>{ S.latch=!S.latch; e.currentTarget.setAttribute('aria-pressed',S.latch); });
+$('release').addEventListener('click',()=>{ S.key.fill(false); syncKeyUI(); });
+
+STOPS.forEach((s,i)=>{ const b=document.createElement('button'); b.className='knob'; b.dataset.i=i; b.setAttribute('aria-pressed','false'); b.innerHTML='<b>'+s.name+'</b><span>'+s.ja+'</span>'; b.addEventListener('click',()=>{ audioInit(); S.stop[i]=!S.stop[i]; syncStopUI(); }); stopsEl.appendChild(b); });
+function syncStopUI(){ stopsEl.querySelectorAll('.knob').forEach(b=>b.setAttribute('aria-pressed',S.stop[+b.dataset.i])); }
+
+function setXray(v){ S.xray=v; for(const m of XRAY){ m.transparent=v; m.opacity=v?0.22:1; m.depthWrite=!v; m.needsUpdate=true; } $('xray').setAttribute('aria-pressed',v); }
+$('xray').addEventListener('click',()=>setXray(!S.xray));
+$('tPts').addEventListener('click',e=>{ SHOW.pts=!SHOW.pts; e.currentTarget.setAttribute('aria-pressed',SHOW.pts); });
+$('tLines').addEventListener('click',e=>{ SHOW.lines=!SHOW.lines; e.currentTarget.setAttribute('aria-pressed',SHOW.lines); });
+function setCut(v){ S.cut=v; const [mn,mx]=inst.def.clip; clipPlane.constant=v<=0.001?1e5:lerp(mx,mn,v); $('cut').value=Math.round(v*100); }
+$('cut').addEventListener('input',e=>setCut(e.target.value/100));
+function setSpeed(v){ S.speed=v; $('speed').value=String(v); }
+$('speed').addEventListener('change',e=>S.speed=parseFloat(e.target.value));
+function camTo(p,t){ camera.position.set(p[0],p[1],p[2]); controls.target.set(t[0],t[1],t[2]); controls.update(); }
+$('camreset').addEventListener('click',()=>camTo(inst.def.cam.p,inst.def.cam.t));
+$('sound').addEventListener('click',e=>{ AU.on=!AU.on; e.currentTarget.setAttribute('aria-pressed',AU.on); e.currentTarget.textContent=AU.on?'音を出す':'音を消している'; if(AU.on) audioInit(); });
+
+const api={
+  keys(arr){ S.key.fill(false); arr.forEach(k=>S.key[k]=true); syncKeyUI(); },
+  stops(arr){ arr.forEach((v,i)=>S.stop[i]=!!v); syncStopUI(); },
+  xray:setXray, cut:setCut, speed:setSpeed, cam:camTo,
+  ctl(id,v){ if(inst.ctl&&inst.ctl[id]) inst.ctl[id](v); renderControls(); }
+};
+
+const notes=$('notes'), sel=$('modelSelect'), list=$('indexList');
+function renderIndex(cur){
+  let h='', o='';
+  for(const ch of INDEX){
+    h+='<section class="chap"><h2><span class="cl">'+ch.c+'</span>'+ch.n+'</h2>';
+    o+='<optgroup label="'+ch.c+' '+ch.n+'">';
+    for(const [id,nm,st] of ch.items){
+      const key=id.toLowerCase(), live=!!MODELS[key];
+      h+='<button class="item" data-id="'+key+'"'+(live?'':' disabled')+(key===cur?' aria-current="true"':'')+'><span class="id">'+id+'</span><span>'+nm+(live?'':'<span class="stg">第'+st+'段階で公開</span>')+'</span></button>';
+      o+='<option value="'+key+'"'+(live?'':' disabled')+(key===cur?' selected':'')+'>'+id+' '+nm+(live?'':'（第'+st+'段階）')+'</option>';
+    }
+    h+='</section>'; o+='</optgroup>';
+  }
+  list.innerHTML=h; sel.innerHTML=o;
+}
+list.addEventListener('click',e=>{ const b=e.target.closest('.item'); if(b&&!b.disabled) load(b.dataset.id); });
+sel.addEventListener('change',()=>load(sel.value));
+
+function renderNotes(def){
+  let h='<div><p class="nid">'+def.id+'</p><h2>'+def.name+'</h2><p class="terms">'+def.terms+'</p></div><p>'+def.summary+'</p><h3>手順（押すとモデルが動きます）</h3><ol class="steps">';
+  def.steps.forEach((s,i)=>{ h+='<li><button data-s="'+i+'"><span class="n">'+(i+1)+'</span><span>'+s.t+'</span></button></li>'; });
+  h+='</ol><p class="foot">標準構成：13鍵（C〜c）× 5ストップ。Gedackt 8′（木管）、Rohrflöte 4′、Prinzipal 2′、Mixtur III（1 1/3′・1′・2/3′）、Vox humana 8′。音はモデルの風が歌口に届いた時点で鳴る簡易合成です。</p>';
+  notes.innerHTML=h;
+}
+notes.addEventListener('click',e=>{ const b=e.target.closest('[data-s]'); if(!b) return; audioInit(); clearTimers(); notes.querySelectorAll('[data-s]').forEach(x=>x.removeAttribute('aria-current')); b.setAttribute('aria-current','true'); inst.def.steps[+b.dataset.s].run(api); });
+
+function renderControls(){
+  const row=$('mctlRow'), box_=$('mctl'); const cs=inst.controls||[]; row.hidden=!cs.length; box_.innerHTML='';
+  cs.forEach(c=>{
+    const b=document.createElement('button'); b.className='btn'; b.textContent=c.label;
+    if(c.type==='toggle'){ b.setAttribute('aria-pressed',!!c.get()); b.addEventListener('click',()=>{ audioInit(); c.set(!c.get()); b.setAttribute('aria-pressed',!!c.get()); }); }
+    else { const up=()=>{ c.up(); b.setAttribute('aria-pressed','false'); }; b.setAttribute('aria-pressed','false'); b.addEventListener('pointerdown',e=>{ audioInit(); c.down(); b.setAttribute('aria-pressed','true'); try{ b.setPointerCapture(e.pointerId); }catch(_){} }); b.addEventListener('pointerup',up); b.addEventListener('pointercancel',up); b.addEventListener('keydown',e=>{ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); c.down(); b.setAttribute('aria-pressed','true'); } }); b.addEventListener('keyup',e=>{ if(e.key===' '||e.key==='Enter') up(); }); }
+    box_.appendChild(b);
+  });
+}
+
+const pinsEl=$('pins'); let pinEls=[];
+function setupPins(){ pinsEl.innerHTML=''; pinEls=(inst.pins||[]).map(p=>{ const d=document.createElement('div'); d.className='pin'+(p.n?'':' plain'); d.innerHTML=(p.n?'<b>'+p.n+'</b>':'')+p.t; pinsEl.appendChild(d); return {d,p:p.p}; }); }
+const _pp=V3(0,0,0);
+function pinsUpdate(){ if(!pinEls.length) return; const w=wrap.clientWidth,h=wrap.clientHeight; for(const q of pinEls){ _pp.copy(q.p).project(camera); const vis=_pp.z<1&&Math.abs(_pp.x)<1.05&&Math.abs(_pp.y)<1.05; q.d.hidden=!vis; if(vis){ q.d.style.left=((_pp.x+1)/2*w)+'px'; q.d.style.top=((1-_pp.y)/2*h)+'px'; } } }
+
+const gwl=$('gwl'), gwr=$('gwr'), gv=$('gv'); let gLast=-1;
+function gaugeUpdate(){ const p=Math.round(S.p); const d=clamp(S.p,0,110)*0.225; gwl.setAttribute('y',60+d); gwl.setAttribute('height',64-d); gwr.setAttribute('y',60-d); gwr.setAttribute('height',64+d); if(p!==gLast){ gv.textContent=p+' mm'; gLast=p; } }
+
+/* hover labels */
+const tip=$('tip'), ray=new T.Raycaster(), mv=new T.Vector2(); let hovEvt=null, hovQ=false;
+canvas.addEventListener('pointermove',e=>{ hovEvt=e; if(!hovQ){ hovQ=true; requestAnimationFrame(doHover); } });
+canvas.addEventListener('pointerleave',()=>{ tip.hidden=true; hovEvt=null; });
+function doHover(){
+  hovQ=false; const e=hovEvt; if(!e||!CX) return; if(e.buttons){ tip.hidden=true; return; }
+  const r=canvas.getBoundingClientRect(); mv.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1); ray.setFromCamera(mv,camera);
+  const hits=ray.intersectObject(CX.root,true); let lab=null;
+  for(const h of hits){ if(h.point.x>clipPlane.constant) continue; if(S.xray&&XRAY.includes(h.object.material)) continue; let o=h.object; while(o&&!o.userData.label) o=o.parent; if(o){ lab=o.userData.label; break; } }
+  if(!lab){ tip.hidden=true; return; }
+  tip.innerHTML='<b>'+lab.ja+'</b><span>'+lab.de+'</span>'; tip.hidden=false;
+  const x=e.clientX-r.left+14, y=e.clientY-r.top+14; tip.style.left=Math.min(x,r.width-tip.offsetWidth-8)+'px'; tip.style.top=Math.min(y,r.height-tip.offsetHeight-8)+'px';
+}
+
+/* ---------------- model loading ---------------- */
+let inst=null, curId=null;
+function load(id){
+  const def=MODELS[id]; if(!def) return; clearTimers();
+  if(CX){ scene.remove(CX.root); CX.own.forEach(m=>m.dispose()); }
+  flows.length=0; CX={root:new T.Group(),own:[],keyMats:[],stopMats:[]}; scene.add(CX.root);
+  S.key.fill(false); S.kd.fill(0); def.stops0.forEach((v,i)=>{ S.stop[i]=!!v; S.sp[i]=v?1:0; }); S.p=75;
+  inst=def.build(); inst.def=def; grid.position.y=def.floor;
+  setXray(def.xray0!==false); setCut(0); setSpeed(1); camTo(def.cam.p,def.cam.t);
+  $('tag').innerHTML='<span class="tid">'+def.id+'</span><span class="tnm">'+def.name+'</span><span class="tde">'+def.terms+'</span>';
+  renderNotes(def); renderControls(); renderIndex(id); syncKeyUI(); syncStopUI(); setupPins();
+  curId=id; try{ if(location.hash!=='#'+id) history.replaceState(null,'','#'+id); }catch(e){}
+}
+
+/* ---------------- loop ---------------- */
+let last=performance.now();
+function frame(now){
+  requestAnimationFrame(frame);
+  const rdt=Math.min(0.05,Math.max(0,(now-last)/1000)); last=now; const dt=rdt*S.speed; S.time+=dt;
+  for(let k=0;k<13;k++){ const tg=S.key[k]?1:0; S.kd[k]+=(tg-S.kd[k])*Math.min(1,dt*22); }
+  for(let i=0;i<5;i++){ const tg=S.stop[i]?1:0; S.sp[i]+=clamp(tg-S.sp[i],-dt*2.5,dt*2.5); }
+  if(!inst.def.own) S.p=75;
+  inst.update(dt);
+  for(const f of flows) f.update(dt);
+  CX.keyMats.forEach((m,k)=>{ if(m) m.emissive.copy(COL.key).multiplyScalar(0.6*S.kd[k]); });
+  CX.stopMats.forEach((m,i)=>{ if(m) m.emissive.copy(COL.stop).multiplyScalar(0.5*S.sp[i]); });
+  writeParticles(); audioSync(inst.chest?inst.chest.speaking():[]); gaugeUpdate(); pinsUpdate();
+  controls.update(); renderer.render(scene,camera);
+}
+const start=(location.hash||'').replace('#','').toLowerCase();
+load(MODELS[start]?start:'b-01');
+requestAnimationFrame(frame);
+window.addEventListener('hashchange',()=>{ const h=location.hash.replace('#','').toLowerCase(); if(MODELS[h]&&h!==curId) load(h); });
+})();
+</script>
