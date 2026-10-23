@@ -1782,7 +1782,8 @@ function buildZimbelstern(){
 function buildSuspManual(o){
   const G=new T.Group(); CX.root.add(G);
   const xp=k=>((k in SLOT?SLOT[k]:BPOS[k])-3.5)*3, Lk=o.zf-o.zt, y=o.y, keys=[];
-  box(G,27,1,o.bed1-o.bed0,MAT.woodDark,0,y-3.2,(o.bed0+o.bed1)/2,LB('鍵盤の底板','Klaviaturboden'));
+  if(o.bedGap){ box(G,27,1,o.bedGap[0]-o.bed0,MAT.woodDark,0,y-3.2,(o.bed0+o.bedGap[0])/2,LB('鍵盤の底板','Klaviaturboden')); box(G,27,1,o.bed1-o.bedGap[1],MAT.woodDark,0,y-3.2,(o.bedGap[1]+o.bed1)/2,LB('鍵盤の底板の前の桟（あいだを下鍵盤の突起が通る）','Klaviaturboden')); }
+  else box(G,27,1,o.bed1-o.bed0,MAT.woodDark,0,y-3.2,(o.bed0+o.bed1)/2,LB('鍵盤の底板','Klaviaturboden'));
   box(G,26,0.25,1.4,MAT.cloth,0,y-KH/2-o.dip*(o.zfelt-o.zt)/Lk-0.13,o.zfelt,LB('下止めのフェルト','Tastenfilz'));
   box(G,27,KH+3.5,2.4,MAT.wood,0,y-0.75,o.zt-1.6,LB('尾部のラック（鍵の支点）','Tastenrechen'));
   for(let j=0;j<=13;j++) box(G,0.22,KH+2,3.2,MAT.woodDark,(j-6.5)*1.95,y+0.3,o.zt+0.6,LB('ラックの仕切り（鍵の奥端を1本ずつ案内する）','Rechenstäbchen'));
@@ -1801,10 +1802,11 @@ function buildSuspManual(o){
     const hole=mk(G_DISC,MAT.dark,pv,LB('トラッカーを通す穴','Bohrung')); hole.rotation.x=-Math.PI/2; hole.scale.set(0.28,0.28,0.28); hole.position.set(0,KH/2+0.01,o.za-o.zt);
     let dogTop=null;
     if(o.dog!=null){
-      const lz=(w?o.dog:o.dog-6)-o.zt, base=w?KH/2+0.6:KH/2+2, h=o.dogTop-y-base-0.2;
+      const lz=(w?o.dog:o.dog-1)-o.zt, base=w?KH/2+0.6:KH/2+2, h=o.dogTop-y-base-0.2;
       box(pv,1.0,h,0.6,o.dogMat,0,base+h/2,lz,LB('カプラーの突起（下鍵盤の鍵に立つ。上鍵盤の鍵に押し下げられる）','Koppelklotz'));
       box(pv,1.0,0.2,0.6,MAT.cloth,0,base+h+0.1,lz,LB('突起の先のフェルト','Anschlagfilz'));
     }
+    if(o.blk!=null){ const lz=(w?o.blk:o.blk-1)-o.zt; box(pv,1.0,o.blkH,0.8,o.blkMat,0,-KH/2-o.blkH/2,lz,LB('上の鍵の下の当て木（カプラーを入れると、下鍵盤の突起の真上に来る）','Koppelklotz')); }
     pv.traverse(c=>{ c.userData.key=k; c.userData.man=o.man; });
     keys.push({pv,hm,lm,x});
   }
@@ -1813,10 +1815,10 @@ function buildSuspManual(o){
 }
 function buildCoupler(){
   const R=CX.root, m={cpl:true,cu:1,man:1}, SH=1.4, POSSP=new Float32Array([0,1,0,0,1]), DIP=1.3;
-  const LO={y:0,zf:40,zt:-52,za:-17,bed0:-14,bed1:41,zfelt:38.6,dip:DIP*92/92,dog:33.5,dogTop:5.75,man:0,cheek:'下鍵盤（I・ポジティフ）の側板'};
-  const UP={y:7,zf:34,zt:-12,za:8,bed0:-11,bed1:31.8,zfelt:30.8,dip:DIP,man:1,cheek:'上鍵盤（II・ハウプトヴェルク）の側板'};
+  const LO={y:0,zf:40,zt:-52,za:-17,bed0:-14,bed1:41,zfelt:38.6,dip:DIP*92/92,dog:28,dogTop:4.25,man:0,cheek:'下鍵盤（I・ポジティフ）の側板'};
+  const UP={y:7,zf:34,zt:-12,za:8,bed0:-11,bed1:31.8,bedGap:[25.4,30.2],zfelt:30.8,dip:DIP,blk:28,blkH:1.5,man:1,cheek:'上鍵盤（II・ハウプトヴェルク）の側板'};
   const umats=[], lmats=[]; for(let k=0;k<13;k++){ umats.push(mclone(MAT.woodPale)); lmats.push(mclone(MAT.woodPale)); }
-  UP.mat=k=>umats[k]; LO.mat=k=>lmats[k]; LO.dogMat=mclone(MAT.woodDark); LO.dogMat.color.set(0x6b4a2c);
+  UP.mat=k=>umats[k]; LO.mat=k=>lmats[k]; UP.blkMat=mclone(MAT.woodDark); UP.blkMat.color.set(0x6b4a2c); LO.dogMat=mclone(MAT.woodDark); LO.dogMat.color.set(0x6b4a2c);
   const lo=buildSuspManual(LO), up=buildSuspManual(UP);
   box(R,30,6.5,98,MAT.woodDark,0,-6.6,-6,LB('演奏台（コンソール）の台','Spieltisch'));
   const kdL=new Float32Array(13), kdU=new Float32Array(13);
@@ -1853,11 +1855,11 @@ function buildCoupler(){
       m.cu+=clamp((m.cpl?1:0)-m.cu,-dt*3,dt*3);
       const shift=SH*(1-m.cu); lo.G.position.z=shift;
       for(let k=0;k<13;k++){
-        const w=(k in SLOT), d0=w?LO.dog:LO.dog-6, dz=d0+shift, over=dz+0.3<(w?UP.zf:UP.zf-6), dU=dz-UP.zt, dL=d0-LO.zt;
+        const w=(k in SLOT), d0=w?LO.dog:LO.dog-1, over=shift<0.7, dU=d0-UP.zt, dL=d0-LO.zt;
         const thU=m.man===1?Math.asin(clamp(DIP*S.kd[k]/up.Lk,0,1)):0;
         const thD=m.man===0?Math.asin(clamp(DIP*S.kd[k]/lo.Lk,0,1)):0;
         let thC=0;
-        if(over){ const yub=UP.y-KH/2-dU*Math.sin(thU); thC=Math.max(0,Math.asin(clamp((LO.dogTop-yub)/dL,-1,1))); }
+        if(over){ const yub=UP.y-KH/2-UP.blkH-dU*Math.sin(thU); thC=Math.max(0,Math.asin(clamp((LO.dogTop-yub)/dL,-1,1))); }
         const thL=Math.max(thD,thC);
         lo.set(k,thL); up.set(k,thU);
         kdL[k]=Math.sin(thL)*lo.Lk/DIP; kdU[k]=Math.sin(thU)*up.Lk/DIP;
@@ -2211,14 +2213,14 @@ const MODELS={
 'g-01':{id:'G-01',name:'カプラー',terms:'coupler · Koppel · accouplement',stops0:[1,0,1,0,0],floor:-10,
   cam:{p:[120,50,130],t:[0,60,-20]},clip:[-40,40],
   foot:'ポジティフ（下の風箱）には Rohrflöte 4′ と Vox humana 8′ を入れたままにしています。ストップのボタンはハウプトヴェルク（上の風箱）に効きます。鍵盤のボタンと画面の鍵は、操作欄で選んだほうの鍵盤を弾きます。',
-  summary:'2段の手鍵盤をつなぐ機械式の押し込み式カプラー（シーブカプラー）です。どちらの鍵盤もサスペンデッド（吊り下げ式）アクションで、鍵は奥端が支点、トラッカーに吊られていて、押すと鍵全体が下がります。下鍵盤（I・ポジティフ）の鍵に突起が立っていて、下鍵盤を約11 mm奥へ押し込むと、突起が上鍵盤（II・ハウプトヴェルク）の鍵の前端の真下に来ます。上の鍵を押すと突起を押し下げ、下の鍵もいっしょに下がって、ポジティフも鳴ります（I/II）。',
+  summary:'2段の手鍵盤をつなぐ機械式の押し込み式カプラー（シーブカプラー）です。どちらの鍵盤もサスペンデッド（吊り下げ式）アクションで、鍵は奥端が支点、トラッカーに吊られていて、押すと鍵全体が下がります。下鍵盤（I・ポジティフ）の鍵に突起が立っていて、下鍵盤を約11 mm奥へ押し込むと、突起が上鍵盤（II・ハウプトヴェルク）の鍵の下に付いた当て木の真下に来ます。突起は上鍵盤の下に隠れていて、下鍵盤の演奏の邪魔にはなりません。上の鍵を押すと当て木が突起を押し下げ、下の鍵もいっしょに下がって、ポジティフも鳴ります（I/II）。',
   steps:[
     {t:'2段の鍵盤はどちらもサスペンデッド（吊り下げ式）アクションです。鍵は奥端のラックのピンが支点で、トラッカーに吊られていて、押すと鍵全体が下がります。下鍵盤のトラッカーは上鍵盤のラックの後ろを上がるので、下鍵盤の鍵は長くなっています。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',1);a.ctl('cpl',false);a.keys([]);a.home();}},
     {t:'トラッカーはローラーボードへ上がります。ローラーの腕は鍵の位置が短く、パレットの位置が長くなっていて、吊り下げ式の鍵の小さな引き（約4〜5 mm）を、パレットを開けるのに必要な引き（約10 mm）に大きくしながら、風箱の幅へ左右に広げます。下の風箱がポジティフ（I）、上の風箱がハウプトヴェルク（II）です。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',1);a.ctl('cpl',true);a.keys([0,12]);a.cam([62,40,56],[0,22,-6]);}},
-    {t:'カプラーを切ったまま上鍵盤（II）を弾きます。ハウプトヴェルクだけが鳴ります。下鍵盤は手前に引き出されていて、突起は上の鍵の前端より前に立っているので当たりません。（鍵Eの位置で縦に切った断面）',run:a=>{a.ctl('man',1);a.ctl('cpl',false);a.keys([4]);a.xray(false);a.cut(0.55);a.cam([24,11,50],[-4,4,30]);}},
-    {t:'下鍵盤を奥へ押し込みます（カプラーを入れる）。突起が上の鍵の前端の真下に来ます。',run:a=>{a.ctl('man',1);a.keys([]);a.ctl('cpl',true);a.xray(false);a.cut(0.55);a.cam([24,11,50],[-4,4,30]);}},
-    {t:'上鍵盤を弾くと、上の鍵が突起を押し下げて下の鍵もいっしょに下がり、ポジティフ（下の風箱）も同時に鳴ります。',run:a=>{a.ctl('man',1);a.ctl('cpl',true);a.keys([4]);a.xray(false);a.cut(0.55);a.cam([24,11,50],[-4,4,30]);}},
-    {t:'下鍵盤だけを弾いても、下の鍵は上の鍵から離れるだけなので、上の鍵は動きません。吊り下げ式のこのカプラーは「上鍵盤で下鍵盤も弾く」一方向のつながり（I/II）です。',run:a=>{a.ctl('man',0);a.ctl('cpl',true);a.keys([4]);a.xray(false);a.cut(0.55);a.cam([24,11,50],[-4,4,30]);}},
+    {t:'カプラーを切ったまま上鍵盤（II）を弾きます。ハウプトヴェルクだけが鳴ります。下鍵盤は手前に引き出されていて、突起は上の鍵の当て木の前にずれているので当たりません。（鍵Eの位置で縦に切った断面）',run:a=>{a.ctl('man',1);a.ctl('cpl',false);a.keys([4]);a.xray(false);a.cut(0.55);a.cam([24,11,44],[-4,4,26]);}},
+    {t:'下鍵盤を奥へ押し込みます（カプラーを入れる）。突起が上の鍵の当て木の真下に来ます。突起は、両方の鍵の下がる量がちょうど等しくなる位置（上鍵盤の下、鍵盤の前から約9 cm奥）にあります。',run:a=>{a.ctl('man',1);a.keys([]);a.ctl('cpl',true);a.xray(false);a.cut(0.55);a.cam([24,11,44],[-4,4,26]);}},
+    {t:'上鍵盤を弾くと、上の鍵の当て木が突起を押し下げて下の鍵もいっしょに下がり、ポジティフ（下の風箱）も同時に鳴ります。',run:a=>{a.ctl('man',1);a.ctl('cpl',true);a.keys([4]);a.xray(false);a.cut(0.55);a.cam([24,11,44],[-4,4,26]);}},
+    {t:'下鍵盤だけを弾いても、下の鍵は上の鍵から離れるだけなので、上の鍵は動きません。吊り下げ式のこのカプラーは「上鍵盤で下鍵盤も弾く」一方向のつながり（I/II）です。',run:a=>{a.ctl('man',0);a.ctl('cpl',true);a.keys([4]);a.xray(false);a.cut(0.55);a.cam([24,11,44],[-4,4,26]);}},
     {t:'全体を見ます。ハウプトヴェルクの風箱はポジティフの上にあり、そのトラッカーはポジティフの風箱の前を通って上へ伸びています。',run:a=>{a.xray(true);a.ctl('man',1);a.ctl('cpl',true);a.keys([0,4,7]);a.cut(0);a.home();}}
   ],
   build(){ return buildCoupler(); }},
