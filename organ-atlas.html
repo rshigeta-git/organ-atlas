@@ -2130,7 +2130,7 @@ function buildPedalCoupler(){
   const aiM=4*pullM/KPULL, zrM=MAN.za-aiM, zoM=zrM+4, y0M=YM+15;
   const KDH=new Float32Array(13), KDP=new Float32Array(13);
   const hw=buildChest({y:y0M+13*1.25+6,z:zoM-14,kd:KDH,sp:HWSP,stops:HWST,rows:HWR,mixz:[-2.4,0,2.4],P:9.6,palMat:k=>mm[k]});
-  const ozP=hw.oz-19.2-10-19.2, zP=ozP+14, zs1=ZA+AI, zs2=zP+AO, zrP=zP-AO, y0P=32;
+  const ozP=hw.oz-19.2-100-19.2, zP=ozP+14, zs1=ZA+AI, zs2=zP+AO, zrP=zP-AO, y0P=32;
   const pd=buildChest({y:y0P+13*1.25+5,z:ozP,kd:KDP,sp:PDSP,stops:PDST,rows:PDR,P:15,palMat:k=>pm[k],volN:300});
   box(R,64,1.2,1.2,MAT.woodDark,0,YS,zs1+0.9,LB('スクエアの軸受け（ペダル側）','Winkelbalken'));
   box(R,64,1.2,1.2,MAT.woodDark,0,YS,zs2+0.9,LB('スクエアの軸受け（風箱側）','Winkelbalken'));
@@ -2149,7 +2149,7 @@ function buildPedalCoupler(){
   const aiC=3, dropC1=DEP*(ZH-ZCP)/KL, aoC=aiC*pullM/dropC1, zrC=ZCP-aiC, ZAw=zrC+aoC, y0C=40;
   const rbC=mkRB('カプラー用',zrC,y0C,k=>xp(k),k=>man.keys[k].x,k=>pm[k],aiC,aoC);
   // ---- rocker coupler ----
-  const YU=YM+10, YL=YM+7, ZB=4.9, ZPU=(ZAw+ZB)/2, ZD=MAN.za, ZPL=(ZB+ZD)/2, OFF=1.0;
+  const YU=YM-12, YL=YM-15, ZB=4.9, ZPU=(ZAw+ZB)/2, ZD=MAN.za, ZPL=(ZB+ZD)/2, OFF=1.0;
   const railU=box(R,30,1,1,MAT.woodDark,0,YU,ZPU,LB('上のウィッペンバルケン（カプラーを切ると下がる）','Wippenbalken')); box(R,30,1,1,MAT.woodDark,0,YL,ZPL,LB('下のウィッペンバルケン（固定）','Wippenbalken'));
   for(const s of [-1,1]){ box(R,1.2,10,1.6,MAT.woodDark,s*15.6,YU-4.5,ZPU,LB('ウィッペンバルケンの支柱','Balgstütze')); box(R,1.2,7,1.6,MAT.woodDark,s*15.6,YL-3,ZPL,LB('ウィッペンバルケンの支柱','Balgstütze')); }
   const CW=[]; for(let k=0;k<13;k++){ const x=man.keys[k].x;
@@ -2158,8 +2158,8 @@ function buildPedalCoupler(){
       wire:rod(R,0.07,MAT.iron,LB('つなぎの線','Draht')),nW:cyl(R,0.42,0.3,MAT.leather,x,0,ZB,LB('革ナット（つなぎの線の上端）','Ledermutter')),
       nU:cyl(R,0.42,0.3,MAT.leather,x,0,ZAw,LB('カプラーのナット（カプラーを入れると上のウィッペンに乗る）','Ledermutter')),
       tc2:makeTracker(pm[k],LB('カプラーのトラッカー（ローラー → 上のカプラー・ウィッペン）','Abstrakte')),
-      tm:makeTracker(mm[k],LB('トラッカー（手鍵盤の鍵 → 下のカプラー・ウィッペン。鍵はこれに吊られている）','Abstrakte')),
-      tr2:makeTracker(mm[k],LB('トラッカー（下のカプラー・ウィッペン → ローラー）','Abstrakte'))}); }
+      tm:makeTracker(mm[k],LB('カプラーの引き棒（鍵の下面から下のウィッペンへ。ナットが腕の下に掛かり、ウィッペンが下がると鍵を引き下げる）','Abstrakte')),
+      tr2:makeTracker(mm[k],LB('トラッカー（手鍵盤の鍵 → ローラー。鍵はこれに吊られている）','Abstrakte'))}); }
   const setMan=v=>{ m.man=v; S.key.fill(false); syncKeyUI(); renderControls(); };
   return {chest:hw,
     controls:[{type:'toggle',id:'cpl',label:'カプラー I/P',get:()=>m.cpl,set:v=>m.cpl=v},
@@ -2168,8 +2168,8 @@ function buildPedalCoupler(){
     stopRows:[{label:'I ハウプトヴェルク（手鍵盤）',items:HWST.map((si,i)=>({name:STOPS[si].name,ja:STOPS[si].ja,get:()=>m.hs[i],set:v=>m.hs[i]=v}))},{label:'P ペダル',items:PDST.map((si,i)=>({name:STOPS[si].name,ja:STOPS[si].ja,get:()=>m.ps[i],set:v=>m.ps[i]=v}))}],
     ctl:{cpl:v=>m.cpl=v,man:v=>{ m.man=v; },pd:arr=>{ arr.forEach((v,i)=>m.ps[i]=!!v); syncStopUI(); },hw:arr=>{ arr.forEach((v,i)=>m.hs[i]=!!v); syncStopUI(); }},
     setMan,curMan:()=>m.man,
-    views:{cpl:[[28,YM+9,24],[-4,YM+5,6]],ped:[[90,50,50],[0,22,-20]],chests:[[230,190,260],[0,130,-20]]},
-    pins:[{t:'ペダル鍵盤',p:V3(-38,8,30)},{t:'手鍵盤（ハウプトヴェルク）',p:V3(-18,YM+2,50)},{t:'カプラーのウィッペン',p:V3(17,YU+2,ZPU),max:120},{t:'カプラーのローラーボード',p:V3(-38,y0C+18,zrC)},{t:'ペダル風箱用のローラーボード',p:V3(-90,y0P+18,zrP)},{t:'ハウプトヴェルク',p:V3(66,hw.oy+20,hw.oz+12)},{t:'ペダルの風箱',p:V3(100,pd.oy+20,pd.oz+12)}],
+    views:{cpl:[[30,YM-4,26],[-4,YM-10,6]],ped:[[90,50,50],[0,22,-20]],chests:[[230,190,260],[0,130,-20]]},
+    pins:[{t:'ペダル鍵盤',p:V3(-38,8,30)},{t:'手鍵盤（ハウプトヴェルク）',p:V3(-18,YM+2,50)},{t:'カプラーのウィッペン（手鍵盤の下）',p:V3(17,YU+2,ZPU),max:120},{t:'カプラーのローラーボード',p:V3(-38,y0C+18,zrC)},{t:'ペダル風箱用のローラーボード',p:V3(-90,y0P+18,zrP)},{t:'ハウプトヴェルク',p:V3(66,hw.oy+20,hw.oz+12)},{t:'ペダルの風箱',p:V3(100,pd.oy+20,pd.oz+12)}],
     speaking:()=>hw.speaking().concat(pd.speaking()),
     update(dt){
       m.cu+=clamp((m.cpl?1:0)-m.cu,-dt*3,dt*3);
@@ -2189,15 +2189,15 @@ function buildPedalCoupler(){
         const dC=(ZH-ZCP)*Math.sin(th), [ct1,ct2]=rbC.set(k,dC); q.tc.set(ct1,V3(q.x,q.top-dC,ZCP),0.4);
         const pA=aoC*Math.sin(Math.asin(clamp(dC/aiC,0,1)));
         const thK=m.man===1?Math.asin(clamp(DIP*S.kd[k]/man.Lk,0,1)):0, pK=(MAN.za-MAN.zt)*Math.sin(thK);
-        const dA=Math.max(0,pA+off), cUp=Math.max(0,off+dA), dD=Math.max(pK,cUp), c=dD;
-        const thM=Math.asin(clamp(dD/(MAN.za-MAN.zt),0,1)); man.set(k,thM); const aM=man.attach(k,thM);
-        KDH[k]=dD/pullM;
+        const dA=Math.max(0,pA+off), cUp=Math.max(0,off+dA), dR=cUp, c=dR, dK=Math.max(pK,dR);
+        const thM=Math.asin(clamp(dK/(MAN.za-MAN.zt),0,1)); man.set(k,thM); const aM=man.attach(k,thM);
+        KDH[k]=dK/pullM;
         const w=CW[k], x=w.x, PUv=V3(x,YU+off,ZPU), PLv=V3(x,YL,ZPL);
-        const tA=V3(x,YU+off-dA,ZAw), tB=V3(x,YU+off+dA,ZB), tC=V3(x,YL+c,ZB), tD=V3(x,YL-dD,ZD);
+        const tA=V3(x,YU+off-dA,ZAw), tB=V3(x,YU+off+dA,ZB), tC=V3(x,YL+c,ZB), tD=V3(x,YL-dR,ZD);
         w.ua.set(PUv,tA); w.ub.set(PUv,tB); w.la.set(PLv,tC); w.lb.set(PLv,tD);
         w.wire.set(tC,V3(x,YU+0.4+c,ZB)); w.nW.position.y=YU+0.4+c; w.nU.position.y=YU+0.4-pA;
-        w.tc2.set(V3(x,YU+0.25-pA,ZAw),ct2,0.6); w.tm.set(V3(x,YL+0.25-dD,ZD),aM,KH);
-        const [mt1,mt2]=rbM.set(k,dD); w.tr2.set(mt1,V3(x,tD.y-0.25,ZD),0.6); rbM.it[k].tr.set(hw.pullDown(k),mt2,0.6);
+        w.tc2.set(V3(x,YU+0.25-pA,ZAw),ct2,0.6); w.tm.set(V3(aM.x,aM.y-KH,aM.z),V3(x,YL-dR,ZD),0.3);
+        const [mt1,mt2]=rbM.set(k,dK); w.tr2.set(mt1,aM,KH); rbM.it[k].tr.set(hw.pullDown(k),mt2,0.6);
         const kdm=KDH[k], kdp=kP;
         mm[k].emissive.copy(COL.key).multiplyScalar(0.6*Math.min(1,kdm)); man.keys[k].hm.emissive.copy(COL.key).multiplyScalar(0.35*Math.min(1,kdm));
         pm[k].emissive.copy(COL.key).multiplyScalar(0.6*Math.min(1,kdp));
@@ -2504,15 +2504,15 @@ const MODELS={
   build(){ return buildWippenCoupler(); }},
 'g-03':{id:'G-03',name:'ペダルカプラー',terms:'pedal coupler · Pedalkoppel · tirasse',stops0:[0,0,0,0,0],floor:-2,homeK:1.0,
   cam:{p:[230,120,240],t:[0,110,-20]},clip:[-40,40],
-  foot:'ハウプトヴェルク（I）：Prinzipal 8′・Octave 4′・Quinte 2 2/3′・Octave 2′・Mixtur III・Trompete 8′、ペダル（P）：Subbass 16′（木管・閉管）・Prinzipal 8′・Posaune 16′。パイプは長さ・太さとも実物の45 %で、ペダルの風箱はいちばん太いパイプ（Subbass 16′ の C 約190×235 mm）が収まるよう、チャンネルの間隔を約117 mm にしています。ペダルのアクションは D-04 と同じです。鍵盤のボタンと画面の鍵は、操作欄で選んだほう（ペダルか手鍵盤）を弾きます。',
-  summary:'ペダルでハウプトヴェルクを鳴らす、ロッカー式（ウィッペン式）のペダルカプラー（I/P）です。ペダル鍵のつま先からもう1本のトラッカーが上がり、カプラー用のローラーボードでペダル鍵の位置から手鍵盤の鍵の位置へ移され、手鍵盤の上の上下2本のウィッペンに伝わります。下のウィッペンが手鍵盤のトラッカーを引くので、ペダルを踏むと手鍵盤の鍵もいっしょに下がり、ハウプトヴェルクが鳴ります。ペダルの風箱は、ハウプトヴェルクの奥の床近くにあります。',
+  foot:'ハウプトヴェルク（I）：Prinzipal 8′・Octave 4′・Quinte 2 2/3′・Octave 2′・Mixtur III・Trompete 8′、ペダル（P）：Subbass 16′（木管・閉管）・Prinzipal 8′・Posaune 16′。パイプは長さ・太さとも実物の45 %で、ペダルの風箱（ハウプトヴェルクの奥 約80 cm）はいちばん太いパイプ（Subbass 16′ の C 約190×235 mm）が収まるよう、チャンネルの間隔を約117 mm にしています。ペダルのアクションは D-04 と同じです。鍵盤のボタンと画面の鍵は、操作欄で選んだほう（ペダルか手鍵盤）を弾きます。',
+  summary:'ペダルでハウプトヴェルクを鳴らす、ロッカー式（ウィッペン式）のペダルカプラー（I/P）です。ペダル鍵のつま先からもう1本のトラッカーが上がり、カプラー用のローラーボードでペダル鍵の位置から手鍵盤の鍵の位置へ移され、手鍵盤の下にある上下2本のウィッペンに伝わります。下のウィッペンが引き棒で手鍵盤の鍵を下から引き下げるので、ペダルを踏むと手鍵盤の鍵もいっしょに下がり、ハウプトヴェルクが鳴ります。ペダルの風箱は、ハウプトヴェルクの奥に約80 cm離して、床近くに置いています。',
   steps:[
-    {t:'手鍵盤1段（ハウプトヴェルク）とペダル鍵盤、それぞれの風箱です。ペダルの風箱はハウプトヴェルクの奥、少し離れた床近くにあり、Subbass 16′・Prinzipal 8′・Posaune 16′ が立っています。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',0);a.ctl('cpl',false);a.ctl('hw',[1,1,0,1,0,0]);a.ctl('pd',[0,1,0]);a.keys([]);a.home();}},
+    {t:'手鍵盤1段（ハウプトヴェルク）とペダル鍵盤、それぞれの風箱です。ペダルの風箱はハウプトヴェルクの奥に約80 cm離れた床近くにあり、Subbass 16′・Prinzipal 8′・Posaune 16′ が立っています。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',0);a.ctl('cpl',false);a.ctl('hw',[1,1,0,1,0,0]);a.ctl('pd',[0,1,0]);a.keys([]);a.home();}},
     {t:'ペダルのアクションです。つま先からトラッカーが上がってスクエアで後ろ向きに変わり、水平のトラッカーで奥へ行き、もう一つのスクエアとローラーボードで、幅の広いペダルの風箱のパレットを引き下げます。',run:a=>{a.ctl('man',0);a.ctl('cpl',false);a.keys([0,7]);a.cam(inst.views.ped[0],inst.views.ped[1]);}},
-    {t:'ペダル鍵のつま先には、カプラー用のトラッカーがもう1本付いています。これはカプラーのローラーボードで、ペダル鍵の位置から手鍵盤の鍵の位置へ移され、手鍵盤の上のウィッペンまで上がります。',run:a=>{a.ctl('man',0);a.ctl('cpl',true);a.keys([0,7]);a.cam([110,70,70],[0,55,-10]);}},
-    {t:'カプラーを入れてペダルを踏みます。カプラーのトラッカーのナットが上のウィッペンを引き下げ、つなぎの線で下のウィッペンが手鍵盤のトラッカーを引きます。手鍵盤の鍵もいっしょに下がり、ペダルとハウプトヴェルクが同時に鳴ります。（鍵Eの位置で縦に切った断面）',run:a=>{a.ctl('man',0);a.ctl('cpl',true);a.keys([4]);a.xray(false);a.cut(0.55);a.cam(inst.views.cpl[0],inst.views.cpl[1]);}},
+    {t:'ペダル鍵のつま先には、カプラー用のトラッカーがもう1本付いています。これはカプラーのローラーボードで、ペダル鍵の位置から手鍵盤の鍵の位置へ移され、手鍵盤の下のウィッペンまで上がります。',run:a=>{a.ctl('man',0);a.ctl('cpl',true);a.keys([0,7]);a.cam([110,70,70],[0,55,-10]);}},
+    {t:'カプラーを入れてペダルを踏みます。カプラーのトラッカーのナットが上のウィッペンを引き下げ、つなぎの線で下のウィッペンが持ち上げられて反対側が下がり、引き棒で手鍵盤の鍵を下から引き下げます。鍵が下がると、鍵から上へ伸びるトラッカーがハウプトヴェルクのパレットを開け、ペダルとハウプトヴェルクが同時に鳴ります。（鍵Eの位置で縦に切った断面）',run:a=>{a.ctl('man',0);a.ctl('cpl',true);a.keys([4]);a.xray(false);a.cut(0.55);a.cam(inst.views.cpl[0],inst.views.cpl[1]);}},
     {t:'カプラーを切ると、上のウィッペンバルケンが下がり、カプラーのトラッカーのナットが届かなくなります。ペダルを踏んでも、ペダルの風箱だけが鳴ります。',run:a=>{a.ctl('man',0);a.ctl('cpl',false);a.keys([4]);a.xray(false);a.cut(0.55);a.cam(inst.views.cpl[0],inst.views.cpl[1]);}},
-    {t:'手鍵盤を弾いても、つなぎの線のナットが上のウィッペンから浮くだけなので、ペダルには伝わりません。',run:a=>{a.ctl('man',1);a.ctl('cpl',true);a.keys([4]);a.xray(false);a.cut(0.55);a.cam(inst.views.cpl[0],inst.views.cpl[1]);}},
+    {t:'手鍵盤を弾いても、引き棒のナットが下のウィッペンの腕から離れるだけなので、ウィッペンは動かず、ペダルには伝わりません。',run:a=>{a.ctl('man',1);a.ctl('cpl',true);a.keys([4]);a.xray(false);a.cut(0.55);a.cam(inst.views.cpl[0],inst.views.cpl[1]);}},
     {t:'全体を見ます。カプラーを入れてペダルを踏むと、両方の風箱が鳴ります。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',0);a.ctl('cpl',true);a.ctl('pd',[1,1,1]);a.keys([0,7]);a.home();}}
   ],
   build(){ return buildPedalCoupler(); }}
