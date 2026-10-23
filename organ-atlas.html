@@ -29,7 +29,7 @@ html,body{background:var(--bg)}
 body{color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased}
 button,select,input{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.pin[hidden],.tip[hidden],.drow[hidden]{display:none!important}
+.pin[hidden],.tip[hidden],.drow[hidden],#pins[hidden]{display:none!important}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 .mast{padding-block:22px 14px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));border-bottom:1px solid var(--line)}
@@ -192,6 +192,7 @@ h1{margin:0;font-family:var(--f-display);font-weight:800;font-size:clamp(26px,3.
       <button class="btn" id="tPts" aria-pressed="true">粒子</button>
       <button class="btn" id="tLines" aria-pressed="true">流線</button>
       <button class="btn" id="xray" aria-pressed="false">木部を透かす</button>
+      <button class="btn" id="tPins" aria-pressed="true">部品名を表示</button>
       <label class="field" for="cut">断面<input id="cut" type="range" min="0" max="100" value="0"></label>
       <button class="btn" id="camreset">視点を戻す</button>
       <button class="btn" id="sound" aria-pressed="true">音を出す</button>
@@ -366,7 +367,7 @@ const points=new T.Points(pGeo,pMat); points.frustumCulled=false; scene.add(poin
 
 
 /* ---------------- streamlines ---------------- */
-const SHOW={pts:true,lines:true};
+const SHOW={pts:true,lines:true,pins:true};
 const SL_VS=`varying float vU;
 #include <clipping_planes_pars_vertex>
 void main(){ vU=uv.x; vec4 mvPosition=modelViewMatrix*vec4(position,1.0); gl_Position=projectionMatrix*mvPosition;
@@ -1802,11 +1803,11 @@ function buildSuspManual(o){
     const hole=mk(G_DISC,MAT.dark,pv,LB('トラッカーを通す穴','Bohrung')); hole.rotation.x=-Math.PI/2; hole.scale.set(0.28,0.28,0.28); hole.position.set(0,KH/2+0.01,o.za-o.zt);
     let dogTop=null;
     if(o.dog!=null){
-      const lz=(w?o.dog:o.dog-1)-o.zt, base=w?KH/2+0.6:KH/2+2, h=o.dogTop-y-base-0.2;
+      const lz=o.dog-o.zt, base=KH/2, h=o.dogTop-y-base-0.2;
       box(pv,1.0,h,0.6,o.dogMat,0,base+h/2,lz,LB('カプラーの突起（下鍵盤の鍵に立つ。上鍵盤の鍵に押し下げられる）','Koppelklotz'));
       box(pv,1.0,0.2,0.6,MAT.cloth,0,base+h+0.1,lz,LB('突起の先のフェルト','Anschlagfilz'));
     }
-    if(o.blk!=null){ const lz=(w?o.blk:o.blk-1)-o.zt; box(pv,1.0,o.blkH,0.8,o.blkMat,0,-KH/2-o.blkH/2,lz,LB('上の鍵の下の当て木（カプラーを入れると、下鍵盤の突起の真上に来る）','Koppelklotz')); }
+    if(o.blk!=null){ const lz=o.blk-o.zt; box(pv,1.0,o.blkH,0.8,o.blkMat,0,-KH/2-o.blkH/2,lz,LB('上の鍵の下の当て木（カプラーを入れると、下鍵盤の突起の真上に来る）','Koppelklotz')); }
     pv.traverse(c=>{ c.userData.key=k; c.userData.man=o.man; });
     keys.push({pv,hm,lm,x});
   }
@@ -1814,19 +1815,20 @@ function buildSuspManual(o){
     attach(k,th){ const lz=o.za-o.zt; return V3(keys[k].x,y+KH/2*Math.cos(th)-lz*Math.sin(th),G.position.z+o.zt+KH/2*Math.sin(th)+lz*Math.cos(th)); }};
 }
 function buildCoupler(){
-  const R=CX.root, m={cpl:true,cu:1,man:1}, SH=1.4, POSSP=new Float32Array([0,1,0,0,1]), DIP=1.3;
-  const LO={y:0,zf:40,zt:-52,za:-17,bed0:-14,bed1:41,zfelt:38.6,dip:DIP*92/92,dog:28,dogTop:4.25,man:0,cheek:'下鍵盤（I・ポジティフ）の側板'};
-  const UP={y:7,zf:34,zt:-12,za:8,bed0:-11,bed1:31.8,bedGap:[25.4,30.2],zfelt:30.8,dip:DIP,blk:28,blkH:1.5,man:1,cheek:'上鍵盤（II・ハウプトヴェルク）の側板'};
+  const R=CX.root, m={cpl:true,cu:1,man:1,ps:[false,true,false,false,true]}, SH=1.4, POSSP=new Float32Array([0,1,0,0,1]), DIP=1.3;
+  const LO={y:0,zf:51.5,zt:-52,za:-17,bed0:-14,bed1:52.5,zfelt:50,dip:DIP,dog:20,dogTop:4.25,man:0,cheek:'下鍵盤（I・ポジティフ）の側板'};
+  const UP={y:7,zf:34,zt:-12,za:8,bed0:-11,bed1:31.8,bedGap:[17.4,22.4],zfelt:30.8,dip:DIP,blk:20,blkH:1.5,man:1,cheek:'上鍵盤（II・ハウプトヴェルク）の側板'};
   const umats=[], lmats=[]; for(let k=0;k<13;k++){ umats.push(mclone(MAT.woodPale)); lmats.push(mclone(MAT.woodPale)); }
   UP.mat=k=>umats[k]; LO.mat=k=>lmats[k]; UP.blkMat=mclone(MAT.woodDark); UP.blkMat.color.set(0x6b4a2c); LO.dogMat=mclone(MAT.woodDark); LO.dogMat.color.set(0x6b4a2c);
   const lo=buildSuspManual(LO), up=buildSuspManual(UP);
-  box(R,30,6.5,98,MAT.woodDark,0,-6.6,-6,LB('演奏台（コンソール）の台','Spieltisch'));
+  box(R,30,6.5,110,MAT.woodDark,0,-6.6,0,LB('演奏台（コンソール）の台','Spieltisch'));
   const kdL=new Float32Array(13), kdU=new Float32Array(13);
   const AO=4, pullL=DIP*(LO.za-LO.zt)/(LO.zf-LO.zt), pullU=DIP*(UP.za-UP.zt)/(UP.zf-UP.zt);
   const RB=[{man:lo,o:LO,ai:AO*pullL/KPULL,y0:12,kd:kdL,lab:'下鍵盤（I）',wn:'ポジティフ'},{man:up,o:UP,ai:AO*pullU/KPULL,y0:14,kd:kdU,lab:'上鍵盤（II）',wn:'ハウプトヴェルク'}];
   for(const b of RB){ b.zr=b.o.za-b.ai; b.zo=b.zr+AO; }
   const pos=buildChest({y:34,z:RB[0].zo-14,kd:kdL,sp:POSSP,palMat:k=>lmats[k],volN:260});
-  const hw=buildChest({y:Math.ceil(pos.top)+6,z:RB[1].zo-14,kd:kdU,palMat:k=>umats[k]});
+  RB[1].y0=Math.ceil(pos.top)+3;
+  const hw=buildChest({y:RB[1].y0+13*1.25+6,z:RB[1].zo-14,kd:kdU,palMat:k=>umats[k]});
   RB[0].ch=pos; RB[1].ch=hw;
   for(const b of RB){
     const xs=[]; for(let k=0;k<13;k++) xs.push(b.man.keys[k].x,b.ch.pos(k)); const xmin=Math.min(...xs)-3, xmax=Math.max(...xs)+3, ytop=b.y0+13*1.25+2;
@@ -1846,16 +1848,16 @@ function buildCoupler(){
   return {chest:hw,
     controls:[{type:'toggle',id:'cpl',label:'カプラー（下鍵盤を押し込む）',get:()=>m.cpl,set:v=>m.cpl=v},
       {type:'toggle',id:'m1',label:'上鍵盤（II）を弾く',get:()=>m.man===1,set:()=>setMan(1)},
-      {type:'toggle',id:'m0',label:'下鍵盤（I）を弾く',get:()=>m.man===0,set:()=>setMan(0)}],
-    ctl:{cpl:v=>m.cpl=v,man:v=>{ m.man=v; }},
+      {type:'toggle',id:'m0',label:'下鍵盤（I）を弾く',get:()=>m.man===0,set:()=>setMan(0)}].concat(STOPS.map((st,i)=>({type:'toggle',id:'ps'+i,label:'I：'+st.name,get:()=>m.ps[i],set:v=>m.ps[i]=v}))),
+    ctl:{cpl:v=>m.cpl=v,man:v=>{ m.man=v; },pos:arr=>arr.forEach((v,i)=>m.ps[i]=!!v)},
     setMan,curMan:()=>m.man,
-    pins:[{t:'上鍵盤（II・ハウプトヴェルク）',p:V3(-18,9,30)},{t:'下鍵盤（I・ポジティフ）',p:V3(-18,1,39)},{t:'カプラーの突起',p:V3(16,4,34),max:90},{t:'ローラーボード',p:V3(-36,30,0)},{t:'ポジティフ',p:V3(40,pos.oy+20,pos.oz+12)},{t:'ハウプトヴェルク',p:V3(40,hw.oy+20,hw.oz+12)}],
+    pins:[{t:'上鍵盤（II・ハウプトヴェルク）',p:V3(-18,9,30)},{t:'下鍵盤（I・ポジティフ）',p:V3(-18,1,39)},{t:'カプラーの突起',p:V3(16,4,34),max:90},{t:'ローラーボード（ポジティフ用）',p:V3(-36,26,-18)},{t:'ローラーボード（ハウプトヴェルク用）',p:V3(-36,pos.top+14,6)},{t:'ポジティフ',p:V3(40,pos.oy+20,pos.oz+12)},{t:'ハウプトヴェルク',p:V3(40,hw.oy+20,hw.oz+12)}],
     speaking:()=>hw.speaking().concat(pos.speaking()),
     update(dt){
       m.cu+=clamp((m.cpl?1:0)-m.cu,-dt*3,dt*3);
       const shift=SH*(1-m.cu); lo.G.position.z=shift;
       for(let k=0;k<13;k++){
-        const w=(k in SLOT), d0=w?LO.dog:LO.dog-1, over=shift<0.7, dU=d0-UP.zt, dL=d0-LO.zt;
+        const w=(k in SLOT), d0=LO.dog, over=shift<0.7, dU=d0-UP.zt, dL=d0-LO.zt;
         const thU=m.man===1?Math.asin(clamp(DIP*S.kd[k]/up.Lk,0,1)):0;
         const thD=m.man===0?Math.asin(clamp(DIP*S.kd[k]/lo.Lk,0,1)):0;
         let thC=0;
@@ -1872,6 +1874,7 @@ function buildCoupler(){
           q.t1.set(t1,at,KH); q.t2.set(b.ch.pullDown(k),t2,0.6);
         }
       }
+      for(let i=0;i<5;i++) POSSP[i]+=clamp((m.ps[i]?1:0)-POSSP[i],-dt*2.5,dt*2.5);
       pos.update(dt); hw.update(dt);
     }};
 }
@@ -2009,7 +2012,7 @@ const MODELS={
     const trunk=new Tube(tp,{r:1.7,density:0.4,front:400,state:()=>({open:S.p>10,speed:3*(chest?chest.speaking().length:0)})});
     chest=buildChest({y:30,feed:trunk});
     const thMax=0.34, m={auto:true};
-    return {chest,controls:[
+    return {chest,pins:[{t:'ふいご1',p:V3(-88,10,-16)},{t:'ふいご2',p:V3(-88,10,16)},{t:'ふいごレバー',p:V3(-130,50,0)},{t:'風導管',p:V3(-40,22,8)},{t:'風箱',p:V3(36,44,18)}],controls:[
       {type:'toggle',id:'auto',label:'カルカント自動',get:()=>m.auto,set:v=>m.auto=v},
       {type:'hold',label:'ふいご1を踏む',down:()=>bs[0].hold=true,up:()=>bs[0].hold=false},
       {type:'hold',label:'ふいご2を踏む',down:()=>bs[1].hold=true,up:()=>bs[1].hold=false}],
@@ -2042,7 +2045,7 @@ const MODELS={
     let chest=null;
     const M=buildBlowerMag({trunkPts:[V3(-60,11.5,6),V3(-60,6,6),V3(-40,6,6),V3(-40,36,6),V3(-33,36,6)]});
     chest=buildChest({y:30,feed:M.trunk});
-    return {chest,controls:[{type:'toggle',id:'blower',label:'送風機',get:()=>M.blower,set:v=>M.blower=v}],
+    return {chest,pins:[{t:'送風機',p:V3(-122,19,0)},{t:'マガジンふいご',p:V3(-75,42,17)},{t:'カーテン弁',p:V3(-87,22,-4),max:160},{t:'風導管',p:V3(-40,22,8)},{t:'風箱',p:V3(36,44,18)}],controls:[{type:'toggle',id:'blower',label:'送風機',get:()=>M.blower,set:v=>M.blower=v}],
       ctl:{blower:v=>M.blower=v,reset:()=>M.reset()},
       update(dt){ M.update(dt,chest.speaking().length); chest.update(dt); }};
   }},
@@ -2057,7 +2060,7 @@ const MODELS={
     {t:'鍵を離すとパレットが閉じ、チャンネル内の風はパイプから抜けて止まります。',run:a=>a.keys([])},
     {t:'断面でFisのチャンネルを切り、鍵を押します。パレット・チャンネル・スライダー・上板・パイプの縦の関係がわかります。',run:a=>{a.xray(false);a.cut(0.5);a.stops([1,1,1,1,1]);a.keys([6]);a.cam([95,50,0],[0,34,0]);}}
   ],
-  build(){ const chest=buildChest({}); return {chest,update(dt){ chest.update(dt); }}; }},
+  build(){ const chest=buildChest({}); return {chest,pins:[{t:'パレットボックス',p:V3(36,5,18)},{t:'トーンチャンネル',p:V3(36,18,19)},{t:'スライダー',p:V3(36,26,15)},{t:'上板',p:V3(36,30,7)},{t:'パイプ',p:V3(36,62,0)}],update(dt){ chest.update(dt); }}; }},
 'c-02':{id:'C-02',name:'スプリングチェスト',terms:'spring chest · Springlade · sommier à ressorts',stops0:[1,0,1,0,0],floor:-8,
   cam:{p:[80,74,112],t:[0,36,0]},clip:[-33,34],
   summary:'スライダーの代わりに、パイプごとにばねで閉じた小さな弁（ばね弁）をチャンネルの天井に持つ風箱です。ストップを入れるとストップバーが下がり、ピンでそのストップの弁をまとめて押し開けます。16〜17世紀のオランダや北ドイツ、19世紀までのイタリアなどで使われました。',
@@ -2068,7 +2071,7 @@ const MODELS={
     {t:'鍵を離しても、ばね弁は開いたままです。ストップが入っていても、パレットが開かない限り鳴りません。実物ではストップレバーをフックに掛けて、この位置に保ちます。',run:a=>a.keys([])},
     {t:'和音を弾きます。パレットとばね弁の両方が開いたパイプだけが鳴ります。スライダーチェスト（C-01）と、止める方法の違いを比べてください。',run:a=>{a.stops([1,1,1,0,0]);a.keys([0,4,7]);}}
   ],
-  build(){ const chest=buildChest({spring:true}); return {chest,update(dt){ chest.update(dt); }}; }},
+  build(){ const chest=buildChest({spring:true}); return {chest,pins:[{t:'パレットボックス',p:V3(36,5,18)},{t:'トーンチャンネル',p:V3(36,18,19)},{t:'ばね弁',p:V3(36,23.6,15)},{t:'ストップバー',p:V3(36,28,12)},{t:'パイプ',p:V3(36,62,0)}],update(dt){ chest.update(dt); }}; }},
 'c-03':{id:'C-03',name:'コーンバルブチェスト',terms:'cone-valve chest · Kegellade · sommier à cônes',stops0:[1,0,1,0,0],floor:12,
   cam:{p:[110,70,140],t:[0,22,10]},clip:[-33,34],
   summary:'ストップごとに風箱の長さいっぱいの部屋（ストップチャンネル）があり、パイプ1本ごとに円すい弁が付いた風箱です。鍵を押すとその鍵の円すい弁がいっしょに持ち上がり、風のあるチャンネル（入っているストップ）のパイプだけが鳴ります。円すい弁を持ち上げる方法には、鍵の力で直接持ち上げる機械式と、小ふいごで持ち上げる空気式があります。',
@@ -2118,7 +2121,7 @@ const MODELS={
     const seq=[0,2,4,6,8,10,12,11,9,7,5,3,1], order=[]; seq.forEach((k,j)=>order[k]=j);
     const chest=buildChest({y:48,z:-50,order}); const kb=buildKeyboard({x:0,y:0,z:34}); box(CX.root,30,8.5,61,MAT.woodDark,0,-7.75,5.5,LB('演奏台（コンソール）の台','Spieltisch'));
     const rs=buildRollerSquare(chest,kb);
-    return {chest,update(dt){ chest.update(dt); kb.update(); rs.update(); }};
+    return {chest,pins:[{t:'鍵盤',p:V3(-16,3,40)},{t:'ローラーボード',p:V3(-40,24,11)},{t:'スクエア',p:V3(38,36,11)},{t:'水平のトラッカー',p:V3(38,37,-18)},{t:'風箱',p:V3(38,62,-38)}],update(dt){ chest.update(dt); kb.update(); rs.update(); }};
   }},
 'e-01':{id:'E-01',name:'機械式ストップアクション',terms:'mechanical stop action · mechanische Registertraktur · tirage mécanique des jeux',stops0:[0,0,0,0,0],floor:-8,
   cam:{p:[55,62,125],t:[-20,30,8]},clip:[-60,34],
@@ -2130,7 +2133,7 @@ const MODELS={
     {t:'スライダーの穴が上下と一致したので、鍵を押すとこのストップが鳴ります。',run:a=>{a.stops([1,0,0,0,0]);a.keys([0,4,7]);}},
     {t:'全部のストップを入れてから、まとめて切ります。',run:a=>{a.keys([0,4,7]);a.stops([1,1,1,1,1]);later(2200,()=>{api.stops([0,0,0,0,0]);});}}
   ],
-  build(){ const chest=buildChest({y:30}); const sa=buildStopAction(chest,{ky0:6,kz:30}); return {chest,update(dt){ chest.update(dt); sa.update(); }}; }},
+  build(){ const chest=buildChest({y:30}); const sa=buildStopAction(chest,{ky0:6,kz:30}); return {chest,pins:[{t:'ストップノブ',p:V3(-46,26,32)},{t:'ストップのローラー',p:V3(-55,40,14)},{t:'スライダー',p:V3(-38,57,16)},{t:'風箱',p:V3(36,44,18)}],update(dt){ chest.update(dt); sa.update(); }}; }},
 'd-02':{id:'D-02',name:'バーカーレバー',terms:'Barker lever · Barkerhebel · machine Barker',stops0:[1,0,1,0,0],floor:-26,
   cam:{p:[110,40,100],t:[0,16,6]},clip:[-40,40],
   summary:'重い機械式アクションを風の力で助ける装置です。鍵が動かすのは小さな弁だけで、その弁が開くと風箱の風が鍵ごとの小ふいごに入り、ふくらむ力で重いトラッカーとパレットを動かします。19世紀の大オルガンで、カプラーをつないだ鍵盤を軽くするために使われました。',
@@ -2212,15 +2215,15 @@ const MODELS={
   build(){ return buildZimbelstern(); }},
 'g-01':{id:'G-01',name:'カプラー',terms:'coupler · Koppel · accouplement',stops0:[1,0,1,0,0],floor:-10,
   cam:{p:[120,50,130],t:[0,60,-20]},clip:[-40,40],
-  foot:'ポジティフ（下の風箱）には Rohrflöte 4′ と Vox humana 8′ を入れたままにしています。ストップのボタンはハウプトヴェルク（上の風箱）に効きます。鍵盤のボタンと画面の鍵は、操作欄で選んだほうの鍵盤を弾きます。',
+  foot:'ストップは風箱ごとに選べます。下の「ストップ」のボタンはハウプトヴェルク（II・上の風箱）、操作欄の「I：…」のボタンはポジティフ（I・下の風箱）のストップです。下鍵盤は、黒鍵まで上鍵盤より手前に出しています。鍵盤のボタンと画面の鍵は、操作欄で選んだほうの鍵盤を弾きます。',
   summary:'2段の手鍵盤をつなぐ機械式の押し込み式カプラー（シーブカプラー）です。どちらの鍵盤もサスペンデッド（吊り下げ式）アクションで、鍵は奥端が支点、トラッカーに吊られていて、押すと鍵全体が下がります。下鍵盤（I・ポジティフ）の鍵に突起が立っていて、下鍵盤を約11 mm奥へ押し込むと、突起が上鍵盤（II・ハウプトヴェルク）の鍵の下に付いた当て木の真下に来ます。突起は上鍵盤の下に隠れていて、下鍵盤の演奏の邪魔にはなりません。上の鍵を押すと当て木が突起を押し下げ、下の鍵もいっしょに下がって、ポジティフも鳴ります（I/II）。',
   steps:[
-    {t:'2段の鍵盤はどちらもサスペンデッド（吊り下げ式）アクションです。鍵は奥端のラックのピンが支点で、トラッカーに吊られていて、押すと鍵全体が下がります。下鍵盤のトラッカーは上鍵盤のラックの後ろを上がるので、下鍵盤の鍵は長くなっています。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',1);a.ctl('cpl',false);a.keys([]);a.home();}},
-    {t:'トラッカーはローラーボードへ上がります。ローラーの腕は鍵の位置が短く、パレットの位置が長くなっていて、吊り下げ式の鍵の小さな引き（約4〜5 mm）を、パレットを開けるのに必要な引き（約10 mm）に大きくしながら、風箱の幅へ左右に広げます。下の風箱がポジティフ（I）、上の風箱がハウプトヴェルク（II）です。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',1);a.ctl('cpl',true);a.keys([0,12]);a.cam([62,40,56],[0,22,-6]);}},
-    {t:'カプラーを切ったまま上鍵盤（II）を弾きます。ハウプトヴェルクだけが鳴ります。下鍵盤は手前に引き出されていて、突起は上の鍵の当て木の前にずれているので当たりません。（鍵Eの位置で縦に切った断面）',run:a=>{a.ctl('man',1);a.ctl('cpl',false);a.keys([4]);a.xray(false);a.cut(0.55);a.cam([24,11,44],[-4,4,26]);}},
-    {t:'下鍵盤を奥へ押し込みます（カプラーを入れる）。突起が上の鍵の当て木の真下に来ます。突起は、両方の鍵の下がる量がちょうど等しくなる位置（上鍵盤の下、鍵盤の前から約9 cm奥）にあります。',run:a=>{a.ctl('man',1);a.keys([]);a.ctl('cpl',true);a.xray(false);a.cut(0.55);a.cam([24,11,44],[-4,4,26]);}},
-    {t:'上鍵盤を弾くと、上の鍵の当て木が突起を押し下げて下の鍵もいっしょに下がり、ポジティフ（下の風箱）も同時に鳴ります。',run:a=>{a.ctl('man',1);a.ctl('cpl',true);a.keys([4]);a.xray(false);a.cut(0.55);a.cam([24,11,44],[-4,4,26]);}},
-    {t:'下鍵盤だけを弾いても、下の鍵は上の鍵から離れるだけなので、上の鍵は動きません。吊り下げ式のこのカプラーは「上鍵盤で下鍵盤も弾く」一方向のつながり（I/II）です。',run:a=>{a.ctl('man',0);a.ctl('cpl',true);a.keys([4]);a.xray(false);a.cut(0.55);a.cam([24,11,44],[-4,4,26]);}},
+    {t:'2段の鍵盤はどちらもサスペンデッド（吊り下げ式）アクションです。鍵は奥端のラックのピンが支点で、トラッカーに吊られていて、押すと鍵全体が下がります。下鍵盤のトラッカーは上鍵盤のラックの後ろを上がるので、下鍵盤の鍵は長くなっています。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',1);a.ctl('cpl',false);a.stops([1,0,1,0,0]);a.ctl('pos',[0,1,0,0,1]);a.keys([]);a.home();}},
+    {t:'トラッカーはローラーボードへ上がります。ローラーの腕は鍵の位置が短く、パレットの位置が長くなっていて、吊り下げ式の鍵の小さな引き（約4〜5 mm）を、パレットを開けるのに必要な引き（約10 mm）に大きくしながら、風箱の幅へ左右に広げます。ポジティフ（I・下の風箱）のローラーボードは鍵盤のすぐ上、ハウプトヴェルク（II・上の風箱）のローラーボードはポジティフのパイプの少し上にあり、上鍵盤のトラッカーはポジティフの前をまっすぐ上がっていきます。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',1);a.ctl('cpl',true);a.keys([0,12]);a.home();}},
+    {t:'カプラーを切ったまま上鍵盤（II）を弾きます。ハウプトヴェルクだけが鳴ります。下鍵盤は手前に引き出されていて、突起は上の鍵の当て木の前にずれているので当たりません。（鍵Eの位置で縦に切った断面）',run:a=>{a.ctl('man',1);a.ctl('cpl',false);a.keys([4]);a.xray(false);a.cut(0.55);a.cam([26,12,44],[-4,4,24]);}},
+    {t:'下鍵盤を奥へ押し込みます（カプラーを入れる）。突起が上の鍵の当て木の真下に来ます。突起は、両方の鍵の下がる量がちょうど等しくなる位置（上鍵盤の下）にあります。',run:a=>{a.ctl('man',1);a.keys([]);a.ctl('cpl',true);a.xray(false);a.cut(0.55);a.cam([26,12,44],[-4,4,24]);}},
+    {t:'上鍵盤を弾くと、上の鍵の当て木が突起を押し下げて下の鍵もいっしょに下がり、ポジティフ（下の風箱）も同時に鳴ります。',run:a=>{a.ctl('man',1);a.ctl('cpl',true);a.keys([4]);a.xray(false);a.cut(0.55);a.cam([26,12,44],[-4,4,24]);}},
+    {t:'下鍵盤だけを弾いても、下の鍵は上の鍵から離れるだけなので、上の鍵は動きません。吊り下げ式のこのカプラーは「上鍵盤で下鍵盤も弾く」一方向のつながり（I/II）です。',run:a=>{a.ctl('man',0);a.ctl('cpl',true);a.keys([4]);a.xray(false);a.cut(0.55);a.cam([26,12,44],[-4,4,24]);}},
     {t:'全体を見ます。ハウプトヴェルクの風箱はポジティフの上にあり、そのトラッカーはポジティフの風箱の前を通って上へ伸びています。',run:a=>{a.xray(true);a.ctl('man',1);a.ctl('cpl',true);a.keys([0,4,7]);a.cut(0);a.home();}}
   ],
   build(){ return buildCoupler(); }},
@@ -2296,6 +2299,7 @@ function setXray(v){ S.xray=v; for(const m of XRAY){ m.transparent=v; m.opacity=
 $('xray').addEventListener('click',()=>setXray(!S.xray));
 $('tPts').addEventListener('click',e=>{ SHOW.pts=!SHOW.pts; e.currentTarget.setAttribute('aria-pressed',SHOW.pts); });
 $('tLines').addEventListener('click',e=>{ SHOW.lines=!SHOW.lines; e.currentTarget.setAttribute('aria-pressed',SHOW.lines); });
+$('tPins').addEventListener('click',e=>{ SHOW.pins=!SHOW.pins; e.currentTarget.setAttribute('aria-pressed',SHOW.pins); pinsEl.hidden=!SHOW.pins; });
 function setCut(v){ S.cut=v; const [mn,mx]=inst.def.clip; clipPlane.constant=v<=0.001?1e5:lerp(mx,mn,v); $('cut').value=Math.round(v*100); }
 $('cut').addEventListener('input',e=>setCut(e.target.value/100));
 function camTo(p,t){ camera.position.set(p[0],p[1],p[2]); controls.target.set(t[0],t[1],t[2]); controls.update(); }
@@ -2362,7 +2366,7 @@ const pinsEl=$('pins'); let pinEls=[];
 const LEGEND0=document.getElementById('legend').innerHTML;
 function setupPins(){ pinsEl.innerHTML=''; pinEls=(inst.pins||[]).map(p=>{ const d=document.createElement('div'); d.className='pin'+(p.n?'':' plain'); d.innerHTML=(p.n?'<b>'+p.n+'</b>':'')+p.t; pinsEl.appendChild(d); return {d,p:p.p,max:p.max}; }); }
 const _pp=V3(0,0,0);
-function pinsUpdate(){ if(!pinEls.length) return; const w=wrap.clientWidth,h=wrap.clientHeight; for(const q of pinEls){ _pp.copy(q.p).project(camera); const vis=_pp.z<1&&Math.abs(_pp.x)<1.05&&Math.abs(_pp.y)<1.05&&(!q.max||camera.position.distanceTo(q.p)<q.max); q.d.hidden=!vis; if(vis){ q.d.style.left=((_pp.x+1)/2*w)+'px'; q.d.style.top=((1-_pp.y)/2*h)+'px'; } } }
+function pinsUpdate(){ if(!pinEls.length||!SHOW.pins) return; const w=wrap.clientWidth,h=wrap.clientHeight; for(const q of pinEls){ _pp.copy(q.p).project(camera); const vis=_pp.z<1&&Math.abs(_pp.x)<1.05&&Math.abs(_pp.y)<1.05&&(!q.max||camera.position.distanceTo(q.p)<q.max); q.d.hidden=!vis; if(vis){ q.d.style.left=((_pp.x+1)/2*w)+'px'; q.d.style.top=((1-_pp.y)/2*h)+'px'; } } }
 
 const gwl=$('gwl'), gwr=$('gwr'), gv=$('gv'); let gLast=-1;
 function gaugeUpdate(){ const p=Math.round(S.p); const d=clamp(S.p,0,110)*0.225; gwl.setAttribute('y',60+d); gwl.setAttribute('height',64-d); gwr.setAttribute('y',60-d); gwr.setAttribute('height',64+d); if(p!==gLast){ gv.textContent=p+' mm'; gLast=p; } }
