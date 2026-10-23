@@ -34,6 +34,8 @@ button,select,input{font:inherit;color:inherit}
 
 .mast{padding-block:22px 14px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));border-bottom:1px solid var(--line)}
 .mast-in{max-width:1600px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 28px}
+.langpick{margin-left:auto}
+.langpick select{font:inherit;font-size:13px;padding:4px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
 .eyebrow{flex-basis:100%;margin:0;font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;color:var(--muted)}
 h1{margin:0;font-family:var(--f-display);font-weight:800;font-size:clamp(26px,3.2vw,38px);letter-spacing:.05em;line-height:1.25;text-wrap:balance}
 .lede{margin:0;max-width:60ch;color:var(--muted);font-size:14px}
@@ -151,6 +153,7 @@ h1{margin:0;font-family:var(--f-display);font-weight:800;font-size:clamp(26px,3.
   <div class="mast-in">
     <p class="eyebrow">ORGELBAU-ATLAS · 第3段階 · 22モデル公開</p>
     <h1>パイプオルガン機構図鑑</h1>
+    <label class="langpick"><span class="sr">Language</span><select id="langSel" aria-label="Language"><option value="ja">日本語</option><option value="en">English</option><option value="de">Deutsch</option><option value="fr">Français</option></select></label>
   </div>
 </header>
 
@@ -242,6 +245,11 @@ const lerp=(a,b,t)=>a+(b-a)*t;
 const TR={'Koppelwippe':['coupler backfall','balancier d’accouplement'],'Schleifenzugmagnet':['slider solenoid','électro-aimant de registre'],'Einschaltspule':['on coil','bobine d’enclenchement'],'Ausschaltspule':['off coil','bobine de déclenchement'],'Anker':['plunger','noyau plongeur'],'Endschalter':['limit switch','contact de fin de course'],'Registerwippe':['stop tab','domino de registre'],'Kabel':['wire','fil électrique'],'Kombinationsknopf':['combination piston','piston de combinaison'],'Setzer':['setter button','bouton de mémorisation'],'Schwimmer':['schwimmer (spring regulator)','régulateur à ressorts'],'Schwimmerplatte':['moving plate','plateau mobile'],'Schwimmerfeder':['regulator spring','ressort du régulateur'],'Schwimmerventil':['inlet valve','soupape d’admission'],'Ventilstange':['valve rod','tige de soupape'],'Federbock':['spring frame','support des ressorts'],'Einlasskanal':['inlet channel','canal d’admission'],'Pedalklaviatur':['pedalboard','pédalier'],'Pedaltaste':['pedal key','marche de pédalier'],'Scharnier':['hinge rail','charnière'],'Pedalfeder':['pedal spring','ressort de pédale'],'Orgelbank':['organ bench','banc d’orgue'],'Haken':['hook','crochet'],'Gehäuse':['case front','buffet'],'Zimbelstern':['cymbelstern','étoile à clochettes'],'Glocke':['bell','clochette'],'Glockenring':['bell ring','couronne des clochettes'],'Klöppel':['clapper','battant'],'Windrad':['wind wheel','roue à vent'],'Düse':['nozzle','buse'],'Lagerbock':['bearing bracket','palier'],'Koppelklotz':['coupler dog','pilote d’accouplement'],'Waagebalken':['balance rail','barre d’équilibre'],'Magazinbalg':['reservoir','réservoir'],'Windlade':['windchest','sommier'],'Balgbrett':['bellows board','planche du soufflet'],'Tremulantventil':['tremulant valve','soupape du tremblant'],'Ventilarm':['valve arm','bras de soupape'],'Anschlag':['stop block','butée'],'Tremulantklappe':['tremulant flap','clapet du tremblant'],'Achse':['axle','axe'],'Gewichtsarm':['weight arm','bras du poids'],'Schraube':['screw','vis'],'Kernboden':['block base','fond du bloc'],'Vorderbrett':['front board','planche de façade'],'Kanal':['wind channel','canal'],'Kernspalte':['windway','lumière'],'Spundleder':['stopper leather','cuir du tampon'],'Ventilkammer':['valve chamber','chambre de soupape'],'Doppelventil':['double valve','double soupape'],'Abstromöffnung':['exhaust port','orifice d’échappement'],'Membranbohrung':['membrane hole','trou de membrane'],'Bälgchenbrett':['bellows board','planche des soufflets'],'Relaiskanal':['relay channel','canal de relais'],'Kegel':['cone valve','soupape conique'],'Kegelsitz':['cone seat','siège du cône'],'Bälgchen':['small motor bellows','petit soufflet'],'Registerkanzelle':['stop channel','gravure de registre'],'Registerventil':['stop valve','soupape de registre'],'Kondukt':['conveyance','conduit'],'Bleirohr':['lead tube','tube de plomb'],'Spielventilkasten':['key-valve box','boîte à soupapes de touche'],'Ventilabzug':['valve pull-down','tirant de soupape'],'Windzufuhr':['wind supply','alimentation en vent'],'Membrane':['membrane','membrane'],'Membrankästchen':['membrane chamber','boîtier de membrane'],'Tonkanzelle':['key channel','gravure de note'],'Abstromventil':['exhaust valve','soupape d’échappement'],'Relaisbalg':['relay pouch','soufflet relais'],'Speisekanal':['feed duct','canal d’alimentation'],'Pfeifenbohrung':['pipe bore','trou de pied'],'Barkerbalg':['Barker motor','soufflet Barker'],'Barkerkasten':['motor wind box','laye des moteurs'],'Einlassventil':['inlet valve','soupape d’admission'],'Auslassventil':['exhaust valve','soupape d’échappement'],'Wippe':['backfall','balancier'],'Wippenbalken':['backfall rail','barre des balanciers'],'Pneumatikmotor':['pneumatic motor','moteur pneumatique'],'Schwellkasten':['swell box','boîte expressive'],'Jalousie':['shutter','jalousie'],'Jalousiehebel':['shutter arm','bras de jalousie'],'Zugstange':['connecting rod','tringle'],'Schwelltritt':['balanced expression pedal','pédale d’expression'],'Schwelltrittlager':['pedal bearing','support de pédale'],'Schwelltritthebel':['pedal arm','bras de pédale'],'Abstrakte':['tracker','vergette'],'Abzugsdraht':['pull-down wire','fil de tirage'],'Ansaugöffnung':['air intake','ouïe d’aspiration'],'Anschlagfilz':['upstop felt','feutre d’arrêt'],'Anschlagleiste':['upstop rail','barre d’arrêt'],'Anschlagleistenstütze':['upstop rail post','support de barre d’arrêt'],'Aufschnitt':['mouth (cut-up)','bouche'],'Backe':['key cheek','joue de clavier'],'Balgbock':['bellows trestle','tréteau du soufflet'],'Balghebel':['bellows lever','levier de soufflet'],'Balgkanal':['bellows outlet','porte-vent du soufflet'],'Balgstütze':['lever post','poteau du levier'],'Becher':['resonator','résonateur'],'Bohrung':['tracker hole','trou de vergette'],'Damm':['slider bearer','faux-registre'],'Deckel':['cap','calotte'],'Draht':['wire','fil'],'Drehstift':['pivot pin','axe de pivot'],'Falten':['folds','plis'],'Federleiste':['spring rail','barre à ressorts'],'Federrolle':['spring roller','rouleau à ressort'],'Federwindung':['spring coil','boucle du ressort'],'Fundamentbrett':['table','table'],'Fuß':['foot','pied'],'Fußloch':['toe hole','trou du pied'],'Führungsleiste':['guide rail','barre de guidage'],'Führungsstift':['guide pin','pointe de guidage'],'Gebläsegehäuse':['blower casing','carter du ventilateur'],'Gewicht':['weight','poids'],'Gewindedraht':['threaded wire','fil fileté'],'Holzgedackt':['stopped wood pipe','bourdon en bois'],'Hut':['cap','calotte'],'Kehle':['shallot','anche'],'Keil':['wedge','coin'],'Kern':['languid','biseau'],'Kernfase':['languid bevel','chanfrein du biseau'],'Kernstiche':['nicks','dents'],'Klaviaturboden':['key bed','fond de clavier'],'Kopf / Zunge':['block and tongue','noyau et languette'],'Krücke':['tuning wire','rasette'],'Körper':['body','corps'],'Labium':['mouth','bouche'],'Laufrad':['impeller','turbine'],'Laufradschaufel':['impeller blade','aube de turbine'],'Ledermutter':['leather nut','écrou en cuir'],'Luftblatt':['air jet','lame d’air'],'Motor':['motor','moteur'],'Nuss':['block','noyau'],'Oberlabium':['upper lip','lèvre supérieure'],'Oberplatte':['top board','table supérieure'],'Obertaste':['sharp key','feinte'],'Pfeife':['pipe','tuyau'],'Pfeifenstock':['upper board','chape'],'Pulpete':['pull-down purse','boursette'],'Rechenstäbchen':['rack slip','dent de peigne'],'Registerbalken':['stop bar','barre de registre'],'Registerbank':['stop jamb','joue de tirants'],'Registerschild':['stop label','étiquette de registre'],'Registerwelle':['stop roller','rouleau de registre'],'Registerzug':['drawknob','tirant de registre'],'Registerzugstange':['draw rod','tringle de tirant'],'Registerärmchen':['stop roller arm','bras de rouleau de registre'],'Rollenführung':['roller guide','guide du rouleau'],'Rollventilkasten':['curtain valve box','boîte de la valve à rideau'],'Röhrchen':['chimney','cheminée'],'Rückschlagventil':['non-return valve','clapet anti-retour'],'Sammelkanal':['collecting trunk','porte-vent collecteur'],'Schalldruck':['sound pressure','pression acoustique'],'Schied':['channel bar','barrage'],'Schleife':['slider','registre'],'Schleifenbohrung':['slider hole','trou de registre'],'Schleifenzug':['slider link','bielle de registre'],'Schlitz':['slot','fente'],'Schöpfventil':['intake valve','soupape d’aspiration'],'Seil':['rope','corde'],'Seitenbart':['ear','oreille'],'Spieltisch':['console','console'],'Spielventil':['pallet','soupape'],'Springventil':['spring valve','soupapette de registre'],'Spund':['stopper','tampon'],'Spundgriff':['stopper handle','poignée du tampon'],'Stecher':['sticker pin','pilote'],'Stiefel':['boot','pied (boîte)'],'Stimmschieber':['tuning slide','coulisse d’accord'],'Sägeschnitt':['saw kerf','trait de scie'],'Tastenfilz':['key felt','feutre de touche'],'Tastenhebel':['key lever','levier de touche'],'Tastenrechen':['tail rack','peigne arrière'],'Tritt':['treadle','marchepied du souffleur'],'Unterlabium':['lower lip','lèvre inférieure'],'Unterplatte':['bottom board','table inférieure'],'Untertaste':['natural key','marche'],'Ventilfeder':['pallet spring','ressort de soupape'],'Ventilführungsstift':['pallet guide pin','guide de soupape'],'Ventilöse':['pallet eye','œillet de soupape'],'Vorhang':['curtain','rideau'],'Vorhangleiste':['curtain batten','latte de rideau'],'Vorschlag':['cap (wood pipe)','lèvre inférieure rapportée'],'Welle':['roller','rouleau'],'Wellenbrett':['roller board','abrégé'],'Wellenböckchen':['roller stud','palier de rouleau'],'Wellenärmchen':['roller arm','bras de rouleau'],'Windkanal':['wind trunk','porte-vent'],'Windkasten':['pallet box','laye'],'Windleitung':['wind duct','conduit de vent'],'Winkel':['square','équerre'],'Winkelbalken':['square rail','barre d’équerres'],'Zugschnur':['pull cord','cordon'],'Zunge':['tongue','languette'],'Öse':['eye','œillet']};
 /* part names: Japanese, English, German, French */
 const LB=(ja,de)=>{ const t=TR[de]||['','']; return {ja,en:t[0],de,fr:t[1]}; };
+/* ---------------- interface language ---------------- */
+let LANG='ja'; try{ const q=localStorage.getItem('oa-lang'); if(q&&/^(ja|en|de|fr)$/.test(q)) LANG=q; }catch(e){}
+const I18N={}; const LI={en:0,de:1,fr:2};
+const T_=s=>{ if(LANG==='ja'||s==null) return s; const e=I18N[s]; return e?e[LI[LANG]]:s; };
+const TF=(s,...a)=>T_(s).replace(/\{(\d)\}/g,(m,i)=>a[+i]);
 
 /* ---------------- data ---------------- */
 const STOPS=[
@@ -1031,7 +1039,7 @@ function buildFlueSection(){
   const vw=voice({zc:zcw,zl:zFi,g:gw,hc:hcw,mode:2,zA:zW-WI+0.1,zB:zFi-0.1,top:()=>m.stop,
     supply:[V3(-0.15,-23,zW),V3(-0.15,-17,zW),V3(-0.15,-6.6,zW),V3(-0.15,-5.4,zW+0.9),V3(-0.15,-5.0,zCi-0.6),V3(-0.15,-3.6,zCi-0.75),V3(-0.15,-1.2,zcw)],
     footVol:(a,b,c,out)=>{ if(a<0.55) out.set(-0.08-c*0.3,-16.5+b*9.6,zW+(a/0.55-0.5)*0.8); else out.set(-0.08-c*0.3,yC+0.2+b*(yT-yC-0.4),zW-1.6+((a-0.55)/0.45)*(zCi-0.2-zW+1.6)); }});
-  const fmt=(f,f0)=>{ const c=Math.round(1200*Math.log2(f/f0)); return f.toFixed(1)+' Hz（'+(c>0?'+':c<0?'−':'±')+Math.abs(c)+' セント）'; };
+  const fmt=(f,f0)=>{ const c=Math.round(1200*Math.log2(f/f0)); return TF('{0} Hz（{1} セント）',f.toFixed(1),(c>0?'+':c<0?'−':'±')+Math.abs(c)); };
   const setR=(id,v)=>{ const el=document.getElementById('rc_'+id); if(el){ el.value=v; el.dispatchEvent(new Event('input')); } };
   return {
     controls:[{type:'toggle',id:'wind',label:'風を送る',get:()=>m.on,set:v=>m.on=v},
@@ -1114,7 +1122,7 @@ function buildReedSection(){
   puff.update=dt=>{ if(m.env<0.04) return; const L=PL+4, v=16*flow(); for(let i=0;i<puff.n;i++){ let s=puff.s[i]*L+v*dt*(0.8+0.4*puff.r[i*4+3]); if(s>L) s-=L; puff.s[i]=s/L; } };
   return {
     controls:[{type:'toggle',id:'wind',label:'風を送る',get:()=>m.on,set:v=>m.on=v},
-      {type:'range',id:'wire',label:'チューニングワイヤー',min:yC-0.9,max:yC+0.9,step:0.02,get:()=>m.yc,set:v=>m.yc=v,fmt:()=>{ const f=freq(), c=Math.round(1200*Math.log2(f/F0)); return f.toFixed(1)+' Hz（'+(c>0?'+':c<0?'−':'±')+Math.abs(c)+' セント）'; }}],
+      {type:'range',id:'wire',label:'チューニングワイヤー',min:yC-0.9,max:yC+0.9,step:0.02,get:()=>m.yc,set:v=>m.yc=v,fmt:()=>{ const f=freq(), c=Math.round(1200*Math.log2(f/F0)); return TF('{0} Hz（{1} セント）',f.toFixed(1),(c>0?'+':c<0?'−':'±')+Math.abs(c)); }}],
     ctl:{wind:v=>m.on=v,wire:v=>{ m.yc=v; const el=document.getElementById('rc_wire'); if(el){ el.value=v; el.dispatchEvent(new Event('input')); } }},
     pins:[{t:'足穴',p:V3(0,-3.5,2)},{t:'ブーツ',p:V3(0,12,-3.4)},{t:'シャロット',p:V3(0,26,-2.4),max:60},{t:'舌',p:V3(0,21,z0+2.6),max:60},{t:'くさび',p:V3(0,29.2,z0+1.7),max:50},
           {t:'チューニングワイヤー',p:wirePin,max:60},{t:'ナット',p:V3(0,yK-1.8,-4.7)},{t:'共鳴管',p:V3(0,yK+12,-2.6)}],
@@ -1358,7 +1366,7 @@ function buildTubular(){
   const setFront=()=>{ for(let k=0;k<13;k++){ fill[k].front=fill[k].L/delay(); drain[k].front=drain[k].L/delay(); } }; setFront();
   return {chest,
     controls:[{type:'toggle',id:'exh',label:'排気式にする',get:()=>m.exhaust,set:v=>{ m.exhaust=v; fill.forEach(f=>f.reset()); drain.forEach(f=>f.reset()); }},
-      {type:'range',id:'len',label:'導管の長さ',min:2,max:20,step:0.5,get:()=>m.len,set:v=>{ m.len=v; setFront(); },fmt:()=>m.len.toFixed(1)+' m（応答の遅れ 約'+Math.round(delay()*1000)+' ms）'}],
+      {type:'range',id:'len',label:'導管の長さ',min:2,max:20,step:0.5,get:()=>m.len,set:v=>{ m.len=v; setFront(); },fmt:()=>TF('{0} m（応答の遅れ 約{1} ms）',m.len.toFixed(1),Math.round(delay()*1000))}],
     ctl:{exh:v=>{ m.exhaust=v; fill.forEach(f=>f.reset()); drain.forEach(f=>f.reset()); },len:v=>{ m.len=v; setFront(); }},
     pins:[{t:'鍵の弁箱',p:V3(0,-2,92)},{t:'導管（制御風）',p:V3(0,0,50)},{t:'リレー',p:V3(38,9,9)},{t:'空気式モーター',p:V3(38,14,2)},{t:'風箱（パレット）',p:V3(38,44,10)}],
     update(dt){ kc.update(); for(let k=0;k<13;k++) pouch[k].scale.y=0.6+0.5*(arrived(k)?1:0); mr.update(dt); for(let k=0;k<13;k++) B0[k]=mr.B[k]; chest.update(dt); }
@@ -1387,7 +1395,7 @@ function buildSwell(){
   for(let i=0;i<18;i++){ const mt=new T.MeshBasicMaterial({color:COL.sound.getHex(),transparent:true,opacity:0,side:T.DoubleSide,depthWrite:false}); CX.own.push(mt); const r=new T.Mesh(RG,mt); r.visible=false; r.userData.age=1; R.add(r); rings.push(r); }
   const XB=X1+3;
   return {chest,
-    controls:[{type:'range',id:'swell',label:'スウェルペダル',min:0,max:1,step:0.01,get:()=>m.open,set:v=>m.open=v,fmt:()=>'開き '+Math.round(m.open*100)+' %'}],
+    controls:[{type:'range',id:'swell',label:'スウェルペダル',min:0,max:1,step:0.01,get:()=>m.open,set:v=>m.open=v,fmt:()=>TF('開き {0} %',Math.round(m.open*100))}],
     ctl:{swell:v=>m.open=v},
     pins:[{t:'スウェルボックス',p:V3(X0-2,Y1-6,0)},{t:'シャッター',p:V3(X1-12,Y1-4,Z1+3)},{t:'スウェルペダル',p:V3(0,-3,52)},{t:'トレース・ベルクランク',p:V3(XB+2,10,30)}],
     swell:()=>m.open,
@@ -1477,7 +1485,7 @@ function buildTremulant(){
       {type:'toggle',id:'trem',label:'トレムラント',get:()=>m.trem,set:v=>m.trem=v},
       {type:'toggle',id:'wipp',label:'ヴィップフェーダー型',get:()=>m.type==='wipp',set:v=>{ m.type='wipp'; setVis(); renderControls(); }},
       {type:'toggle',id:'doux',label:'トランブラン・ドゥ',get:()=>m.type==='doux',set:v=>{ m.type='doux'; setVis(); renderControls(); }},
-      {type:'range',id:'hz',label:'揺れの速さ',min:3.5,max:8,step:0.1,get:()=>m.hz,set:v=>m.hz=v,fmt:()=>'毎秒 '+m.hz.toFixed(1)+' 回'}],
+      {type:'range',id:'hz',label:'揺れの速さ',min:3.5,max:8,step:0.1,get:()=>m.hz,set:v=>m.hz=v,fmt:()=>TF('毎秒 {0} 回',m.hz.toFixed(1))}],
     ctl:{play:v=>m.play=v,trem:v=>m.trem=v,type:v=>{ m.type=v; setVis(); },hz:v=>m.hz=v},
     pins:[{t:'リザーバー',p:V3(-56,yT+9,0)},{t:'風導管',p:V3(-36,yT+5,4)},{t:'パイプ',p:V3(x1+6,yT+40,3)},
           {t:'小ふいご（ヴィップフェーダー型）',p:wl(WX,yTop+9,0)},{t:'フラップ（トランブラン・ドゥ）',p:V3(DX,yT+TH/2+3,-2)}],
@@ -1775,7 +1783,7 @@ function buildZimbelstern(){
   return {
     controls:[{type:'toggle',id:'on',label:'Zimbelstern を入れる',get:()=>m.on,set:v=>m.on=v},
       {type:'toggle',id:'chord',label:'オルガンの和音も鳴らす',get:()=>m.chord,set:v=>m.chord=v},
-      {type:'range',id:'flow',label:'風の量',min:0.4,max:1.6,step:0.05,get:()=>m.flow,set:v=>m.flow=v,fmt:()=>'毎秒 約'+(1.1*m.flow).toFixed(1)+' 回転'}],
+      {type:'range',id:'flow',label:'風の量',min:0.4,max:1.6,step:0.05,get:()=>m.flow,set:v=>m.flow=v,fmt:()=>TF('毎秒 約{0} 回転',(1.1*m.flow).toFixed(1))}],
     ctl:{on:v=>m.on=v,chord:v=>m.chord=v,flow:v=>m.flow=v},
     pins:[{t:'星',p:V3(-14,YC+16,3)},{t:'鈴（6個）',p:V3(-12,YC-6,-6),max:140},{t:'打ち子',p:V3(10,YC+3,-10),max:140},{t:'風車',p:V3(-9,YC-6,-18)},{t:'弁箱・ストップ',p:V3(VX+6,VY+5,VZ+4)}],
     speaking:()=>m.chord?[{k:7,i:0,r:0},{k:11,i:0,r:0},{k:2,i:2,r:0},{k:7,i:2,r:0},{k:11,i:2,r:0},{k:2,i:1,r:0}]:[],
@@ -2489,12 +2497,12 @@ const MODELS={
     {t:'コンビネーション 2 で全部のストップ、0 で全部を切ります。「セット」を入れてからコンビネーションを押すと、今のストップの組み合わせを記憶できます。',run:a=>{a.keys([0,4,7]);a.ctl('recall',2);later(2600,()=>api.ctl('recall',0));}}
   ],
   build(){ return buildElectricStops(); }},
-'g-02':{id:'G-02',name:'ロッカーカプラー',terms:'backfall coupler · Wippenkoppel · accouplement à balanciers',stops0:[0,0,0,0,0],floor:-10,homeK:1.0,
+'g-02':{id:'G-02',name:'バックフォールカプラー',terms:'backfall coupler · Wippenkoppel · accouplement à balanciers',stops0:[0,0,0,0,0],floor:-10,homeK:1.0,
   cam:{p:[120,50,130],t:[0,60,-20]},clip:[-40,40],
   foot:'カプラー以外は G-01 と同じです。ハウプトヴェルク（II）：Prinzipal 8′・Octave 4′・Quinte 2 2/3′・Octave 2′・Mixtur III・Trompete 8′、ポジティフ（I）：Gedackt 8′・Rohrflöte 4′・Blockflöte 2′・Vox humana 8′。ストップは下の「ストップ」欄で、1行目がハウプトヴェルク、2行目がポジティフです。鍵盤のボタンと画面の鍵は、操作欄で選んだほうの鍵盤を弾きます。',
-  summary:'ロッカーカプラー（ウィッペンコッペル）は、鍵盤の上のアクションの中に組み込んだ、ウィッペン（シーソー形のてこ）式のカプラーです。音ごとに上下2本のウィッペンがあり、上鍵盤（II）のトラッカーが上のウィッペンを引くと、上のウィッペンが線で下のウィッペンを引き上げ、下のウィッペンがポジティフ（I）のトラッカーを引きます（I/II）。下鍵盤の鍵は下のウィッペンに吊られているので、上鍵盤を弾くと下鍵盤の鍵もいっしょに下がります。カプラーを切ると、上のウィッペンバルケン（支点の桟）が下がって、ナットがウィッペンに届かなくなります。',
+  summary:'バックフォールカプラー（ウィッペンコッペル）は、鍵盤の上のアクションの中に組み込んだ、ウィッペン（シーソー形のてこ）式のカプラーです。音ごとに上下2本のウィッペンがあり、上鍵盤（II）のトラッカーが上のウィッペンを引くと、上のウィッペンが線で下のウィッペンを引き上げ、下のウィッペンがポジティフ（I）のトラッカーを引きます（I/II）。下鍵盤の鍵は下のウィッペンに吊られているので、上鍵盤を弾くと下鍵盤の鍵もいっしょに下がります。カプラーを切ると、上のウィッペンバルケン（支点の桟）が下がって、ナットがウィッペンに届かなくなります。',
   steps:[
-    {t:'G-01 と同じオルガン（2段ともサスペンデッドアクション、ローラーボード、2つの風箱）に、ロッカーカプラーを付けたモデルです。カプラーは鍵盤のすぐ上のアクションの中にあり、音ごとに上下2本のウィッペンでできています。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',1);a.ctl('cpl',false);a.ctl('hw',[1,1,0,1,0,0]);a.ctl('pos',[1,1,0,0]);a.keys([]);a.home();}},
+    {t:'G-01 と同じオルガン（2段ともサスペンデッドアクション、ローラーボード、2つの風箱）に、バックフォールカプラーを付けたモデルです。カプラーは鍵盤のすぐ上のアクションの中にあり、音ごとに上下2本のウィッペンでできています。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',1);a.ctl('cpl',false);a.ctl('hw',[1,1,0,1,0,0]);a.ctl('pos',[1,1,0,0]);a.keys([]);a.home();}},
     {t:'鍵Eの位置で縦に切った断面です。上鍵盤のトラッカー（手前）には革ナットが付いていて、上のウィッペンの手前の腕に上から乗っています。下鍵盤のトラッカー（奥）は、下のウィッペンの奥の腕に留めてあり、鍵はこれに吊られています。上下のウィッペンは線でつながっています。',run:a=>{a.ctl('man',1);a.ctl('cpl',true);a.keys([]);a.xray(false);a.cut(0.55);a.cam([34,24,14],[-4,14,-3]);}},
     {t:'カプラーを入れて上鍵盤を弾きます。ナットが上のウィッペンを引き下げ、奥の腕が上がって線で下のウィッペンの手前の腕を引き上げ、下のウィッペンの奥の腕がポジティフのトラッカーを引きます。下鍵盤の鍵は下のウィッペンに吊られているので、トラッカーといっしょに下鍵盤の鍵も下がり、ハウプトヴェルクとポジティフが同時に鳴ります。',run:a=>{a.ctl('man',1);a.ctl('cpl',true);a.keys([4]);a.xray(false);a.cut(0.55);a.cam([34,24,14],[-4,14,-3]);}},
     {t:'カプラーを切ると、上のウィッペンバルケン（支点の桟）が下がり、上鍵盤のトラッカーのナットが上のウィッペンに届かなくなります。上鍵盤を弾いても、ハウプトヴェルクだけが鳴ります。',run:a=>{a.ctl('man',1);a.ctl('cpl',false);a.keys([4]);a.xray(false);a.cut(0.55);a.cam([34,24,14],[-4,14,-3]);}},
@@ -2506,7 +2514,7 @@ const MODELS={
 'g-03':{id:'G-03',name:'ペダルカプラー',terms:'pedal coupler · Pedalkoppel · tirasse',stops0:[0,0,0,0,0],floor:-2,homeK:1.0,
   cam:{p:[230,120,240],t:[0,110,-20]},clip:[-40,40],
   foot:'ハウプトヴェルク（I）：Prinzipal 8′・Octave 4′・Quinte 2 2/3′・Octave 2′・Mixtur III・Trompete 8′、ペダル（P）：Subbass 16′（木管・閉管）・Prinzipal 8′・Posaune 16′。パイプは長さ・太さとも実物の45 %で、ペダルの風箱（ハウプトヴェルクの奥 約80 cm）はいちばん太いパイプ（Subbass 16′ の C 約190×235 mm）が収まるよう、チャンネルの間隔を約117 mm にしています。ペダルのアクションは D-04 と同じ形ですが、ペダル鍵をつま先の先へ約10 cm延長し、アクションとカプラーのトラッカー、ばね、ガイドピンをその延長部に付けて、足で踏む部分には何も出ないようにしています。鍵盤のボタンと画面の鍵は、操作欄で選んだほう（ペダルか手鍵盤）を弾きます。',
-  summary:'ペダルでハウプトヴェルクを鳴らす、ロッカー式（ウィッペン式）のペダルカプラー（I/P）です。ペダル鍵のつま先からもう1本のトラッカーが上がり、カプラー用のローラーボードでペダル鍵の位置から手鍵盤の鍵の位置へ移され、手鍵盤の下にある上下2本のウィッペンに伝わります。下のウィッペンが引き棒で手鍵盤の鍵を下から引き下げるので、ペダルを踏むと手鍵盤の鍵もいっしょに下がり、ハウプトヴェルクが鳴ります。ペダルの風箱は、ハウプトヴェルクの奥に約80 cm離して、床近くに置いています。',
+  summary:'ペダルでハウプトヴェルクを鳴らす、バックフォール式（ウィッペン式）のペダルカプラー（I/P）です。ペダル鍵のつま先からもう1本のトラッカーが上がり、カプラー用のローラーボードでペダル鍵の位置から手鍵盤の鍵の位置へ移され、手鍵盤の下にある上下2本のウィッペンに伝わります。下のウィッペンが引き棒で手鍵盤の鍵を下から引き下げるので、ペダルを踏むと手鍵盤の鍵もいっしょに下がり、ハウプトヴェルクが鳴ります。ペダルの風箱は、ハウプトヴェルクの奥に約80 cm離して、床近くに置いています。',
   steps:[
     {t:'手鍵盤1段（ハウプトヴェルク）とペダル鍵盤、それぞれの風箱です。ペダルの風箱はハウプトヴェルクの奥に約80 cm離れた床近くにあり、Subbass 16′・Prinzipal 8′・Posaune 16′ が立っています。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',0);a.ctl('cpl',false);a.ctl('hw',[1,1,0,1,0,0]);a.ctl('pd',[0,1,0]);a.keys([]);a.home();}},
     {t:'ペダルのアクションです。ペダル鍵はつま先の先へ延長してあり、その延長部からトラッカーが上がってスクエアで後ろ向きに変わり、水平のトラッカーで奥へ行き、もう一つのスクエアとローラーボードで、幅の広いペダルの風箱のパレットを引き下げます。',run:a=>{a.ctl('man',0);a.ctl('cpl',false);a.keys([0,7]);a.cam(inst.views.ped[0],inst.views.ped[1]);}},
@@ -2526,7 +2534,7 @@ const INDEX=[
  {c:'D',n:'キーアクション',items:[['D-01','ローラーボード＋スクエア',1],['D-02','バーカーレバー',2],['D-03','チューブラーニューマチック',2],['D-04','ペダル鍵盤のアクション',3]]},
  {c:'E',n:'ストップアクション',items:[['E-01','機械式ストップアクション',1],['E-02','スプリングチェスト用ストップアクション',3],['E-03','電気式ストップアクション',3]]},
  {c:'F',n:'表現・効果装置',items:[['F-01','スウェルボックス',2],['F-02','トレムラント',3],['F-03','ツィンベルシュテルン',3]]},
- {c:'G',n:'補助機構',items:[['G-01','スライドカプラー',3],['G-02','ロッカーカプラー',3],['G-03','ペダルカプラー',3]]},
+ {c:'G',n:'補助機構',items:[['G-01','スライドカプラー',3],['G-02','バックフォールカプラー',3],['G-03','ペダルカプラー',3]]},
  {c:'H',n:'総合モデル',items:[['H-01','バロックオルガン',3],['H-02','19世紀ロマン派オルガン',3],['H-03','現代オルガン',3]]}
 ];
 
@@ -2574,9 +2582,9 @@ let STOPROWS=null;
 function mkKnob(name,ja,on){ const b=document.createElement('button'); b.className='knob'; b.setAttribute('aria-pressed','false'); b.innerHTML='<b>'+name+'</b><span>'+ja+'</span>'; b.addEventListener('click',()=>{ audioInit(); on(); syncStopUI(); }); return b; }
 function renderStops(rows){
   STOPROWS=rows||null; stopsEl.innerHTML=''; stopsEl.classList.toggle('multi',!!rows);
-  $('stopsLbl').innerHTML=rows?'ストップ<small>'+rows.map(r=>r.items.length).join(' + ')+' stops</small>':'ストップ<small>5 stops</small>';
-  if(!rows){ STOPS.slice(0,5).forEach((st,i)=>{ const b=mkKnob(st.name,st.ja,()=>{ S.stop[i]=!S.stop[i]; }); b.dataset.i=i; stopsEl.appendChild(b); }); return; }
-  rows.forEach((r,g)=>{ const row=document.createElement('div'); row.className='srow'; row.innerHTML='<span class="slbl">'+r.label+'</span>'; r.items.forEach((it,j)=>{ const b=mkKnob(it.name,it.ja,()=>it.set(!it.get())); b.dataset.g=g; b.dataset.j=j; row.appendChild(b); }); stopsEl.appendChild(row); });
+  $('stopsLbl').innerHTML=T_('ストップ')+'<small>'+(rows?rows.map(r=>r.items.length).join(' + '):'5')+' stops</small>';
+  if(!rows){ STOPS.slice(0,5).forEach((st,i)=>{ const b=mkKnob(st.name,T_(st.ja),()=>{ S.stop[i]=!S.stop[i]; }); b.dataset.i=i; stopsEl.appendChild(b); }); return; }
+  rows.forEach((r,g)=>{ const row=document.createElement('div'); row.className='srow'; row.innerHTML='<span class="slbl">'+T_(r.label)+'</span>'; r.items.forEach((it,j)=>{ const b=mkKnob(it.name,T_(it.ja),()=>it.set(!it.get())); b.dataset.g=g; b.dataset.j=j; row.appendChild(b); }); stopsEl.appendChild(row); });
 }
 renderStops(null);
 function syncStopUI(){ stopsEl.querySelectorAll('.knob').forEach(b=>{ const on=b.dataset.i!=null?S.stop[+b.dataset.i]:!!STOPROWS[+b.dataset.g].items[+b.dataset.j].get(); b.setAttribute('aria-pressed',on); }); }
@@ -2598,7 +2606,7 @@ function camHome(){
   controls.target.copy(sp.center); camera.position.copy(sp.center).addScaledVector(dir,dist); controls.update();
 }
 $('camreset').addEventListener('click',()=>camHome());
-$('sound').addEventListener('click',e=>{ AU.on=!AU.on; e.currentTarget.setAttribute('aria-pressed',AU.on); e.currentTarget.textContent=AU.on?'音を出す':'音を消している'; if(AU.on) audioInit(); });
+$('sound').addEventListener('click',e=>{ AU.on=!AU.on; e.currentTarget.setAttribute('aria-pressed',AU.on); e.currentTarget.textContent=T_(AU.on?'音を出す':'音を消している'); if(AU.on) audioInit(); });
 
 const api={
   keys(arr){ S.key.fill(false); arr.forEach(k=>S.key[k]=true); syncKeyUI(); },
@@ -2611,12 +2619,12 @@ const notes=$('notes'), sel=$('modelSelect'), list=$('indexList');
 function renderIndex(cur){
   let h='', o='';
   for(const ch of INDEX){
-    h+='<section class="chap"><h2><span class="cl">'+ch.c+'</span>'+ch.n+'</h2>';
-    o+='<optgroup label="'+ch.c+' '+ch.n+'">';
+    h+='<section class="chap"><h2><span class="cl">'+ch.c+'</span>'+T_(ch.n)+'</h2>';
+    o+='<optgroup label="'+ch.c+' '+T_(ch.n)+'">';
     for(const [id,nm,st] of ch.items){
       const key=id.toLowerCase(), live=!!MODELS[key];
-      h+='<button class="item" data-id="'+key+'"'+(live?'':' disabled')+(key===cur?' aria-current="true"':'')+'><span class="id">'+id+'</span><span>'+nm+(live?'':'<span class="stg">第'+st+'段階で公開</span>')+'</span></button>';
-      o+='<option value="'+key+'"'+(live?'':' disabled')+(key===cur?' selected':'')+'>'+id+' '+nm+(live?'':'（第'+st+'段階）')+'</option>';
+      h+='<button class="item" data-id="'+key+'"'+(live?'':' disabled')+(key===cur?' aria-current="true"':'')+'><span class="id">'+id+'</span><span>'+T_(nm)+(live?'':'<span class="stg">'+TF('第{0}段階で公開',st)+'</span>')+'</span></button>';
+      o+='<option value="'+key+'"'+(live?'':' disabled')+(key===cur?' selected':'')+'>'+id+' '+T_(nm)+(live?'':TF('（第{0}段階）',st))+'</option>';
     }
     h+='</section>'; o+='</optgroup>';
   }
@@ -2626,9 +2634,9 @@ list.addEventListener('click',e=>{ const b=e.target.closest('.item'); if(b&&!b.d
 sel.addEventListener('change',()=>load(sel.value));
 
 function renderNotes(def){
-  let h='<div><p class="nid">'+def.id+'</p><h2>'+def.name+'</h2><p class="terms">'+def.terms+'</p></div><p>'+def.summary+'</p><h3>手順（押すとモデルが動きます）</h3><ol class="steps">';
-  def.steps.forEach((s,i)=>{ h+='<li><button data-s="'+i+'"><span class="n">'+(i+1)+'</span><span>'+s.t+'</span></button></li>'; });
-  h+='</ol><p class="foot">'+(def.foot||'標準構成：13鍵（C〜c）× 5ストップ。Gedackt 8′（木管）、Rohrflöte 4′、Prinzipal 2′、Mixtur III（1 1/3′・1′・2/3′）、Vox humana 8′。実物のパイプ長（C）：Gedackt 約110 cm、Rohrflöte 約56 cm＋煙突、Prinzipal 約59 cm、Mixtur 約39・30・20 cm、Vox humana 共鳴管 約31 cm。モデルでは長さ・太さとも45 %で表示。音はパレットが開きストップが入った瞬間に鳴る簡易合成です。')+'</p>';
+  let h='<div><p class="nid">'+def.id+'</p><h2>'+T_(def.name)+'</h2><p class="terms">'+def.terms+'</p></div><p>'+T_(def.summary)+'</p><h3>'+T_('手順（押すとモデルが動きます）')+'</h3><ol class="steps">';
+  def.steps.forEach((s,i)=>{ h+='<li><button data-s="'+i+'"><span class="n">'+(i+1)+'</span><span>'+T_(s.t)+'</span></button></li>'; });
+  h+='</ol><p class="foot">'+T_(def.foot||'標準構成：13鍵（C〜c）× 5ストップ。Gedackt 8′（木管）、Rohrflöte 4′、Prinzipal 2′、Mixtur III（1 1/3′・1′・2/3′）、Vox humana 8′。実物のパイプ長（C）：Gedackt 約110 cm、Rohrflöte 約56 cm＋煙突、Prinzipal 約59 cm、Mixtur 約39・30・20 cm、Vox humana 共鳴管 約31 cm。モデルでは長さ・太さとも45 %で表示。音はパレットが開きストップが入った瞬間に鳴る簡易合成です。')+'</p>';
   notes.innerHTML=h;
 }
 notes.addEventListener('click',e=>{ const b=e.target.closest('[data-s]'); if(!b) return; audioInit(); clearTimers(); notes.querySelectorAll('[data-s]').forEach(x=>x.removeAttribute('aria-current')); b.setAttribute('aria-current','true'); inst.def.steps[+b.dataset.s].run(api); });
@@ -2638,11 +2646,11 @@ function renderControls(){
   cs.forEach(c=>{
     if(c.type==='range'){
       const w=document.createElement('label'); w.className='field rng'; w.htmlFor='rc_'+c.id;
-      w.innerHTML='<span>'+c.label+'</span><input type="range" id="rc_'+c.id+'" min="'+c.min+'" max="'+c.max+'" step="'+c.step+'" value="'+c.get()+'"><output></output>';
+      w.innerHTML='<span>'+T_(c.label)+'</span><input type="range" id="rc_'+c.id+'" min="'+c.min+'" max="'+c.max+'" step="'+c.step+'" value="'+c.get()+'"><output></output>';
       const inp=w.querySelector('input'), out=w.querySelector('output'); const show=()=>{ out.textContent=c.fmt(); };
       inp.addEventListener('input',()=>{ c.set(parseFloat(inp.value)); show(); }); show(); box_.appendChild(w); return;
     }
-    const b=document.createElement('button'); b.className='btn'; b.textContent=c.label;
+    const b=document.createElement('button'); b.className='btn'; b.textContent=T_(c.label);
     if(c.type==='toggle'){ b.setAttribute('aria-pressed',!!c.get()); b.addEventListener('click',()=>{ audioInit(); c.set(!c.get()); b.setAttribute('aria-pressed',!!c.get()); }); }
     else { const up=()=>{ c.up(); b.setAttribute('aria-pressed','false'); }; b.setAttribute('aria-pressed','false'); b.addEventListener('pointerdown',e=>{ audioInit(); c.down(); b.setAttribute('aria-pressed','true'); try{ b.setPointerCapture(e.pointerId); }catch(_){} }); b.addEventListener('pointerup',up); b.addEventListener('pointercancel',up); b.addEventListener('keydown',e=>{ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); c.down(); b.setAttribute('aria-pressed','true'); } }); b.addEventListener('keyup',e=>{ if(e.key===' '||e.key==='Enter') up(); }); }
     box_.appendChild(b);
@@ -2651,7 +2659,11 @@ function renderControls(){
 
 const pinsEl=$('pins'); let pinEls=[];
 const LEGEND0=document.getElementById('legend').innerHTML;
-function setupPins(){ pinsEl.innerHTML=''; pinEls=(inst.pins||[]).map(p=>{ const d=document.createElement('div'); d.className='pin'+(p.n?'':' plain'); d.innerHTML=(p.n?'<b>'+p.n+'</b>':'')+p.t; pinsEl.appendChild(d); return {d,p:p.p,max:p.max}; }); }
+const JPRE=/[\u3040-\u30ff\u4e00-\u9fff]/;
+function i18nDom(root){ const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT); const ns=[]; while(w.nextNode()) ns.push(w.currentNode);
+  for(const n of ns){ if(n.__ja==null){ if(!JPRE.test(n.nodeValue)) continue; n.__ja=n.nodeValue; } const t=n.__ja.trim(); const tr=T_(t); n.nodeValue=n.__ja.replace(t,tr); }
+  root.querySelectorAll('[aria-label]').forEach(e=>{ if(e.__al==null){ const v=e.getAttribute('aria-label'); if(!JPRE.test(v)) return; e.__al=v; } e.setAttribute('aria-label',T_(e.__al)); }); }
+function setupPins(){ pinsEl.innerHTML=''; pinEls=(inst.pins||[]).map(p=>{ const d=document.createElement('div'); d.className='pin'+(p.n?'':' plain'); d.innerHTML=(p.n?'<b>'+p.n+'</b>':'')+T_(p.t); pinsEl.appendChild(d); return {d,p:p.p,max:p.max}; }); }
 const _pp=V3(0,0,0);
 function pinsUpdate(){ if(!pinEls.length||!SHOW.pins) return; const w=wrap.clientWidth,h=wrap.clientHeight; for(const q of pinEls){ _pp.copy(q.p).project(camera); const vis=_pp.z<1&&Math.abs(_pp.x)<1.05&&Math.abs(_pp.y)<1.05&&(!q.max||camera.position.distanceTo(q.p)<q.max); q.d.hidden=!vis; if(vis){ q.d.style.left=((_pp.x+1)/2*w)+'px'; q.d.style.top=((1-_pp.y)/2*h)+'px'; } } }
 
@@ -2681,8 +2693,8 @@ function doHover(){
   const hit=pickAt(e);
   canvas.style.cursor=hit&&(hit.key!=null||hit.stop!=null)?'pointer':'';
   if(!hit||!hit.lab){ tip.hidden=true; return; }
-  const act=hit.key!=null?'クリックで鍵 '+KEYNAMES[hit.key]+' を押す':hit.stop!=null?'クリックで '+STOPS[hit.stop].name+' を'+(S.stop[hit.stop]?'切る':'入れる'):'';
-  const L=hit.lab; tip.innerHTML='<b>'+L.ja+'</b><dl><dt>EN</dt><dd>'+L.en+'</dd><dt>DE</dt><dd>'+L.de+'</dd><dt>FR</dt><dd>'+L.fr+'</dd></dl>'+(act?'<em>'+act+'</em>':''); tip.hidden=false;
+  const act=hit.key!=null?TF('クリックで鍵 {0} を押す',KEYNAMES[hit.key]):hit.stop!=null?TF(S.stop[hit.stop]?'クリックで {0} を切る':'クリックで {0} を入れる',STOPS[hit.stop].name):'';
+  const L=hit.lab, OR=['ja','en','de','fr'], hd=(LANG!=='ja'&&L[LANG])?LANG:'ja'; tip.innerHTML='<b>'+L[hd]+'</b><dl>'+OR.filter(q=>q!==hd&&L[q]).map(q=>'<dt>'+q.toUpperCase()+'</dt><dd>'+L[q]+'</dd>').join('')+'</dl>'+(act?'<em>'+act+'</em>':''); tip.hidden=false;
   const r=hit.r, x=e.clientX-r.left+14, y=e.clientY-r.top+14; tip.style.left=Math.min(x,r.width-tip.offsetWidth-8)+'px'; tip.style.top=Math.min(y,r.height-tip.offsetHeight-8)+'px';
 }
 /* clicking parts of the model: keys, levers, trackers, pallets play the key; stop knobs, sliders, stop bars toggle the stop */
@@ -2707,9 +2719,9 @@ function load(id){
   inst=def.build(); inst.def=def; grid.position.y=def.floor;
   CX.root.traverse(ob=>{ if(!ob.isMesh) return; const k=CX.keyMats.indexOf(ob.material); if(k>=0&&ob.userData.key==null) ob.userData.key=k; const i=CX.stopMats.indexOf(ob.material); if(i>=0&&ob.userData.stop==null) ob.userData.stop=i; });
   setXray(def.xray0!==false); setCut(def.cut0||0); pMat.size=def.psize||1.8; camHome();
-  $('stops').closest('.drow').hidden=!!def.noStops; $('kbd').closest('.drow').hidden=!!def.noKeys; $('mctlLabel').textContent=def.noKeys?'操作':'送風'; $('legend').innerHTML=def.legend==='ctrl'?LEGEND0+CTRL_LEG:def.legend==='elec'?LEGEND0+ELEC_LEG:(def.legend||LEGEND0);
-  $('tag').innerHTML='<span class="tid">'+def.id+'</span><span class="tnm">'+def.name+'</span><span class="tde">'+def.terms+'</span>';
-  renderStops(inst.stopRows); renderNotes(def); renderControls(); renderIndex(id); syncKeyUI(); syncStopUI(); setupPins();
+  $('stops').closest('.drow').hidden=!!def.noStops; $('kbd').closest('.drow').hidden=!!def.noKeys; $('mctlLabel').textContent=T_(def.noKeys?'操作':'送風'); $('legend').innerHTML=def.legend==='ctrl'?LEGEND0+CTRL_LEG:def.legend==='elec'?LEGEND0+ELEC_LEG:(def.legend||LEGEND0);
+  $('tag').innerHTML='<span class="tid">'+def.id+'</span><span class="tnm">'+T_(def.name)+'</span><span class="tde">'+def.terms+'</span>';
+  i18nDom($('legend')); renderStops(inst.stopRows); renderNotes(def); renderControls(); renderIndex(id); syncKeyUI(); syncStopUI(); setupPins();
   curId=id; try{ if(location.hash!=='#'+id) history.replaceState(null,'','#'+id); }catch(e){}
 }
 
@@ -2730,7 +2742,20 @@ function frame(now){
   controls.update(); renderer.render(scene,camera);
 }
 const start=(location.hash||'').replace('#','').toLowerCase();
+const langSel=$('langSel'); langSel.value=LANG;
+function applyLang(){
+  document.documentElement.lang=LANG; i18nDom(document.body);
+  if(!inst) return; const def=inst.def;
+  $('mctlLabel').textContent=T_(def.noKeys?'操作':'送風'); $('legend').innerHTML=def.legend==='ctrl'?LEGEND0+CTRL_LEG:def.legend==='elec'?LEGEND0+ELEC_LEG:(def.legend||LEGEND0); i18nDom($('legend'));
+  $('tag').innerHTML='<span class="tid">'+def.id+'</span><span class="tnm">'+T_(def.name)+'</span><span class="tde">'+def.terms+'</span>';
+  const cur=notes.querySelector('[data-s][aria-current]'), ci=cur?cur.dataset.s:null;
+  renderStops(inst.stopRows); renderNotes(def); renderControls(); renderIndex(curId); syncStopUI(); setupPins();
+  if(ci!=null){ const b=notes.querySelector('[data-s="'+ci+'"]'); if(b) b.setAttribute('aria-current','true'); }
+  const sb=$('sound'); sb.textContent=T_(AU.on?'音を出す':'音を消している');
+}
+langSel.addEventListener('change',()=>{ LANG=langSel.value; try{ localStorage.setItem('oa-lang',LANG); }catch(e){} applyLang(); });
 load(MODELS[start]?start:'a-01');
+applyLang();
 requestAnimationFrame(frame);
 window.addEventListener('hashchange',()=>{ const h=location.hash.replace('#','').toLowerCase(); if(MODELS[h]&&h!==curId) load(h); });
 })();
