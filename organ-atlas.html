@@ -2016,7 +2016,7 @@ function buildWippenCoupler(){
       wire:rod(R,0.07,MAT.iron,LB('つなぎの線（上のウィッペンが上がると下のウィッペンを引き上げる）','Draht')),
       nW:cyl(R,0.42,0.3,MAT.leather,x,0,ZB,LB('革ナット（つなぎの線の上端。上のウィッペンに乗る）','Ledermutter')),
       nU:cyl(R,0.42,0.3,MAT.leather,x,0,ZA,LB('カプラーのナット（上鍵盤のトラッカーに付く。カプラーを入れると上のウィッペンに乗る）','Ledermutter')),
-      nL:cyl(R,0.42,0.3,MAT.leather,x,0,ZD,LB('革ナット（下鍵盤のトラッカーの上端。下のウィッペンに上から掛かる。カプラーで引かれるとここが離れるので、下の鍵は動かない）','Ledermutter')),
+      nL:cyl(R,0.42,0.3,MAT.leather,x,0,ZD,LB('革ナット（下鍵盤のトラッカーの上端。下のウィッペンの腕に留めてあり、腕といっしょに動く）','Ledermutter')),
       tL:makeTracker(ml,LB('トラッカー（下鍵盤の鍵 → 下のカプラー・ウィッペン）','Abstrakte'))});
   }
   const RB=[{man:lo,o:LO,ai:AO*pullL/KPULL,y0:18,kd:kdP,lab:'下のカプラー・ウィッペン',wn:'ポジティフ'},{man:up,o:UP,ai:AO*pullU/KPULL,y0:14,kd:kdU,lab:'上鍵盤（II）の鍵',wn:'ハウプトヴェルク'}];
@@ -2054,10 +2054,12 @@ function buildWippenCoupler(){
       const off=-OFF*(1-m.cu); railU.position.y=YU+off;
       for(let k=0;k<13;k++){
         const thU=m.man===1?Math.asin(clamp(DIP*S.kd[k]/up.Lk,0,1)):0;
-        const thL=m.man===0?Math.asin(clamp(DIP*S.kd[k]/lo.Lk,0,1)):0;
-        lo.set(k,thL); up.set(k,thU);
-        const aU=up.attach(k,thU), aL=lo.attach(k,thL), pU=UP.y+KH/2-aU.y, pL=LO.y+KH/2-aL.y;
-        const dA=Math.max(0,pU+off), cUp=Math.max(0,off+dA), dD=Math.max(pL,cUp*rD), c=dD/rD;
+        const thK=m.man===0?Math.asin(clamp(DIP*S.kd[k]/lo.Lk,0,1)):0;
+        const aU=up.attach(k,thU), pU=UP.y+KH/2-aU.y, pK=(LO.za-LO.zt)*Math.sin(thK);
+        const dA=Math.max(0,pU+off), cUp=Math.max(0,off+dA), dD=Math.max(pK,cUp*rD), c=dD/rD;
+        // the lower key hangs from the lower backfall: when the coupler pulls the backfall down, the key goes down with it
+        const thL=Math.asin(clamp(dD/(LO.za-LO.zt),0,1)); lo.set(k,thL); up.set(k,thU);
+        const aL=lo.attach(k,thL), pL=dD;
         kdU[k]=Math.sin(thU)*up.Lk/DIP; kdP[k]=dD/pullL;
         const kdl=Math.sin(thL)*lo.Lk/DIP;
         for(const [mn,kd] of [[up,kdU[k]],[lo,kdl]]){ mn.keys[k].lm.emissive.copy(COL.key).multiplyScalar(0.6*Math.min(1,kd)); mn.keys[k].hm.emissive.copy(COL.key).multiplyScalar(0.35*Math.min(1,kd)); }
@@ -2333,7 +2335,7 @@ const MODELS={
     {t:'オルガンの和音といっしょに鳴らします。下のスライダーで風の量を変えると、回る速さと鈴の打たれる間隔が変わります。',run:a=>{a.ctl('on',true);a.ctl('chord',true);a.home();}}
   ],
   build(){ return buildZimbelstern(); }},
-'g-01':{id:'G-01',name:'カプラー',terms:'coupler · Koppel · accouplement',stops0:[0,0,0,0,0],floor:-10,homeK:1.0,
+'g-01':{id:'G-01',name:'スライドカプラー',terms:'shove coupler · Schiebekoppel · accouplement à tiroir',stops0:[0,0,0,0,0],floor:-10,homeK:1.0,
   cam:{p:[120,50,130],t:[0,60,-20]},clip:[-40,40],
   foot:'ハウプトヴェルク（II）：Prinzipal 8′・Octave 4′・Quinte 2 2/3′・Octave 2′・Mixtur III・Trompete 8′、ポジティフ（I）：Gedackt 8′・Rohrflöte 4′・Blockflöte 2′・Vox humana 8′。ストップは下の「ストップ」欄で、1行目がハウプトヴェルク、2行目がポジティフです。パイプは長さ・太さとも実物の45 %で表示しています。Prinzipal 8′ の低音（直径 約155 mm）が収まるよう、ハウプトヴェルクの風箱はチャンネルの間隔を約75 mmに広げています。鍵盤のボタンと画面の鍵は、操作欄で選んだほうの鍵盤を弾きます。下鍵盤は、黒鍵まで上鍵盤より手前に出しています。',
   summary:'2段の手鍵盤をつなぐ機械式の押し込み式カプラー（シーブカプラー）です。どちらの鍵盤もサスペンデッド（吊り下げ式）アクションで、鍵は奥端が支点、トラッカーに吊られていて、押すと鍵全体が下がります。下鍵盤（I・ポジティフ）の鍵に突起が立っていて、下鍵盤を約11 mm奥へ押し込むと、突起が上鍵盤（II・ハウプトヴェルク）の鍵の下に付いた当て木の真下に来ます。突起は上鍵盤の下に隠れていて、下鍵盤の演奏の邪魔にはなりません。上の鍵を押すと当て木が突起を押し下げ、下の鍵もいっしょに下がって、ポジティフも鳴ります（I/II）。',
@@ -2360,16 +2362,16 @@ const MODELS={
     {t:'コンビネーション 2 で全部のストップ、0 で全部を切ります。「セット」を入れてからコンビネーションを押すと、今のストップの組み合わせを記憶できます。',run:a=>{a.keys([0,4,7]);a.ctl('recall',2);later(2600,()=>api.ctl('recall',0));}}
   ],
   build(){ return buildElectricStops(); }},
-'g-02':{id:'G-02',name:'ウィッペンコッペル',terms:'backfall coupler · Wippenkoppel · accouplement à balanciers',stops0:[0,0,0,0,0],floor:-10,homeK:1.0,
+'g-02':{id:'G-02',name:'ロッカーカプラー',terms:'backfall coupler · Wippenkoppel · accouplement à balanciers',stops0:[0,0,0,0,0],floor:-10,homeK:1.0,
   cam:{p:[120,50,130],t:[0,60,-20]},clip:[-40,40],
   foot:'カプラー以外は G-01 と同じです。ハウプトヴェルク（II）：Prinzipal 8′・Octave 4′・Quinte 2 2/3′・Octave 2′・Mixtur III・Trompete 8′、ポジティフ（I）：Gedackt 8′・Rohrflöte 4′・Blockflöte 2′・Vox humana 8′。ストップは下の「ストップ」欄で、1行目がハウプトヴェルク、2行目がポジティフです。鍵盤のボタンと画面の鍵は、操作欄で選んだほうの鍵盤を弾きます。',
-  summary:'鍵盤の上のアクションの中に組み込んだ、ウィッペン（シーソー形のてこ）式のカプラーです。音ごとに上下2本のウィッペンがあり、上鍵盤（II）のトラッカーが上のウィッペンを引くと、上のウィッペンが線で下のウィッペンを引き上げ、下のウィッペンがポジティフ（I）のトラッカーを引きます（I/II）。どちらのトラッカーも革ナットで腕に上から掛かっているだけなので、つながれた側の鍵は動きません。カプラーを切ると、上のウィッペンバルケン（支点の桟）が下がって、ナットがウィッペンに届かなくなります。',
+  summary:'ロッカーカプラー（ウィッペンコッペル）は、鍵盤の上のアクションの中に組み込んだ、ウィッペン（シーソー形のてこ）式のカプラーです。音ごとに上下2本のウィッペンがあり、上鍵盤（II）のトラッカーが上のウィッペンを引くと、上のウィッペンが線で下のウィッペンを引き上げ、下のウィッペンがポジティフ（I）のトラッカーを引きます（I/II）。下鍵盤の鍵は下のウィッペンに吊られているので、上鍵盤を弾くと下鍵盤の鍵もいっしょに下がります。カプラーを切ると、上のウィッペンバルケン（支点の桟）が下がって、ナットがウィッペンに届かなくなります。',
   steps:[
-    {t:'G-01 と同じオルガン（2段ともサスペンデッドアクション、ローラーボード、2つの風箱）に、ウィッペンコッペルを付けたモデルです。カプラーは鍵盤のすぐ上のアクションの中にあり、音ごとに上下2本のウィッペンでできています。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',1);a.ctl('cpl',false);a.ctl('hw',[1,1,0,1,0,0]);a.ctl('pos',[1,1,0,0]);a.keys([]);a.home();}},
-    {t:'鍵Eの位置で縦に切った断面です。上鍵盤のトラッカー（手前）には革ナットが付いていて、上のウィッペンの手前の腕に上から乗っています。下鍵盤のトラッカー（奥）も、ナットで下のウィッペンの奥の腕に上から掛かっています。上下のウィッペンは線でつながっています。',run:a=>{a.ctl('man',1);a.ctl('cpl',true);a.keys([]);a.xray(false);a.cut(0.55);a.cam([34,24,14],[-4,14,-3]);}},
-    {t:'カプラーを入れて上鍵盤を弾きます。ナットが上のウィッペンを引き下げ、奥の腕が上がって線で下のウィッペンの手前の腕を引き上げ、下のウィッペンの奥の腕がポジティフのトラッカーを引きます。ハウプトヴェルクとポジティフが同時に鳴りますが、下鍵盤の鍵は動きません。下鍵盤のトラッカーのナットが、下がった腕から離れるだけだからです。',run:a=>{a.ctl('man',1);a.ctl('cpl',true);a.keys([4]);a.xray(false);a.cut(0.55);a.cam([34,24,14],[-4,14,-3]);}},
+    {t:'G-01 と同じオルガン（2段ともサスペンデッドアクション、ローラーボード、2つの風箱）に、ロッカーカプラーを付けたモデルです。カプラーは鍵盤のすぐ上のアクションの中にあり、音ごとに上下2本のウィッペンでできています。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',1);a.ctl('cpl',false);a.ctl('hw',[1,1,0,1,0,0]);a.ctl('pos',[1,1,0,0]);a.keys([]);a.home();}},
+    {t:'鍵Eの位置で縦に切った断面です。上鍵盤のトラッカー（手前）には革ナットが付いていて、上のウィッペンの手前の腕に上から乗っています。下鍵盤のトラッカー（奥）は、下のウィッペンの奥の腕に留めてあり、鍵はこれに吊られています。上下のウィッペンは線でつながっています。',run:a=>{a.ctl('man',1);a.ctl('cpl',true);a.keys([]);a.xray(false);a.cut(0.55);a.cam([34,24,14],[-4,14,-3]);}},
+    {t:'カプラーを入れて上鍵盤を弾きます。ナットが上のウィッペンを引き下げ、奥の腕が上がって線で下のウィッペンの手前の腕を引き上げ、下のウィッペンの奥の腕がポジティフのトラッカーを引きます。下鍵盤の鍵は下のウィッペンに吊られているので、トラッカーといっしょに下鍵盤の鍵も下がり、ハウプトヴェルクとポジティフが同時に鳴ります。',run:a=>{a.ctl('man',1);a.ctl('cpl',true);a.keys([4]);a.xray(false);a.cut(0.55);a.cam([34,24,14],[-4,14,-3]);}},
     {t:'カプラーを切ると、上のウィッペンバルケン（支点の桟）が下がり、上鍵盤のトラッカーのナットが上のウィッペンに届かなくなります。上鍵盤を弾いても、ハウプトヴェルクだけが鳴ります。',run:a=>{a.ctl('man',1);a.ctl('cpl',false);a.keys([4]);a.xray(false);a.cut(0.55);a.cam([34,24,14],[-4,14,-3]);}},
-    {t:'下鍵盤を弾くと、トラッカーのナットが下のウィッペンの奥の腕を引き下げ、ポジティフだけが鳴ります。下のウィッペンの手前の腕は上がりますが、つなぎの線のナットが上のウィッペンから浮くだけなので、上鍵盤には伝わりません。',run:a=>{a.ctl('man',0);a.ctl('cpl',true);a.keys([4]);a.xray(false);a.cut(0.55);a.cam([34,24,14],[-4,14,-3]);}},
+    {t:'下鍵盤を弾くと、トラッカーが下のウィッペンの奥の腕を引き下げ、ポジティフだけが鳴ります。下のウィッペンの手前の腕は上がりますが、つなぎの線のナットが上のウィッペンから浮くだけなので、上鍵盤には伝わりません。',run:a=>{a.ctl('man',0);a.ctl('cpl',true);a.keys([4]);a.xray(false);a.cut(0.55);a.cam([34,24,14],[-4,14,-3]);}},
     {t:'ハウプトヴェルクの風箱です。手前から Prinzipal 8′・Octave 4′・Quinte 2 2/3′・Octave 2′・Mixtur III・Trompete 8′。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',1);a.ctl('hw',[1,1,1,1,1,1]);a.keys([0,4,7]);a.cam(inst.hwView[0],inst.hwView[1]);}},
     {t:'全体を見ます。カプラーを入れて上鍵盤で和音を弾くと、両方の風箱が鳴ります。',run:a=>{a.xray(true);a.ctl('man',1);a.ctl('cpl',true);a.keys([0,4,7]);a.cut(0);a.home();}}
   ],
@@ -2383,7 +2385,7 @@ const INDEX=[
  {c:'D',n:'キーアクション',items:[['D-01','ローラーボード＋スクエア',1],['D-02','バーカーレバー',2],['D-03','チューブラーニューマチック',2],['D-04','ペダル鍵盤のアクション',3]]},
  {c:'E',n:'ストップアクション',items:[['E-01','機械式ストップアクション',1],['E-02','スプリングチェスト用ストップアクション',3],['E-03','電気式ストップアクション',3]]},
  {c:'F',n:'表現・効果装置',items:[['F-01','スウェルボックス',2],['F-02','トレムラント',3],['F-03','ツィンベルシュテルン',3]]},
- {c:'G',n:'補助機構',items:[['G-01','カプラー',3],['G-02','ウィッペンコッペル',3]]},
+ {c:'G',n:'補助機構',items:[['G-01','スライドカプラー',3],['G-02','ロッカーカプラー',3]]},
  {c:'H',n:'総合モデル',items:[['H-01','バロックオルガン',3],['H-02','19世紀ロマン派オルガン',3],['H-03','現代オルガン',3]]}
 ];
 
