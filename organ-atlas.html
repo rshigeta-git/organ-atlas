@@ -246,7 +246,8 @@ const STOPS=[
   {name:'Rohrflöte 4′', ja:'ロールフレーテ（半閉管）'},
   {name:'Prinzipal 2′', ja:'プリンツィパル（開管）'},
   {name:'Mixtur III',   ja:'ミクスチュア 3列'},
-  {name:'Vox humana 8′',ja:'ヴォックス・フマーナ（リード）'}
+  {name:'Vox humana 8′',ja:'ヴォックス・フマーナ（リード）'},
+  {name:'Prinzipal 8′',ja:'プリンツィパル 8′（開管）'},{name:'Octave 4′',ja:'オクターヴ 4′'},{name:'Quinte 2 2/3′',ja:'クヴィンテ 2 2/3′'},{name:'Octave 2′',ja:'オクターヴ 2′'},{name:'Trompete 8′',ja:'トロンペーテ（リード）'},{name:'Blockflöte 2′',ja:'ブロックフレーテ（広い開管）'}
 ];
 const ZROW=[0,7,14,-7,-14];          // z of each stop row (front of chest = +z)
 const MIXZ=[-2.6,0,2.6];
@@ -260,7 +261,13 @@ const PIPE={
   1:{body:560,chim:0.25,semi:12+3,mw:2/9,cut:1/3,ears:true},  // Rohrflöte 4′, half-stopped with chimney; 3 semitones narrower than normal
   2:{body:592,semi:24,mw:1/4,cut:1/4},  // Prinzipal 2′, open
   3:{body:[394,296,197],semi:[31,36,43],mw:1/4,cut:1/4}, // Mixtur III: 1 1/3′, 1′, 2/3′
-  4:{body:305}                            // Vox humana 8′: short cylindrical resonator, about 1/8 length
+  4:{body:305},                           // Vox humana 8′: short cylindrical resonator, about 1/8 length
+  5:{body:2368,semi:0,mw:1/4,cut:1/4},  // Prinzipal 8′
+  6:{body:1184,semi:12,mw:1/4,cut:1/4}, // Octave 4′
+  7:{body:789,semi:19,mw:1/4,cut:1/4},  // Quinte 2 2/3′
+  8:{body:592,semi:24,mw:1/4,cut:1/4},  // Octave 2′
+  9:{body:2130},                        // Trompete 8′: full-length conical resonator
+  10:{body:575,semi:19,mw:2/9,cut:1/3}  // Blockflöte 2′: wide open flute
 };
 const bodyLen=(i,k,r)=>{ const b=PIPE[i].body; return (Array.isArray(b)?b[r]:b)*Math.pow(2,-k/12)*SC*MM; };
 const pipeR=(i,k,r)=>{ const sm=PIPE[i].semi, s0=Array.isArray(sm)?sm[r]:sm; return 155.5*Math.pow(2,-(s0+k)/16)*SC*MM/2; };
@@ -355,7 +362,7 @@ function duct(pts,s,mat,label){ for(let i=1;i<pts.length;i++){ const a=pts[i-1],
 
 /* ---------------- wind particles ---------------- */
 const flows=[];
-const MAXP=14000;
+const MAXP=24000;
 const pGeo=new T.BufferGeometry();
 const pAttr=new T.BufferAttribute(new Float32Array(MAXP*3),3); pAttr.setUsage(T.DynamicDrawUsage);
 const cAttr=new T.BufferAttribute(new Float32Array(MAXP*3),3); cAttr.setUsage(T.DynamicDrawUsage);
@@ -483,6 +490,15 @@ function buildPipe(x,z,i,k,r,base){
     const top=base+bootH+0.9+L;
     return {reed:true,path:[V3(x,base+bootH+0.2,z),V3(x,top,z),V3(x,top+6,z)],ei:0,top};
   }
+  if(i===9){
+    const bootH=12, rb=0.45, rt=Math.min(2.3,3.17*Math.pow(2,-k/24));
+    const cone=mk(G_CONE,MAT.metal,R,LB('ブーツ（リードを囲む足部）','Stiefel')); cone.scale.set(1.15,bootH,1.15); cone.position.set(x,base+bootH/2,z);
+    cyl(R,0.95,1.4,MAT.brass,x,base+bootH+0.2,z,LB('頭部（中でリードが振動して発音する）','Kopf / Zunge'));
+    const g=new T.CylinderGeometry(rt,rb,L,20,1,true); CX.own.push(g);
+    const b=mk(g,MAT.metal,R,LB('共鳴管（全長の円すい管：Trompete 8′）','Becher')); b.position.set(x,base+bootH+0.9+L/2,z);
+    const top=base+bootH+0.9+L;
+    return {reed:true,path:[V3(x,base+bootH+0.2,z),V3(x,top,z),V3(x,top+6,z)],ei:0,top};
+  }
   if(i===0){
     // wooden stopped pipe: square body, turned toe, front lip (Vorschlag), stopper with handle (Spund)
     // outside section about 100 × 125 mm at C (width × depth), same 45 % scale; the widest bass pipes are capped to fit the 39 mm pitch
@@ -497,7 +513,7 @@ function buildPipe(x,z,i,k,r,base){
     box(R,w*0.3,1.6,dz*0.5,MAT.pipeWoodLight,x,top+1.9,z,LB('栓の取っ手','Spundgriff'));
     return {reed:false,path:[V3(x,my-0.8,z),V3(x,my-0.3,z+hz-0.15),V3(x,my+0.9,z+hz+0.25),V3(x,my+3,z+hz+3),V3(x,my+5,z+hz+6)],ei:1,top:top+2.7};
   }
-  const P=PIPE[i], Rb=pipeR(i,k,r), footH=i===3?9:12, my=base+footH;
+  const P=PIPE[i], Rb=Math.min(2.3,pipeR(i,k,r)), footH=i===3?9:12, my=base+footH;
   const G=flueGeos(Rb,footH,Math.min(0.45,Rb*0.35),L,P.mw,P.cut); CX.own.push(G.body,G.foot,G.lang);
   const LBu=LB('上唇（平たくつぶした歌口の上側。下の縁が風を切る）','Oberlabium'), LBl=LB('下唇（足の上部をつぶした歌口の下側）','Unterlabium');
   const body=mk(G.body,MAT.metal,R,lab); body.position.set(x,my,z);
@@ -517,7 +533,7 @@ function buildPipe(x,z,i,k,r,base){
 
 /* ---------------- windchest (slider / spring) ---------------- */
 function buildChest(o){
-  const KD=o.kd||S.kd, SP=o.sp||S.sp, PM=o.palMat||keyMat, SMc=[], SM=o.sp?(i=>SMc[i]||(SMc[i]=mclone(MAT.woodPale))):stopMat;
+  const STP=o.stops||[0,1,2,3,4], ROWS=o.rows||ZROW, NS=STP.length, MZ=o.mixz||MIXZ, KD=o.kd||S.kd, SP=o.sp||S.sp, PM=o.palMat||keyMat, SMc=[], SM=o.sp?(i=>SMc[i]||(SMc[i]=mclone(MAT.woodPale))):stopMat;
   const R=CX.root, ox=o.x||0, oy=o.y||0, oz=o.z||0, P=5, N=13, W=N*P, spring=!!o.spring;
   const order=o.order||[0,1,2,3,4,5,6,7,8,9,10,11,12];
   const cxj=j=>ox-W/2+P*(j+0.5);
@@ -535,16 +551,17 @@ function buildChest(o){
   box(R,W+1.2,1,13.2,MAT.woodDark,ox,oy+12.5,oz-12.6,LC);
   box(R,W+2,1.5,38.4,MAT.wood,ox,oy+24.75,oz,LB('テーブル（チャンネルの天板。パイプごとに穴がある）','Fundamentbrett'));
   if(!spring){
-    for(const zz of [-17.5,-10.5,-3.5,3.5,10.5,17.5]) box(R,W+2,1,3,MAT.wood,ox,oy+26,oz+zz,LB('ダム（スライダーの間の固定材）','Damm'));
+    const rs=ROWS.slice().sort((p,q)=>p-q), dz=[-18.4]; for(let j=1;j<rs.length;j++) dz.push((rs[j-1]+rs[j])/2); dz.push(18.4);
+    for(const zz of dz){ const wd=Math.min(3,(o.rows?1.6:3)); box(R,W+2,1,wd,MAT.wood,ox,oy+26,oz+zz,LB('ダム（スライダーの間の固定材）','Damm')); }
   }
-  for(let i=0;i<5;i++){
-    const z=oz+ZROW[i], st=STOPS[i];
+  for(let i=0;i<NS;i++){
+    const z=oz+ROWS[i], st=STOPS[STP[i]], mx=STP[i]===3;
     if(!spring){
       C.sliders.push(box(R,W+14,1,4,MAT.woodPale,ox-5,oy+26,z,LB('スライダー：'+st.name+'（左右に動いて穴を合わせる）','Schleife'))); if(!o.sp) C.sliders[i].userData.stop=i;
       const hm=mclone(MAT.dark); C.holeMats.push(hm); const hs=[];
-      for(let k=0;k<N;k++){ const nr=i===3?3:1; for(let r=0;r<nr;r++){ const dd=mk(G_DISC,hm,R,LB('スライダーの穴','Schleifenbohrung')); if(!o.sp) dd.userData.stop=i; dd.rotation.x=-Math.PI/2; const s=i===3?0.45:0.65; dd.scale.set(s,s,s); dd.position.set(C.pos(k),oy+26.53,z+(i===3?MIXZ[r]:0)); dd.userData.bx=C.pos(k); hs.push(dd); } }
+      for(let k=0;k<N;k++){ const nr=mx?3:1; for(let r=0;r<nr;r++){ const dd=mk(G_DISC,hm,R,LB('スライダーの穴','Schleifenbohrung')); if(!o.sp) dd.userData.stop=i; dd.rotation.x=-Math.PI/2; const s=mx?0.45:0.65; dd.scale.set(s,s,s); dd.position.set(C.pos(k),oy+26.53,z+(mx?MZ[r]:0)); dd.userData.bx=C.pos(k); hs.push(dd); } }
       C.holes.push(hs);
-      box(R,W+1,3.5,6,MAT.wood,ox,oy+28.25,z,LB('上板：'+st.name+'（パイプを立てる台）','Pfeifenstock'));
+      box(R,W+1,3.5,o.rows?5.2:6,MAT.wood,ox,oy+28.25,z,LB('上板：'+st.name+'（パイプを立てる台）','Pfeifenstock'));
     } else {
       box(R,W+1,4.5,3.6,MAT.wood,ox,oy+27.75,z+0.9,LB('上板：'+st.name,'Pfeifenstock'));
       const sm=SM(i);
@@ -584,16 +601,16 @@ function buildChest(o){
     const ch=new Tube([V3(x,oy+9.5,oz+12),V3(x,oy+13.5,oz+12),V3(x,oy+19,oz+6),V3(x,oy+19,oz-17.5)],{r:0.85,density:0.7,front:900,state:()=>({open:KD[k]>0.22&&C.vol.fill>0.3&&S.p>4,speed:C.chanFlow[k]})});
     C.chan.push(ch);
     for(const fp of [[-1.6,2.4,16.8],[1.6,2.6,-3.8],[0,5.5,17.2]]) new Tube([V3(x+fp[0],oy+fp[1],oz+fp[2]),V3(x+fp[0]*0.4,oy+7,oz+(fp[2]+12)/2),V3(x,oy+9.5,oz+12)],{r:0.25,n:4,front:900,state:()=>({open:ch.head>0&&KD[k]>0.22,speed:C.chanFlow[k]*0.8})});
-    for(let i=0;i<5;i++){
-      const nr=i===3?3:1;
+    for(let i=0;i<NS;i++){
+      const si=STP[i], nr=si===3?3:1;
       for(let r=0;r<nr;r++){
-        const zz=oz+ZROW[i]+(i===3?MIXZ[r]:0);
-        const sp=buildPipe(x,zz,i,k,r,oy+30);
+        const zz=oz+ROWS[i]+(si===3?MZ[r]:0);
+        const sp=buildPipe(x,zz,si,k,r,oy+30);
         const d=ch.nearestDist(V3(x,oy+19,zz));
         const pts=[V3(x,oy+19,zz),V3(x,oy+24.5,zz),V3(x,oy+30,zz)].concat(sp.path);
-        const tb=new Tube(pts,{r:i===3?0.22:0.3,density:0.3,front:900,state:()=>({open:ch.reached(d)&&SP[i]>0.85&&S.p>4,speed:20})});
+        const tb=new Tube(pts,{r:si===3?0.22:0.3,density:0.3,front:900,state:()=>({open:ch.reached(d)&&SP[i]>0.85&&S.p>4,speed:20})});
         tb.exitU=tb.cum[3+sp.ei]/tb.L;
-        C.tubes.push({k,i,r,tb,md:tb.cum[3+sp.ei]});
+        C.tubes.push({k,i:si,j:i,r,tb,md:tb.cum[3+sp.ei]});
         C.top=Math.max(C.top||0,sp.top);
       }
     }
@@ -609,10 +626,10 @@ function buildChest(o){
     for(const t of C.speaking()) C.chanFlow[t.k]+=1;
     for(let k=0;k<N;k++) C.chanFlow[k]=C.chanFlow[k]>0?12+2.5*C.chanFlow[k]:0;
     if(!spring){
-      for(let i=0;i<5;i++){ const off=-1.8*(1-SP[i]); C.sliders[i].position.x=ox-5+off; for(const dd of C.holes[i]) dd.position.x=dd.userData.bx+off; C.holeMats[i].emissive.copy(COL.stop).multiplyScalar(SP[i]>0.85?0.9:0); }
+      for(let i=0;i<NS;i++){ const off=-1.8*(1-SP[i]); C.sliders[i].position.x=ox-5+off; for(const dd of C.holes[i]) dd.position.x=dd.userData.bx+off; C.holeMats[i].emissive.copy(COL.stop).multiplyScalar(SP[i]>0.85?0.9:0); }
     } else {
-      for(let i=0;i<5;i++){
-        const dy=0.8*SP[i], z=oz+ZROW[i]; C.bars[i].position.y=oy+27.6-dy;
+      for(let i=0;i<NS;i++){
+        const dy=0.8*SP[i], z=oz+ROWS[i]; C.bars[i].position.y=oy+27.6-dy;
         const ph=-Math.asin(clamp(dy/3.8,0,1));
         for(let k=0;k<N;k++){
           const pv=C.valves[i][k]; pv.rotation.x=ph;
@@ -624,7 +641,7 @@ function buildChest(o){
     if(o.sp) SMc.forEach((mm,i)=>{ if(mm) mm.emissive.copy(COL.stop).multiplyScalar(0.5*SP[i]); });
   };
   C.pullDown=k=>V3(C.pos(k),oy-1-KPULL*KD[k],oz+14);
-  C.speaking=()=>{ const out=[]; if(S.p<8||C.vol.fill<0.3) return out; for(const t of C.tubes) if(KD[t.k]>0.25&&SP[t.i]>0.85) out.push(t); return out; };
+  C.speaking=()=>{ const out=[]; if(S.p<8||C.vol.fill<0.3) return out; for(const t of C.tubes) if(KD[t.k]>0.25&&SP[t.j]>0.85) out.push(t); return out; };
   return C;
 }
 
@@ -1815,7 +1832,8 @@ function buildSuspManual(o){
     attach(k,th){ const lz=o.za-o.zt; return V3(keys[k].x,y+KH/2*Math.cos(th)-lz*Math.sin(th),G.position.z+o.zt+KH/2*Math.sin(th)+lz*Math.cos(th)); }};
 }
 function buildCoupler(){
-  const R=CX.root, m={cpl:true,cu:1,man:1,ps:[false,true,false,false,true]}, SH=1.4, POSSP=new Float32Array([0,1,0,0,1]), DIP=1.3;
+  const R=CX.root, m={cpl:true,cu:1,man:1,ps:[true,true,false,false],hs:[true,true,false,true,false,false]}, SH=1.4, POSSP=new Float32Array([1,1,0,0]), HWSP=new Float32Array([1,1,0,1,0,0]), DIP=1.3;
+  const POST=[0,1,10,4], POSR=[-4,4,12,-12], HWST=[5,6,7,8,3,9], HWR=[15,9,3,-3,-9,-15];
   const LO={y:0,zf:51.5,zt:-52,za:-17,bed0:-14,bed1:52.5,zfelt:50,dip:DIP,dog:20,dogTop:4.25,man:0,cheek:'下鍵盤（I・ポジティフ）の側板'};
   const UP={y:7,zf:34,zt:-12,za:8,bed0:-11,bed1:31.8,bedGap:[17.4,22.4],zfelt:30.8,dip:DIP,blk:20,blkH:1.5,man:1,cheek:'上鍵盤（II・ハウプトヴェルク）の側板'};
   const umats=[], lmats=[]; for(let k=0;k<13;k++){ umats.push(mclone(MAT.woodPale)); lmats.push(mclone(MAT.woodPale)); }
@@ -1826,9 +1844,9 @@ function buildCoupler(){
   const AO=4, pullL=DIP*(LO.za-LO.zt)/(LO.zf-LO.zt), pullU=DIP*(UP.za-UP.zt)/(UP.zf-UP.zt);
   const RB=[{man:lo,o:LO,ai:AO*pullL/KPULL,y0:12,kd:kdL,lab:'下鍵盤（I）',wn:'ポジティフ'},{man:up,o:UP,ai:AO*pullU/KPULL,y0:14,kd:kdU,lab:'上鍵盤（II）',wn:'ハウプトヴェルク'}];
   for(const b of RB){ b.zr=b.o.za-b.ai; b.zo=b.zr+AO; }
-  const pos=buildChest({y:34,z:RB[0].zo-14,kd:kdL,sp:POSSP,palMat:k=>lmats[k],volN:260});
+  const pos=buildChest({y:34,z:RB[0].zo-14,kd:kdL,sp:POSSP,stops:POST,rows:POSR,palMat:k=>lmats[k],volN:260});
   RB[1].y0=Math.ceil(pos.top)+3;
-  const hw=buildChest({y:RB[1].y0+13*1.25+6,z:RB[1].zo-14,kd:kdU,palMat:k=>umats[k]});
+  const hw=buildChest({y:RB[1].y0+13*1.25+6,z:RB[1].zo-14,kd:kdU,sp:HWSP,stops:HWST,rows:HWR,mixz:[-1.7,0,1.7],palMat:k=>umats[k]});
   RB[0].ch=pos; RB[1].ch=hw;
   for(const b of RB){
     const xs=[]; for(let k=0;k<13;k++) xs.push(b.man.keys[k].x,b.ch.pos(k)); const xmin=Math.min(...xs)-3, xmax=Math.max(...xs)+3, ytop=b.y0+13*1.25+2;
@@ -1848,8 +1866,8 @@ function buildCoupler(){
   return {chest:hw,
     controls:[{type:'toggle',id:'cpl',label:'カプラー（下鍵盤を押し込む）',get:()=>m.cpl,set:v=>m.cpl=v},
       {type:'toggle',id:'m1',label:'上鍵盤（II）を弾く',get:()=>m.man===1,set:()=>setMan(1)},
-      {type:'toggle',id:'m0',label:'下鍵盤（I）を弾く',get:()=>m.man===0,set:()=>setMan(0)}].concat(STOPS.map((st,i)=>({type:'toggle',id:'ps'+i,label:'I：'+st.name,get:()=>m.ps[i],set:v=>m.ps[i]=v}))),
-    ctl:{cpl:v=>m.cpl=v,man:v=>{ m.man=v; },pos:arr=>arr.forEach((v,i)=>m.ps[i]=!!v)},
+      {type:'toggle',id:'m0',label:'下鍵盤（I）を弾く',get:()=>m.man===0,set:()=>setMan(0)}].concat(HWST.map((si,i)=>({type:'toggle',id:'hs'+i,label:'II：'+STOPS[si].name,get:()=>m.hs[i],set:v=>m.hs[i]=v}))).concat(POST.map((si,i)=>({type:'toggle',id:'ps'+i,label:'I：'+STOPS[si].name,get:()=>m.ps[i],set:v=>m.ps[i]=v}))),
+    ctl:{cpl:v=>m.cpl=v,man:v=>{ m.man=v; },pos:arr=>arr.forEach((v,i)=>m.ps[i]=!!v),hw:arr=>arr.forEach((v,i)=>m.hs[i]=!!v)},
     setMan,curMan:()=>m.man,
     pins:[{t:'上鍵盤（II・ハウプトヴェルク）',p:V3(-18,9,30)},{t:'下鍵盤（I・ポジティフ）',p:V3(-18,1,39)},{t:'カプラーの突起',p:V3(16,4,34),max:90},{t:'ローラーボード（ポジティフ用）',p:V3(-36,26,-18)},{t:'ローラーボード（ハウプトヴェルク用）',p:V3(-36,pos.top+14,6)},{t:'ポジティフ',p:V3(40,pos.oy+20,pos.oz+12)},{t:'ハウプトヴェルク',p:V3(40,hw.oy+20,hw.oz+12)}],
     speaking:()=>hw.speaking().concat(pos.speaking()),
@@ -1874,7 +1892,8 @@ function buildCoupler(){
           q.t1.set(t1,at,KH); q.t2.set(b.ch.pullDown(k),t2,0.6);
         }
       }
-      for(let i=0;i<5;i++) POSSP[i]+=clamp((m.ps[i]?1:0)-POSSP[i],-dt*2.5,dt*2.5);
+      for(let i=0;i<4;i++) POSSP[i]+=clamp((m.ps[i]?1:0)-POSSP[i],-dt*2.5,dt*2.5);
+      for(let i=0;i<6;i++) HWSP[i]+=clamp((m.hs[i]?1:0)-HWSP[i],-dt*2.5,dt*2.5);
       pos.update(dt); hw.update(dt);
     }};
 }
@@ -2213,12 +2232,12 @@ const MODELS={
     {t:'オルガンの和音といっしょに鳴らします。下のスライダーで風の量を変えると、回る速さと鈴の打たれる間隔が変わります。',run:a=>{a.ctl('on',true);a.ctl('chord',true);a.home();}}
   ],
   build(){ return buildZimbelstern(); }},
-'g-01':{id:'G-01',name:'カプラー',terms:'coupler · Koppel · accouplement',stops0:[1,0,1,0,0],floor:-10,
+'g-01':{id:'G-01',name:'カプラー',terms:'coupler · Koppel · accouplement',stops0:[0,0,0,0,0],noStops:true,floor:-10,homeK:1.0,
   cam:{p:[120,50,130],t:[0,60,-20]},clip:[-40,40],
-  foot:'ストップは風箱ごとに選べます。下の「ストップ」のボタンはハウプトヴェルク（II・上の風箱）、操作欄の「I：…」のボタンはポジティフ（I・下の風箱）のストップです。下鍵盤は、黒鍵まで上鍵盤より手前に出しています。鍵盤のボタンと画面の鍵は、操作欄で選んだほうの鍵盤を弾きます。',
+  foot:'ハウプトヴェルク（II）：Prinzipal 8′・Octave 4′・Quinte 2 2/3′・Octave 2′・Mixtur III・Trompete 8′、ポジティフ（I）：Gedackt 8′・Rohrflöte 4′・Blockflöte 2′・Vox humana 8′。ストップは操作欄の「II：…」「I：…」のボタンで、風箱ごとに選べます。パイプは実物の45 %で表示し、8′の低音のように太いパイプは、風箱のチャンネルの間隔に収まる太さに抑えています。鍵盤のボタンと画面の鍵は、操作欄で選んだほうの鍵盤を弾きます。下鍵盤は、黒鍵まで上鍵盤より手前に出しています。',
   summary:'2段の手鍵盤をつなぐ機械式の押し込み式カプラー（シーブカプラー）です。どちらの鍵盤もサスペンデッド（吊り下げ式）アクションで、鍵は奥端が支点、トラッカーに吊られていて、押すと鍵全体が下がります。下鍵盤（I・ポジティフ）の鍵に突起が立っていて、下鍵盤を約11 mm奥へ押し込むと、突起が上鍵盤（II・ハウプトヴェルク）の鍵の下に付いた当て木の真下に来ます。突起は上鍵盤の下に隠れていて、下鍵盤の演奏の邪魔にはなりません。上の鍵を押すと当て木が突起を押し下げ、下の鍵もいっしょに下がって、ポジティフも鳴ります（I/II）。',
   steps:[
-    {t:'2段の鍵盤はどちらもサスペンデッド（吊り下げ式）アクションです。鍵は奥端のラックのピンが支点で、トラッカーに吊られていて、押すと鍵全体が下がります。下鍵盤のトラッカーは上鍵盤のラックの後ろを上がるので、下鍵盤の鍵は長くなっています。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',1);a.ctl('cpl',false);a.stops([1,0,1,0,0]);a.ctl('pos',[0,1,0,0,1]);a.keys([]);a.home();}},
+    {t:'2段の鍵盤はどちらもサスペンデッド（吊り下げ式）アクションです。鍵は奥端のラックのピンが支点で、トラッカーに吊られていて、押すと鍵全体が下がります。下鍵盤のトラッカーは上鍵盤のラックの後ろを上がるので、下鍵盤の鍵は長くなっています。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',1);a.ctl('cpl',false);a.ctl('hw',[1,1,0,1,0,0]);a.ctl('pos',[1,1,0,0]);a.keys([]);a.home();}},
     {t:'トラッカーはローラーボードへ上がります。ローラーの腕は鍵の位置が短く、パレットの位置が長くなっていて、吊り下げ式の鍵の小さな引き（約4〜5 mm）を、パレットを開けるのに必要な引き（約10 mm）に大きくしながら、風箱の幅へ左右に広げます。ポジティフ（I・下の風箱）のローラーボードは鍵盤のすぐ上、ハウプトヴェルク（II・上の風箱）のローラーボードはポジティフのパイプの少し上にあり、上鍵盤のトラッカーはポジティフの前をまっすぐ上がっていきます。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',1);a.ctl('cpl',true);a.keys([0,12]);a.home();}},
     {t:'カプラーを切ったまま上鍵盤（II）を弾きます。ハウプトヴェルクだけが鳴ります。下鍵盤は手前に引き出されていて、突起は上の鍵の当て木の前にずれているので当たりません。（鍵Eの位置で縦に切った断面）',run:a=>{a.ctl('man',1);a.ctl('cpl',false);a.keys([4]);a.xray(false);a.cut(0.55);a.cam([26,12,44],[-4,4,24]);}},
     {t:'下鍵盤を奥へ押し込みます（カプラーを入れる）。突起が上の鍵の当て木の真下に来ます。突起は、両方の鍵の下がる量がちょうど等しくなる位置（上鍵盤の下）にあります。',run:a=>{a.ctl('man',1);a.keys([]);a.ctl('cpl',true);a.xray(false);a.cut(0.55);a.cam([26,12,44],[-4,4,24]);}},
@@ -2259,14 +2278,14 @@ function audioInit(){
   try{ AU.ctx=new AC(); }catch(e){ return; }
   const comp=AU.ctx.createDynamicsCompressor(); AU.out=AU.ctx.createGain(); AU.out.gain.value=0.2; AU.sw=AU.ctx.createBiquadFilter(); AU.sw.type='lowpass'; AU.sw.frequency.value=16000; AU.sg=AU.ctx.createGain(); AU.out.connect(AU.sw); AU.sw.connect(AU.sg); AU.sg.connect(comp); comp.connect(AU.ctx.destination);
   const pw=h=>AU.ctx.createPeriodicWave(new Float32Array(h.length),new Float32Array(h));
-  AU.waves=[pw([0,1,.02,.14,.01,.05]),pw([0,1,.3,.12,.06,.04]),pw([0,1,.55,.36,.24,.16,.1,.07,.05,.03]),pw([0,1,.25,.12,.05]),pw([0,.5,.85,.75,.62,.55,.48,.42,.34,.28,.22,.17,.12,.08])];
+  AU.waves=[pw([0,1,.02,.14,.01,.05]),pw([0,1,.3,.12,.06,.04]),pw([0,1,.55,.36,.24,.16,.1,.07,.05,.03]),pw([0,1,.25,.12,.05]),pw([0,.5,.85,.75,.62,.55,.48,.42,.34,.28,.22,.17,.12,.08]),pw([0,1,.5,.3,.2,.12,.08,.05,.03]),pw([0,1,.45,.25,.15,.08,.05]),pw([0,1,.35,.2,.1,.05]),pw([0,1,.55,.36,.24,.16,.1,.07,.05,.03]),pw([0,.7,.95,.9,.8,.7,.6,.5,.42,.34,.27,.2,.15,.1,.07]),pw([0,1,.12,.05,.02])];
 }
-const GAINS=[.42,.3,.24,.09,.26], MULT=[[1],[2],[4],[6,8,12],[1]];
+const GAINS=[.42,.3,.24,.09,.26,.3,.22,.12,.2,.26,.22], MULT=[[1],[2],[4],[6,8,12],[1],[1],[2],[3],[4],[1],[4]];
 function audioSync(list){
   if(!AU.ctx) return; if(AU.ctx.state==='suspended') AU.ctx.resume().catch(()=>{});
   const now=AU.ctx.currentTime, seen=new Set(), pf=Math.pow(Math.max(S.p,1)/75,0.12), pg=clamp(S.p/75,0,1.1);
   if(AU.on) for(const e of list){
-    const id=e.k*100+e.i*10+e.r; seen.add(id); let v=AU.v.get(id);
+    const id=e.k*1000+e.i*10+e.r; seen.add(id); let v=AU.v.get(id);
     const fq=e.f||65.406*Math.pow(2,e.k/12)*MULT[e.i][e.r];
     if(!v){ const f=fq; const o=AU.ctx.createOscillator(); o.setPeriodicWave(AU.waves[e.i]); o.frequency.value=f*pf; const g=AU.ctx.createGain(); g.gain.value=0; o.connect(g); g.connect(AU.out); o.start(); v={o,g,f}; AU.v.set(id,v); }
     v.f=fq; v.g.gain.setTargetAtTime(GAINS[e.i]*pg,now,e.i===4?0.012:0.025); v.o.frequency.setTargetAtTime(v.f*pf,now,0.05);
@@ -2292,7 +2311,7 @@ window.addEventListener('blur',()=>{ if(!S.latch){ S.key.fill(false); syncKeyUI(
 $('latch').addEventListener('click',e=>{ S.latch=!S.latch; e.currentTarget.setAttribute('aria-pressed',S.latch); });
 $('release').addEventListener('click',()=>{ S.key.fill(false); syncKeyUI(); });
 
-STOPS.forEach((s,i)=>{ const b=document.createElement('button'); b.className='knob'; b.dataset.i=i; b.setAttribute('aria-pressed','false'); b.innerHTML='<b>'+s.name+'</b><span>'+s.ja+'</span>'; b.addEventListener('click',()=>{ audioInit(); S.stop[i]=!S.stop[i]; syncStopUI(); }); stopsEl.appendChild(b); });
+STOPS.slice(0,5).forEach((s,i)=>{ const b=document.createElement('button'); b.className='knob'; b.dataset.i=i; b.setAttribute('aria-pressed','false'); b.innerHTML='<b>'+s.name+'</b><span>'+s.ja+'</span>'; b.addEventListener('click',()=>{ audioInit(); S.stop[i]=!S.stop[i]; syncStopUI(); }); stopsEl.appendChild(b); });
 function syncStopUI(){ stopsEl.querySelectorAll('.knob').forEach(b=>b.setAttribute('aria-pressed',S.stop[+b.dataset.i])); }
 
 function setXray(v){ S.xray=v; for(const m of XRAY){ m.transparent=v; m.opacity=v?0.22:1; m.depthWrite=!v; m.needsUpdate=true; } $('xray').setAttribute('aria-pressed',v); }
@@ -2307,7 +2326,7 @@ function camTo(p,t){ camera.position.set(p[0],p[1],p[2]); controls.target.set(t[
 function camHome(){
   const c=inst.def.cam, dir=V3(c.p[0]-c.t[0],c.p[1]-c.t[1],c.p[2]-c.t[2]).normalize();
   const bx=new T.Box3().setFromObject(CX.root), sp=bx.getBoundingSphere(new T.Sphere());
-  const vf=camera.fov*Math.PI/180, hf=2*Math.atan(Math.tan(vf/2)*camera.aspect), dist=sp.radius/Math.sin(Math.min(vf,hf)/2)*0.82;
+  const vf=camera.fov*Math.PI/180, hf=2*Math.atan(Math.tan(vf/2)*camera.aspect), dist=sp.radius/Math.sin(Math.min(vf,hf)/2)*(inst.def.homeK||0.82);
   controls.target.copy(sp.center); camera.position.copy(sp.center).addScaledVector(dir,dist); controls.update();
 }
 $('camreset').addEventListener('click',()=>camHome());
