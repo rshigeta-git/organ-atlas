@@ -146,7 +146,7 @@ h1{margin:0;font-family:var(--f-display);font-weight:800;font-size:clamp(26px,3.
 
 <header class="mast">
   <div class="mast-in">
-    <p class="eyebrow">ORGELBAU-ATLAS · 第2段階 · 14モデル公開</p>
+    <p class="eyebrow">ORGELBAU-ATLAS · 第3段階 · 20モデル公開</p>
     <h1>パイプオルガン機構図鑑</h1>
   </div>
 </header>
@@ -235,7 +235,7 @@ if(!T){ wrap.insertAdjacentHTML('beforeend','<div class="nogl">3D表示用のラ
 const V3=(x,y,z)=>new T.Vector3(x,y,z);
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const lerp=(a,b,t)=>a+(b-a)*t;
-const TR={'Magazinbalg':['reservoir','réservoir'],'Windlade':['windchest','sommier'],'Balgbrett':['bellows board','planche du soufflet'],'Tremulantventil':['tremulant valve','soupape du tremblant'],'Ventilarm':['valve arm','bras de soupape'],'Anschlag':['stop block','butée'],'Tremulantklappe':['tremulant flap','clapet du tremblant'],'Achse':['axle','axe'],'Gewichtsarm':['weight arm','bras du poids'],'Schraube':['screw','vis'],'Kernboden':['block base','fond du bloc'],'Vorderbrett':['front board','planche de façade'],'Kanal':['wind channel','canal'],'Kernspalte':['windway','lumière'],'Spundleder':['stopper leather','cuir du tampon'],'Ventilkammer':['valve chamber','chambre de soupape'],'Doppelventil':['double valve','double soupape'],'Abstromöffnung':['exhaust port','orifice d’échappement'],'Membranbohrung':['membrane hole','trou de membrane'],'Bälgchenbrett':['bellows board','planche des soufflets'],'Relaiskanal':['relay channel','canal de relais'],'Kegel':['cone valve','soupape conique'],'Kegelsitz':['cone seat','siège du cône'],'Bälgchen':['small motor bellows','petit soufflet'],'Registerkanzelle':['stop channel','gravure de registre'],'Registerventil':['stop valve','soupape de registre'],'Kondukt':['conveyance','conduit'],'Bleirohr':['lead tube','tube de plomb'],'Spielventilkasten':['key-valve box','boîte à soupapes de touche'],'Ventilabzug':['valve pull-down','tirant de soupape'],'Windzufuhr':['wind supply','alimentation en vent'],'Membrane':['membrane','membrane'],'Membrankästchen':['membrane chamber','boîtier de membrane'],'Tonkanzelle':['key channel','gravure de note'],'Abstromventil':['exhaust valve','soupape d’échappement'],'Relaisbalg':['relay pouch','soufflet relais'],'Speisekanal':['feed duct','canal d’alimentation'],'Pfeifenbohrung':['pipe bore','trou de pied'],'Barkerbalg':['Barker motor','soufflet Barker'],'Barkerkasten':['motor wind box','laye des moteurs'],'Einlassventil':['inlet valve','soupape d’admission'],'Auslassventil':['exhaust valve','soupape d’échappement'],'Wippe':['backfall','balancier'],'Wippenbalken':['backfall rail','barre des balanciers'],'Pneumatikmotor':['pneumatic motor','moteur pneumatique'],'Schwellkasten':['swell box','boîte expressive'],'Jalousie':['shutter','jalousie'],'Jalousiehebel':['shutter arm','bras de jalousie'],'Zugstange':['connecting rod','tringle'],'Schwelltritt':['balanced expression pedal','pédale d’expression'],'Schwelltrittlager':['pedal bearing','support de pédale'],'Schwelltritthebel':['pedal arm','bras de pédale'],'Abstrakte':['tracker','vergette'],'Abzugsdraht':['pull-down wire','fil de tirage'],'Ansaugöffnung':['air intake','ouïe d’aspiration'],'Anschlagfilz':['upstop felt','feutre d’arrêt'],'Anschlagleiste':['upstop rail','barre d’arrêt'],'Anschlagleistenstütze':['upstop rail post','support de barre d’arrêt'],'Aufschnitt':['mouth (cut-up)','bouche'],'Backe':['key cheek','joue de clavier'],'Balgbock':['bellows trestle','tréteau du soufflet'],'Balghebel':['bellows lever','levier de soufflet'],'Balgkanal':['bellows outlet','porte-vent du soufflet'],'Balgstütze':['lever post','poteau du levier'],'Becher':['resonator','résonateur'],'Bohrung':['tracker hole','trou de vergette'],'Damm':['slider bearer','faux-registre'],'Deckel':['cap','calotte'],'Draht':['wire','fil'],'Drehstift':['pivot pin','axe de pivot'],'Falten':['folds','plis'],'Federleiste':['spring rail','barre à ressorts'],'Federrolle':['spring roller','rouleau à ressort'],'Federwindung':['spring coil','boucle du ressort'],'Fundamentbrett':['table','table'],'Fuß':['foot','pied'],'Fußloch':['toe hole','trou du pied'],'Führungsleiste':['guide rail','barre de guidage'],'Führungsstift':['guide pin','pointe de guidage'],'Gebläsegehäuse':['blower casing','carter du ventilateur'],'Gewicht':['weight','poids'],'Gewindedraht':['threaded wire','fil fileté'],'Holzgedackt':['stopped wood pipe','bourdon en bois'],'Hut':['cap','calotte'],'Kehle':['shallot','anche'],'Keil':['wedge','coin'],'Kern':['languid','biseau'],'Kernfase':['languid bevel','chanfrein du biseau'],'Kernstiche':['nicks','dents'],'Klaviaturboden':['key bed','fond de clavier'],'Kopf / Zunge':['block and tongue','noyau et languette'],'Krücke':['tuning wire','rasette'],'Körper':['body','corps'],'Labium':['mouth','bouche'],'Laufrad':['impeller','turbine'],'Laufradschaufel':['impeller blade','aube de turbine'],'Ledermutter':['leather nut','écrou en cuir'],'Luftblatt':['air jet','lame d’air'],'Motor':['motor','moteur'],'Nuss':['block','noyau'],'Oberlabium':['upper lip','lèvre supérieure'],'Oberplatte':['top board','table supérieure'],'Obertaste':['sharp key','feinte'],'Pfeife':['pipe','tuyau'],'Pfeifenstock':['upper board','chape'],'Pulpete':['pull-down purse','boursette'],'Rechenstäbchen':['rack slip','dent de peigne'],'Registerbalken':['stop bar','barre de registre'],'Registerbank':['stop jamb','joue de tirants'],'Registerschild':['stop label','étiquette de registre'],'Registerwelle':['stop roller','rouleau de registre'],'Registerzug':['drawknob','tirant de registre'],'Registerzugstange':['draw rod','tringle de tirant'],'Registerärmchen':['stop roller arm','bras de rouleau de registre'],'Rollenführung':['roller guide','guide du rouleau'],'Rollventilkasten':['curtain valve box','boîte de la valve à rideau'],'Röhrchen':['chimney','cheminée'],'Rückschlagventil':['non-return valve','clapet anti-retour'],'Sammelkanal':['collecting trunk','porte-vent collecteur'],'Schalldruck':['sound pressure','pression acoustique'],'Schied':['channel bar','barrage'],'Schleife':['slider','registre'],'Schleifenbohrung':['slider hole','trou de registre'],'Schleifenzug':['slider link','bielle de registre'],'Schlitz':['slot','fente'],'Schöpfventil':['intake valve','soupape d’aspiration'],'Seil':['rope','corde'],'Seitenbart':['ear','oreille'],'Spieltisch':['console','console'],'Spielventil':['pallet','soupape'],'Springventil':['spring valve','soupapette de registre'],'Spund':['stopper','tampon'],'Spundgriff':['stopper handle','poignée du tampon'],'Stecher':['sticker pin','pilote'],'Stiefel':['boot','pied (boîte)'],'Stimmschieber':['tuning slide','coulisse d’accord'],'Sägeschnitt':['saw kerf','trait de scie'],'Tastenfilz':['key felt','feutre de touche'],'Tastenhebel':['key lever','levier de touche'],'Tastenrechen':['tail rack','peigne arrière'],'Tritt':['treadle','marchepied du souffleur'],'Unterlabium':['lower lip','lèvre inférieure'],'Unterplatte':['bottom board','table inférieure'],'Untertaste':['natural key','marche'],'Ventilfeder':['pallet spring','ressort de soupape'],'Ventilführungsstift':['pallet guide pin','guide de soupape'],'Ventilöse':['pallet eye','œillet de soupape'],'Vorhang':['curtain','rideau'],'Vorhangleiste':['curtain batten','latte de rideau'],'Vorschlag':['cap (wood pipe)','lèvre inférieure rapportée'],'Welle':['roller','rouleau'],'Wellenbrett':['roller board','abrégé'],'Wellenböckchen':['roller stud','palier de rouleau'],'Wellenärmchen':['roller arm','bras de rouleau'],'Windkanal':['wind trunk','porte-vent'],'Windkasten':['pallet box','laye'],'Windleitung':['wind duct','conduit de vent'],'Winkel':['square','équerre'],'Winkelbalken':['square rail','barre d’équerres'],'Zugschnur':['pull cord','cordon'],'Zunge':['tongue','languette'],'Öse':['eye','œillet']};
+const TR={'Schleifenzugmagnet':['slider solenoid','électro-aimant de registre'],'Einschaltspule':['on coil','bobine d’enclenchement'],'Ausschaltspule':['off coil','bobine de déclenchement'],'Anker':['plunger','noyau plongeur'],'Endschalter':['limit switch','contact de fin de course'],'Registerwippe':['stop tab','domino de registre'],'Kabel':['wire','fil électrique'],'Kombinationsknopf':['combination piston','piston de combinaison'],'Setzer':['setter button','bouton de mémorisation'],'Schwimmer':['schwimmer (spring regulator)','régulateur à ressorts'],'Schwimmerplatte':['moving plate','plateau mobile'],'Schwimmerfeder':['regulator spring','ressort du régulateur'],'Schwimmerventil':['inlet valve','soupape d’admission'],'Ventilstange':['valve rod','tige de soupape'],'Federbock':['spring frame','support des ressorts'],'Einlasskanal':['inlet channel','canal d’admission'],'Pedalklaviatur':['pedalboard','pédalier'],'Pedaltaste':['pedal key','marche de pédalier'],'Scharnier':['hinge rail','charnière'],'Pedalfeder':['pedal spring','ressort de pédale'],'Orgelbank':['organ bench','banc d’orgue'],'Haken':['hook','crochet'],'Gehäuse':['case front','buffet'],'Zimbelstern':['cymbelstern','étoile à clochettes'],'Glocke':['bell','clochette'],'Glockenring':['bell ring','couronne des clochettes'],'Klöppel':['clapper','battant'],'Windrad':['wind wheel','roue à vent'],'Düse':['nozzle','buse'],'Lagerbock':['bearing bracket','palier'],'Koppelklotz':['coupler dog','pilote d’accouplement'],'Waagebalken':['balance rail','barre d’équilibre'],'Magazinbalg':['reservoir','réservoir'],'Windlade':['windchest','sommier'],'Balgbrett':['bellows board','planche du soufflet'],'Tremulantventil':['tremulant valve','soupape du tremblant'],'Ventilarm':['valve arm','bras de soupape'],'Anschlag':['stop block','butée'],'Tremulantklappe':['tremulant flap','clapet du tremblant'],'Achse':['axle','axe'],'Gewichtsarm':['weight arm','bras du poids'],'Schraube':['screw','vis'],'Kernboden':['block base','fond du bloc'],'Vorderbrett':['front board','planche de façade'],'Kanal':['wind channel','canal'],'Kernspalte':['windway','lumière'],'Spundleder':['stopper leather','cuir du tampon'],'Ventilkammer':['valve chamber','chambre de soupape'],'Doppelventil':['double valve','double soupape'],'Abstromöffnung':['exhaust port','orifice d’échappement'],'Membranbohrung':['membrane hole','trou de membrane'],'Bälgchenbrett':['bellows board','planche des soufflets'],'Relaiskanal':['relay channel','canal de relais'],'Kegel':['cone valve','soupape conique'],'Kegelsitz':['cone seat','siège du cône'],'Bälgchen':['small motor bellows','petit soufflet'],'Registerkanzelle':['stop channel','gravure de registre'],'Registerventil':['stop valve','soupape de registre'],'Kondukt':['conveyance','conduit'],'Bleirohr':['lead tube','tube de plomb'],'Spielventilkasten':['key-valve box','boîte à soupapes de touche'],'Ventilabzug':['valve pull-down','tirant de soupape'],'Windzufuhr':['wind supply','alimentation en vent'],'Membrane':['membrane','membrane'],'Membrankästchen':['membrane chamber','boîtier de membrane'],'Tonkanzelle':['key channel','gravure de note'],'Abstromventil':['exhaust valve','soupape d’échappement'],'Relaisbalg':['relay pouch','soufflet relais'],'Speisekanal':['feed duct','canal d’alimentation'],'Pfeifenbohrung':['pipe bore','trou de pied'],'Barkerbalg':['Barker motor','soufflet Barker'],'Barkerkasten':['motor wind box','laye des moteurs'],'Einlassventil':['inlet valve','soupape d’admission'],'Auslassventil':['exhaust valve','soupape d’échappement'],'Wippe':['backfall','balancier'],'Wippenbalken':['backfall rail','barre des balanciers'],'Pneumatikmotor':['pneumatic motor','moteur pneumatique'],'Schwellkasten':['swell box','boîte expressive'],'Jalousie':['shutter','jalousie'],'Jalousiehebel':['shutter arm','bras de jalousie'],'Zugstange':['connecting rod','tringle'],'Schwelltritt':['balanced expression pedal','pédale d’expression'],'Schwelltrittlager':['pedal bearing','support de pédale'],'Schwelltritthebel':['pedal arm','bras de pédale'],'Abstrakte':['tracker','vergette'],'Abzugsdraht':['pull-down wire','fil de tirage'],'Ansaugöffnung':['air intake','ouïe d’aspiration'],'Anschlagfilz':['upstop felt','feutre d’arrêt'],'Anschlagleiste':['upstop rail','barre d’arrêt'],'Anschlagleistenstütze':['upstop rail post','support de barre d’arrêt'],'Aufschnitt':['mouth (cut-up)','bouche'],'Backe':['key cheek','joue de clavier'],'Balgbock':['bellows trestle','tréteau du soufflet'],'Balghebel':['bellows lever','levier de soufflet'],'Balgkanal':['bellows outlet','porte-vent du soufflet'],'Balgstütze':['lever post','poteau du levier'],'Becher':['resonator','résonateur'],'Bohrung':['tracker hole','trou de vergette'],'Damm':['slider bearer','faux-registre'],'Deckel':['cap','calotte'],'Draht':['wire','fil'],'Drehstift':['pivot pin','axe de pivot'],'Falten':['folds','plis'],'Federleiste':['spring rail','barre à ressorts'],'Federrolle':['spring roller','rouleau à ressort'],'Federwindung':['spring coil','boucle du ressort'],'Fundamentbrett':['table','table'],'Fuß':['foot','pied'],'Fußloch':['toe hole','trou du pied'],'Führungsleiste':['guide rail','barre de guidage'],'Führungsstift':['guide pin','pointe de guidage'],'Gebläsegehäuse':['blower casing','carter du ventilateur'],'Gewicht':['weight','poids'],'Gewindedraht':['threaded wire','fil fileté'],'Holzgedackt':['stopped wood pipe','bourdon en bois'],'Hut':['cap','calotte'],'Kehle':['shallot','anche'],'Keil':['wedge','coin'],'Kern':['languid','biseau'],'Kernfase':['languid bevel','chanfrein du biseau'],'Kernstiche':['nicks','dents'],'Klaviaturboden':['key bed','fond de clavier'],'Kopf / Zunge':['block and tongue','noyau et languette'],'Krücke':['tuning wire','rasette'],'Körper':['body','corps'],'Labium':['mouth','bouche'],'Laufrad':['impeller','turbine'],'Laufradschaufel':['impeller blade','aube de turbine'],'Ledermutter':['leather nut','écrou en cuir'],'Luftblatt':['air jet','lame d’air'],'Motor':['motor','moteur'],'Nuss':['block','noyau'],'Oberlabium':['upper lip','lèvre supérieure'],'Oberplatte':['top board','table supérieure'],'Obertaste':['sharp key','feinte'],'Pfeife':['pipe','tuyau'],'Pfeifenstock':['upper board','chape'],'Pulpete':['pull-down purse','boursette'],'Rechenstäbchen':['rack slip','dent de peigne'],'Registerbalken':['stop bar','barre de registre'],'Registerbank':['stop jamb','joue de tirants'],'Registerschild':['stop label','étiquette de registre'],'Registerwelle':['stop roller','rouleau de registre'],'Registerzug':['drawknob','tirant de registre'],'Registerzugstange':['draw rod','tringle de tirant'],'Registerärmchen':['stop roller arm','bras de rouleau de registre'],'Rollenführung':['roller guide','guide du rouleau'],'Rollventilkasten':['curtain valve box','boîte de la valve à rideau'],'Röhrchen':['chimney','cheminée'],'Rückschlagventil':['non-return valve','clapet anti-retour'],'Sammelkanal':['collecting trunk','porte-vent collecteur'],'Schalldruck':['sound pressure','pression acoustique'],'Schied':['channel bar','barrage'],'Schleife':['slider','registre'],'Schleifenbohrung':['slider hole','trou de registre'],'Schleifenzug':['slider link','bielle de registre'],'Schlitz':['slot','fente'],'Schöpfventil':['intake valve','soupape d’aspiration'],'Seil':['rope','corde'],'Seitenbart':['ear','oreille'],'Spieltisch':['console','console'],'Spielventil':['pallet','soupape'],'Springventil':['spring valve','soupapette de registre'],'Spund':['stopper','tampon'],'Spundgriff':['stopper handle','poignée du tampon'],'Stecher':['sticker pin','pilote'],'Stiefel':['boot','pied (boîte)'],'Stimmschieber':['tuning slide','coulisse d’accord'],'Sägeschnitt':['saw kerf','trait de scie'],'Tastenfilz':['key felt','feutre de touche'],'Tastenhebel':['key lever','levier de touche'],'Tastenrechen':['tail rack','peigne arrière'],'Tritt':['treadle','marchepied du souffleur'],'Unterlabium':['lower lip','lèvre inférieure'],'Unterplatte':['bottom board','table inférieure'],'Untertaste':['natural key','marche'],'Ventilfeder':['pallet spring','ressort de soupape'],'Ventilführungsstift':['pallet guide pin','guide de soupape'],'Ventilöse':['pallet eye','œillet de soupape'],'Vorhang':['curtain','rideau'],'Vorhangleiste':['curtain batten','latte de rideau'],'Vorschlag':['cap (wood pipe)','lèvre inférieure rapportée'],'Welle':['roller','rouleau'],'Wellenbrett':['roller board','abrégé'],'Wellenböckchen':['roller stud','palier de rouleau'],'Wellenärmchen':['roller arm','bras de rouleau'],'Windkanal':['wind trunk','porte-vent'],'Windkasten':['pallet box','laye'],'Windleitung':['wind duct','conduit de vent'],'Winkel':['square','équerre'],'Winkelbalken':['square rail','barre d’équerres'],'Zugschnur':['pull cord','cordon'],'Zunge':['tongue','languette'],'Öse':['eye','œillet']};
 /* part names: Japanese, English, German, French */
 const LB=(ja,de)=>{ const t=TR[de]||['','']; return {ja,en:t[0],de,fr:t[1]}; };
 
@@ -516,7 +516,7 @@ function buildPipe(x,z,i,k,r,base){
 
 /* ---------------- windchest (slider / spring) ---------------- */
 function buildChest(o){
-  const KD=o.kd||S.kd;
+  const KD=o.kd||S.kd, SP=o.sp||S.sp, PM=o.palMat||keyMat, SMc=[], SM=o.sp?(i=>SMc[i]||(SMc[i]=mclone(MAT.woodPale))):stopMat;
   const R=CX.root, ox=o.x||0, oy=o.y||0, oz=o.z||0, P=5, N=13, W=N*P, spring=!!o.spring;
   const order=o.order||[0,1,2,3,4,5,6,7,8,9,10,11,12];
   const cxj=j=>ox-W/2+P*(j+0.5);
@@ -539,14 +539,14 @@ function buildChest(o){
   for(let i=0;i<5;i++){
     const z=oz+ZROW[i], st=STOPS[i];
     if(!spring){
-      C.sliders.push(box(R,W+14,1,4,MAT.woodPale,ox-5,oy+26,z,LB('スライダー：'+st.name+'（左右に動いて穴を合わせる）','Schleife'))); C.sliders[i].userData.stop=i;
+      C.sliders.push(box(R,W+14,1,4,MAT.woodPale,ox-5,oy+26,z,LB('スライダー：'+st.name+'（左右に動いて穴を合わせる）','Schleife'))); if(!o.sp) C.sliders[i].userData.stop=i;
       const hm=mclone(MAT.dark); C.holeMats.push(hm); const hs=[];
-      for(let k=0;k<N;k++){ const nr=i===3?3:1; for(let r=0;r<nr;r++){ const dd=mk(G_DISC,hm,R,LB('スライダーの穴','Schleifenbohrung')); dd.userData.stop=i; dd.rotation.x=-Math.PI/2; const s=i===3?0.45:0.65; dd.scale.set(s,s,s); dd.position.set(C.pos(k),oy+26.53,z+(i===3?MIXZ[r]:0)); dd.userData.bx=C.pos(k); hs.push(dd); } }
+      for(let k=0;k<N;k++){ const nr=i===3?3:1; for(let r=0;r<nr;r++){ const dd=mk(G_DISC,hm,R,LB('スライダーの穴','Schleifenbohrung')); if(!o.sp) dd.userData.stop=i; dd.rotation.x=-Math.PI/2; const s=i===3?0.45:0.65; dd.scale.set(s,s,s); dd.position.set(C.pos(k),oy+26.53,z+(i===3?MIXZ[r]:0)); dd.userData.bx=C.pos(k); hs.push(dd); } }
       C.holes.push(hs);
       box(R,W+1,3.5,6,MAT.wood,ox,oy+28.25,z,LB('上板：'+st.name+'（パイプを立てる台）','Pfeifenstock'));
     } else {
       box(R,W+1,4.5,3.6,MAT.wood,ox,oy+27.75,z+0.9,LB('上板：'+st.name,'Pfeifenstock'));
-      const sm=stopMat(i);
+      const sm=SM(i);
       C.bars.push(box(R,W+1,1.4,1.2,sm,ox,oy+27.6,z-1.6,LB('ストップバー：'+st.name+'（下がるとピンで弁を押し開ける）','Registerbalken')));
       const vs=[],ps=[];
       for(let k=0;k<N;k++){
@@ -559,7 +559,7 @@ function buildChest(o){
   }
   for(let k=0;k<N;k++){
     const x=C.pos(k); const pv=new T.Group(); pv.position.set(x,oy+11.25,oz-4); R.add(pv);
-    box(pv,P-1.7,1.4,20,keyMat(k),0,0,10,LB('パレット（'+KEYNAMES[k]+'の弁。押鍵で下に開く）','Spielventil'));
+    box(pv,P-1.7,1.4,20,PM(k),0,0,10,LB('パレット（'+KEYNAMES[k]+'の弁。押鍵で下に開く）','Spielventil'));
     C.pal.push(pv); C.wires.push(rod(R,0.1,MAT.metalDark,LB('引き下げ線（パレットの前端から底板を貫いて下へ出る）','Abzugsdraht')));
     const eye=mk(G_CYL,MAT.brass,R,LB('パレットの目金（引き下げ線を掛ける）','Ventilöse')); eye.scale.set(0.3,0.5,0.3); C.eyes.push(eye);
     const purse=mk(G_CONE,MAT.leather,R,LB('パルペーテ（引き下げ線が底板を通る穴をふさぐ革袋）','Pulpete')); purse.scale.set(0.75,1.1,0.75); purse.position.set(x,oy-0.55,oz+14);
@@ -590,7 +590,7 @@ function buildChest(o){
         const sp=buildPipe(x,zz,i,k,r,oy+30);
         const d=ch.nearestDist(V3(x,oy+19,zz));
         const pts=[V3(x,oy+19,zz),V3(x,oy+24.5,zz),V3(x,oy+30,zz)].concat(sp.path);
-        const tb=new Tube(pts,{r:i===3?0.22:0.3,density:0.3,front:900,state:()=>({open:ch.reached(d)&&S.sp[i]>0.85&&S.p>4,speed:20})});
+        const tb=new Tube(pts,{r:i===3?0.22:0.3,density:0.3,front:900,state:()=>({open:ch.reached(d)&&SP[i]>0.85&&S.p>4,speed:20})});
         tb.exitU=tb.cum[3+sp.ei]/tb.L;
         C.tubes.push({k,i,r,tb,md:tb.cum[3+sp.ei]});
         C.top=Math.max(C.top||0,sp.top);
@@ -608,10 +608,10 @@ function buildChest(o){
     for(const t of C.speaking()) C.chanFlow[t.k]+=1;
     for(let k=0;k<N;k++) C.chanFlow[k]=C.chanFlow[k]>0?12+2.5*C.chanFlow[k]:0;
     if(!spring){
-      for(let i=0;i<5;i++){ const off=-1.8*(1-S.sp[i]); C.sliders[i].position.x=ox-5+off; for(const dd of C.holes[i]) dd.position.x=dd.userData.bx+off; C.holeMats[i].emissive.copy(COL.stop).multiplyScalar(S.sp[i]>0.85?0.9:0); }
+      for(let i=0;i<5;i++){ const off=-1.8*(1-SP[i]); C.sliders[i].position.x=ox-5+off; for(const dd of C.holes[i]) dd.position.x=dd.userData.bx+off; C.holeMats[i].emissive.copy(COL.stop).multiplyScalar(SP[i]>0.85?0.9:0); }
     } else {
       for(let i=0;i<5;i++){
-        const dy=0.8*S.sp[i], z=oz+ZROW[i]; C.bars[i].position.y=oy+27.6-dy;
+        const dy=0.8*SP[i], z=oz+ZROW[i]; C.bars[i].position.y=oy+27.6-dy;
         const ph=-Math.asin(clamp(dy/3.8,0,1));
         for(let k=0;k<N;k++){
           const pv=C.valves[i][k]; pv.rotation.x=ph;
@@ -620,9 +620,10 @@ function buildChest(o){
         }
       }
     }
+    if(o.sp) SMc.forEach((mm,i)=>{ if(mm) mm.emissive.copy(COL.stop).multiplyScalar(0.5*SP[i]); });
   };
   C.pullDown=k=>V3(C.pos(k),oy-1-KPULL*KD[k],oz+14);
-  C.speaking=()=>{ const out=[]; if(S.p<8||C.vol.fill<0.3) return out; for(const t of C.tubes) if(KD[t.k]>0.25&&S.sp[t.i]>0.85) out.push(t); return out; };
+  C.speaking=()=>{ const out=[]; if(S.p<8||C.vol.fill<0.3) return out; for(const t of C.tubes) if(KD[t.k]>0.25&&SP[t.i]>0.85) out.push(t); return out; };
   return C;
 }
 
@@ -1479,6 +1480,476 @@ function buildTremulant(){
   };
 }
 
+/* ---------- shared: coil spring (helix built at its free length, scaled along its axis) ---------- */
+function helixGeo(r,turns,L0,w){ const pts=[], N=turns*16; for(let i=0;i<=N;i++){ const a=i/16*2*Math.PI; pts.push(V3(r*Math.cos(a),L0*i/N,r*Math.sin(a))); } const g=new T.TubeGeometry(new T.CatmullRomCurve3(pts),N*2,w,5,false); CX.own.push(g); return g; }
+
+/* ---------- B-03: Schwimmer ----------
+   A small spring-loaded regulator hung directly under the windchest. Its moving plate hangs below a fixed frame and is
+   pushed UP by coil springs; the springs, not weights, give the pressure. The inlet valve is a disc lying in the inlet
+   channel of the frame; its rod runs down through the seat hole to the moving plate. As the bellows fills, the plate
+   sinks and pulls the disc onto its seat; as it empties, the springs lift the plate and the disc opens. */
+function buildSchwimmer(){
+  const R=CX.root, oy=34, m={blower:true,rpm:1,h:0.75,vo:0,n:0,np:0,lock:false,ph:0};
+  const X0=-26, X1=26, Z0=-5, Z1=11, ZC=(Z0+Z1)/2, yFb=oy-3.5, CH0=-27, CH1=-13, HX=-20, HR=1.4, LROD=7.4;
+  let chest=null;
+  // blower
+  const BX=-104, BY=10;
+  box(R,14,14,14,MAT.casing,BX,BY,ZC,LB('送風機のケース','Gebläsegehäuse'));
+  const imp=new T.Group(); imp.position.set(BX,BY,ZC+1); R.add(imp);
+  const hub=mk(G_CYL,MAT.iron,imp,LB('羽根車','Laufrad')); hub.scale.set(5.6,1.2,5.6); hub.rotation.x=Math.PI/2; hub.position.z=-1.6;
+  for(let b=0;b<8;b++){ const bl=box(imp,0.5,5.2,2.6,MAT.metalDark,0,0,0,LB('羽根車の羽根','Laufradschaufel')); const an=b/8*Math.PI*2; bl.position.set(Math.cos(an)*3.2,Math.sin(an)*3.2,0); bl.rotation.z=an-Math.PI/2+0.35; }
+  const mot=mk(G_CYL,MAT.iron,R,LB('電動モーター','Motor')); mot.rotation.x=Math.PI/2; mot.scale.set(4,7,4); mot.position.set(BX,BY,ZC-10.5);
+  const DP=[V3(BX+7,BY,ZC),V3(-60,BY,ZC),V3(-60,oy-1.75,ZC),V3(CH0-0.3,oy-1.75,ZC)];
+  duct(DP,3.2,MAT.wood,LB('風導管（送風機からシュヴィンマーの入口へ）','Windkanal'));
+  // fixed frame under the chest: inlet channel at the left end, open neck to the pallet box elsewhere
+  const LF=LB('シュヴィンマーの枠（風箱の底板の下に固定。中央の穴で風箱とつながる）','Schwimmer');
+  box(R,X1-X0,0.5,Z1-Z0,MAT.wood,0,yFb+0.25,ZC,LF);
+  for(const z of [Z0,Z1]) box(R,X1-X0,3,0.6,MAT.wood,0,oy-1.5,z,LF);
+  for(const x of [X0,X1]) box(R,0.6,3,Z1-Z0,MAT.wood,x,oy-1.5,ZC,LF);
+  const LCH=LB('入口の通路（送風機の風がここに来る）','Einlasskanal');
+  box(R,0.6,3,Z1-Z0-1.2,MAT.wood,CH1,oy-1.5,ZC,LCH);
+  box(R,CH1-CH0,0.5,Z1-Z0,MAT.wood,(CH0+CH1)/2,oy-0.25,ZC,LCH);
+  const seat=mk(G_CYL_OPEN,MAT.dark,R,LB('弁座（入口の穴）','Kegelsitz')); seat.scale.set(HR,0.5,HR); seat.position.set(HX,yFb+0.25,ZC);
+  for(const x of [-6,6,18]){ const d=mk(G_DISC,MAT.dark,R,LB('風箱へ通じる穴','Kanal')); d.rotation.x=Math.PI/2; d.scale.set(2.4,2.4,1); d.position.set(x,yFb-0.01,ZC); }
+  const disc=cyl(R,HR+0.7,0.35,MAT.leather,HX,yFb+0.7,ZC,LB('入口弁（円板。下がると穴をふさぐ）','Schwimmerventil'));
+  const vrod=rod(R,0.13,MAT.iron,LB('弁の棒（可動板とつながる。可動板が下がると弁を閉じる）','Ventilstange'));
+  // moving plate, folds, springs, frame below
+  const plate=new T.Group(); R.add(plate);
+  box(plate,X1-X0-1,0.8,Z1-Z0-1,MAT.woodPale,0,-0.4,0,LB('可動板（ばねで押し上げられ、風が入ると下がる）','Schwimmerplatte'));
+  const nut=cyl(plate,0.45,0.35,MAT.leather,HX,0.18,0,LB('革ナット（弁の棒の長さを調整する）','Ledermutter'));
+  const RL=LB('ひだ（革）','Falten'), RW=4.4;
+  const rib={f1:plank(R,X1-X0-1,0.3,MAT.leather,RL),f2:plank(R,X1-X0-1,0.3,MAT.leather,RL),b1:plank(R,X1-X0-1,0.3,MAT.leather,RL),b2:plank(R,X1-X0-1,0.3,MAT.leather,RL),
+             l1:plank(R,0.3,Z1-Z0-1,MAT.leather,RL),l2:plank(R,0.3,Z1-Z0-1,MAT.leather,RL),r1:plank(R,0.3,Z1-Z0-1,MAT.leather,RL),r2:plank(R,0.3,Z1-Z0-1,MAT.leather,RL)};
+  const yBase=oy-17.5, LFB=LB('ばねの台','Federbock');
+  for(const x of [-18,18]){ box(R,3,1,Z1-Z0+2,MAT.woodDark,x,yBase-0.5,ZC,LFB); for(const z of [Z0,Z1]) box(R,1.6,yBase-1,1.6,MAT.woodDark,x,(yBase-1)/2,z,LFB); }
+  const SL0=12.5, SG=helixGeo(1.1,7,SL0,0.14), springs=[];
+  const SPL=LB('ばね（可動板を押し上げて風に圧力をかける）','Schwimmerfeder');
+  for(const x of [-18,18]) for(const z of [ZC-4,ZC+4]){ const s=mk(SG,MAT.iron,R,SPL); s.position.set(x,yBase,z); springs.push(s); }
+  const plateY=()=>yFb-2.5-5.5*m.h;
+  // particles
+  new Tube([V3(BX,BY,ZC+18),V3(BX,BY,ZC+7)],{kind:'air',r:1.3,density:0.8,state:()=>({open:m.rpm>0.15,speed:26*m.rpm})});
+  const sup=new Tube(DP.map(v=>v.clone()).concat([V3(HX,oy-1.75,ZC)]),{r:1,density:0.55,front:200,state:()=>({open:m.rpm>0.2,speed:(m.lock?2+1.6*m.n:4+30*m.vo)*m.rpm})});
+  new Tube([V3(HX,oy-1.6,ZC),V3(HX+0.4,yFb+0.1,ZC),V3(HX+1.2,yFb-2,ZC),V3(HX+4,yFb-3,ZC)],{r:0.5,density:1.4,front:200,state:()=>({open:sup.full()&&(m.lock||m.vo>0.04),speed:m.lock?18:4+26*m.vo})});
+  const bel=new Vol((a,b,c,out)=>{ const py=plateY(); out.set(X0+1.2+a*(X1-X0-2.4),py+0.2+b*(yFb-py-0.4),Z0+0.8+c*(Z1-Z0-1.6)); },260,{state:()=>sup.head>0?0.2+0.8*clamp(m.h/0.8,0,1):0,rate:2});
+  const neck=new Tube([V3(-6,yFb-1,ZC),V3(-6,oy+0.5,ZC),V3(-6,oy+3,ZC+4)],{r:1.2,density:0.8,front:300,state:()=>({open:bel.fill>0.3&&S.p>10,speed:4+1.2*m.n})});
+  for(const x of [6,18]) new Tube([V3(x,yFb-1,ZC),V3(x,oy+0.5,ZC),V3(x,oy+3,ZC+4)],{r:1.2,density:0.8,front:300,state:()=>({open:bel.fill>0.3&&S.p>10,speed:4+1.2*m.n})});
+  chest=buildChest({y:oy,feed:neck});
+  const lockPins=[-1,1].map(s=>box(R,1.2,1,1.2,MAT.iron,s*18,yBase,ZC,LB('つっかい棒（可動板を固定してシュヴィンマーを効かなくする）','Anschlag')));
+  return {chest,
+    controls:[{type:'toggle',id:'blower',label:'送風機',get:()=>m.blower,set:v=>m.blower=v},
+      {type:'toggle',id:'lock',label:'シュヴィンマーを固定する',get:()=>m.lock,set:v=>m.lock=v}],
+    ctl:{blower:v=>m.blower=v,lock:v=>m.lock=v},
+    pins:[{t:'送風機',p:V3(BX,BY+10,ZC)},{t:'シュヴィンマー',p:V3(X1+3,yFb-4,Z1)},{t:'ばね',p:V3(-18,yBase+4,Z1+3)},{t:'入口弁',p:V3(HX,oy+2,Z0-3),max:120},{t:'風箱',p:V3(36,oy+12,18)}],
+    update(dt){
+      const n=chest.speaking().length; m.n=n;
+      m.rpm+=((m.blower?1:0)-m.rpm)*Math.min(1,dt*1.5);
+      if(m.lock){
+        m.h+=(0.45-m.h)*Math.min(1,dt*3); m.vo=clamp((0.8-m.h)*5.5/1.8,0,1);
+        m.np+=(n-m.np)*Math.min(1,dt*1.2);
+        const tg=m.rpm*(82-1.6*n-3.2*Math.max(0,n-m.np)); S.p+=(tg-S.p)*Math.min(1,dt*6);
+      } else {
+        m.vo=clamp((0.8-m.h)*5.5/1.8,0,1);
+        const inflow=m.rpm*1.25*m.vo, out=(m.h>0.01&&n>0)?0.04+0.03*n:(m.h>0.01?0.01:0);
+        m.h=clamp(m.h+(inflow-out)*dt,0,1);
+        m.np+=(n-m.np)*Math.min(1,dt*10);
+        const tg=m.h>0.02?62+18*m.h-0.6*Math.max(0,n-m.np):m.rpm*20*m.vo; S.p+=(tg-S.p)*Math.min(1,dt*10);
+      }
+      imp.rotation.z-=m.rpm*dt*30;
+      const py=plateY(); plate.position.set(0,py,ZC);
+      const H=yFb-py, hf=H/2, d=Math.sqrt(Math.max(0,RW*RW-hf*hf));
+      rib.f1.set(V3(0,py,Z1-0.5),V3(0,py+hf,Z1-0.5+d)); rib.f2.set(V3(0,py+hf,Z1-0.5+d),V3(0,yFb,Z1-0.5));
+      rib.b1.set(V3(0,py,Z0+0.5),V3(0,py+hf,Z0+0.5-d)); rib.b2.set(V3(0,py+hf,Z0+0.5-d),V3(0,yFb,Z0+0.5));
+      rib.l1.set(V3(X0+0.5,py,ZC),V3(X0+0.5-d,py+hf,ZC)); rib.l2.set(V3(X0+0.5-d,py+hf,ZC),V3(X0+0.5,yFb,ZC));
+      rib.r1.set(V3(X1-0.5,py,ZC),V3(X1-0.5+d,py+hf,ZC)); rib.r2.set(V3(X1-0.5+d,py+hf,ZC),V3(X1-0.5,yFb,ZC));
+      const sl=py-0.8-yBase; springs.forEach(s=>s.scale.y=sl/SL0);
+      const dy=Math.max(yFb+0.68,py+LROD+0.18); disc.position.y=dy; vrod.set(V3(HX,py+0.3,ZC),V3(HX,dy,ZC));
+      lockPins.forEach(p=>{ p.visible=m.lock; const hh=py-0.8-yBase; p.scale.y=hh; p.position.y=yBase+hh/2; });
+      chest.update(dt);
+    }};
+}
+
+/* ---------- D-04: pedal action ----------
+   Pedal keys hinged at the heel end (under the bench); the toe end, under the console, goes down. A coil spring under
+   the toe end returns the key, a guide pin in a slot keeps it straight, a felt pad limits its travel. The tracker runs UP
+   from the toe end to a square, a horizontal tracker runs back under the console floor... here: inside the console base,
+   to a second square below the pedal chest, which pulls the pallet down. */
+function buildPedalAction(){
+  const R=CX.root, ZH=62, ZE=-14, KL=ZH-ZE, yK=5, KHp=3.4, DEP=1.9, ZA=-8, LA=ZH-ZA, YS=26, AI=3.9, AO=3, oz=-60, oy=34;
+  const chest=buildChest({y:oy,z:oz}); const zs1=ZA+AI, zs2=oz+14+AO;
+  const xp=k=>((k in SLOT?SLOT[k]:BPOS[k])-3.5)*8;
+  // frame
+  const LF=LB('ペダル鍵盤の枠','Pedalklaviatur');
+  box(R,66,1.2,3,MAT.woodDark,0,0.6,ZE+2.5,LB('つま先側の桟（ばねと下止めのフェルトを受ける）','Federleiste'));
+  box(R,66,yK+1,4,MAT.woodDark,0,(yK+1)/2,ZH+1,LB('蝶番の桟（ペダル鍵のかかと側の支点）','Scharnier'));
+  for(const s of [-1,1]) box(R,2,1.6,KL+6,MAT.woodDark,s*34,0.8,(ZH+ZE)/2+1,LF);
+  for(const z of [ZE+2.5+8,ZH-14]) box(R,66,0.8,2,MAT.woodDark,0,0.4,z,LF);
+  const pin=mk(G_ROD,MAT.iron,R,LB('蝶番のピン','Drehstift')); pin.rotation.z=Math.PI/2; pin.scale.set(0.2,66,0.2); pin.position.set(0,yK,ZH);
+  // bench (context)
+  const LBk=LB('オルガンベンチ','Orgelbank');
+  box(R,74,2.4,16,MAT.wood,0,62,ZH+12,LBk); for(const s of [-1,1]) box(R,2.4,61,14,MAT.wood,s*35,30.5,ZH+12,LBk);
+  // keys
+  const SG=helixGeo(0.8,5,2.2,0.13), keys=[];
+  for(let k=0;k<13;k++){
+    const w=(k in SLOT), x=xp(k), lm=keyMat(k), g=new T.Group(); g.position.set(x,yK,ZH); R.add(g);
+    const lab=LB('ペダル鍵 '+KEYNAMES[k]+'（かかと側の蝶番を支点に、つま先側が下がる）','Pedaltaste');
+    box(g,w?2.9:2.4,KHp,KL,lm,0,0,-KL/2,lab);
+    if(!w) box(g,2.4,3.2,18,MAT.ebony,0,KHp/2+1.6,-KL+9,LB('ペダルの黒鍵（つま先側に高く付いた台）','Obertaste'));
+    else box(g,2.9,0.3,KL-4,MAT.woodPale,0,KHp/2+0.15,-KL/2-1,LB('ペダルの白鍵の踏み面','Untertaste'));
+    const slot=box(g,0.5,KHp+0.02,1.4,MAT.dark,0,0,-KL+2,LB('ガイドピンの溝','Schlitz'));
+    rod(R,0.15,MAT.brass,LB('ガイドピン（鍵先の溝に入り、鍵を左右に振らせない）','Führungsstift')).set(V3(x,1.2,ZE+2),V3(x,yK+KHp/2+(w?0.6:3.8),ZE+2));
+    box(R,2.2,0.3,1.6,MAT.cloth,x,1.35,ZE+3.6,LB('下止めのフェルト（ペダルの深さを決める）','Tastenfilz'));
+    const sp=mk(SG,MAT.iron,R,LB('ペダルのばね（つま先側を押し上げて戻す）','Pedalfeder')); sp.position.set(x,1.2,ZE+6.5);
+    const top=yK+KHp/2+(w?0.3:3.2);
+    keys.push({k,x,g,sp,top,
+      t1:makeTracker(lm,LB('トラッカー（ペダル鍵 → スクエア。上へ引かれる）','Abstrakte')),
+      s1a:rod(R,0.32,lm,LB('スクエア（ペダル側。下向きの引きを後ろ向きに変える）','Winkel')), s1b:rod(R,0.32,lm,LB('スクエア（ペダル側）','Winkel')),
+      t2:makeTracker(lm,LB('水平のトラッカー（演奏台の下を奥の風箱へ）','Abstrakte')),
+      s2a:rod(R,0.32,lm,LB('スクエア（風箱側。後ろ向きの引きを下向きに変える）','Winkel')), s2b:rod(R,0.32,lm,LB('スクエア（風箱側）','Winkel')),
+      t3:makeTracker(lm,LB('トラッカー（スクエア → パレット）','Abstrakte'))});
+  }
+  const xs=keys.map(q=>q.x).concat(keys.map((q,k)=>chest.pos(k)));
+  box(R,64,1.2,1.2,MAT.woodDark,0,YS,zs1+0.9,LB('スクエアの軸受け（ペダル側）','Winkelbalken'));
+  box(R,chest.W+4,1.2,1.2,MAT.woodDark,chest.ox,YS,zs2+0.9,LB('スクエアの軸受け（風箱側）','Winkelbalken'));
+  for(const s of [-1,1]){ box(R,1.6,YS,1.6,MAT.woodDark,s*33,YS/2,zs1+0.9,LB('軸受けの支柱','Balgstütze')); box(R,1.6,oy-0.5,1.6,MAT.woodDark,s*(chest.W/2+2),(oy-0.5)/2,zs2+0.9,LB('軸受けの支柱','Balgstütze')); }
+  return {chest,
+    pins:[{t:'ペダル鍵盤',p:V3(-36,10,20)},{t:'蝶番（かかと側）',p:V3(38,yK+3,ZH)},{t:'ばね・ガイドピン',p:V3(-38,4,ZE+2)},{t:'スクエア',p:V3(36,YS+3,zs1)},{t:'水平のトラッカー',p:V3(36,YS+6,(zs1+zs2)/2)},{t:'風箱',p:V3(40,oy+14,oz+12)}],
+    update(dt){
+      for(const q of keys){
+        const d=DEP*S.kd[q.k], th=Math.asin(d/KL); q.g.rotation.x=-th;
+        q.sp.scale.y=(yK-KHp/2-1.2-(ZH-(ZE+6.5))*Math.sin(th))/2.2;
+        const ya=q.top-LA*Math.sin(th), drop=LA*Math.sin(th);
+        const p1=Math.asin(clamp(drop/AI,0,1)), c1=Math.cos(p1), s1=Math.sin(p1);
+        const P1=V3(q.x,YS,zs1), inT=V3(q.x,YS-AI*s1,zs1-AI*c1), upT=V3(q.x,YS+AO*c1,zs1-AO*s1);
+        q.t1.set(inT,V3(q.x,ya,ZA),0.4); q.s1a.set(P1,inT); q.s1b.set(P1,upT);
+        const xc=chest.pos(q.k), pull=AO*s1, p2=Math.asin(clamp(pull/AO,0,1)), c2=Math.cos(p2), s2=Math.sin(p2);
+        const P2=V3(xc,YS,zs2), up2=V3(xc,YS+AO*c2,zs2-AO*s2), out2=V3(xc,YS-AO*s2,zs2-AO*c2);
+        q.t2.set(up2,upT,0.6); q.s2a.set(P2,up2); q.s2b.set(P2,out2);
+        q.t3.set(chest.pullDown(q.k),out2,0.6);
+      }
+      chest.update(dt);
+    }};
+}
+
+/* ---------- E-02: stop action for a spring chest ----------
+   Each stop bar of the spring chest runs out through the end of the chest. Above its end a square (bellcrank) presses it
+   down through a short sticker; the drawknob's rod pulls the square's upright arm toward the player. The springs of all
+   the pallets of that stop push the bar back up, so a drawn stop must be held: a hook on the jamb drops behind a
+   collar on the draw rod. Lifting the hook (or switching the hooks off here) lets the springs push the knob back in. */
+function buildSpringStopAction(){
+  const R=CX.root, chest=buildChest({spring:true}), oy=chest.oy, oz=chest.oz, xE=chest.ox-chest.W/2-0.5;
+  const A1=7.2, A2=1.6, TRV=3.6, KZ=34, yP=oy+27.6+0.7+3.2, yT=yP+A1, m={hook:true,tm:new Float32Array(5)};
+  const LBS=LB('ストップアクションの台','Winkelbalken');
+  box(R,22,1.2,42,MAT.woodDark,xE-12,oy+19.4,oz,LBS);
+  for(const z of [oz-19,oz+19]) box(R,1.6,oy+18.8,1.6,MAT.woodDark,xE-21,(oy+18.8)/2,z,LBS);
+  const jx0=xE-21, jx1=xE-1;
+  box(R,jx1-jx0+4,10,2,MAT.wood,(jx0+jx1)/2,yT,KZ-1.6,LB('ストップノブの板（ストップジャム）','Registerbank'));
+  const its=[];
+  for(let i=0;i<5;i++){
+    const zb=oz+ZROW[i]-1.6, xs=xE-3-4*i, sm=stopMat(i);
+    const zp=zb-A2;
+    const ext=box(R,xE-xs+1.2,1.4,1.2,sm,(xE+xs)/2,oy+27.6,zb,LB('ストップバーの延長（風箱の外へ出た端）','Registerbalken'));
+    const felt=box(R,1.2,0.4,1.4,MAT.cloth,xs,oy+27.6+0.9,zb,LB('フェルト（押し棒の当たり）','Anschlagfilz'));
+    box(R,1.2,yP-oy-20,1.2,MAT.woodDark,xs,(yP+oy+20)/2,zp,LB('スクエアの支え','Wellenböckchen'));
+    const knob=mk(G_CYL,MAT.ebony,R,LB('ストップノブ：'+STOPS[i].name+'（手前に引くと入る）','Registerzug')); knob.rotation.x=Math.PI/2; knob.scale.set(1.3,2.2,1.3);
+    const face=mk(G_CYL,MAT.ivory,R,LB('ストップ名の札：'+STOPS[i].name,'Registerschild')); face.rotation.x=Math.PI/2; face.scale.set(0.95,0.25,0.95);
+    knob.userData.stop=i; face.userData.stop=i;
+    const collar=mk(G_CYL,MAT.brass,R,LB('留め輪（フックが後ろに落ちて引いた位置に保つ）','Öse')); collar.rotation.x=Math.PI/2; collar.scale.set(0.7,0.6,0.7);
+    box(R,0.6,0.6,0.6,MAT.iron,xs,yT+1.9,KZ-0.3,LB('フックの軸','Achse'));
+    const hook=rod(R,0.16,MAT.iron,LB('フック（ストップを引いた位置に掛けて保つ。ばね弁のばねに押し戻されないように）','Haken'));
+    its.push({i,xs,zb,zp,ext,felt,knob,face,collar,hook,hd:0,sm,
+      rodK:rod(R,0.3,sm,LB('ノブの軸（引き棒）','Registerzugstange')),
+      armU:rod(R,0.4,sm,LB('スクエアの立った腕（ノブの軸に引かれる）','Winkel')),
+      armF:rod(R,0.4,sm,LB('スクエアの短い腕（押し棒でストップバーを押し下げる）','Winkel')),
+      st:rod(R,0.22,MAT.iron,LB('押し棒（スクエアがストップバーの端を押し下げる）','Stecher'))});
+  }
+  return {chest,
+    controls:[{type:'toggle',id:'hook',label:'フックで保つ',get:()=>m.hook,set:v=>m.hook=v}],
+    ctl:{hook:v=>m.hook=v},
+    pins:[{t:'ストップノブ',p:V3(xE-24,yT+4,KZ)},{t:'スクエア',p:V3(xE-12,yT+3,oz-8)},{t:'ストップバー',p:V3(xE+6,oy+31,oz+20)},{t:'ばね弁',p:V3(36,oy+24,oz+6),max:150}],
+    update(dt){
+      for(const it of its){
+        if(!m.hook&&S.stop[it.i]){ m.tm[it.i]+=dt; if(m.tm[it.i]>0.7){ S.stop[it.i]=false; syncStopUI(); m.tm[it.i]=0; } } else m.tm[it.i]=0;
+        const sp=S.sp[it.i], ph=Math.asin(clamp(TRV*sp/A1,0,1)), c=Math.cos(ph), s=Math.sin(ph);
+        const P=V3(it.xs,yP,it.zp), tU=V3(it.xs,yP+A1*c,it.zp+A1*s), tF=V3(it.xs,yP-A2*s,it.zp+A2*c);
+        it.armU.set(P,tU); it.armF.set(P,tF);
+        const dy=0.8*sp; it.ext.position.y=oy+27.6-dy; it.felt.position.y=oy+28.5-dy;
+        it.st.set(tF,V3(it.xs,oy+27.6+0.7-dy+0.4,it.zb));
+        const kz=KZ+TRV*sp; it.knob.position.set(it.xs,yT,kz+1.1); it.face.position.set(it.xs,yT,kz+2.3);
+        it.rodK.set(tU,V3(it.xs,yT,kz)); it.collar.position.set(it.xs,yT,kz-3.5);
+        it.hd+=(((m.hook&&sp>0.95)?1:0)-it.hd)*Math.min(1,dt*12);
+        const ha=lerp(1.25,0.05,it.hd); it.hook.set(V3(it.xs,yT+1.9,KZ-0.3),V3(it.xs,yT+1.9-1.6*Math.cos(ha),KZ-0.3+1.6*Math.sin(ha)));
+      }
+      chest.update(dt);
+    }};
+}
+
+/* bell: struck partials with exponential decay (minor-third bell partial series, slightly inharmonic) */
+function bellStrike(f,vel){
+  if(!AU.ctx||!AU.on) return; if(AU.ctx.state==='suspended') AU.ctx.resume().catch(()=>{});
+  const t=AU.ctx.currentTime, P=[[0.5,0.35,1.6],[1,1,1.4],[1.19,0.45,1.0],[1.5,0.35,0.8],[2,0.5,0.6],[2.74,0.22,0.35],[3.6,0.12,0.22]];
+  for(const [r,a,d] of P){ const o=AU.ctx.createOscillator(), g=AU.ctx.createGain(); o.frequency.value=f*r; g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.32*a*vel,t+0.003); g.gain.exponentialRampToValueAtTime(0.0005,t+d); o.connect(g); g.connect(AU.out); o.start(t); o.stop(t+d+0.05); }
+}
+/* ---------- F-03: Zimbelstern ----------
+   A gilded star on the case front turns on a shaft; behind the case front a ring of small tuned bells is fixed round the
+   shaft and a sprung clapper on the shaft strikes them in turn. The shaft is driven by a small wind wheel: drawing the stop
+   opens a valve, wind blows through a nozzle onto the paddles. When the stop is put in, the wheel runs on and slows down. */
+function buildZimbelstern(){
+  const R=CX.root, YC=45, m={on:false,chord:false,flow:1,w:0,th:0,nb:6,last:0}, F=[783.99,880,987.77,1174.66,1318.51,1567.98];
+  // case front
+  const LG=LB('オルガンケースの正面板','Gehäuse');
+  box(R,52,58,1.6,MAT.wood,0,YC,0,LG);
+  const bush=mk(G_CYL,MAT.brass,R,LB('軸受けのブッシュ','Achse')); bush.rotation.x=Math.PI/2; bush.scale.set(1,1.8,1); bush.position.set(0,YC,0);
+  // star
+  const sh=new T.Shape(); for(let j=0;j<16;j++){ const r=j%2?6.5:16, a=j/16*2*Math.PI+Math.PI/2, x=r*Math.cos(a), y=r*Math.sin(a); if(j) sh.lineTo(x,y); else sh.moveTo(x,y); } sh.closePath();
+  const sg=new T.ExtrudeGeometry(sh,{depth:0.6,bevelEnabled:true,bevelThickness:0.25,bevelSize:0.25,bevelSegments:1}); CX.own.push(sg);
+  const star=new T.Group(); star.position.set(0,YC,1.6); R.add(star);
+  const GOLD=mclone(MAT.brass); GOLD.color.set(0xd9b25a); GOLD.metalness=0.25; GOLD.roughness=0.4; mk(sg,GOLD,star,LB('星（金色の木彫りの星。軸とともに回る）','Zimbelstern'));
+  const boss=mk(G_CYL,GOLD,star,LB('星の中心','Zimbelstern')); boss.rotation.x=Math.PI/2; boss.scale.set(3,1.6,3); boss.position.z=0.8;
+  // shaft & bearing brackets
+  const shaft=mk(G_ROD,MAT.iron,R,LB('軸（星・打ち子・風車をつなぐ）','Welle')); shaft.rotation.x=Math.PI/2; shaft.scale.set(0.35,25,0.35); shaft.position.set(0,YC,-10);
+  const LBk=LB('軸受けの台','Lagerbock');
+  for(const z of [-3,-21]){ box(R,1.6,YC-1,1.6,MAT.woodDark,0,(YC-1)/2,z,LBk); box(R,2.4,2.4,1.6,MAT.woodDark,0,YC,z,LBk); }
+  // bell ring
+  const ring=mk(new T.TorusGeometry(9.6,0.3,6,48),MAT.iron,R,LB('鈴を取り付ける輪（固定）','Glockenring')); CX.own.push(ring.geometry); ring.position.set(0,YC,-5);
+  for(let s=0;s<4;s++){ const a=s/4*2*Math.PI+Math.PI/4; rod(R,0.25,MAT.iron,LB('輪の支え','Glockenring')).set(V3(9.6*Math.cos(a),YC+9.6*Math.sin(a),-5),V3(14*Math.cos(a),YC+14*Math.sin(a),-0.8)); }
+  const BP=[[0,2.6],[0.55,2.56],[0.85,2.35],[0.95,1.7],[1.08,0.9],[1.4,0.25],[1.62,0]].map(p=>new T.Vector2(p[0],p[1]));
+  const BG=new T.LatheGeometry(BP,24); CX.own.push(BG);
+  const bells=[];
+  for(let j=0;j<6;j++){
+    const a=j/6*2*Math.PI, g=new T.Group(); g.position.set(9*Math.cos(a),YC+9*Math.sin(a),-5.4); R.add(g);
+    const bm=mclone(MAT.brass); bm.side=T.DoubleSide;
+    const b=mk(BG,bm,g,LB('鈴（'+['g″','a″','h″','d‴','e‴','g‴'][j]+'に調律。打ち子に打たれて鳴る）','Glocke')); b.rotation.x=Math.PI/2;
+    bells.push({g,bm,a,amp:0});
+  }
+  // clapper on the shaft
+  const clap=new T.Group(); clap.position.set(0,YC,-9.2); R.add(clap);
+  cyl(clap,1.2,1,MAT.iron,0,0,0,LB('打ち子の台','Klöppel')).rotation.x=Math.PI/2;
+  const spr=rod(clap,0.1,MAT.iron,LB('打ち子のばね線（しなって鈴を打ち、通り抜ける）','Klöppel')); spr.set(V3(0,0,0),V3(9,0,0.6));
+  const ball=mk(G_SPH,MAT.iron,clap,LB('打ち子（ばね付き。回りながら鈴を順に打つ）','Klöppel')); ball.scale.set(0.5,0.5,0.5); ball.position.set(9,0,0.6);
+  // wind wheel
+  const wheel=new T.Group(); wheel.position.set(0,YC,-17); R.add(wheel);
+  cyl(wheel,1.6,2.4,MAT.wood,0,0,0,LB('風車の軸の胴','Windrad')).rotation.x=Math.PI/2;
+  for(let b=0;b<10;b++){ const a=b/10*2*Math.PI, p=box(wheel,3.4,0.35,2.2,MAT.woodPale,0,0,0,LB('風車の羽根（ノズルの風に押されて回る）','Windrad')); p.position.set(5.5*Math.cos(a),5.5*Math.sin(a),0); p.rotation.z=a; }
+  // wind supply: valve box with the stop, duct to the nozzle
+  const VX=20, VY=8, VZ=-17;
+  box(R,8,6,8,MAT.wood,VX,VY,VZ,LB('ツィンベルシュテルンの弁箱（中は風で満ちている）','Ventilkasten'));
+  const flap=new T.Group(); flap.position.set(VX-2,VY+2.6,VZ); R.add(flap);
+  box(flap,4,0.4,4,MAT.leather,2,-0.2,0,LB('弁（ストップを引くと開いて風車へ風を送る）','Spielventil'));
+  const DPT=[V3(VX,VY+3,VZ),V3(VX,30,VZ),V3(6,30,VZ),V3(6,36.2,VZ)];
+  duct(DPT,2.2,MAT.wood,LB('風導管（弁箱から風車のノズルへ）','Windleitung'));
+  const noz=mk(G_CONE,MAT.metalDark,R,LB('ノズル（風を細く絞って羽根に吹き付ける）','Düse')); noz.scale.set(1.1,2.2,1.1); noz.rotation.x=Math.PI; noz.position.set(6,37.3,VZ);
+  duct([V3(-52,VY,VZ),V3(VX-4,VY,VZ)],4,MAT.wood,LB('風導管（ふいごから）','Windkanal'));
+  const knob=mk(G_CYL,MAT.ebony,R,LB('ストップノブ：Zimbelstern（引くと星が回る）','Registerzug')); knob.rotation.x=Math.PI/2; knob.scale.set(1.3,2.2,1.3);
+  const face=mk(G_CYL,MAT.ivory,R,LB('ストップ名の札：Zimbelstern','Registerschild')); face.rotation.x=Math.PI/2; face.scale.set(0.95,0.25,0.95);
+  const drod=rod(R,0.3,MAT.woodPale,LB('ノブの軸（弁を引き開ける）','Registerzugstange'));
+  box(R,8,6,1.6,MAT.wood,VX,VY,12.4,LB('ストップノブの板','Registerbank'));
+  let vo=0;
+  new Tube([V3(-52,VY,VZ),V3(VX-3,VY,VZ)],{r:1.5,density:0.5,front:200,state:()=>({open:true,speed:2+16*vo*m.flow})});
+  new Vol((a,b,c,out)=>out.set(VX-3.4+a*6.8,VY-2.4+b*4.8,VZ-3.4+c*6.8),70,{state:()=>1,rate:3});
+  const jt=new Tube(DPT.map(v=>v.clone()).concat([V3(6,38.6,VZ),V3(5.6,42,VZ),V3(2,47,VZ-1),V3(-4,49,VZ-3)]),{r:0.7,density:0.8,front:120,state:()=>({open:vo>0.08,speed:8+26*vo*m.flow})});
+  jt.exitU=jt.cum[4]/jt.L;
+  return {
+    controls:[{type:'toggle',id:'on',label:'Zimbelstern を入れる',get:()=>m.on,set:v=>m.on=v},
+      {type:'toggle',id:'chord',label:'オルガンの和音も鳴らす',get:()=>m.chord,set:v=>m.chord=v},
+      {type:'range',id:'flow',label:'風の量',min:0.4,max:1.6,step:0.05,get:()=>m.flow,set:v=>m.flow=v,fmt:()=>'毎秒 約'+(1.1*m.flow).toFixed(1)+' 回転'}],
+    ctl:{on:v=>m.on=v,chord:v=>m.chord=v,flow:v=>m.flow=v},
+    pins:[{t:'星',p:V3(-14,YC+16,3)},{t:'鈴（6個）',p:V3(-12,YC-6,-6),max:140},{t:'打ち子',p:V3(10,YC+3,-10),max:140},{t:'風車',p:V3(-9,YC-6,-18)},{t:'弁箱・ストップ',p:V3(VX+6,VY+5,VZ+4)}],
+    speaking:()=>m.chord?[{k:7,i:0,r:0},{k:11,i:0,r:0},{k:2,i:2,r:0},{k:7,i:2,r:0},{k:11,i:2,r:0},{k:2,i:1,r:0}]:[],
+    update(dt){
+      vo+=((m.on?1:0)-vo)*Math.min(1,dt*6);
+      const wt=vo*m.flow*1.1*2*Math.PI; m.w+=(wt-m.w)*Math.min(1,dt*(wt>m.w?1.4:0.45));
+      const th0=m.th; m.th+=m.w*dt;
+      star.rotation.z=m.th; clap.rotation.z=m.th; wheel.rotation.z=m.th;
+      for(const b of bells){
+        const ka=Math.floor((th0-b.a)/(2*Math.PI)), kb=Math.floor((m.th-b.a)/(2*Math.PI));
+        if(kb>ka&&m.w>0.6){ const v=clamp(m.w/7,0.25,1); b.amp=1; bellStrike(F[bells.indexOf(b)],v); }
+        b.amp=Math.max(0,b.amp-dt*2.2); b.g.rotation.set(0.12*b.amp*Math.sin(S.time*40),0.12*b.amp*Math.cos(S.time*37),0);
+        b.bm.emissive.copy(COL.sound).multiplyScalar(0.8*b.amp);
+      }
+      const dz=3.6*vo; knob.position.set(VX,VY,13.2+1.1+dz); face.position.set(VX,VY,13.2+2.3+dz); drod.set(V3(VX,VY,VZ+4),V3(VX,VY,13.2+dz));
+      flap.rotation.z=-0.7*vo;
+    }};
+}
+
+/* ---------- G-01: shove coupler ----------
+   Two manuals of balanced keys (pivoted on a balance rail in the middle; pressing the front lifts the tail). Each tail
+   pushes a sticker up to a backfall, whose rear end pulls a tracker down from its own chest's pallet. Coupler dogs stand
+   on the tails of the lower-manual keys. With the upper manual pushed in, the tails of its keys lie over the dogs: a lower
+   key lifts the upper key's tail and plays the upper division too. Pulled forward (about 9 mm), the dogs pass behind the
+   upper tails and the manuals are independent. Playing the upper manual never moves the lower keys. */
+function buildBalancedManual(o){
+  const G=new T.Group(); CX.root.add(G);
+  const xp=k=>((k in SLOT?SLOT[k]:BPOS[k])-3.5)*3, fl=o.zf-o.zp, tl=o.zp-o.zt, y=o.y, keys=[];
+  const bz0=o.bedBack==null?o.zt-1:o.bedBack;
+  box(G,27,1,o.zf+1-bz0,MAT.woodDark,0,y-3.2,(o.zf+1+bz0)/2,LB('鍵盤の底板','Klaviaturboden'));
+  box(G,26,1.5,1.6,MAT.wood,0,y-1.95,o.zp,LB('天秤桟（鍵の中ほどの支点）','Waagebalken'));
+  box(G,26,0.25,1.6,MAT.cloth,0,y-2.58,o.zf-1.4,LB('下止めのフェルト','Tastenfilz'));
+  for(const s of [-1,1]) box(G,1.4,6,o.zf-o.zt+2,MAT.wood,s*13.6,y-0.8,(o.zf+o.zt)/2,LB(o.cheek,'Backe'));
+  box(G,26,0.8,1.6,MAT.wood,0,y-1.6,o.zr,LB('鍵の尾の受け桟（離した鍵の尾が乗る）','Anschlagleiste'));
+  box(G,26,0.2,1.6,MAT.cloth,0,y-1.3,o.zr,LB('受け桟のフェルト','Anschlagfilz'));
+  if(o.dog!=null){ o.dogMat=mclone(MAT.woodDark); o.dogMat.color.set(0x6b4a2c); }
+  for(let k=0;k<13;k++){
+    const w=(k in SLOT), x=xp(k), pv=new T.Group(); pv.position.set(x,y,o.zp); G.add(pv);
+    const lm=o.mat(k), hm=mclone(w?MAT.ivory:MAT.ebony), lab=LB('鍵のレバー（'+KEYNAMES[k]+'。天秤桟のピンを支点に、前を押すと尾が上がる）','Tastenhebel');
+    const fE=w?fl:fl-6;
+    box(pv,w?1.45:1.2,KH,fE+tl,lm,0,0,(fE-tl)/2,lab);
+    if(w){
+      box(pv,2.75,0.6,6,hm,0,KH/2+0.3,fl-3,LB('鍵 '+KEYNAMES[k]+'（白鍵の表面）','Untertaste'));
+      const L=(k-1>=0&&!(k-1 in SLOT))?xp(k-1)+0.85-x:-1.4, Rr=(k+1<13&&!(k+1 in SLOT))?xp(k+1)-0.85-x:1.4;
+      box(pv,Rr-L,0.6,11.1,hm,(L+Rr)/2,KH/2+0.3,fl-11.5,LB('鍵 '+KEYNAMES[k]+'（白鍵の表面）','Untertaste'));
+    } else box(pv,1.6,2,11,hm,0,KH/2+1,fl-11.5,LB('鍵 '+KEYNAMES[k]+'（黒鍵）','Obertaste'));
+    const pin=rod(pv,0.12,MAT.brass,LB('天秤ピン','Drehstift')); pin.set(V3(0,-KH/2-0.6,0),V3(0,KH/2+0.3,0));
+    if(o.dog!=null){
+      const lz=o.dog-o.zp;
+      box(pv,1.0,o.dogH,0.6,o.dogMat,0,KH/2+o.dogH/2,lz,LB('カプラーの突起（下鍵盤の尾に立つ。上鍵盤の尾を押し上げる）','Koppelklotz'));
+      box(pv,1.0,0.2,0.6,MAT.cloth,0,KH/2+o.dogH+0.1,lz,LB('突起の先のフェルト','Anschlagfilz'));
+    }
+    pv.traverse(c=>{ c.userData.key=k; c.userData.man=o.man; });
+    keys.push({pv,hm,lm,x});
+  }
+  return {G,keys,xp,fl,set(k,th){ keys[k].pv.rotation.x=th; },
+    // world point on the key top at world z (the key's current rotation, the manual's current shift)
+    topAt(k,zw,th){ const lz=zw-(o.zp+G.position.z); return V3(keys[k].x,y+KH/2*Math.cos(th)-lz*Math.sin(th),G.position.z+o.zp+KH/2*Math.sin(th)+lz*Math.cos(th)); }};
+}
+function buildCoupler(){
+  const R=CX.root, m={cpl:true,cu:1,man:0}, SH=1.2, OWSP=new Float32Array([0,1,0,0,1]);
+  const LO={y:0,zf:40,zp:10,zt:-17,zr:-15.5,dog:-8,dogH:4.35,man:0,cheek:'下鍵盤（ハウプトヴェルク）の側板'};
+  const UP={y:7,zf:34,zp:7.75,zt:-8.8,zr:-2.6,bedBack:4.5,man:1,cheek:'上鍵盤（オーバーヴェルク）の側板'};
+  const umats=[], lmats=[]; for(let k=0;k<13;k++){ umats.push(mclone(MAT.woodPale)); lmats.push(mclone(MAT.woodPale)); } UP.mat=k=>umats[k]; LO.mat=k=>lmats[k];
+  const lo=buildBalancedManual(LO), up=buildBalancedManual(UP);
+  box(R,30,6.5,61,MAT.woodDark,0,-6.6,12,LB('演奏台（コンソール）の台','Spieltisch'));
+  const kdL=new Float32Array(13), kdU=new Float32Array(13);
+  const hw=buildChest({y:72,z:-24.8-14,kd:kdL,palMat:k=>lmats[k]});
+  const ow=buildChest({y:Math.ceil(hw.top)+6,z:-16.7-14,kd:kdU,sp:OWSP,palMat:k=>umats[k],volN:260});
+  // backfalls
+  const BF=[{zs:-16,a1:4,a2:4.8,yB:12,ch:hw,man:lo,kd:kdL,o:LO,lab:'下鍵盤'},{zs:-6.5,a1:3.5,a2:6.7,yB:14.5,ch:ow,man:up,kd:kdU,o:UP,lab:'上鍵盤'}];
+  for(const b of BF){
+    b.zpb=b.zs-b.a1;
+    box(R,30,1,1,MAT.woodDark,0,b.yB,b.zpb,LB('バックフォールの軸受け（'+b.lab+'）','Wippenbalken'));
+    for(const s of [-1,1]) box(R,1,b.yB,1,MAT.woodDark,s*15.5,b.yB/2,b.zpb,LB('軸受けの支柱','Balgstütze'));
+    b.it=[]; for(let k=0;k<13;k++){ const mt=b.man.keys[k].lm; b.it.push({st:rod(R,0.2,mt,LB('押し棒（'+b.lab+'の鍵の尾がバックフォールを押し上げる）','Stecher')),
+      wa:rod(R,0.35,mt,LB('バックフォール（'+b.lab+'。前が上がると後ろが下がる）','Wippe')),wb:rod(R,0.35,mt,LB('バックフォール','Wippe')),
+      tr:makeTracker(mt,LB('トラッカー（'+b.lab+'のバックフォール → '+(b.man===lo?'ハウプトヴェルク':'オーバーヴェルク')+'の風箱のパレット）','Abstrakte'))}); }
+  }
+  const setMan=v=>{ m.man=v; S.key.fill(false); syncKeyUI(); renderControls(); };
+  return {chest:hw,
+    controls:[{type:'toggle',id:'cpl',label:'カプラー（上鍵盤を押し込む）',get:()=>m.cpl,set:v=>m.cpl=v},
+      {type:'toggle',id:'m0',label:'下鍵盤を弾く',get:()=>m.man===0,set:()=>setMan(0)},
+      {type:'toggle',id:'m1',label:'上鍵盤を弾く',get:()=>m.man===1,set:()=>setMan(1)}],
+    ctl:{cpl:v=>m.cpl=v,man:v=>{ m.man=v; }},
+    setMan,curMan:()=>m.man,
+    pins:[{t:'下鍵盤（ハウプトヴェルク）',p:V3(-18,1,38)},{t:'上鍵盤（オーバーヴェルク）',p:V3(-18,9,30)},{t:'カプラーの突起',p:V3(16,5,-8),max:90},{t:'バックフォール',p:V3(18,15,-14),max:150},{t:'ハウプトヴェルク',p:V3(40,hw.oy+20,hw.oz+12)},{t:'オーバーヴェルク',p:V3(40,ow.oy+20,ow.oz+12)}],
+    speaking:()=>hw.speaking().concat(ow.speaking()),
+    update(dt){
+      m.cu+=clamp((m.cpl?1:0)-m.cu,-dt*3,dt*3);
+      const shift=SH*(1-m.cu); up.G.position.z=shift;
+      const over=UP.zt+shift<LO.dog+0.3;
+      for(let k=0;k<13;k++){
+        const thL=m.man===0?Math.asin(clamp(1.3*S.kd[k]/lo.fl,0,1)):0;
+        const thD=m.man===1?Math.asin(clamp(1.3*S.kd[k]/up.fl,0,1)):0;
+        let thC=0;
+        if(over){ const yd=LO.y+(KH/2+LO.dogH+0.2)*Math.cos(thL)-(LO.dog-LO.zp)*Math.sin(thL), lzu=LO.dog-(UP.zp+shift); thC=Math.max(0,Math.asin(clamp((UP.y-KH/2-yd)/lzu,-1,1))); }
+        const thU=Math.max(thD,thC);
+        lo.set(k,thL); up.set(k,thU);
+        kdL[k]=Math.sin(thL)*lo.fl/1.3; kdU[k]=Math.sin(thU)*up.fl/1.3;
+        up.keys[k].lm.emissive.copy(COL.key).multiplyScalar(0.6*kdU[k]); up.keys[k].hm.emissive.copy(COL.key).multiplyScalar(0.35*kdU[k]);
+        lo.keys[k].lm.emissive.copy(COL.key).multiplyScalar(0.6*kdL[k]); lo.keys[k].hm.emissive.copy(COL.key).multiplyScalar(0.35*kdL[k]);
+      }
+      for(const b of BF){
+        for(let k=0;k<13;k++){
+          const th=b.man===lo?Math.asin(clamp(kdL[k]*1.3/lo.fl,0,1)):Math.asin(clamp(kdU[k]*1.3/up.fl,0,1));
+          const kt=b.man.topAt(k,b.zs+(b.man===up?shift:0),th), x=b.man.keys[k].x, q=b.it[k];
+          const rise=kt.y-(b.o.y+KH/2), ph=Math.asin(clamp(rise/b.a1,-1,1));
+          const P=V3(x,b.yB,b.zpb), tF=V3(x,b.yB+b.a1*Math.sin(ph),b.zpb+b.a1*Math.cos(ph)), tB=V3(x,b.yB-b.a2*Math.sin(ph),b.zpb-b.a2*Math.cos(ph));
+          q.st.set(kt,V3(tF.x,tF.y-0.35,tF.z)); q.wa.set(P,tF); q.wb.set(P,tB);
+          q.tr.set(b.ch.pullDown(k),tB,0.7);
+        }
+      }
+      hw.update(dt); ow.update(dt);
+    }};
+}
+
+/* ---------- E-03: electric stop action ----------
+   Each slider is moved by a double-coil solenoid at the end of the chest: a short current pulse in the ON coil pulls the
+   plunger and the slider in, a pulse in the OFF coil pushes it back. A limit switch in the unit cuts the current when the
+   stroke is complete. At the console the stops are tilting tabs; a setter combination can store a registration and recall
+   it with one piston, which sends pulses to every coil that has to change. Current is shown slowed down. */
+const ELEC_LEG='<span><i style="background:var(--ctrl)"></i>電流（電気信号。表示のため遅くしています）</span>';
+function polyAt(P,cum,s,out){ let i=1; while(i<cum.length-1&&cum[i]<s) i++; const seg=(cum[i]-cum[i-1])||1; return out.lerpVectors(P[i-1],P[i],clamp((s-cum[i-1])/seg,0,1)); }
+function buildElectricStops(){
+  const R=CX.root, SPm=new Float32Array(5), chest=buildChest({y:30,sp:SPm}), oy=chest.oy, oz=chest.oz;
+  const m={st:[false,false,false,false,false],tg:new Float32Array(5),coil:[],pulses:[],set:false,mem:{1:[1,0,1,0,0],2:[1,1,1,1,1]},press:{}};
+  for(let i=0;i<5;i++){ m.st[i]=S.stop[i]; m.tg[i]=S.stop[i]?1:0; SPm[i]=m.tg[i]; m.coil.push([0,0]); }
+  const xS=chest.ox-5-(chest.W+14)/2, yS=oy+26, HX0=xS-12.5, HX1=xS-5.5;   // slider left end (when drawn); solenoid housing
+  const LH=LB('スライダー用ソレノイド（2つのコイルでスライダーを出し入れする）','Schleifenzugmagnet');
+  box(R,2,22,40,MAT.woodDark,HX0-1.6,yS-8,oz,LB('ソレノイドの取付け板','Winkelbalken'));
+  for(const z of [oz-19,oz+19]) box(R,1.6,yS-19,1.6,MAT.woodDark,HX0-1.6,(yS-19)/2,z,LB('取付け板の支柱','Balgstütze'));
+  const U=[], CM=[];
+  for(let i=0;i<5;i++){
+    const z=oz+ZROW[i];
+    box(R,HX1-HX0,3.4,3.6,MAT.casing,(HX0+HX1)/2,yS,z,LH);
+    const cm=[0,1].map(j=>{ const c=mclone(MAT.brass); CM.push(c); return c; });
+    const cOff=cyl(R,1.25,2.6,cm[0],HX0+1.8,yS,z,LB('切りコイル（電流でプランジャーを押し戻し、スライダーを切る）','Ausschaltspule')); cOff.rotation.z=Math.PI/2;
+    const cOn=cyl(R,1.25,2.6,cm[1],HX1-1.8,yS,z,LB('入りコイル（電流でプランジャーを引き、スライダーを入れる）','Einschaltspule')); cOn.rotation.z=Math.PI/2;
+    const sw=box(R,1,0.8,1.2,MAT.ebony,(HX0+HX1)/2,yS+2.1,z,LB('終端スイッチ（動ききると電流を切る）','Endschalter'));
+    U.push({z,cm,pl:rod(R,0.32,MAT.iron,LB('プランジャー（コイルに引かれて動く鉄心。スライダーにつながる）','Anker')),lk:rod(R,0.25,stopMat(i),LB('スライダーへのつなぎ','Schleifenzug'))});
+  }
+  // console: tabs + setter pistons
+  const CX0=-64, CY=14, CZ=34;
+  box(R,26,14,2,MAT.wood,CX0,CY,CZ-1,LB('演奏台のストップ板','Registerbank'));
+  box(R,26,1.2,8,MAT.wood,CX0,CY-7.6,CZ+2,LB('演奏台のストップ板','Registerbank'));
+  box(R,4,CY-8.2,6,MAT.woodDark,CX0,(CY-8.2)/2,CZ+1,LB('演奏台の脚','Spieltisch'));
+  const tabs=[];
+  for(let i=0;i<5;i++){
+    const g=new T.Group(); g.position.set(CX0-9.6+4.8*i,CY+2.4,CZ+0.2); R.add(g);
+    const t=box(g,3.4,4.6,0.7,stopMat(i),0,0,0.35,LB('ストップのタブ：'+STOPS[i].name+'（下を押すと入る。中のスイッチが電流を送る）','Registerwippe'));
+    t.userData.stop=i; tabs.push(g);
+  }
+  const pist={}, PL={s:'セットボタン（押しながらコンビネーションを押すと、今のストップを記憶する）',1:'コンビネーション 1',2:'コンビネーション 2',0:'ゼロ（全部切る）'};
+  ['s',1,2,0].forEach((n,j)=>{ const b=cyl(R,0.9,0.8,n==='s'?MAT.ebony:MAT.ivory,CX0-6+4*j,CY-4.2,CZ+0.6,LB(PL[n],n==='s'?'Setzer':'Kombinationsknopf')); b.rotation.x=Math.PI/2; pist[n]=b; });
+  // cables: each unit has an ON and an OFF wire from the console
+  const cables=[];
+  for(let i=0;i<5;i++) for(let j=0;j<2;j++){
+    const u=U[i], dz=(i-2)*0.5+j*0.25, xe=j?HX1-1.8:HX0+1.8;
+    const P=[V3(CX0-9.6+4.8*i,CY-1,CZ-2.2),V3(CX0-9.6+4.8*i,2+0.25*j,CZ-2.2),V3(HX0-4,2+0.25*j,CZ-2.2+dz),V3(HX0-4,2+0.25*j,u.z+j*0.5),V3(HX0-4,yS-1.8,u.z+j*0.5),V3(xe,yS-1.3,u.z+j*0.5)];
+    const mat=j?std(0xb8372d,.6,0):std(0x2d2d32,.6,0); CX.own.push(mat);
+    for(let s=1;s<P.length;s++) rod(R,0.13,mat,LB('電線（タブのスイッチ → '+(j?'入り':'切り')+'コイル）','Kabel')).set(P[s-1],P[s]);
+    const cum=[0]; for(let s=1;s<P.length;s++) cum.push(cum[s-1]+P[s].distanceTo(P[s-1]));
+    cables.push({P,cum,L:cum[cum.length-1]});
+  }
+  const SPK=[]; for(let q=0;q<24;q++){ const mt=new T.MeshBasicMaterial({color:COL.ctrl.getHex()}); CX.own.push(mt); const s=new T.Mesh(G_SPH,mt); s.scale.set(0.45,0.45,0.45); s.visible=false; R.add(s); SPK.push(s); }
+  const TP=0.45;
+  const send=(i,on)=>{ m.pulses.push({i,on,t:0}); };
+  const recall=n=>{ if(n==='s') return; if(m.set&&n!==0){ m.mem[n]=S.stop.map(v=>v?1:0); return; } const c=n===0?[0,0,0,0,0]:m.mem[n]; c.forEach((v,i)=>S.stop[i]=!!v); syncStopUI(); };
+  return {chest,
+    controls:[{type:'toggle',id:'set',label:'セット（記憶）',get:()=>m.set,set:v=>m.set=v},
+      {type:'hold',label:'コンビネーション 1',down:()=>{ m.press[1]=1; recall(1); },up:()=>m.press[1]=0},
+      {type:'hold',label:'コンビネーション 2',down:()=>{ m.press[2]=1; recall(2); },up:()=>m.press[2]=0},
+      {type:'hold',label:'0（全部切る）',down:()=>{ m.press[0]=1; recall(0); },up:()=>m.press[0]=0}],
+    ctl:{set:v=>m.set=v,recall:n=>{ m.press[n]=1; recall(n); later(400,()=>m.press[n]=0); }},
+    pins:[{t:'ストップのタブ',p:V3(CX0,CY+6,CZ+1)},{t:'コンビネーション',p:V3(CX0+8,CY-5,CZ+2)},{t:'電線',p:V3(HX0-4,10,CZ-8)},{t:'ソレノイド',p:V3((HX0+HX1)/2,yS+5,oz-16)},{t:'スライダー',p:V3(-20,oy+27,oz+20),max:160}],
+    update(dt){
+      for(let i=0;i<5;i++) if(S.stop[i]!==m.st[i]){ m.st[i]=S.stop[i]; send(i,S.stop[i]); }
+      let k=0;
+      for(const p of m.pulses){
+        p.t+=dt; const cb=cables[p.i*2+(p.on?1:0)];
+        if(p.t<TP){ for(let q=0;q<3&&k<SPK.length;q++){ const s=SPK[k++]; s.visible=true; s.material.color.copy(COL.ctrl); polyAt(cb.P,cb.cum,clamp(p.t/TP-q*0.06,0,1)*cb.L,s.position); } }
+        else if(!p.done){ p.done=true; m.tg[p.i]=p.on?1:0; m.coil[p.i][p.on?1:0]=0.35; }
+      }
+      for(;k<SPK.length;k++) SPK[k].visible=false;
+      m.pulses=m.pulses.filter(p=>p.t<TP+0.05);
+      for(let i=0;i<5;i++){
+        SPm[i]+=clamp(m.tg[i]-SPm[i],-dt*7,dt*7);
+        for(let j=0;j<2;j++){ m.coil[i][j]=Math.max(0,m.coil[i][j]-dt); U[i].cm[j].emissive.copy(COL.ctrl).multiplyScalar(m.coil[i][j]>0?0.9:0); }
+        const xe=xS-1.8*(1-SPm[i]), u=U[i];
+        const sh=-1.8*(1-SPm[i]); u.pl.set(V3(HX0+2.6+sh,yS,u.z),V3(HX1+1.6+sh,yS,u.z)); u.lk.set(V3(HX1+1.6+sh,yS,u.z),V3(xe,yS,u.z));
+        tabs[i].rotation.x=S.stop[i]?-0.28:0.18;
+      }
+      for(const n of ['s',1,2,0]){ const on=n==='s'?m.set:!!m.press[n]; pist[n].position.z=CZ+0.6-(on?0.3:0); }
+      chest.update(dt);
+    }};
+}
+
 const MODELS={
 'a-01':{id:'A-01',name:'フルー管の発音',terms:'flue pipe · Lippenpfeife · tuyau à bouche',stops0:[0,0,0,0,0],own:true,noStops:true,noKeys:true,floor:-26,xray0:false,cut0:1,clip:[0.02,6],psize:0.32,
   cam:{p:[150,30,40],t:[0,22,-9]},
@@ -1652,7 +2123,111 @@ const MODELS={
     {t:'スライダーの穴が上下と一致したので、鍵を押すとこのストップが鳴ります。',run:a=>{a.stops([1,0,0,0,0]);a.keys([0,4,7]);}},
     {t:'全部のストップを入れてから、まとめて切ります。',run:a=>{a.keys([0,4,7]);a.stops([1,1,1,1,1]);later(2200,()=>{api.stops([0,0,0,0,0]);});}}
   ],
-  build(){ const chest=buildChest({y:30}); const sa=buildStopAction(chest,{ky0:6,kz:30}); return {chest,update(dt){ chest.update(dt); sa.update(); }}; }}
+  build(){ const chest=buildChest({y:30}); const sa=buildStopAction(chest,{ky0:6,kz:30}); return {chest,update(dt){ chest.update(dt); sa.update(); }}; }},
+'d-02':{id:'D-02',name:'バーカーレバー',terms:'Barker lever · Barkerhebel · machine Barker',stops0:[1,0,1,0,0],floor:-26,
+  cam:{p:[110,40,100],t:[0,16,6]},clip:[-40,40],
+  summary:'重い機械式アクションを風の力で助ける装置です。鍵が動かすのは小さな弁だけで、その弁が開くと風箱の風が鍵ごとの小ふいごに入り、ふくらむ力で重いトラッカーとパレットを動かします。19世紀の大オルガンで、カプラーをつないだ鍵盤を軽くするために使われました。',
+  steps:[
+    {t:'バーカーレバーは、鍵と風箱のパレットのあいだに置かれた、鍵ごとの小ふいごの列です。',run:a=>{a.xray(true);a.keys([]);a.home();}},
+    {t:'鍵を押すと、トラッカーがバーカーの弁を引き、入口弁が開いて排気弁が閉じます。',run:a=>{a.keys([4]);a.cam([18,14,26],[-10,11,4]);}},
+    {t:'風箱の風が小ふいごに入ってふくらみ、押し棒でバックフォールの前を押し上げます。バックフォールの後ろが下がり、トラッカーで風箱のパレットを引き下げます。',run:a=>{a.keys([4]);a.cam([46,32,34],[-10,26,0]);}},
+    {t:'鍵を離すと入口弁が閉じて排気弁が開き、小ふいごの風が外へ逃げて、パレットが閉じます。',run:a=>{a.keys([]);a.cam([18,14,26],[-10,11,4]);}},
+    {t:'和音を弾きます。指で動かすのは小さな弁だけなので、ストップを増やしたり鍵盤をつないだりしても鍵は軽いままです。',run:a=>{a.stops([1,1,1,1,0]);a.keys([0,4,7,12]);a.home();}}
+  ],
+  build(){ return buildBarker(); }},
+'d-03':{id:'D-03',name:'チューブラーニューマチックアクション',terms:'tubular-pneumatic action · pneumatische Traktur · traction tubulaire pneumatique',stops0:[1,0,1,0,0],floor:-26,legend:'ctrl',
+  cam:{p:[150,60,170],t:[0,10,45]},clip:[-40,40],
+  summary:'鍵の動きを、鉛管の中の制御風で風箱へ伝えるアクションです。鍵の弁が制御風を送り（加圧式）または抜き（排気式）、風箱側のリレーが空気式モーターを動かしてパレットを開けます。導管が長いほど、鍵を押してから鳴るまでに遅れが出ます。',
+  steps:[
+    {t:'演奏台と風箱を、鉛管の導管が結んでいます。風箱の手前に、鍵ごとのリレーと空気式モーターがあります。',run:a=>{a.ctl('exh',false);a.keys([]);a.xray(true);a.home();}},
+    {t:'加圧式：鍵を押すと鍵の弁が開き、制御風（橙）が導管を通って風箱側のリレーへ送られます。',run:a=>{a.ctl('exh',false);a.keys([4]);a.cam([30,14,104],[0,-2,88]);}},
+    {t:'リレーが制御風で動くと、モーターの入口弁が開いてモーターがふくらみ、バックフォールとトラッカーでパレットを引きます。',run:a=>{a.keys([4]);a.cam([46,32,34],[-10,22,2]);}},
+    {t:'導管が長いほど制御風が届くまでに時間がかかり、鍵を押してから鳴るまでに遅れが出ます。下のスライダーで導管の長さを変えると、遅れの時間が表示されます。',run:a=>{a.ctl('len',20);a.keys([]);later(500,()=>api.keys([0,4,7]));a.home();}},
+    {t:'排気式：導管はふだん制御風で満ちていて、鍵を押すと風が抜けます。風が抜けたことをリレーが受けて、モーターを動かします。',run:a=>{a.ctl('len',10);a.ctl('exh',true);a.keys([4]);a.cam([30,14,104],[0,-2,88]);}}
+  ],
+  build(){ return buildTubular(); }},
+'f-01':{id:'F-01',name:'スウェルボックス',terms:'swell box · Schwellkasten · boîte expressive',stops0:[1,1,1,0,1],floor:-12,
+  cam:{p:[120,60,150],t:[0,40,10]},clip:[-40,40],
+  summary:'パイプを厚い木の箱で囲み、前面のシャッター（よろい戸）の開き具合で音量と音色を変える装置です。演奏者はスウェルペダルで開き具合を調節し、音を大きく明るく、または小さくこもった音にします。',
+  steps:[
+    {t:'スウェルボックスは、パイプを厚い木の箱で囲み、前面のシャッターで音の出口を調節する装置です。和音を鳴らしながら見てください。',run:a=>{a.stops([1,1,1,0,1]);a.keys([0,4,7]);a.ctl('swell',0.5);a.home();}},
+    {t:'スウェルペダルを踏み込む（つま先を下げる）とシャッターが開き、音が箱の外へ出て大きく明るい音になります。',run:a=>{a.keys([0,4,7]);a.ctl('swell',1);a.cam([40,60,140],[0,58,20]);}},
+    {t:'ペダルを戻すとシャッターが閉じ、音は小さく、こもった音色になります。',run:a=>{a.keys([0,4,7]);a.ctl('swell',0);}},
+    {t:'ペダルの動きは、トレース、ベルクランク、連結棒を通って、すべてのシャッターに同時に伝わります。バランス式のペダルは、足を離してもその角度で止まります。',run:a=>{a.ctl('swell',0.6);a.cam([110,30,80],[36,30,24]);}},
+    {t:'下のスライダーで開き具合を変えながら弾いてみてください。',run:a=>{a.home();}}
+  ],
+  build(){ return buildSwell(); }},
+'b-03':{id:'B-03',name:'シュヴィンマー',terms:'schwimmer · Schwimmer · régulateur à ressorts',stops0:[1,0,1,0,0],own:true,floor:0,
+  cam:{p:[70,40,110],t:[-20,24,4]},clip:[-33,34],
+  summary:'シュヴィンマーは、風箱の真下に取り付ける小さなばね式の調圧ふいごです。おもりの代わりにばねで可動板を押し上げて風に圧力をかけ、可動板に棒でつながった入口弁が、ふくらむと閉じ、しぼむと開きます。風箱のすぐ近くで調圧するので、和音を急に弾いたときの風の揺れを素早く抑えます。20世紀以降のオルガンで広く使われています。',
+  steps:[
+    {t:'シュヴィンマーは風箱の底板のすぐ下にあります。木部を透かすと、ばねに押し上げられた可動板、革のひだ、入口弁が見えます。',run:a=>{a.xray(true);a.keys([]);a.ctl('blower',true);a.ctl('lock',false);a.home();}},
+    {t:'送風機の風は、風導管から枠の中の入口の通路に入り、入口弁の穴からシュヴィンマーへ流れ込みます。可動板が下がるほど、棒が弁を引き下げて穴を狭めます。',run:a=>{a.keys([]);a.cam([-2,14,44],[-20,27,3]);}},
+    {t:'和音を弾くと風箱の風が使われ、ばねが可動板を押し上げ、弁が大きく開いて流入が増えます。流入と消費がつり合った位置で可動板が止まります。',run:a=>{a.stops([1,1,1,0,0]);a.keys([0,4,7]);a.cam([52,18,78],[-6,24,3]);}},
+    {t:'たくさんの鍵とストップで弾いても、風箱のすぐ下で調圧しているので、風圧（右上の水柱計）はほとんど揺れません。ばね式なので、ふくらみ具合によって風圧がわずかに変わるのが特徴です。',run:a=>{a.stops([1,1,1,1,1]);a.keys([0,2,4,5,7,9,11,12]);a.home();}},
+    {t:'「シュヴィンマーを固定する」を入れると、可動板がつっかい棒で止まり、送風機の風が長い風導管から直接届きます。和音を弾くたびに風圧が下がって音が揺れるので、シュヴィンマーの働きがわかります。',run:a=>{a.ctl('lock',true);a.stops([1,1,1,1,1]);a.keys([]);for(let j=0;j<6;j++){ later(400+j*1500,()=>api.keys([0,4,7,12,2,9])); later(1150+j*1500,()=>api.keys([])); }}}
+  ],
+  build(){ return buildSchwimmer(); }},
+'d-04':{id:'D-04',name:'ペダル鍵盤のアクション',terms:'pedal action · Pedaltraktur · traction du pédalier',stops0:[1,0,1,0,0],floor:0,
+  cam:{p:[120,70,110],t:[0,30,-10]},clip:[-40,40],
+  foot:'13鍵（C〜c）のペダル鍵盤。鍵の間隔は実物どおり約62 mm、踏み込みの深さはつま先で約15 mm。風箱とパイプは手鍵盤のモデルと共通です（実際のペダルでは16′などの低いストップを使います）。',
+  summary:'ペダル鍵盤は足で弾く鍵盤です。鍵はかかと側（ベンチの下）の蝶番を支点に、つま先側（オルガンの下）が下がります。つま先側にはばね・ガイドピン・下止めのフェルトがあり、そこからトラッカーが上へ引かれ、スクエアで向きを変えて奥のペダル風箱のパレットを引き下げます。',
+  steps:[
+    {t:'ペダル鍵盤 → トラッカー → スクエア → 水平のトラッカー → スクエア → 風箱、と伝わります。',run:a=>{a.keys([]);a.home();}},
+    {t:'ペダルCを踏みます。鍵はかかと側の蝶番を支点に回り、つま先側が約15 mm下がります。',run:a=>{a.keys([0]);a.cam([70,42,100],[0,4,24]);}},
+    {t:'つま先側です。ばねが鍵を押し上げて戻し、ガイドピンが鍵先の溝に入って左右の振れを防ぎ、フェルトが深さを決めます。黒鍵は、つま先側に高い台が付いています。',run:a=>{a.keys([1]);a.cam([46,26,26],[-8,3,-8]);}},
+    {t:'つま先側から上へ伸びるトラッカーがスクエアを回し、下向きの引きを後ろ向きの引きに変えます。水平のトラッカーは、鍵の並びから風箱のパレットの並びへ扇のように広がり、風箱側のスクエアでパレットを引き下げます。',run:a=>{a.keys([4]);a.cam([88,46,12],[0,26,-28]);}},
+    {t:'半音階で順に踏みます。',run:a=>{a.keys([]);a.home();for(let k=0;k<13;k++) later(k*420,()=>{S.key.fill(false);S.key[k]=true;syncKeyUI();}); later(13*420,()=>{S.key.fill(false);syncKeyUI();});}}
+  ],
+  build(){ return buildPedalAction(); }},
+'e-02':{id:'E-02',name:'スプリングチェスト用ストップアクション',terms:'stop action for a spring chest · Registertraktur der Springlade · tirage des jeux du sommier à ressorts',stops0:[0,0,0,0,0],floor:-8,
+  cam:{p:[-15,72,112],t:[-30,30,6]},clip:[-60,34],
+  summary:'スプリングチェスト（C-02）では、ストップを入れるとストップバーが下がり、そのストップのばね弁をまとめて押し開けます。ばね弁のばねはいつもバーを押し戻しているので、ストップノブは引いた位置に引っ掛けて保たなければなりません。ノブの軸がスクエアを回し、短い腕が押し棒でバーの端を押し下げます。',
+  steps:[
+    {t:'木部を透かします。左の5本のストップノブが、それぞれ風箱の端から出たストップバーにつながっています。',run:a=>{a.xray(true);a.keys([]);a.ctl('hook',true);a.stops([0,0,0,0,0]);a.home();}},
+    {t:'Gedackt 8′ を引きます。ノブの軸がスクエアの立った腕を手前に引き、短い腕が押し棒でストップバーの端を押し下げます。',run:a=>{a.stops([1,0,0,0,0]);a.cam([-92,52,40],[-42,32,0]);}},
+    {t:'ノブの移動 約28 mm に対して、バーは約6 mm 下がります（腕の長さの比 7.2：1.6）。そのストップの13個のばね弁のばねに逆らって押し下げるので、てこで力を大きくしています。引ききるとフックが落ちて、ノブを引いた位置に保ちます。',run:a=>{a.stops([1,0,0,0,0]);a.cam([-72,50,58],[-44,38,30]);}},
+    {t:'「フックで保つ」を切ってストップを入れてみます。手を離すと、ばね弁のばねに押し戻されて、ストップはすぐに戻ってしまいます。',run:a=>{a.ctl('hook',false);a.stops([0,0,0,0,0]);later(300,()=>api.stops([0,0,1,0,0]));a.cam([-92,52,40],[-42,32,0]);}},
+    {t:'フックを使って和音を弾きます。ばね弁とパレットの両方が開いたパイプだけが鳴ります。',run:a=>{a.ctl('hook',true);a.stops([1,0,1,0,0]);a.keys([0,4,7]);a.home();}}
+  ],
+  build(){ return buildSpringStopAction(); }},
+'f-03':{id:'F-03',name:'ツィンベルシュテルン',terms:'cymbelstern · Zimbelstern · étoile à clochettes',stops0:[0,0,0,0,0],noStops:true,noKeys:true,floor:0,
+  cam:{p:[60,60,90],t:[0,42,-6]},clip:[-30,30],
+  foot:'星の直径 約25 cm、鈴の直径 約2.5 cm。風車が毎秒約1回転すると、鈴は毎秒6回打たれます。「オルガンの和音も鳴らす」はパイプを表示せずに音だけを鳴らします。',
+  summary:'ツィンベルシュテルンは、ケースの正面で金色の星が回り、その裏で小さな鈴が鳴る効果装置です。ストップを引くと弁が開き、風が小さな風車を回します。同じ軸に付いた打ち子が、輪に並んだ調律済みの鈴を順に打ちます。17〜18世紀の北ドイツなどで好まれ、祝祭的な曲で使われます。',
+  steps:[
+    {t:'ケースの正面に星があり、正面板の裏に6個の鈴と打ち子、さらに奥に風車があります。木部は透けて見えています。',run:a=>{a.xray(true);a.ctl('on',false);a.ctl('chord',false);a.home();}},
+    {t:'ストップを引くと弁箱の弁が開き、風がノズルから風車の羽根に吹き付けます。風車が回り始め、同じ軸の星と打ち子もいっしょに回ります。',run:a=>{a.ctl('on',true);a.cam([58,34,-46],[6,36,-16]);}},
+    {t:'打ち子はばね線の先に付いていて、回りながら鈴を順に打ちます。鈴は g″ a″ h″ d‴ e‴ g‴ に調律されていて、ト長調の和音によく合います。',run:a=>{a.ctl('on',true);a.cam([-24,58,-40],[0,45,-7]);}},
+    {t:'ストップを戻すと弁が閉じますが、風車は惰性でしばらく回り続け、だんだん遅くなります。',run:a=>{a.ctl('on',false);a.home();}},
+    {t:'オルガンの和音といっしょに鳴らします。下のスライダーで風の量を変えると、回る速さと鈴の打たれる間隔が変わります。',run:a=>{a.ctl('on',true);a.ctl('chord',true);a.home();}}
+  ],
+  build(){ return buildZimbelstern(); }},
+'g-01':{id:'G-01',name:'カプラー',terms:'coupler · Koppel · accouplement',stops0:[1,0,1,0,0],floor:-10,
+  cam:{p:[120,50,130],t:[0,60,-20]},clip:[-40,40],
+  foot:'上鍵盤（オーバーヴェルク）の風箱には Rohrflöte 4′ と Vox humana 8′ を入れたままにしています。ストップのボタンは下鍵盤（ハウプトヴェルク）の風箱に効きます。鍵盤のボタンと画面の鍵は、操作欄で選んだほうの鍵盤を弾きます。',
+  summary:'2段の手鍵盤をつなぐ機械式の押し込み式カプラー（シーブカプラー）です。下鍵盤（ハウプトヴェルク）の鍵の尾に突起が立っていて、上鍵盤（オーバーヴェルク）を約9 mm奥へ押し込むと、上の鍵の尾が突起の真上に来ます。下の鍵を押すと尾が上がり、突起が上の鍵の尾を押し上げて、上鍵盤の風箱も鳴ります。',
+  steps:[
+    {t:'2段の鍵盤と、それぞれの風箱です。どちらの鍵も中ほどの天秤桟が支点で、前を押すと尾が上がり、押し棒・バックフォール・トラッカーで自分の風箱のパレットを引き下げます。',run:a=>{a.xray(true);a.ctl('man',0);a.ctl('cpl',false);a.keys([]);a.cut(0);a.home();}},
+    {t:'カプラーを切ったまま下鍵盤を弾きます。ハウプトヴェルク（下の風箱）だけが鳴ります。突起は、上の鍵の尾の後ろを素通りします。（鍵Eの位置で縦に切った断面）',run:a=>{a.ctl('man',0);a.ctl('cpl',false);a.keys([4]);a.xray(false);a.cut(0.55);a.cam([28,11,10],[-4,4.5,-3]);}},
+    {t:'上鍵盤を奥へ押し込みます（カプラーを入れる）。上の鍵の尾が突起の真上に来ます。',run:a=>{a.ctl('man',0);a.keys([]);a.ctl('cpl',true);a.xray(false);a.cut(0.55);a.cam([28,11,10],[-4,4.5,-3]);}},
+    {t:'下鍵盤を弾くと、突起が上の鍵の尾を押し上げて上の鍵も下がり、オーバーヴェルク（上の風箱）も同時に鳴ります。',run:a=>{a.ctl('man',0);a.ctl('cpl',true);a.keys([4]);a.xray(false);a.cut(0.55);a.cam([28,11,10],[-4,4.5,-3]);}},
+    {t:'上鍵盤だけを弾いても、上の鍵の尾が突起から離れるだけなので、下の鍵は動きません。このカプラーは「下鍵盤で上鍵盤も弾く」一方向のつながりです。',run:a=>{a.ctl('man',1);a.ctl('cpl',true);a.keys([4]);a.xray(false);a.cut(0.55);a.cam([28,11,10],[-4,4.5,-3]);}},
+    {t:'全体を見ます。オーバーヴェルクはハウプトヴェルクの上にあり、そのトラッカーはハウプトヴェルクの風箱の前を通って上へ伸びています。',run:a=>{a.xray(true);a.ctl('man',0);a.ctl('cpl',true);a.keys([0,4,7]);a.cut(0);a.home();}}
+  ],
+  build(){ return buildCoupler(); }},
+'e-03':{id:'E-03',name:'電気式ストップアクション',terms:'electric stop action · elektrische Registertraktur · tirage électrique des jeux',stops0:[0,0,0,0,0],floor:-8,legend:'elec',
+  cam:{p:[30,70,125],t:[-30,28,8]},clip:[-70,34],
+  foot:'電流は実際には一瞬で届きますが、流れがわかるよう遅くして表示しています。ソレノイドがスライダーを動かす時間は実物どおり約0.15秒です。',
+  summary:'ストップのタブを押すと、中のスイッチから風箱の端のソレノイドへ電流が流れ、スライダーを動かします。ソレノイドには「入り」と「切り」の2つのコイルがあり、短い電流のパルスでプランジャーを引いたり押し戻したりします。動ききると終端スイッチが電流を切ります。電気なので、コンビネーション（セッター）で記憶したストップの組み合わせを、ボタン1つで一度に呼び出せます。',
+  steps:[
+    {t:'左手前が演奏台のストップのタブとコンビネーションのボタン（タブ1枚 約27×36 mm）、風箱の左端にスライダーごとのソレノイドがあり、電線でつながっています。',run:a=>{a.xray(true);a.keys([]);a.stops([0,0,0,0,0]);a.ctl('set',false);a.home();}},
+    {t:'Gedackt 8′ のタブを押します。タブの中のスイッチから「入り」コイルへ電流（橙）が流れ、コイルがプランジャーを引いて、スライダーを右へ動かします。',run:a=>{a.stops([1,0,0,0,0]);a.cam([-22,70,48],[-52,50,2]);}},
+    {t:'タブを戻すと、今度は「切り」コイルに電流が流れ、プランジャーを押し戻してスライダーを切ります。どちらも短いパルスで、動ききると終端スイッチが電流を切ります。',run:a=>{a.stops([0,0,0,0,0]);a.cam([-34,62,26],[-54,55,0]);}},
+    {t:'コンビネーション 1 を押します。記憶していた組み合わせ（Gedackt＋Prinzipal）にするため、変わるストップのコイルにだけ同時に電流が送られます。',run:a=>{a.ctl('recall',1);a.cam([-30,34,72],[-62,14,30]);}},
+    {t:'コンビネーション 2 で全部のストップ、0 で全部を切ります。「セット」を入れてからコンビネーションを押すと、今のストップの組み合わせを記憶できます。',run:a=>{a.keys([0,4,7]);a.ctl('recall',2);later(2600,()=>api.ctl('recall',0));}}
+  ],
+  build(){ return buildElectricStops(); }}
 };
 
 const INDEX=[
@@ -1660,8 +2235,8 @@ const INDEX=[
  {c:'B',n:'送風',items:[['B-01','くさび型ふいご（人力）',1],['B-02','電動ブロワー＋マガジンふいご',1],['B-03','シュヴィンマー',3]]},
  {c:'C',n:'風箱',items:[['C-01','スライダーチェスト',1],['C-02','スプリングチェスト',1],['C-03','コーンバルブチェスト',2],['C-04','メンブレンチェスト',2]]},
  {c:'D',n:'キーアクション',items:[['D-01','ローラーボード＋スクエア',1],['D-02','バーカーレバー',2],['D-03','チューブラーニューマチック',2],['D-04','ペダル鍵盤のアクション',3]]},
- {c:'E',n:'ストップアクション',items:[['E-01','機械式ストップアクション',1],['E-02','スプリングチェスト用',3],['E-03','電気式ストップアクション',3]]},
- {c:'F',n:'表現・効果装置',items:[['F-01','スウェルボックス',2],['F-02','トレモラント',3],['F-03','ツィンベルシュテルン',3]]},
+ {c:'E',n:'ストップアクション',items:[['E-01','機械式ストップアクション',1],['E-02','スプリングチェスト用ストップアクション',3],['E-03','電気式ストップアクション',3]]},
+ {c:'F',n:'表現・効果装置',items:[['F-01','スウェルボックス',2],['F-02','トレムラント',3],['F-03','ツィンベルシュテルン',3]]},
  {c:'G',n:'補助機構',items:[['G-01','カプラー',3]]},
  {c:'H',n:'総合モデル',items:[['H-01','バロックオルガン',3],['H-02','19世紀ロマン派オルガン',3],['H-03','現代オルガン',3]]}
 ];
@@ -1798,7 +2373,7 @@ function pickAt(e){
     if(S.xray&&XRAY.includes(ob.material)) continue;
     let o=ob; while(o&&!o.userData.label&&o.userData.key==null&&o.userData.stop==null) o=o.parent;
     if(!o) continue;
-    return {lab:o.userData.label,key:ob.userData.key,stop:ob.userData.stop,r};
+    return {lab:o.userData.label,key:ob.userData.key,stop:ob.userData.stop,man:ob.userData.man,r};
   }
   return null;
 }
@@ -1817,7 +2392,7 @@ canvas.addEventListener('pointerdown',e=>{
   if(e.button!==0) return;
   const hit=pickAt(e); if(!hit||(hit.key==null&&hit.stop==null)) return;
   audioInit(); controls.enabled=false; tip.hidden=true;
-  if(hit.key!=null){ const k=hit.key; if(S.latch) S.key[k]=!S.key[k]; else { S.key[k]=true; heldKey=k; } syncKeyUI(); }
+  if(hit.key!=null){ const k=hit.key; if(hit.man!=null&&inst.setMan&&hit.man!==inst.curMan()) inst.setMan(hit.man); if(S.latch) S.key[k]=!S.key[k]; else { S.key[k]=true; heldKey=k; } syncKeyUI(); }
   else { S.stop[hit.stop]=!S.stop[hit.stop]; syncStopUI(); }
 },true);
 const releaseHeld=()=>{ if(heldKey>=0){ S.key[heldKey]=false; heldKey=-1; syncKeyUI(); } controls.enabled=true; };
@@ -1833,7 +2408,7 @@ function load(id){
   inst=def.build(); inst.def=def; grid.position.y=def.floor;
   CX.root.traverse(ob=>{ if(!ob.isMesh) return; const k=CX.keyMats.indexOf(ob.material); if(k>=0&&ob.userData.key==null) ob.userData.key=k; const i=CX.stopMats.indexOf(ob.material); if(i>=0&&ob.userData.stop==null) ob.userData.stop=i; });
   setXray(def.xray0!==false); setCut(def.cut0||0); pMat.size=def.psize||1.8; camHome();
-  $('stops').closest('.drow').hidden=!!def.noStops; $('kbd').closest('.drow').hidden=!!def.noKeys; $('mctlLabel').textContent=def.noKeys?'操作':'送風'; $('legend').innerHTML=def.legend==='ctrl'?LEGEND0+CTRL_LEG:(def.legend||LEGEND0);
+  $('stops').closest('.drow').hidden=!!def.noStops; $('kbd').closest('.drow').hidden=!!def.noKeys; $('mctlLabel').textContent=def.noKeys?'操作':'送風'; $('legend').innerHTML=def.legend==='ctrl'?LEGEND0+CTRL_LEG:def.legend==='elec'?LEGEND0+ELEC_LEG:(def.legend||LEGEND0);
   $('tag').innerHTML='<span class="tid">'+def.id+'</span><span class="tnm">'+def.name+'</span><span class="tde">'+def.terms+'</span>';
   renderNotes(def); renderControls(); renderIndex(id); syncKeyUI(); syncStopUI(); setupPins();
   curId=id; try{ if(location.hash!=='#'+id) history.replaceState(null,'','#'+id); }catch(e){}
