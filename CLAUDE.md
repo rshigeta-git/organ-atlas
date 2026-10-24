@@ -4,6 +4,12 @@ Interactive Three.js atlas of pipe-organ mechanisms (wind supply, windchests, ke
 The owner is an organ builder with a mechanical-design background; he talks in Japanese and expects mechanically
 correct models (real dimensions, trackers only ever in tension, correct lever directions).
 
+## First-time setup (if there is no .git yet)
+The project was delivered without a `.git` folder; the full history is in `organ-atlas-history.bundle`.
+Restore it with `git init -b main && git fetch organ-atlas-history.bundle main && git reset FETCH_HEAD`,
+check `git status` is clean (only the bundle itself untracked), then delete the bundle (ask the owner first).
+Set `git config user.name "Shigeta Ryoji"` and `user.email` locally if Git asks. Do not push anywhere unless asked.
+
 ## Layout
 - `src/head.html`, `src/style.css`, `src/body.html` – page shell.
 - `src/js/NNN-*.js` – the main script, **concatenated in file-name order** into one `<script>` inside an IIFE.

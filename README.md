@@ -15,6 +15,19 @@
 | `tests/` | 全モデルの読み込み確認、スクリーンショット、翻訳漏れの確認 |
 | `CLAUDE.md` | Claude Code 向けの説明（作りの決まりごと・テストの方法） |
 
+## 最初に一度だけ：変更履歴（Git）の復元
+
+このフォルダには、これまでの版（v3〜v68）の変更履歴が `organ-atlas-history.bundle` という1つのファイルにまとめて入っています。
+Claude Code でこのフォルダを開き、「organ-atlas-history.bundle から Git の履歴を復元して」と頼めば復元されます。
+自分で行う場合は、Git for Windows を入れたうえで、このフォルダで次を実行します。
+
+```
+git init -b main
+git fetch organ-atlas-history.bundle main
+git reset FETCH_HEAD
+git status        # 何も変更がなければ成功。bundle ファイルは削除してかまいません
+```
+
 ## 使い方
 
 1. ページを組み立てる：`node build.mjs`
