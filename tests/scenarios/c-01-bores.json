@@ -1,0 +1,3 @@
+[{"model":"c-01","w":1100,"h":800},
+ {"js":"__oa.api.xray(true);__oa.api.stops([1,0,1,0,0]);__oa.api.keys([0,4]);__oa.api.cam([30,46,40],[0,32,0])","wait":3000,"shot":"c01_bores_xray"}
+]

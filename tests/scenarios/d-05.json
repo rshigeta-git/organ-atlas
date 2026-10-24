@@ -1,0 +1,4 @@
+[{"model":"d-05","w":1100,"h":800},
+ {"js":"__oa.api.keys([0])","wait":2500,"shot":"d05_home"},
+ {"js":"document.querySelector('.steps button[data-s=\"4\"]').click()","wait":2500,"shot":"d05_rollerboard"}
+]
