@@ -24,8 +24,13 @@ const main = '<script>\n' + js + '</script>\n';
 // Claude artifact: same shape as the original single file (the artifact host adds the document skeleton)
 const artifact = head + '<style>\n' + css + '</style>\n' + body + scripts(CDN) + main;
 
-// Website: complete document, Three.js served from our own copy
-const webHead = head.split('\n').filter(l => !l.includes('name="claude:')).join('\n');
+// Website: complete document, Three.js served from our own copy.
+// Vercel Web Analytics (website only; enable it in the Vercel project): the page itself is counted on load, and each model
+// opened from the menu (the #id in the address) is counted as a page view of "/<id>".
+const analytics = '<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};\n' +
+  "addEventListener('hashchange',()=>{ const id=location.hash.slice(1); if(id) window.va('pageview',{route:'/'+id,path:'/'+id}); });</script>\n" +
+  '<script defer src="/_vercel/insights/script.js"></script>\n';
+const webHead = head.split('\n').filter(l => !l.includes('name="claude:')).join('\n') + analytics;
 const web = '<!doctype html>\n<html lang="ja">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n' +
   webHead + '<style>\n' + css + '</style>\n</head>\n<body>\n' + body +
   `<script src="vendor/${THREE}/three.min.js"></script>\n<script src="vendor/${THREE}/OrbitControls.js"></script>\n` + main + '</body>\n</html>\n';
