@@ -17,8 +17,10 @@ function buildReedSection(){
   const LS=LB('シャロット（下を閉じた管。前面の開口を舌が覆う）','Kehle');
   // shallot section: round at the back, flat face at the front where the tongue lies; the opening is cut in that face
   const flatten=g=>{ const a=g.attributes.position; for(let i=0;i<a.count;i++) if(a.getZ(i)>zFace) a.setZ(i,zFace); a.needsUpdate=true; g.computeVertexNormals(); return g; };
-  mk(flatten(halfShell(()=>rS,[yTip-0.6,20.3,28,yClamp+0.1],(y0,y1,t)=>y0>=20.3-1e-3&&y1<=28+1e-3&&rS*Math.cos(t)>zFace+0.05,48)),BR,R,LS);
-  const sb=new T.CircleGeometry(rS,24,Math.PI/2,Math.PI); sb.rotateX(-Math.PI/2); sb.translate(0,yTip-0.6,0); flatten(sb); CX.own.push(sb); mk(sb,BR,R,LS);
+  // built whole (the second half mirrored), so the cut slider trims it like the tongue; the boot stays a half section
+  const shg=flatten(halfShell(()=>rS,[yTip-0.6,20.3,28,yClamp+0.1],(y0,y1,t)=>y0>=20.3-1e-3&&y1<=28+1e-3&&rS*Math.cos(t)>zFace+0.05,48));
+  const sb=new T.CircleGeometry(rS,24,Math.PI/2,Math.PI); sb.rotateX(-Math.PI/2); sb.translate(0,yTip-0.6,0); flatten(sb); CX.own.push(sb);
+  for(const sx of [1,-1]){ mk(shg,BR,R,LS).scale.x=sx; mk(sb,BR,R,LS).scale.x=sx; }
   // wedge
   box(R,1.3,yClamp-27.6,0.42,MAT.woodPale,0,(yClamp+27.6)/2,z0+0.3,LB('くさび（舌をシャロットに押さえて留める）','Keil'));
   // tongue: brass strip, flat above the tuning wire, curved below it

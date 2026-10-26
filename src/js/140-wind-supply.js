@@ -1,37 +1,170 @@
 /* ---------------- wind supply ---------------- */
-function buildWedge(x,z,th0){
-  const R=CX.root, L=40, Wd=20, B={th:th0,hold:false,timer:0,autoP:false,pumping:false,supplying:false,x,z,L};
-  box(R,L+2,1.5,Wd+2,MAT.wood,x+L/2,0.75,z,LB('下板（固定）','Unterplatte'));
-  const top=new T.Group(); top.position.set(x,1.5,z); R.add(top);
-  box(top,L+2,1.5,Wd+2,MAT.wood,L/2,0.75,0,LB('上板（奥の蝶番を中心に開閉する）','Oberplatte'));
+/* B-01: three wedge bellows after Dom Bédos (L'art du facteur d'orgues). They lie side by side on sleepers, the head toward
+   the front. A trestle straddling the bellows carries one lever per bellows: its short arm reaches forward and lifts the head
+   of the top board through an iron rod, its long arm runs back over the tail (hinge) and up between the uprights of the
+   gallows, where the calcant pulls it down. Everything is drawn in a group at 45 % (as the pipes); the numbers below are
+   full size (1 = 7.8 mm): bellows 1.09 m × 0.47 m, head rise 0.23 m; lever 1.31 m (short arm 0.22 m) on a pivot
+   0.57 m above the floor, swinging 60° (55° up to 5° down): the grip goes from 1.47 m down to 0.48 m; calcant 1.57 m.
+   The bellows stand one bellows width beside the chest and one bellows length behind it. */
+const BB={K:0.45, O:[-43,-3.85,-66], F:-7, L:140, W:60, ZT:-70, XB:[-228,-152,-76], NF:4, thMax:0.215, UA:118, hA:4.5, ZP:24, YP:66.5, a:28, b:140, ph0:0.96, ZG:-40, ZS:-128};
+BB.yb=BB.F+11.5;   // top of the bottom board = hinge line
+const bbW=(x,y,z)=>V3(BB.O[0]+BB.K*x,BB.O[1]+BB.K*y,BB.O[2]+BB.K*z);   // full-size group coordinates → scene
+const bbS=ph=>[BB.ZP+BB.a*Math.cos(ph),BB.YP-BB.a*Math.sin(ph)];   // short end of the lever (z, y)
+const bbA=th=>[BB.ZT+BB.UA*Math.cos(th)-BB.hA*Math.sin(th),BB.yb+BB.UA*Math.sin(th)+BB.hA*Math.cos(th)];   // eye on the top board
+BB.ell=Math.hypot(bbS(BB.ph0)[0]-bbA(0)[0],bbS(BB.ph0)[1]-bbA(0)[1]);   // length of the iron rod
+function bbPhi(th){ const A=bbA(th); let lo=-0.6, hi=1.3; for(let k=0;k<28;k++){ const m=(lo+hi)/2, s=bbS(m); if(Math.hypot(s[0]-A[0],s[1]-A[1])>BB.ell) lo=m; else hi=m; } return (lo+hi)/2; }
+function buildBedosBellows(R,i,th0){
+  const {L,W,ZT,NF:n,yb,F,K}=BB, x=BB.XB[i], B={th:th0,pumping:false,supplying:false,flow:0,x,E:V3()};
+  box(R,W+4,2.5,L+6,MAT.wood,x,yb-1.25,ZT+L/2-1,LB('下板（固定）','Unterplatte'));
+  box(R,W+2,1.2,3,MAT.leather,x,yb+0.6,ZT-1.5,LB('蝶番（革）','Scharnier'));
+  const top=new T.Group(); top.position.set(x,yb,ZT); R.add(top);
+  box(top,W+4,2.5,L+4,MAT.wood,0,1.25,L/2+1,LB('上板（尾の蝶番を中心に開閉する）','Oberplatte'));
   const WL=LB('おもり（この重さが風圧になる）','Gewicht');
-  box(top,7,3,7,MAT.weight,L-7,3,-5,WL); box(top,7,3,7,MAT.weight,L-7,3,5,WL); box(top,7,3,7,MAT.weight,L-15,3,0,WL);
-  const sides=[-1,1].map(s=>{ const m=mk(G_TRI,MAT.leather,R,LB('ひだ（革と板で風を封じる）','Falten')); m.position.set(x,1.5,z+s*(Wd/2+0.6)); return m; });
-  const front=box(R,0.4,1,Wd+1.2,MAT.leather,x+L,1.5,z,LB('ひだ（前面）','Falten'));
-  const inf=new T.Group(); inf.position.set(x+L-14,1.55,z); R.add(inf);
-  box(inf,6,0.4,7,MAT.leather,3,0.2,0,LB('吸気弁（ふいごを持ち上げる間だけ開いて外気を吸う）','Schöpfventil'));
-  const ofl=new T.Group(); ofl.position.set(x+1,-0.3,z); R.add(ofl);
-  box(ofl,5,0.4,7,MAT.leather,2.5,0,0,LB('逆止弁（風導管へ送る間だけ開く）','Rückschlagventil'));
-  box(R,2,46,2,MAT.woodDark,x-20,23,z,LB('レバーの支柱','Balgstütze'));
-  const lever=rod(R,0.8,MAT.woodDark,LB('ふいごレバー（カルカントが左端を踏む）','Balghebel'));
-  const rope=rod(R,0.15,MAT.cloth,LB('引き綱','Seil'));
-  const step=box(R,6,0.8,5,MAT.wood,x-40,40,z,LB('踏み板（カルカントがここを踏む）','Tritt'));
+  for(const [wx,wz] of [[-17,108],[17,108],[-17,88],[17,88],[0,90]]) box(top,13,6,13,MAT.weight,wx,5.5,wz,WL);
+  box(top,5,2,5,MAT.iron,0,3.5,BB.UA,LB('吊り金の留め金','Öse'));
+  // folds: n ribs a side, hinged at the tail; the odd fold lines go out as the bellows closes (the ribs keep their width)
+  const geo=new T.BufferGeometry(), pos=new Float32Array(4*n*9); geo.setAttribute('position',new T.BufferAttribute(pos,3)); CX.own.push(geo);
+  mk(geo,MAT.leather,R,LB('ひだ（革を貼った板が折りたたまれる）','Falten'));
+  const edges=[...Array(3*(n-1))].map(()=>rod(R,0.3,MAT.woodDark,LB('ひだ（革を貼った板が折りたたまれる）','Falten')));
+  const sMax=L*Math.sin(BB.thMax)/n, hinge=s=>V3(x+s*W/2,yb,ZT);
+  const P=(j,th,s)=>{ const t=th*j/n, g=L*(Math.sin(th*(j+1)/n)-Math.sin(th*(j-1)/n))/2, o=j%2?Math.sqrt(Math.max(0,sMax*sMax-g*g)):0;
+    return V3(x+s*(W/2+o),yb+L*Math.sin(t),ZT+L*Math.cos(t)+o); };
+  const folds=th=>{ let q=0; const put=v=>{ pos[q++]=v.x; pos[q++]=v.y; pos[q++]=v.z; };
+    const C=[-1,1].map(s=>[...Array(n+1).keys()].map(j=>P(j,th,s)));
+    [-1,1].forEach((s,si)=>{ const h=hinge(s); for(let j=0;j<n;j++){ put(h); put(C[si][j]); put(C[si][j+1]); } });
+    for(let j=0;j<n;j++){ const a=C[0][j], b=C[1][j], c=C[1][j+1], d=C[0][j+1]; put(a); put(b); put(c); put(a); put(c); put(d); }
+    geo.attributes.position.needsUpdate=true; geo.computeVertexNormals(); geo.computeBoundingSphere();
+    let e=0; for(let j=1;j<n;j++){ edges[e++].set(hinge(-1),C[0][j]); edges[e++].set(hinge(1),C[1][j]); edges[e++].set(C[0][j],C[1][j]); } };
+  // intake valve in the bottom board (air comes in from under it, between the sleepers); outlet with its non-return valve near the tail,
+  // into the collecting trunk that runs under the bottom boards
+  box(R,10,2.7,8,MAT.dark,x,yb-1.25,24,LB('吸気口','Ansaugöffnung'));
+  const inf=new T.Group(); inf.position.set(x,yb,19); R.add(inf);
+  box(inf,13,0.5,11,MAT.leather,0,0.25,5.5,LB('吸気弁（レバーを引く間だけ開いて外気を吸う）','Schöpfventil'));
+  box(R,8,2.7,7,MAT.dark,x,yb-1.25,-62,LB('ふいごの出口','Balgkanal'));
+  const ofl=new T.Group(); ofl.position.set(x,yb-2.5,-66.5); R.add(ofl);
+  box(ofl,9,0.5,8,MAT.leather,0,-0.25,4,LB('逆止弁（風導管へ送る間だけ開く）','Rückschlagventil'));
+  // lever: pivot on the trestle over the front part of the bellows, short arm forward (+z) to the iron rod, long arm back (−z) to the calcant
+  const lever=plank(R,4.5,5.5,MAT.woodDark,LB('ふいごのレバー（カルカントが先を引き下げる）','Balghebel'));
+  const iron=rod(R,0.6,MAT.iron,LB('吊り金（レバーの短い腕が上板を持ち上げる）','Balgeisen'));
+  const grip=rod(R,1.3,MAT.woodPale,LB('握り','Griff'));
+  const pin=mk(G_CYL,MAT.iron,R,LB('レバーの軸','Drehstift')); pin.rotation.z=Math.PI/2; pin.scale.set(0.8,11,0.8); pin.position.set(x,BB.YP,BB.ZP);
+  for(const s of [-1,1]) box(R,2,15,10,MAT.woodDark,x+s*4.25,BB.YP-2,BB.ZP,LB('レバーの軸受け','Lagerbock'));
   B.update=()=>{
-    const th=B.th, h=L*Math.sin(th);
-    top.rotation.z=th;
-    sides.forEach(m=>m.scale.set(L*Math.cos(th),Math.max(0.01,h),1));
-    front.scale.y=Math.max(0.05,h); front.position.set(x+L*Math.cos(th),1.5+h/2,z);
-    inf.rotation.z=B.pumping?0.55:0; ofl.rotation.z=B.supplying?-0.5:0;
-    const fx=x+(L-2)*Math.cos(th), fy=1.5+(L-2)*Math.sin(th)+1.5;
-    const sinp=clamp((fy+30-45)/58,-1,1), p=Math.asin(sinp);
-    const rt=V3(x-20+58*Math.cos(p),45+58*sinp,z), lt=V3(x-20-20*Math.cos(p),45-20*sinp,z);
-    lever.set(lt,rt); rope.set(rt,V3(fx,fy,z)); step.position.set(lt.x,lt.y-0.8,z);
+    const th=B.th; top.rotation.x=-th; folds(th);
+    inf.rotation.x=B.pumping?-0.55:0; ofl.rotation.x=B.supplying?0.5:0;
+    const ph=bbPhi(th), c=Math.cos(ph), s=Math.sin(ph), A=bbA(th), at=(d)=>V3(x,BB.YP+d*s,BB.ZP-d*c);
+    B.E.copy(at(BB.b)); lever.set(at(-BB.a-4),at(BB.b+3)); iron.set(V3(x,A[1],A[0]),at(-BB.a));
+    grip.set(V3(x-8,B.E.y,B.E.z),V3(x+8,B.E.y,B.E.z));
   };
-  // particles
-  new Tube([V3(x+L-11,-7,z),V3(x+L-11,3,z),V3(x+L-20,5,z)],{kind:'air',r:1.2,density:0.6,state:()=>({open:B.pumping,speed:24})});
-  new Vol((a,b,c,out)=>{ const u=0.1+0.86*a, X=u*L*Math.cos(B.th); out.set(x+X,1.5+0.9+b*Math.max(0,u*L*Math.sin(B.th)-1.6),z+(c-0.5)*17); },170,{state:()=>B.th>0.004?0.15+0.85*B.th/0.34:0,rate:3});
-  B.out=new Tube([V3(x+5,2,z),V3(x+3,-1,z),V3(x-4,-1,z),V3(x-4,-4,z),V3(x-4,-4,6)],{r:0.9,density:0.6,state:()=>({open:B.supplying,speed:B.flow||0})});
+  // particles (scene coordinates)
+  const xe=BB.XB[2]+40;
+  new Tube([bbW(x+W/2+7,F+4,24),bbW(x,F+4,24),bbW(x,yb+3,24),bbW(x,yb+5,14)],{kind:'air',r:0.7,density:0.6,state:()=>({open:B.pumping,speed:14})});
+  new Vol((a,b,c,out)=>{ const u=0.1+0.86*a, th=B.th; out.copy(bbW(x+(c-0.5)*(W-6),yb+0.9+b*Math.max(0,u*L*Math.sin(th)-1.6),ZT+u*L*Math.cos(th))); },160,{state:()=>B.th>0.004?0.15+0.85*B.th/BB.thMax:0,rate:3});
+  B.out=new Tube(sharpPath([bbW(x,yb+2,-54),bbW(x,yb+1,-62),bbW(x,-1.5,-62),bbW(xe,-1.5,-62)],1),{r:0.5,density:0.6,state:()=>({open:B.supplying,speed:B.flow})});
   return B;
+}
+// sleepers under the bellows, the trestle straddling them with the lever beam, and the gallows over the tails
+function buildBedosFrame(R){
+  const {F,XB,ZP,YP,ZG}=BB, x0=XB[0]-39, x1=XB[2]+39, xm=(x0+x1)/2;
+  for(const z of [-48,5,58]) box(R,x1-x0,9,8,MAT.woodDark,xm,F+4.5,z,LB('ふいごの台木','Balglager'));
+  box(R,x1-x0+8,8,8,MAT.wood,xm,YP-13,ZP,LB('レバーの台の梁','Balgbock'));
+  const LT=LB('レバーの台（三角の脚）','Balgbock');
+  for(const tx of [x0-4,(XB[0]+XB[1])/2,(XB[1]+XB[2])/2,x1+4]){   // legs at the ends and in the gaps between the bellows
+    for(const s of [-1,1]) plank(R,4,4,MAT.wood,LT).set(V3(tx,F,ZP+s*30),V3(tx,YP-17,ZP+s*3));
+    box(R,4,3,40,MAT.wood,tx,F+30,ZP,LT);
+  }
+  // the gallows over the tails: its uprights stand at the ends and in the gaps between the bellows; the long arm of each lever
+  // runs between two guide posts, the top rail stops it when the bellows is closed, the lower rail when it is full
+  const yAt=th=>YP+(ZP-ZG)*Math.tan(bbPhi(th)), y0=yAt(0), y1=yAt(BB.thMax), LG=LB('レバーの案内枠（ガロウズ）','Galgen');
+  const yT=y0+3.2/Math.cos(BB.ph0)+2.2, yB=y1-3.2-2.2;
+  box(R,x1-x0+8,4,6,MAT.wood,xm,yT,ZG,LG); box(R,x1-x0+8,4,6,MAT.wood,xm,yB,ZG,LG);
+  for(const x of XB) for(const s of [-1,1]) box(R,3.2,yT-yB,4,MAT.wood,x+s*4.35,(yT+yB)/2,ZG,LG);   // guide posts between the rails
+  for(const x of [x0-4,(XB[0]+XB[1])/2,(XB[1]+XB[2])/2,x1+4]) box(R,4,yT+2-F,6,MAT.wood,x,(yT+2+F)/2,ZG,LG);
+  for(const x of [x0-4,x1+4]) for(const s of [-1,1]) plank(R,3,3,MAT.wood,LG).set(V3(x,F,ZG+s*40),V3(x,F+100,ZG));
+}
+/* the calcant: one man who walks from lever to lever and pulls each one down by its grip. The limbs are solved with
+   two-bone IK (elbows go out and down, knees forward); he faces the bellows (+z). */
+function ik2(a,c,l1,l2,hint){ const d=V3().subVectors(c,a), L=clamp(d.length(),Math.abs(l1-l2)+0.01,l1+l2-0.01); d.normalize();
+  const ca=(l1*l1+L*L-l2*l2)/(2*l1*L), h=V3().copy(hint).addScaledVector(d,-hint.dot(d)).normalize();
+  return {j:V3().copy(a).addScaledVector(d,l1*ca).addScaledVector(h,l1*Math.sqrt(Math.max(0,1-ca*ca))),e:V3().copy(a).addScaledVector(d,L)}; }
+function buildCalcant(R){
+  const {F,ZS}=BB, FZ=1, g=new T.Group(); R.add(g); const LK=LB('カルカント（ふいごのレバーを引く人）','Kalkant');
+  const r=(rad,m)=>rod(g,rad,m,LK), sph=(m,sx,sy,sz)=>{ const s=mk(G_SPH,m,g,LK); s.scale.set(sx,sy,sz); return s; };
+  const th=[r(5,MAT.coat),r(5,MAT.coat)], sh=[r(3.4,MAT.hose),r(3.4,MAT.hose)], ua=[r(3.4,MAT.linen),r(3.4,MAT.linen)], fa=[r(2.8,MAT.linen),r(2.8,MAT.linen)];
+  const torso=plank(g,30,17,MAT.coat,LK), hips=plank(g,29,17,MAT.coat,LK), neck=r(3.4,MAT.skin);
+  const head=sph(MAT.skin,8.5,10.5,9.5), hair=sph(MAT.hair,9,8.5,9.6), hands=[0,1].map(()=>sph(MAT.skin,3,4,3.2));
+  const shoes=[0,1].map(()=>box(g,6,4,13,MAT.shoe,0,0,0,LK));
+  const C={g,x:BB.XB[1],st:'idle',tgt:-1,t:0,man:false,pin:V3(),feet:[-1,1].map(s=>({p:V3(BB.XB[1]+s*9,F+5,ZS),s,a:null,b:null,u:0}))};
+  const rest=[V3(),V3()], gp=V3(), up=V3(), pel=V3(), nk=V3(), tmp=V3();
+  C.draw=(dt,grip,blend,crouch)=>{
+    // feet: one at a time steps toward its place beside the body
+    for(const f of C.feet){ const tx=C.x+f.s*9;
+      if(!f.a&&Math.abs(f.p.x-tx)>4&&!C.feet.some(o=>o.a)){ f.a=f.p.clone(); f.b=V3(tx+Math.sign(tx-f.p.x)*3,F+5,ZS); f.u=0; }
+      if(f.a){ f.u=Math.min(1,f.u+dt*3.4); f.p.lerpVectors(f.a,f.b,f.u); f.p.y=F+5+6*Math.sin(Math.PI*f.u); if(f.u>=1) f.a=null; } }
+    C.stepping=C.feet.some(f=>f.a);
+    const lean=0.06+0.44*crouch; up.set(0,Math.cos(lean),FZ*Math.sin(lean));
+    pel.set(C.x,F+116-30*crouch,ZS-FZ*3*crouch); nk.copy(pel).addScaledVector(up,60);
+    torso.set(tmp.copy(pel).addScaledVector(up,-2),nk); hips.set(tmp.copy(pel).addScaledVector(up,-11),V3().copy(pel).addScaledVector(up,6));
+    head.position.copy(nk).addScaledVector(up,15); neck.set(V3().copy(nk).addScaledVector(up,-3),head.position);
+    hair.position.copy(head.position).add(V3(0,2.2,-FZ*2.6));
+    C.pin.copy(head.position).add(V3(0,14,0)); C.pin.copy(bbW(C.pin.x,C.pin.y,C.pin.z));
+    [-1,1].forEach((s,i)=>{
+      const S=V3().copy(nk).addScaledVector(up,-6).add(V3(s*16,0,0));
+      rest[i].copy(S).add(V3(s*4,-66,FZ*4)); gp.copy(rest[i]); if(grip&&blend>0) gp.lerp(V3(grip.x+s*6,grip.y,grip.z),blend);
+      const k=ik2(S,gp,39,38,V3(s,-1,-FZ*0.7)); ua[i].set(S,k.j); fa[i].set(k.j,k.e); hands[i].position.copy(k.e);
+      const H=V3().copy(pel).add(V3(s*8,-5,0)), f=C.feet[i].p, kn=ik2(H,f,58,56,V3(0,0.25,FZ));
+      th[i].set(H,kn.j); sh[i].set(kn.j,kn.e); shoes[i].position.set(f.x,f.y-3,f.z+FZ*3.5);
+    });
+  };
+  return C;
+}
+function buildBedosOrgan(){
+  let chest=null; const thMax=BB.thMax, m={auto:true,force:null,hold:[false,false,false]};
+  const G=new T.Group(); G.position.set(...BB.O); G.scale.setScalar(BB.K); CX.root.add(G);
+  const bs=[0.92,0.66,0.4].map((f,i)=>buildBedosBellows(G,i,f*thMax));
+  const c0=bbW(BB.XB[0]-36,-1.5,-62), c1=bbW(BB.XB[2]+40,-1.5,-62);   // under the bottom boards
+  duct([c0,c1],7*BB.K,MAT.wood,LB('ふいごの出口をまとめる管','Sammelkanal'));
+  const tp=[c1,V3(-40,c1.y,c1.z),V3(-40,c1.y,6),V3(-40,36,6),V3(-33,36,6)];
+  duct(tp,4,MAT.wood,LB('風導管（ふいごから風箱へ）','Windkanal'));
+  const trunk=new Tube(tp,{r:1.2,density:0.4,front:400,state:()=>({open:S.p>10,speed:3*(chest?chest.speaking().length:0)})});
+  chest=buildChest({y:30,feed:trunk});
+  buildBedosFrame(G);
+  const C=buildCalcant(G), E0=V3(), E1=V3();
+  { const t=bs[0].th; bs[0].th=0; bs[0].update(); E0.copy(bs[0].E); bs[0].th=thMax; bs[0].update(); E1.copy(bs[0].E); bs[0].th=t; }
+  // the calcant: picks the emptiest bellows (or the one asked for), steps to its lever, reaches up, pulls it down until the
+  // bellows is full (the lower rail of the gallows), lets go
+  const calcant=(dt,rate)=>{
+    const held=m.hold.findIndex(h=>h);
+    bs.forEach(b=>b.pumping=false);
+    if(C.st==='idle'){ let j=-1;
+      if(held>=0) j=held; else if(m.force!=null) j=m.force;
+      else if(m.auto){ let k=0; bs.forEach((b,i)=>{ if(b.th<bs[k].th) k=i; }); if(bs[k].th<0.8*thMax) j=k; }
+      if(j>=0){ C.tgt=j; C.st='walk'; C.man=held>=0; if(m.force===j) m.force=null; } }
+    if(C.st==='walk'){ const d=BB.XB[C.tgt]-C.x; C.x+=Math.sign(d)*Math.min(Math.abs(d),140*dt); if(Math.abs(d)<0.5&&!C.stepping){ C.st='reach'; C.t=0; } }
+    else if(C.st==='reach'){ C.t=Math.min(1,C.t+dt/0.4); if(C.t>=1) C.st='pull'; }
+    else if(C.st==='pull'){ const b=bs[C.tgt]; b.pumping=true; b.th=Math.min(thMax,b.th+rate*dt);
+      if(C.man?!m.hold[C.tgt]:(b.th>=thMax||!m.auto)){ C.st='release'; C.t=1; b.pumping=false; } }
+    else if(C.st==='release'){ C.t=Math.max(0,C.t-dt/0.35); if(C.t<=0) C.st='idle'; }
+    C.g.visible=m.auto||held>=0||m.force!=null||C.st!=='idle';
+  };
+  return {chest,
+    pins:[{t:'ふいご1',p:bbW(BB.XB[0],28,10)},{t:'ふいご2',p:bbW(BB.XB[1],28,10)},{t:'ふいご3',p:bbW(BB.XB[2],28,10)},{t:'ふいごレバー',p:bbW(BB.XB[0]-12,150,-60)},
+      {t:'レバーの支点の台',p:bbW(BB.XB[0]-40,BB.YP,BB.ZP)},{t:'レバーの案内枠（ガロウズ）',p:bbW(BB.XB[2]+44,170,BB.ZG)},{t:'カルカント',p:C.pin},{t:'風導管',p:V3(-40,22,8)},{t:'風箱',p:V3(36,44,18)}],
+    controls:[{type:'toggle',id:'auto',label:'カルカント自動',get:()=>m.auto,set:v=>m.auto=v},
+      ...[0,1,2].map(i=>({type:'hold',label:'ふいご'+(i+1)+'を引く',down:()=>m.hold[i]=true,up:()=>m.hold[i]=false}))],
+    ctl:{auto:v=>m.auto=v,pump0:()=>m.force=0},
+    update(dt){
+      const n=chest.speaking().length, cons=thMax*(0.004+0.005*n), rate=Math.max(thMax*0.55,cons*3.5);   // he pulls faster as consumption rises
+      calcant(dt,rate);
+      const sup=bs.filter(b=>!b.pumping&&b.th>0.003);
+      bs.forEach(b=>{ b.supplying=sup.includes(b); b.flow=2.5*n; });
+      sup.forEach(b=>b.th=Math.max(0,b.th-cons/sup.length*dt));
+      const target=sup.length?74+3*(sup.reduce((s,b)=>s+b.th,0)/sup.length/thMax):0;
+      S.p+=(target-S.p)*Math.min(1,dt*(target>S.p?8:4));
+      chest.update(dt); bs.forEach(b=>b.update());
+      const blend=C.st==='reach'||C.st==='release'?C.t*C.t*(3-2*C.t):C.st==='pull'?1:0, b=bs[C.tgt];
+      C.draw(dt,b&&b.E,blend,b?blend*clamp((E0.y-b.E.y)/(E0.y-E1.y),0,1):0);
+    }};
 }
 function buildBlowerMag(o){
   const R=CX.root, M={h:o.h0==null?0.8:o.h0,blower:o.on!==false,rpm:o.on===false?0:1,vo:0,n:0};

@@ -5,16 +5,17 @@ function h3Wind(B){
   const LK=LB('風導管（ふいごから風箱へ）','Windkanal');
   duct([V3(-470,15,-345),V3(470,15,-345)],26,MAT.wood,LB('ふいごの出口をまとめる管','Sammelkanal'));
   duct([V3(0,15,-345),V3(0,15,-150)],24,MAT.wood,LK);
-  box(ST,30,418,26,MAT.wood,0,212,-150,LB('立ち上がりの風導管（手鍵盤の風箱へ）','Windkanal'));
-  const hwP=[V3(0,411.5,-150),V3(0,411.5,-70),V3(B.hw.cx,411.5,-70),V3(B.hw.cx,411.5,B.hw.zPB)], poP=[V3(0,214.5,-150),V3(0,214.5,-80),V3(B.pos.cx,214.5,-80),V3(B.pos.cx,214.5,B.pos.zPB)];
+  box(ST,30,B.hw.inlet.y+6.5-3,26,hollow(MAT.wood),0,(B.hw.inlet.y+6.5+3)/2,-150,LB('立ち上がりの風導管（手鍵盤の風箱へ）','Windkanal'));
+  const yH=B.hw.inlet.y, hwP=[V3(0,yH,-150),V3(B.hw.cx,yH,-150),V3(B.hw.cx,yH,B.hw.inlet.z)],   // the Hauptwerk pallet box is at the back of its chest
+        poP=[V3(0,214.5,-150),V3(-62,214.5,-150),V3(-62,214.5,B.pos.inlet.z)];   // beside the Hauptwerk trackers rising behind the swell box; into the back of the pallet box   // the Positiv pallet box is at the back of its chest
   duct(hwP,12,MAT.wood,LB('風導管（ハウプトヴェルクへ）','Windkanal')); duct(poP,12,MAT.wood,LB('風導管（ポジティフへ）','Windkanal'));
-  const pdP=s=>[V3(s*470,15,-345),V3(s*470,15,-168),V3(s*470,70.5,-168),V3(s*470,70.5,(s<0?B.tc:B.td).zPB)];
+  const pdP=s=>[V3(s*470,15,-345),V3(s*470,15,-168),V3(s*470,70.5,-168),V3(s*470,70.5,(s<0?B.tc:B.td).inlet.z)];   // the tower chests have their pallet boxes at the back
   for(const s of [-1,1]) duct(pdP(s),12,MAT.wood,LB('風導管（ペダル塔へ）','Windkanal'));
   const cons=()=>W.n||0;
   W.trunks=[
     new Tube([V3(-420,15,-345),V3(0,15,-345)],{r:7,density:0.12,front:500,state:()=>({open:S.p>10,speed:2+0.8*cons()})}),
     new Tube([V3(420,15,-345),V3(0,15,-345)],{r:7,density:0.12,front:500,state:()=>({open:S.p>10,speed:2+0.8*cons()})}),
-    new Tube([V3(0,15,-345),V3(0,15,-150),V3(0,30,-150),V3(0,411,-150)],{r:7,density:0.1,front:500,state:()=>({open:S.p>10,speed:2+0.8*cons()})}),
+    new Tube([V3(0,15,-345),V3(0,15,-150),V3(0,30,-150),V3(0,yH-0.5,-150)],{r:7,density:0.1,front:500,state:()=>({open:S.p>10,speed:2+0.8*cons()})}),
     new Tube(hwP,{r:3.5,density:0.15,front:500,state:()=>({open:S.p>10,speed:2+1.2*B.hw.speaking().length})}),
     new Tube(poP,{r:3.5,density:0.15,front:500,state:()=>({open:S.p>10,speed:2+1.2*B.pos.speaking().length})}),
     new Tube(pdP(-1),{r:3.5,density:0.12,front:500,state:()=>({open:S.p>10,speed:2+2*B.tc.speaking().length})}),
@@ -39,10 +40,10 @@ function h3Wind(B){
     t.vo=t.amt>0.2?Math.max(0,-c):0; vh.rotation.z=-0.55*t.vo; t.dip=t.amt*(0.1*Math.max(0,-c)+0.03);
     slide.put(19+3*v,111,-157,4,1.5,8); };
   /* cymbelstern valve box on the riser, conduit up to the wind wheel behind the star */
-  box(ST,12,16,12,MAT.wood,21,104,-140,LB('ツィンベルシュテルンの弁箱（中は風で満ちている）','Ventilkasten'));
+  box(ST,12,16,12,hollow(MAT.wood),21,104,-140,LB('ツィンベルシュテルンの弁箱（中は風で満ちている）','Ventilkasten'));
   const zflap=new T.Group(); zflap.position.set(16,112,-144); R.add(zflap);
   box(zflap,8,0.6,8,MAT.leather,4,-0.3,4,LB('弁（ストップを引くと開いて風車へ風を送る）','Spielventil'));
-  const ZO=V3(0,640,14), cd=[V3(22,112,-140),V3(22,722,-140),V3(22,722,ZO.z-18),V3(22,ZO.y-10,ZO.z-18),V3(6,ZO.y-10,ZO.z-18)];
+  const ZO=V3(0,660,14), cd=[V3(22,112,-140),V3(22,742,-140),V3(22,742,ZO.z-18),V3(22,ZO.y-10,ZO.z-18),V3(6,ZO.y-10,ZO.z-18)];
   duct(cd,3,MAT.woodDark,LB('風導管（弁箱から風車のノズルへ）','Windleitung'));
   W.zim={v:0};
   W.zJet=new Tube(cd.concat([V3(6,ZO.y-6.5,ZO.z-18),V3(5.6,ZO.y-2,ZO.z-18),V3(2,ZO.y+3,ZO.z-19)]),{r:0.7,density:0.12,front:400,state:()=>({open:W.zim.v>0.1&&S.p>10,speed:30+40*W.zim.v})});

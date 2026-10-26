@@ -1,4 +1,6 @@
-const DEV=new Set(['d-03','d-04']);   // built, but not shown yet (in development)
+const DEV=new Set(['d-04']);   // built, but not shown yet (in development)
+// with ?dev in the address, models in development can still be opened by their hash (they stay out of the index)
+const DEVOK=/[?&]dev(&|$)/.test(location.search);
 const INDEX=[
  {c:'A',n:'発音原理',items:[['A-01','フルー管の発音',1],['A-02','リード管の発音',1]]},
  {c:'B',n:'送風',items:[['B-01','くさび型ふいご（人力）',1],['B-02','電動ブロワー＋マガジンふいご',1],['B-03','シュヴィンマー',3]]},

@@ -62,10 +62,10 @@ function buildFlueSection(){
     new Tube(o.supply,{r:0.5,density:1.2,front:60,state:()=>({open:v.env>0.05,speed:7*v.env})});
     new Vol(o.footVol,220,{state:()=>v.env,rate:2});
     const hc=o.hc, A=0.85, kap=(Math.PI/2)/hc, del=s=>A*v.env*Math.pow(Math.max(0,s)/hc,1.4)*Math.sin(v.ph-kap*s);
-    const VJ=7, TAIL=7, zc=o.zc, dl0=o.zl, gg=o.g;
+    const VJ=7, TAIL=7, zc=o.zc, dl0=o.zl, gg=o.g, hw=o.hw;
     const jet=new Field(220,(i,t,out,f)=>{
       if(v.env<0.04) return null;
-      const r=f.r, s=f.s[i]*(hc+1.2+TAIL)-1.2, jz=(r[i*4]-0.5)*gg*0.55, x=-0.06-r[i*4+1]*0.2;
+      const r=f.r, s=f.s[i]*(hc+1.2+TAIL)-1.2, jz=(r[i*4]-0.5)*gg*0.55, x=(r[i*4+1]*2-1)*hw*0.95;   // spread over the whole windway width
       if(s<0){ out.set(x,s,zc+jz+s*(o.slant||0)); return COL.wind; }
       if(s<=hc){ out.set(x,s,zc+jz+del(s)); return COL.wind; }
       const u=s-hc;
@@ -78,6 +78,10 @@ function buildFlueSection(){
     jg.setAttribute('position',new T.BufferAttribute(jp,3)); jg.setIndex(ji); CX.own.push(jg);
     const jm=new T.MeshBasicMaterial({color:COL.wind.getHex(),transparent:true,opacity:0.35,side:T.DoubleSide,depthWrite:false}); CX.own.push(jm);
     const sheet=new T.Mesh(jg,jm); sheet.frustumCulled=false; sheet.renderOrder=3; R.add(sheet); sheet.userData.label=LB('噴流（ウインドウェイから吹き出す薄い板状の風）','Luftblatt');
+    // the same jet seen across its width: a sheet as wide as the windway, flapping in and out at the upper lip
+    const wg=new T.BufferGeometry(), wp=new Float32Array((NJ+1)*6); wg.setAttribute('position',new T.BufferAttribute(wp,3)); wg.setIndex(ji); CX.own.push(wg);
+    const wm=new T.MeshBasicMaterial({color:COL.wind.getHex(),transparent:true,opacity:0.22,side:T.DoubleSide,depthWrite:false}); CX.own.push(wm);
+    const wide=new T.Mesh(wg,wm); wide.frustumCulled=false; wide.renderOrder=3; R.add(wide); wide.userData.label=LB('噴流（ウインドウェイの幅いっぱいに吹き出す薄い膜状の風。上唇の内側と外側に交互に振れて音を起こす）','Luftblatt');
     const NZ=9, NY=60;
     new Field(NZ*NY,(i,t,out,f)=>{
       if(v.env<0.02) return null;
@@ -89,19 +93,20 @@ function buildFlueSection(){
     v.update=(dt,target,fr)=>{
       v.env+=(target-v.env)*Math.min(1,dt*(target>v.env?1.6:2.5)); if(v.env>0.01) v.ph+=dt*OMEGA*fr;
       P.ph.value=v.ph; P.env.value=v.env; P.mesh.scale.y=o.top()-hc-0.4;
-      sheet.visible=v.env>0.04&&SHOW.lines; if(!sheet.visible) return; jm.color.copy(COL.wind);
+      sheet.visible=wide.visible=v.env>0.04&&SHOW.lines; if(!sheet.visible) return; jm.color.copy(COL.wind); wm.color.copy(COL.wind);
       const dl=del(hc), inside=dl<0, w=gg*0.45;
       for(let i=0;i<=NJ;i++){ const s=-1.2+(hc+1.2+3.2)*i/NJ; let y,z;
         if(s<=hc){ y=s; z=zc+del(s)+(s<0?s*(o.slant||0):0); } else { const u=s-hc, k=Math.min(1,Math.abs(dl)/(A*0.5)); y=hc+u*(inside?0.75:0.55); z=zc+dl+(inside?-0.32*u*k:0.7*u*k); }
-        jp[i*6]=-0.04; jp[i*6+1]=y; jp[i*6+2]=z-w/2; jp[i*6+3]=-0.04; jp[i*6+4]=y; jp[i*6+5]=z+w/2; }
-      jg.attributes.position.needsUpdate=true; jg.computeBoundingSphere();
+        jp[i*6]=-0.04; jp[i*6+1]=y; jp[i*6+2]=z-w/2; jp[i*6+3]=-0.04; jp[i*6+4]=y; jp[i*6+5]=z+w/2;
+        wp[i*6]=-hw; wp[i*6+1]=y; wp[i*6+2]=z; wp[i*6+3]=hw; wp[i*6+4]=y; wp[i*6+5]=z; }
+      jg.attributes.position.needsUpdate=true; jg.computeBoundingSphere(); wg.attributes.position.needsUpdate=true;
     };
     return v;
   }
-  const vm=voice({zc,zl:d,g,hc,mode:0,zA:-Rb*0.96,zB:d-0.1,top:()=>H+m.ext,
+  const vm=voice({zc,zl:d,g,hc,hw:G.w/2,mode:0,zA:-Rb*0.96,zB:d-0.1,top:()=>H+m.ext,
     supply:[V3(-0.15,-footH-6,0),V3(-0.15,-footH,0),V3(-0.15,-8,0.4),V3(-0.15,-2.6,zc-0.2),V3(-0.15,-1.15,zc)],
     footVol:(a,b,c,out)=>{ const y=-footH+1+b*(footH-2.6), rc=toeR+(Rb-toeR)*(y+footH)/footH; out.set(-0.08-c*rc*0.6,y,(a*2-1)*rc*0.85); }});
-  const vw=voice({zc:zcw,zl:zFi,g:gw,hc:hcw,mode:2,zA:zW-WI+0.1,zB:zFi-0.1,top:()=>m.stop,
+  const vw=voice({zc:zcw,zl:zFi,g:gw,hc:hcw,hw:hx,mode:2,zA:zW-WI+0.1,zB:zFi-0.1,top:()=>m.stop,
     supply:[V3(-0.15,-23,zW),V3(-0.15,-17,zW),V3(-0.15,-6.6,zW),V3(-0.15,-5.4,zW+0.9),V3(-0.15,-5.0,zCi-0.6),V3(-0.15,-3.6,zCi-0.75),V3(-0.15,-1.2,zcw)],
     footVol:(a,b,c,out)=>{ if(a<0.55) out.set(-0.08-c*0.3,-16.5+b*9.6,zW+(a/0.55-0.5)*0.8); else out.set(-0.08-c*0.3,yC+0.2+b*(yT-yC-0.4),zW-1.6+((a-0.55)/0.45)*(zCi-0.2-zW+1.6)); }});
   const fmt=(f,f0)=>{ const c=Math.round(1200*Math.log2(f/f0)); return TF('{0} Hz（{1} セント）',f.toFixed(1),(c>0?'+':c<0?'−':'±')+Math.abs(c)); };

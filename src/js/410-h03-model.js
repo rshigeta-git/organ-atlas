@@ -4,10 +4,10 @@ function buildH03(){
   const Sx=h3Stops(B), W=h3Wind(B), ZM=h3Zimbel(W.ZO,B.ST), SW=h3Swell(B);
   h3Case(B);
   mergeStatic(B.ST); CX.pool.finish();
-  const {m,ped,lo,up,rbH,rbP,rbA,rbHC,rbPC,cPH,cHP,cPP,TH,TP,KDH,KDP,KDD,SPH,SPP,SPD,hw,pos,tc,td,NM,NP,DIP,Y0,ZH,ZX,KL,DEP,ZAA,ZHC,ZPC,yK,KHp,pullU,pullL,dzU,dzL,aiH,aiP,acH,acP,aiA,aoA,aiC,aoHC,aoPC,hmat,pmat,dmat}=B;
+  const {m,ped,lo,up,rbH,rbP,rbA,rbC,cPH,cHP,cPP,TH,TP,KDH,KDP,KDD,SPH,SPP,SPD,hw,pos,tc,td,NM,NP,DIP,Y0,ZH,ZX,KL,DEP,ZAA,ZC,yK,KHp,pullH,pullP,dzH,dzP,aiH,aiP,SQ,kx,UPm,LO,aiA,aoA,aiC,aoC,ZHP,ZPP,hmat,pmat,dmat}=B;
   let swT=0.25, swV=0.25;
-  const thMax=0.34, pAH=new Float32Array(NP), pAP=new Float32Array(NP), toH=[], toP=[];
-  /* key state per keyboard: 0 pedal, 1 Positiv (I), 2 Hauptwerk (II) */
+  const pC=new Float32Array(NP), toC=[];
+  /* key state per keyboard: 0 pedal, 1 Hauptwerk (I, lower manual), 2 Positiv (II, upper manual) */
   const NK=[NP,NM,NM], KS=[0,1,2].map(i=>new Array(NK[i]).fill(false)), KV=[0,1,2].map(()=>new Float32Array(64));
   let conEl=null;
   const syncKeys=()=>{ if(!conEl) return; conEl.querySelectorAll('[data-km]').forEach(b=>b.classList.toggle('on',!!KS[+b.dataset.km][+b.dataset.k])); };
@@ -15,8 +15,8 @@ function buildH03(){
   const releaseAll=()=>{ KS.forEach(a=>a.fill(false)); syncKeys(); };
   const hlM=(mat,hm,a)=>{ mat.emissive.copy(COL.key).multiplyScalar(0.6*Math.min(1,a)); if(hm) hm.emissive.copy(COL.key).multiplyScalar(0.35*Math.min(1,a)); };
   const stopRows=[{label:'P ペダル',items:Sx.ped.map((it,i)=>({name:it.name,ja:STOPS[tc.rows[i].si].ja,get:()=>it.on,set:v=>it.on=v}))},
-    {label:'II ハウプトヴェルク（上鍵盤）',items:Sx.hw.map((it,i)=>({name:it.name,ja:STOPS[hw.rows[i].si].ja,get:()=>it.on,set:v=>it.on=v}))},
-    {label:'I ポジティフ（下鍵盤）',items:Sx.pos.map((it,i)=>({name:it.name,ja:STOPS[pos.rows[i].si].ja,get:()=>it.on,set:v=>it.on=v}))},
+    {label:'I ハウプトヴェルク（下鍵盤）',items:Sx.hw.map((it,i)=>({name:it.name,ja:STOPS[hw.rows[i].si].ja,get:()=>it.on,set:v=>it.on=v}))},
+    {label:'II ポジティフ（上鍵盤）',items:Sx.pos.map((it,i)=>({name:it.name,ja:STOPS[pos.rows[i].si].ja,get:()=>it.on,set:v=>it.on=v}))},
     {label:'カプラー・補助装置',items:[[Sx.cPH,'ポジティフをハウプトヴェルクの鍵盤で鳴らす'],[Sx.cHP,'ハウプトヴェルクをペダルで鳴らす'],[Sx.cPP,'ポジティフをペダルで鳴らす'],[Sx.trem,'手鍵盤の風を揺らす'],[Sx.zimb,'星が回り鈴が鳴る']].map(([it,ja])=>({name:it.name,ja,get:()=>it.on,set:v=>it.on=v}))}];
   /* console panel under the model: drawknobs by division, two manuals, pedalboard */
   const knobTxt=n=>{ const mm=n.match(/^(.*?)\s+((?:\d+\s)?[\d\/]+′|III)$/); return mm?'<b>'+mm[1]+'</b><i>'+mm[2]+'</i>':'<b>'+(n==='Zimbelstern'?'Zimbel-<br>stern':n==='Tremulant'?'Tremu-<br>lant':n)+'</b>'; };
@@ -43,7 +43,7 @@ function buildH03(){
       const up_=e=>{ if(S.latch) return; const b=e.target.closest('[data-km]'); if(b) press(mn,+b.dataset.k,false); };
       kb.addEventListener('pointerup',up_); kb.addEventListener('pointercancel',up_);
       row.appendChild(kb); el.appendChild(row); };
-    mkKb(2,'Hauptwerk (II)','man2'); mkKb(1,'Positiv (I)','man1'); mkKb(0,'Pedal','pedal');
+    mkKb(2,'Positiv (II)','man2'); mkKb(1,'Hauptwerk (I)','man1'); mkKb(0,'Pedal','pedal');
     const tl=document.createElement('div'); tl.className='oc-tools';
     const lb=document.createElement('button'); lb.className='btn'; lb.type='button'; lb.textContent=T_('押したまま保持'); lb.setAttribute('aria-pressed',S.latch); lb.addEventListener('click',()=>{ $('latch').click(); lb.setAttribute('aria-pressed',S.latch); });
     const rb=document.createElement('button'); rb.className='btn'; rb.type='button'; rb.textContent=T_('全部離す'); rb.addEventListener('click',releaseAll);
@@ -60,7 +60,7 @@ function buildH03(){
       cpl:a=>{ setArr([Sx.cPH,Sx.cHP,Sx.cPP],a); syncStopUI(); },trem:v=>{ Sx.trem.on=!!v; syncStopUI(); },zimb:v=>{ Sx.zimb.on=!!v; syncStopUI(); },blower:v=>W.mag.blower=v,swell:v=>{ swT=v; if(swIn) swIn.value=Math.round(v*100); },
       empty:()=>{ W.mag.h=0; }},
     B,
-    pins:[{t:'ハウプトヴェルク（II）',p:V3(-150,470,40)},{t:'ポジティフ（I）',p:V3(-150,250,0)},{t:'ペダル塔（C側）',p:V3(-470,720,-40)},{t:'ペダル塔（Cis側）',p:V3(470,720,-40)},
+    pins:[{t:'ハウプトヴェルク（I）',p:V3(-150,470,40)},{t:'ポジティフ（II）',p:V3(-150,250,0)},{t:'ペダル塔（C側）',p:V3(-470,720,-40)},{t:'ペダル塔（Cis側）',p:V3(470,720,-40)},
       {t:'演奏台',p:V3(-70,130,50)},{t:'ローラーボード',p:V3(-200,350,20),max:900},{t:'ペダルカプラー（Hw/P・Pos/P）',p:V3(-150,90,0),max:700},{t:'送風機とマガジンふいご',p:V3(-200,160,-470)},{t:'スウェルボックス',p:V3(-150,330,0),max:900},{t:'トレムラント',p:V3(40,140,-157),max:700},{t:'ツィンベルシュテルン',p:V3(0,680,30),max:900}],
     speaking:allSpeak,
     update(dt){
@@ -72,36 +72,61 @@ function buildH03(){
       swV+=clamp(swT-swV,-dt*1.5,dt*1.5); SW.set(swV);
       W.tremUpd(dt,Sx.trem.v); B.setP(S.p*(1-W.trem.dip));
       W.zimUpd(Sx.zimb.v); ZM.update(dt,Sx.zimb.v>0.9&&S.p>20?1:0);
-      const oPH=Sx.cPH.off, oHP=Sx.cHP.off, oPP=Sx.cPP.off;
+      const oHP=Sx.cHP.off, oPP=Sx.cPP.off, oPH=Sx.cPH.off;
       // pedal
       for(const q of ped){ const k=q.k, kP=KV[0][k], th=Math.asin(clamp(DEP*kP/KL,0,1)), s=Math.sin(th); q.g.rotation.x=-th;
         q.sp.scale.y=(yK-KHp/2-1.2-(ZH-(ZX+5))*s)/2.2;
-        const drA=(ZH-ZAA)*s, drH=(ZH-ZHC)*s, drP=(ZH-ZPC)*s;
-        const fa=Math.asin(clamp(drA/aiA,0,1)), ra=rbA.set(k,fa); q.ta.set(ra.ti,V3(q.x,q.top-drA,ZAA),0.4); KDD[k]=aoA*Math.sin(fa)/KPULL; q.ta2.set((k%2?td:tc).pullDown(k),ra.to,0.6);
-        const fh=Math.asin(clamp(drH/aiC,0,1)), rh=rbHC.set(k,fh); q.th.set(rh.ti,V3(q.x,q.top-drH,ZHC),0.4); pAH[k]=aoHC*Math.sin(fh); toH[k]=rh.to;
-        const fp=Math.asin(clamp(drP/aiC,0,1)), rp=rbPC.set(k,fp); q.tp.set(rp.ti,V3(q.x,q.top-drP,ZPC),0.4); pAP[k]=aoPC*Math.sin(fp); toP[k]=rp.to;
-        hlM(dmat[k],null,kP); for(const t of [q.ta,q.th,q.tp,q.ta2,q.th2,q.tp2]) t.hl(kP); rbA.hl(k,kP); rbHC.hl(k,kP); rbPC.hl(k,kP);
+        const drA=(ZH-ZAA)*s, drC=(ZH-ZC)*s;
+        // P1 behind the key ends: arm toward the player pulled down, upright arm pulls the horizontal tracker forward;
+        // P2 under the back of the towers: hanging arm pulled forward, arm pointing back goes down and pulls the roller's arm
+        const {P1A,P1B,yP1,zP1,yP2,zP2}=SQ, fP=Math.asin(clamp(drA/P1A,0,1)), cP=Math.cos(fP), sP=Math.sin(fP), x=q.x;
+        const a1=V3(x,yP1-P1A*sP,zP1+P1A*cP), b1=V3(x,yP1+P1B*cP,zP1+P1B*sP), c2=V3(x,yP2-P1B*cP,zP2+P1B*sP), d2=V3(x,yP2-P1A*sP,zP2-P1A*cP);
+        q.p1a.set(V3(x,yP1,zP1),a1); q.p1b.set(V3(x,yP1,zP1),b1); q.p2a.set(V3(x,yP2,zP2),c2); q.p2b.set(V3(x,yP2,zP2),d2);
+        const fa=Math.asin(clamp(drA/aiA,0,1)), ra=rbA.set(k,fa); q.ta.set(a1,V3(q.x,q.top-drA,ZAA),0.4); q.thp.set(c2,b1,0.3); q.tvp.set(ra.ti,d2,0.3); KDD[k]=aoA*Math.sin(fa)/KPULL; q.ta2.set((k%2?td:tc).pullDown(k),ra.to,0.6);
+        // one coupler roller per note; its single tracker carries the nuts of both coupler backfalls
+        const fc=Math.asin(clamp(drC/aiC,0,1)), rc=rbC.set(k,fc); q.tc.set(rc.ti,V3(q.x,q.top-drC,ZC),0.4); pC[k]=aoC*Math.sin(fc); toC[k]=rc.to;
+        q.tc2.set(V3(rc.to.x,B.cPP.y+1.6-pC[k],rc.to.z),rc.to,0.6);
+        cHP.set(k,oHP,pC[k]); cPP.set(k,oPP,pC[k]);
+        hlM(dmat[k],null,kP); for(const t of [q.ta,q.tc,q.ta2,q.tc2,q.thp,q.tvp,q.p1a,q.p1b,q.p2a,q.p2b]) t.hl(kP); rbA.hl(k,kP); rbC.hl(k,kP); cHP.hl(k,oHP>-0.5?kP:0); cPP.hl(k,oPP>-0.5?kP:0);
       }
-      // manuals
+      // manuals: the lower key (I) works the Hauptwerk run, the upper key (II) the Positiv run. Pos/Hw joins the two trackers under
+      // the key desk, Pos/P lifts the upper key's tail; Hw/P turns square S1 under the console. Only Pos/P moves a key.
+      const UT=UPm.zbal;
       for(let k=0;k<NM;k++){
-        const thU=Math.asin(clamp(DIP*KV[2][k]/up.Lk,0,1)), pU=dzU*Math.sin(thU);
-        const dHP=k<NP?cHP.out(oHP,pAH[k]):0, dH=Math.min(dzU*0.95,Math.max(pU,aiH*dHP/acH)), phH=Math.asin(clamp(dH/aiH,0,1)), thH=Math.asin(clamp(dH/dzU,0,1));
-        up.set(k,thH); KDH[k]=4*Math.sin(phH)/KPULL;
-        const dPH=cPH.out(oPH,dH), thK=Math.asin(clamp(DIP*KV[1][k]/lo.Lk,0,1)), pK=dzL*Math.sin(thK);
-        const dPP=k<NP?cPP.out(oPP,pAP[k]):0, dP=Math.min(dzL*0.95,Math.max(pK,dPH,aiP*dPP/acP)), phP=Math.asin(clamp(dP/aiP,0,1)), thL=Math.asin(clamp(dP/dzL,0,1));
-        lo.set(k,thL); KDP[k]=4*Math.sin(phP)/KPULL;
-        const x=lo.keys[k].x, rH=rbH.set(k,phH), rP=rbP.set(k,phP), aU=up.attach(k,thH), aL=lo.attach(k,thL);
-        TH[k].t1.set(rH.ti,aU,KH); TH[k].t2.set(hw.pullDown(k),rH.to,0.6);
-        cPH.set(k,oPH,dH,dP);
-        TP[k].tL.set(V3(x,Y0+14+0.25-dP,LO_ZA),aL,KH); TP[k].t1.set(rP.ti,V3(x,Y0+14-dP-0.25,LO_ZA),0.6); TP[k].t2.set(pos.pullDown(k),rP.to,0.6);
-        if(k<NP){ const rh=cHP.set(k,oHP,pAH[k],acH*Math.sin(phH)); TH[k].tc.set(rH.tc,rh.D,0.6); ped[k].th2.set(rh.A,toH[k],0.6);
-          const rp=cPP.set(k,oPP,pAP[k],acP*Math.sin(phP)); TP[k].tc.set(rP.tc,rp.D,0.6); ped[k].tp2.set(rp.A,toP[k],0.6);
-          cHP.hl(k,acH*Math.sin(phH)); cPP.hl(k,acP*Math.sin(phP)); TH[k].tc.hl(dH/pullU); TP[k].tc.hl(dP/pullL); }
-        const aH=dH/pullU, aP=dP/pullL; hlM(hmat[k],up.keys[k].hm,aH); hlM(pmat[k],lo.keys[k].hm,aP);
-        TH[k].t1.hl(aH); TH[k].t2.hl(aH); rbH.hl(k,aH); cPH.hl(k,Math.max(aH,aP)); TP[k].tL.hl(aP); TP[k].t1.hl(aP); TP[k].t2.hl(aP); rbP.hl(k,aP);
+        const x=kx(k), {SA,zS1,yS1,zS2,yS2,ZHK}=SQ;
+        const thK=Math.asin(clamp(DIP*KV[1][k]/lo.Lk,0,1));
+        let thU=Math.asin(clamp(DIP*KV[2][k]/up.Lk,0,1));
+        if(k<NP) thU=Math.max(thU,Math.asin(clamp(cPP.push(oPP,pC[k])/(UT-ZPP),0,1)));
+        thU=Math.min(thU,Math.asin(DIP/up.Lk)*1.02);
+        // pK: rise of the upper Hauptwerk tracker (the key's own), pL: of the lower one (the key, or Hw/P); pU: drop of the Positiv run
+        const pK=dzH*Math.sin(thK), plPH=cPH.push(oPH,pK), pU0=dzP*Math.sin(thU), pU=Math.max(pU0,plPH);
+        const pL=k<NP?Math.max(pK,cHP.push(oHP,pC[k])):pK, f=Math.asin(clamp(pL/SQ.SA,0,1));
+        const pH=SQ.SA*Math.sin(f), phH=Math.asin(clamp(pH/aiH,0,1)), phP=Math.asin(clamp(pU/aiP,0,1));
+        KDH[k]=4*Math.sin(phH)/KPULL; KDP[k]=4*Math.sin(phP)/KPULL;
+        lo.set(k,thK,0); up.set(k,thU,pU0);
+        const hook=lo.at(k,thK,ZHK,-KH/2), aU=V3(x,UPm.yb-pU,UPm.za), rH=rbH.set(k,phH), rP=rbP.set(k,phP);
+        // S1 under the console: arm toward the player pulled up, hanging arm pulls the horizontal tracker forward;
+        // S2 behind the swell box: hanging arm pulled forward, arm pointing back goes down and pulls the tracker to the roller
+        const c=Math.cos(f), s=Math.sin(f), {YJ,YHP}=SQ;
+        const i1=V3(x,yS1+SA*s,zS1+SA*c), u1=V3(x,yS1-SA*c,zS1+SA*s), h2=V3(x,yS2-SA*c,zS2+SA*s), o2=V3(x,yS2-SA*s,zS2-SA*c);
+        const q=TH[k]; q.s1a.set(V3(x,yS1,zS1),i1); q.s1b.set(V3(x,yS1,zS1),u1); q.s2a.set(V3(x,yS2,zS2),h2); q.s2b.set(V3(x,yS2,zS2),o2);
+        // upper part: wire down past the Pos/Hw nut to the eye; lower part: nut on the eye, wire past the Hw/P nut, wood down to S1
+        const jy=YJ+pK, ny=YJ+0.4+pL; q.tA.set(hook,V3(x,jy,ZHK),0.3,hook.y-jy); q.jn.put(x,jy-0.2,ZHK,0.9,0.4,0.6);
+        q.tL.set(V3(x,ny,ZHK),i1,0.3,ny-(YHP-2.5)); if(q.nHP) q.nHP.at(V3(x,YHP+0.45+pL,ZHK));
+        q.th.set(h2,u1,0.3); q.tv.set(rH.ti,o2,0.3); q.t2.set(hw.pullDown(k),rH.to,0.6);
+        cPH.set(k,oPH,pK,pU,aU);
+        // S3 behind the console: arm toward the player pulled down, upright arm pulls the horizontal tracker forward;
+        // S4 under the back of the Positiv chest: hanging arm pulled forward, arm pointing back goes down
+        const {SA3,yS3,zS3,yS4,zS4}=SQ, f3=Math.asin(clamp(pU/SA3,0,1)), c3=Math.cos(f3), s3=Math.sin(f3);
+        const i3=V3(x,yS3-SA3*s3,zS3+SA3*c3), u3=V3(x,yS3+SA3*c3,zS3+SA3*s3), h4=V3(x,yS4-SA3*c3,zS4+SA3*s3), o4=V3(x,yS4-SA3*s3,zS4-SA3*c3), P=TP[k];
+        P.s3a.set(V3(x,yS3,zS3),i3); P.s3b.set(V3(x,yS3,zS3),u3); P.s4a.set(V3(x,yS4,zS4),h4); P.s4b.set(V3(x,yS4,zS4),o4);
+        P.t1.set(i3,aU,0.3); P.th.set(h4,u3,0.3); P.tv.set(rP.ti,o4,0.3); P.t2.set(pos.pullDown(k),rP.to,0.6);
+        const aH=Math.sin(phH)*aiH/pullH, aP=Math.sin(phP)*aiP/pullP;
+        hlM(hmat[k],lo.keys[k].hm,Math.sin(thK)*lo.Lk/DIP); hlM(pmat[k],up.keys[k].hm,Math.sin(thU)*up.Lk/DIP); q.tA.hl(Math.sin(thK)*lo.Lk/DIP);
+        for(const t of [q.tL,q.th,q.tv,q.s1a,q.s1b,q.s2a,q.s2b,q.t2]) t.hl(aH); rbH.hl(k,aH); cPH.hl(k,plPH>0.01?aP:0,aP);
+        for(const t of [P.t1,P.t2,P.th,P.tv,P.s3a,P.s3b,P.s4a,P.s4b]) t.hl(aP); rbP.hl(k,aP);
       }
       hw.update(); pos.update(); tc.update(); td.update();
     }};
 }
-const LO_ZA=-17;
 

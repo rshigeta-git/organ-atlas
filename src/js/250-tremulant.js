@@ -7,7 +7,7 @@ function buildTremulant(){
   const R=CX.root, m={on:true,play:true,trem:false,type:'wipp',hz:5.5,ph:0,amt:0,env:0};
   const yT=17, TH=12, TD=6, x0=-46, x1=22, zc=0;   // trunk: 12 high (as tall as the tremulant bellows), 6 deep
   // reservoir (simplified) and wind trunk
-  box(R,18,yT+3,18,MAT.wood,-56,(yT+3)/2,0,LB('リザーバー（マガジンふいご）','Magazinbalg'));
+  box(R,18,yT+3,18,hollow(MAT.wood),-56,(yT+3)/2,0,LB('リザーバー（マガジンふいご）','Magazinbalg'));
   box(R,19,1.2,19,MAT.wood,-56,yT+3.6,0,LB('リザーバーの上板','Oberplatte')); box(R,8,3,8,MAT.weight,-56,yT+5.7,0,LB('おもり','Gewicht'));
   const LK=LB('風導管（リザーバーからパイプの風箱へ）','Windkanal');
   box(R,x1-x0,0.8,TD+1.6,MAT.wood,(x0+x1)/2,yT-TH/2-0.4,zc,LK); box(R,x1-x0,0.8,TD+1.6,MAT.wood,(x0+x1)/2,yT+TH/2+0.4,zc,LK);
@@ -21,7 +21,7 @@ function buildTremulant(){
   new Vol((a,b,c,out)=>out.set(x1+1+a*10,yT-TH/2+b*TH,-5+c*10),90,{state:()=>m.on?1:0,rate:2});
   new Tube([V3(-47,yT,0),V3(-30,yT,0),V3(-14,yT,0),V3(0,yT,0),V3(x1+2,yT,0)],{r:2.2,density:0.6,front:200,state:()=>({open:m.on,speed:m.play?6+10*(1-m.dip*m.amt*4):0})});
   const pt=new Tube([V3(x1+6,yT+3,0),V3(x1+6,yT+TH/2+0.8,0)].concat(sp.path.slice(1)),{r:0.3,density:0.3,front:900,state:()=>({open:m.on&&m.play,speed:20})});
-  pt.exitU=pt.cum[1+sp.ei]/pt.L;
+  pt.exitU=pt.cum[1+sp.ei]/pt.L; pt.mouthAt(sp,1);
   /* Wippfedertremulant */
   const WX=-24, WL=10, WW=5.4, yTop=yT+TD/2+0.8, wg=new T.Group(); wg.position.set(WX-WL/2,yTop,0); R.add(wg);
   // the Bock tremulant is mounted on the SIDE of the trunk: built as if on top, then turned 90° about the trunk axis
@@ -29,7 +29,9 @@ function buildTremulant(){
   const WIP=new T.Group(); WIP.position.y=-yT; WPV.add(WIP);
   const side=(x,y,z)=>V3(x,yT-z,y-yT);
   box(WIP,WL+1,0.6,WW+1,MAT.wood,WX,yTop+0.3,0,LB('小ふいごの台（風導管の穴の上）','Balgbrett'));
+  bore(WIP,MAT.dark,WX,yT+TD/2-0.6,yTop+0.6,0,1.6,LB('風導管の側面と台の穴（ここから小ふいごへ風が入る）','Luftbohrung'));
   box(wg,WL,0.5,WW,MAT.wood,WL/2,0.25,0,LB('小ふいごの上板（動く板）','Oberplatte')); wg.position.y=yTop+0.6; WIP.add(wg);
+  bore(wg,MAT.dark,WL-2.8,0,0.5,0,0.9,LB('上板の穴（弁がふさぐ。開くと風が外へ逃げる）','Luftbohrung'));
   const wsides=[-1,1].map(s=>{ const t=mk(G_TRI,MAT.leather,WIP,LB('小ふいごのひだ（革）','Falten')); t.position.set(WX-WL/2,yTop+0.6,s*WW/2); return t; });
   const wfront=box(WIP,0.3,1,WW,MAT.leather,WX+WL/2,yTop+0.6,0,LB('小ふいごのひだ（革）','Falten'));
   // valve: hinged on a horizontal axis (local x = world horizontal); the flap covers the hole above the hinge, the arm

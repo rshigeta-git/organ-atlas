@@ -1,7 +1,7 @@
 /* ---------------- pipes ---------------- */
 function buildPipe(x,z,i,k,r,base,par){
   const R=par||CX.root, L=bodyLen(i,k,r), F=SC/0.45;   // F: fixed details (feet, boots, lips) scale with the drawing scale
-  const lab=LB(STOPS[i].name+(i===3?' 第'+(r+1)+'列':'')+'（'+KEYNAMES[k]+'）のパイプ','Pfeife');
+  const lab=LB(STOPS[i].name+(nRanks(i)>1?' 第'+(r+1)+'列':'')+'（'+KEYNAMES[k]+'）のパイプ','Pfeife');
   if(i===4){
     const rad=0.75*F, bootH=12*F;
     const cone=mk(G_CONE,MAT.metal,R,LB('ブーツ（リードを囲む足部）','Stiefel')); cone.scale.set(1.15*F,bootH,1.15*F); cone.position.set(x,base+bootH/2,z);
@@ -9,6 +9,25 @@ function buildPipe(x,z,i,k,r,base,par){
     const b=mk(G_CYL_OPEN,MAT.metal,R,LB('共鳴管（約1/8の長さの短い管：Vox humana）','Becher')); b.scale.set(rad,L,rad); b.position.set(x,base+bootH+0.9*F+L/2,z);
     cyl(R,rad+0.12*F,0.5*F,MAT.metalDark,x,base+bootH+0.9*F+L,z,LB('半分ふさいだ共鳴管の上端','Deckel'));
     const top=base+bootH+0.9*F+L;
+    return {reed:true,path:[V3(x,base+bootH+0.2*F,z),V3(x,top,z),V3(x,top+6*F,z)],ei:0,top};
+  }
+  const PR=PIPE[i].reed;
+  if(PR&&PR.t==='cyl'){   // Krummhorn: boot and head as the other reeds, a cylindrical resonator of about half length, open at the top
+    const rad=PR.r*F, bootH=12*F;
+    const cone=mk(G_CONE,MAT.metal,R,LB('ブーツ（リードを囲む足部）','Stiefel')); cone.scale.set(1.15*F,bootH,1.15*F); cone.position.set(x,base+bootH/2,z);
+    cyl(R,0.95*F,1.4*F,MAT.brass,x,base+bootH+0.2*F,z,LB('頭部（中でリードが振動して発音する）','Kopf / Zunge'));
+    const b=mk(G_CYL_OPEN,MAT.metal,R,LB('共鳴管（円筒：'+STOPS[i].name+'）','Becher')); b.scale.set(rad,L,rad); b.position.set(x,base+bootH+0.9*F+L/2,z);
+    const top=base+bootH+0.9*F+L;
+    return {reed:true,path:[V3(x,base+bootH+0.2*F,z),V3(x,top,z),V3(x,top+6*F,z)],ei:0,top};
+  }
+  if(PR&&PR.t==='cone'){   // Hautbois: a narrow conical resonator, its top tenth flared out into a bell
+    const bootH=12*F, rb=0.45*F, rt=PR.rt*F*Math.pow(2,-k/24), Lc=L*0.9, Lb=L-Lc;
+    const cone=mk(G_CONE,MAT.metal,R,LB('ブーツ（リードを囲む足部）','Stiefel')); cone.scale.set(1.15*F,bootH,1.15*F); cone.position.set(x,base+bootH/2,z);
+    cyl(R,0.95*F,1.4*F,MAT.brass,x,base+bootH+0.2*F,z,LB('頭部（中でリードが振動して発音する）','Kopf / Zunge'));
+    const y0=base+bootH+0.9*F, g1=new T.CylinderGeometry(rt,rb,Lc,F>1.5?14:20,1,true), g2=new T.CylinderGeometry(rt*PR.bell,rt,Lb,F>1.5?14:20,1,true); CX.own.push(g1,g2);
+    const b1=mk(g1,MAT.metal,R,LB('共鳴管（細い円すい：'+STOPS[i].name+'）','Becher')); b1.position.set(x,y0+Lc/2,z);
+    const b2=mk(g2,MAT.metal,R,LB('共鳴管の上の広がり（ベル）','Becher')); b2.position.set(x,y0+Lc+Lb/2,z);
+    const top=y0+L;
     return {reed:true,path:[V3(x,base+bootH+0.2*F,z),V3(x,top,z),V3(x,top+6*F,z)],ei:0,top};
   }
   if(i===9||i===12){
@@ -32,9 +51,9 @@ function buildPipe(x,z,i,k,r,base,par){
     const top=by+L+3.7*F;
     box(R,w*0.86,1.4*F,dz*0.86,MAT.pipeWoodLight,x,top+0.5*F,z,LB('栓（上端をふさぐ。抜き差しで調律する）','Spund'));
     box(R,w*0.3,1.6*F,dz*0.5,MAT.pipeWoodLight,x,top+1.9*F,z,LB('栓の取っ手','Spundgriff'));
-    return {reed:false,path:[V3(x,my-0.8*F,z),V3(x,my-0.3*F,z+hz-0.15),V3(x,my+0.9*F,z+hz+0.25*F),V3(x,my+3*F,z+hz+3*F),V3(x,my+5*F,z+hz+6*F)],ei:1,top:top+2.7*F};
+    return {reed:false,path:[V3(x,my-0.8*F,z),V3(x,my-0.3*F,z+hz-0.15),V3(x,my+0.9*F,z+hz+0.25*F),V3(x,my+3*F,z+hz+3*F),V3(x,my+5*F,z+hz+6*F)],ei:1,top:top+2.7*F,mouth:{hw:w*0.4}};
   }
-  const P=PIPE[i], Rb=pipeR(i,k,r), footH=(i===3?9:12)*F, my=base+footH;
+  const P=PIPE[i], Rb=pipeR(i,k,r), footH=(nRanks(i)>1?9:12)*F, my=base+footH;
   const G=flueGeos(Rb,footH,Math.min(0.45*F,Rb*0.35),L,P.mw,P.cut); CX.own.push(G.body,G.foot,G.lang);
   const LBu=LB('上唇（平たくつぶした歌口の上側。下の縁が風を切る）','Oberlabium'), LBl=LB('下唇（足の上部をつぶした歌口の下側）','Unterlabium');
   const body=mk(G.body,MAT.metal,R,lab); body.position.set(x,my,z);
@@ -49,6 +68,6 @@ function buildPipe(x,z,i,k,r,base,par){
   let top=my+L;
   if(P.chim){ cyl(R,Rb+0.12*F,1.2*F,MAT.metalDark,x,top-0.3*F,z,LB('蓋（中央に煙突のある半閉管の蓋）','Hut')); const cl=L*P.chim, cr=Math.max(0.12*F,Rb*0.3); cyl(R,cr,cl,MAT.metal,x,top+0.3*F+cl/2,z,LB('煙突（Rohr。名前の由来）','Röhrchen')); top+=0.3*F+cl; }
   const fz=z+G.d;
-  return {reed:false,path:[V3(x,my-0.8*F,z),V3(x,my-0.05,fz-0.1),V3(x,my+G.hc,fz+0.12),V3(x,my+G.hc+2*F,fz+2.5*F),V3(x,my+G.hc+5*F,fz+6*F)],ei:1,top};
+  return {reed:false,path:[V3(x,my-0.8*F,z),V3(x,my-0.05,fz-0.1),V3(x,my+G.hc,fz+0.12),V3(x,my+G.hc+2*F,fz+2.5*F),V3(x,my+G.hc+5*F,fz+6*F)],ei:1,top,mouth:{hw:G.w*0.45}};
 }
 

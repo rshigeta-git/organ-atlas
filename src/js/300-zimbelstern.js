@@ -52,7 +52,7 @@ function buildZimbelstern(){
   for(let b=0;b<10;b++){ const a=b/10*2*Math.PI, p=box(wheel,3.4,0.35,2.2,MAT.woodPale,0,0,0,LB('風車の羽根（ノズルの風に押されて回る）','Windrad')); p.position.set(5.5*Math.cos(a),5.5*Math.sin(a),0); p.rotation.z=a; }
   // wind supply: valve box with the stop, duct to the nozzle
   const VX=20, VY=8, VZ=-20;
-  box(R,8,6,8,MAT.wood,VX,VY,VZ,LB('ツィンベルシュテルンの弁箱（中は風で満ちている）','Ventilkasten'));
+  box(R,8,6,8,hollow(MAT.wood),VX,VY,VZ,LB('ツィンベルシュテルンの弁箱（中は風で満ちている）','Ventilkasten'));
   const flap=new T.Group(); flap.position.set(VX-2,VY+2.6,VZ); R.add(flap);
   box(flap,4,0.4,4,MAT.leather,2,-0.2,0,LB('弁（ストップを引くと開いて風車へ風を送る）','Spielventil'));
   const DPT=[V3(VX,VY+3,VZ),V3(VX,30,VZ),V3(6,30,VZ),V3(6,36.2,VZ)];

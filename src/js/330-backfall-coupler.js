@@ -35,9 +35,9 @@ function buildWippenCoupler(){
   }
   const RB=[{man:lo,o:LO,ai:AO*pullL/KPULL,y0:18,kd:kdP,lab:'下のカプラー・ウィッペン',wn:'ポジティフ'},{man:up,o:UP,ai:AO*pullU/KPULL,y0:14,kd:kdU,lab:'上鍵盤（II）の鍵',wn:'ハウプトヴェルク'}];
   for(const b of RB){ b.zr=b.o.za-b.ai; b.zo=b.zr+AO; }
-  const pos=buildChest({y:42,z:RB[0].zo-14,kd:kdP,sp:POSSP,stops:POST,rows:POSR,palMat:k=>lmats[k],volN:260});
+  const pos=buildChest({y:42,z:RB[0].zo-14,kd:kdP,sp:POSSP,stops:POST,rows:POSR,palMat:k=>lmats[k],volN:260,inlet:'R'});
   RB[1].y0=Math.ceil(pos.top)+3;
-  const hw=buildChest({y:RB[1].y0+13*1.25+6,z:RB[1].zo-14,kd:kdU,sp:HWSP,stops:HWST,rows:HWR,mixz:[-2.4,0,2.4],P:9.6,palMat:k=>umats[k]});
+  const hw=buildChest({y:RB[1].y0+13*1.25+6,z:RB[1].zo-14,kd:kdU,sp:HWSP,stops:HWST,rows:HWR,mixz:[-2.4,0,2.4],P:9.6,palMat:k=>umats[k],inlet:'R'});
   RB[0].ch=pos; RB[1].ch=hw;
   for(const b of RB){
     const xs=[]; for(let k=0;k<13;k++) xs.push(b.man.keys[k].x,b.ch.pos(k)); const xmin=Math.min(...xs)-3, xmax=Math.max(...xs)+3, ytop=b.y0+13*1.25+2;

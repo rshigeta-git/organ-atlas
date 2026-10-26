@@ -25,9 +25,10 @@ button,select,input{font:inherit;color:inherit}
 .pin[hidden],.tip[hidden],.drow[hidden],#pins[hidden]{display:none!important}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-.mast{padding-block:26px 18px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));border-bottom:2px solid var(--ink)}
-.mast-in{max-width:1600px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px}
-h1{margin:0;font-family:var(--f-display);font-weight:900;font-size:clamp(26px,3.4vw,42px);letter-spacing:.02em;line-height:1.15}
+.mast{padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));border-bottom:2px solid var(--ink)}
+.mast-in{max-width:1600px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px}
+/* title about as tall as the language menu, so the plate gets the height */
+h1{margin:0;font-family:var(--f-display);font-weight:900;font-size:22px;letter-spacing:.02em;line-height:1.2}
 .count{margin:0;font-size:14px;color:var(--muted)}
 .langpick{margin-left:auto;align-self:center}
 .langpick select{font-size:14px;padding:5px 10px;border:1px solid var(--line);border-radius:3px;background:var(--panel);color:var(--ink)}
@@ -82,7 +83,7 @@ h1{margin:0;font-family:var(--f-display);font-weight:900;font-size:clamp(26px,3.
 .field.rng>span{display:inline-block;min-width:10.5em}
 .field.rng output{font-size:13px;color:var(--ink);font-variant-numeric:tabular-nums;min-width:15ch}
 .field select{border:1px solid var(--line);background:var(--panel);border-radius:3px;padding:5px 8px;font-size:13.5px;color:var(--ink)}
-.note{font-size:12.5px;color:var(--muted);margin:0;max-width:78ch}
+.note{font-size:12.5px;color:var(--muted);margin:4px 0 0;max-width:78ch}
 
 .dock{display:grid;gap:12px;padding:14px 0 0;border-top:2px solid var(--ink)}
 .drow{display:grid;grid-template-columns:88px minmax(0,1fr);gap:12px;align-items:center}
@@ -96,6 +97,11 @@ h1{margin:0;font-family:var(--f-display);font-weight:900;font-size:clamp(26px,3.
 .wk.on{background:var(--keyglow);color:#2a2000}
 .bk.on{background:var(--keyglow);border-color:var(--keyglow);color:#2a2000}
 .kbd.wide{max-width:none;flex:1 1 100%}
+.kbd.ped{background:#2a1c10;gap:3px;padding:4px;border-radius:2px}
+.kbd.ped .wk{background:linear-gradient(#e0c79a,#c6a26c);border:1px solid #6e5232;border-radius:2px}
+.kbd.ped .wk span{color:#4a3520}
+.kbd.ped .bk{top:4px;height:46%;background:linear-gradient(#3a2b20,#17110c);border-color:#0e0a07;border-radius:2px}
+.kbd.ped .wk.on,.kbd.ped .bk.on{background:var(--keyglow)}
 .kbd.wide .wk{padding-bottom:3px}
 .kbd.wide .wk span{font-size:9px}
 .wk:disabled,.bk:disabled{opacity:.3;cursor:default}
@@ -156,14 +162,24 @@ h1{margin:0;font-family:var(--f-display);font-weight:900;font-size:clamp(26px,3.
 .steps button[aria-current="true"]{border-left-color:var(--oak);background:var(--panel)}
 .foot{font-size:12.5px;color:var(--muted)}
 
+/* wide screens: the page fills the window; the index, the plate column and the notes scroll each on their own,
+   so scrolling the side panes leaves the 3D plate where it is */
+@media (min-width:861px){
+  body{height:100vh;height:100dvh;margin:0;display:flex;flex-direction:column;overflow:hidden}
+  .mast{flex:none}
+  .layout{flex:1 1 auto;min-height:0;width:100%;box-sizing:border-box;grid-template-rows:minmax(0,1fr);padding-block:14px 0}
+  .index,.center,.notes{min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--line) transparent;padding-bottom:24px}
+  .index,.notes{padding-right:6px}
+  .stagewrap{flex:none;height:clamp(380px,calc(100dvh - 260px),980px)}
+}
 @media (max-width:1180px){
-  .layout{grid-template-columns:minmax(0,1fr) 320px}
-  .index{grid-column:1/-1}
+  .layout{grid-template-columns:minmax(0,1fr) 320px;grid-template-rows:auto minmax(0,1fr)}
+  .index{grid-column:1/-1;overflow:visible;padding-bottom:0}
   .index select{display:block}
   #indexList{display:none}
 }
 @media (max-width:860px){
-  .layout{grid-template-columns:minmax(0,1fr)}
+  .layout{grid-template-columns:minmax(0,1fr);grid-template-rows:none}
   .stagewrap{height:clamp(320px,58vh,560px)}
 }
 @media (max-width:520px){

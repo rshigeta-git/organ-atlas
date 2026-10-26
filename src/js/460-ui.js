@@ -12,7 +12,8 @@ function buildKbdUI(n,lim){
   for(let k=0;k<n;k++){ if(nat.includes(k)) continue; const ni=nat.filter(q=>q<k).length; const b=document.createElement('button'); b.className='bk'; b.dataset.k=k; b.setAttribute('aria-label','鍵 '+KEYNAMES[k]); b.style.left='calc('+(ni/nat.length*100)+'% - var(--bkw) / 2)'; b.innerHTML='<span>'+(wide?'':KEYNAMES[k])+'</span>'; if(off(k)) b.disabled=true; kbd.appendChild(b); }
   syncKeyUI();
 }
-function syncKeyUI(){ kbd.querySelectorAll('[data-k]').forEach(b=>b.classList.toggle('on',S.key[+b.dataset.k])); }
+// a model whose keyboard can be the pedal (pedKb) shows it in the pedalboard colours of H-03 while the pedal is selected
+function syncKeyUI(){ kbd.classList.toggle('ped',!!(inst&&inst.pedKb&&inst.curMan&&inst.curMan()===0)); kbd.querySelectorAll('[data-k]').forEach(b=>b.classList.toggle('on',S.key[+b.dataset.k])); }
 kbd.addEventListener('pointerdown',e=>{ const b=e.target.closest('[data-k]'); if(!b) return; e.preventDefault(); audioInit(); const k=+b.dataset.k; if(S.latch) S.key[k]=!S.key[k]; else { S.key[k]=true; try{ b.setPointerCapture(e.pointerId); }catch(_){} } syncKeyUI(); });
 const kup=e=>{ if(S.latch) return; const b=e.target.closest('[data-k]'); if(!b) return; S.key[+b.dataset.k]=false; syncKeyUI(); };
 kbd.addEventListener('pointerup',kup); kbd.addEventListener('pointercancel',kup);
@@ -25,18 +26,19 @@ $('latch').addEventListener('click',e=>{ S.latch=!S.latch; e.currentTarget.setAt
 $('release').addEventListener('click',()=>{ S.key.fill(false); syncKeyUI(); });
 
 let STOPROWS=null;
-function mkKnob(name,ja,on){ const b=document.createElement('button'); b.className='knob'; b.setAttribute('aria-pressed','false'); b.innerHTML='<b>'+name+'</b><span>'+ja+'</span>'; b.addEventListener('click',()=>{ audioInit(); on(); syncStopUI(); }); return b; }
+// a stop button shows the stop's name only (the descriptive line under it was dropped)
+function mkKnob(name,ja,on){ const b=document.createElement('button'); b.className='knob'; b.setAttribute('aria-pressed','false'); b.innerHTML='<b>'+name+'</b>'; b.addEventListener('click',()=>{ audioInit(); on(); syncStopUI(); }); return b; }
 function renderStops(rows){
   STOPROWS=rows||null; stopsEl.innerHTML=''; stopsEl.classList.toggle('multi',!!rows);
   $('stopsLbl').innerHTML=T_('ストップ')+'<small>'+(rows?rows.map(r=>r.items.length).join(' + '):'5')+' stops</small>';
-  if(!rows){ STOPS.slice(0,5).forEach((st,i)=>{ const b=mkKnob(st.name,T_(st.ja),()=>{ S.stop[i]=!S.stop[i]; }); b.dataset.i=i; stopsEl.appendChild(b); }); return; }
+  if(!rows){ STOPSET.map(i=>STOPS[i]).forEach((st,i)=>{ const b=mkKnob(st.name,T_(st.ja),()=>{ S.stop[i]=!S.stop[i]; }); b.dataset.i=i; stopsEl.appendChild(b); }); return; }
   rows.forEach((r,g)=>{ const row=document.createElement('div'); row.className='srow'; row.innerHTML='<span class="slbl">'+T_(r.label)+'</span>'; r.items.forEach((it,j)=>{ const b=mkKnob(it.name,T_(it.ja),()=>it.set(!it.get())); b.dataset.g=g; b.dataset.j=j; row.appendChild(b); }); stopsEl.appendChild(row); });
 }
 renderStops(null);
 function syncStopUI(){ stopsEl.querySelectorAll('.knob').forEach(b=>{ const on=b.dataset.i!=null?S.stop[+b.dataset.i]:!!STOPROWS[+b.dataset.g].items[+b.dataset.j].get(); b.setAttribute('aria-pressed',on); }); if(inst&&inst.syncConsole) inst.syncConsole(); }
 
 
-function setXray(v){ S.xray=v; for(const m of XRAY){ m.transparent=v; m.opacity=v?0.22:1; m.depthWrite=!v; m.needsUpdate=true; } $('xray').setAttribute('aria-pressed',v); }
+function setXray(v){ S.xray=v; for(const m of XRAY){ m.transparent=v; m.opacity=v?0.22:1; m.depthWrite=!v; if(SOLID.has(m)) m.side=v?T.FrontSide:T.DoubleSide; m.needsUpdate=true; } $('xray').setAttribute('aria-pressed',v); }
 $('xray').addEventListener('click',()=>setXray(!S.xray));
 $('tPins').addEventListener('click',e=>{ SHOW.pins=!SHOW.pins; e.currentTarget.setAttribute('aria-pressed',SHOW.pins); pinsEl.hidden=!SHOW.pins; });
 function setCut(v){ S.cut=v; const [mn,mx]=inst.def.clip; clipPlane.constant=v<=0.001?1e5:lerp(mx,mn,v); $('cut').value=Math.round(v*100); }
@@ -58,7 +60,7 @@ const api={
   xray:setXray, cut:setCut, cam:camTo, home:()=>camHome(),
   ctl(id,v){ if(inst.ctl&&inst.ctl[id]) inst.ctl[id](v); renderControls(); }
 };
-window.__oa={api,S,get inst(){ return inst; },load:id=>load(id),r:renderer,MAT};
+window.__oa={api,S,get inst(){ return inst; },get inlets(){ return CX&&CX.inlets||[]; },load:id=>load(id),r:renderer,MAT};
 
 const notes=$('notes'), sel=$('modelSelect'), list=$('indexList');
 function renderIndex(cur){

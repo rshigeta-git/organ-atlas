@@ -6,8 +6,11 @@ function buildBlowerMagR(ST){
   const CXr=0, CZ=-470, LX=256, LZ=192, yb=30, x0=CXr-LX/2, x1=CXr+LX/2, z0=CZ-LZ/2, z1=CZ+LZ/2, RL=42;
   // blower
   const BX=-250, BY=40, BZ=CZ;
-  box(ST,70,80,70,MAT.casing,BX,BY,BZ,LB('送風機のケース','Gebläsegehäuse'));
-  const imp=new T.Group(); imp.position.set(BX,BY,BZ+36); R.add(imp);
+  // casing of sheet panels; the front has a square opening round the intake, so the impeller inside can be seen
+  { const LG=LB('送風機のケース','Gebläsegehäuse'), t=2, o=15;
+    box(ST,70,80,t,MAT.casing,BX,BY,BZ-35+t/2,LG); for(const s of [-1,1]){ box(ST,t,80,70,MAT.casing,BX+s*(35-t/2),BY,BZ,LG); box(ST,70,t,70,MAT.casing,BX,BY+s*(40-t/2),BZ,LG); }
+    for(const s of [-1,1]){ box(ST,35-o,80,t,MAT.casing,BX+s*(35+o)/2,BY,BZ+35-t/2,LG); box(ST,2*o,40-o,t,MAT.casing,BX,BY+s*(40+o)/2,BZ+35-t/2,LG); } }
+  const imp=new T.Group(); imp.position.set(BX,BY,BZ+18); R.add(imp);   // inside the casing, behind the intake
   const hub=mk(G_CYL,MAT.iron,imp,LB('羽根車（回転して風を起こす）','Laufrad')); hub.scale.set(26,4,26); hub.rotation.x=Math.PI/2;
   for(let b=0;b<10;b++){ const bl=box(imp,2.4,24,10,MAT.metalDark,0,0,3,LB('羽根車の羽根','Laufradschaufel')); const an=b/10*Math.PI*2; bl.position.set(Math.cos(an)*14,Math.sin(an)*14,3); bl.rotation.z=an-Math.PI/2+0.35; }
   const mot=mk(G_CYL,MAT.iron,ST,LB('電動モーター','Motor')); mot.rotation.x=Math.PI/2; mot.scale.set(16,30,16); mot.position.set(BX,BY,BZ-50);

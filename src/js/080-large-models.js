@@ -19,24 +19,33 @@ function prod(mat,r,label,ud){ const h=CX.pool.add(G_ROD,mat,label,ud); h.set=(a
 function pplank(mat,sx,sz,label,ud){ const h=CX.pool.add(G_BOX,mat,label,ud); h.set=(a,b)=>{ _dv.subVectors(b,a); const L=_dv.length()||1e-4; _mv.copy(a).addScaledVector(_dv,.5); _q.setFromUnitVectors(UP,_dv.divideScalar(L)); _sv.set(sx,L,sz); h.m.compose(_mv,_q,_sv); }; h.hl=a=>hlSet(h,a); return h; }
 function pnut(mat,r,hh,label,ud){ const h=CX.pool.add(G_CYL,mat,label,ud); h.at=(p,dir)=>{ _q.setFromUnitVectors(UP,dir||UP); _sv.set(r,hh,r); h.m.compose(p,_q,_sv); }; h.hl=a=>hlSet(h,a); return h; }
 function pbox(mat,label,ud){ const h=CX.pool.add(G_BOX,mat,label,ud); h.put=(x,y,z,w,hh,d)=>{ _mv.set(x,y,z); _q.identity(); _sv.set(w,hh,d); h.m.compose(_mv,_q,_sv); }; h.hl=a=>hlSet(h,a); return h; }
-/* tracker: thin wooden strip, threaded wire at both ends (one wire drawn along the whole length), leather nuts */
+/* tracker: thin wooden strip, threaded wire at both ends (one wire drawn along the whole length), leather nuts;
+   set(top,bottom,thick,w1): w1 = length of the wire at the top end (longer where another nut sits on it) */
 function ptrk(mat,label,ud){
   const w=prod(MAT.iron,0.07,LB('ワイヤー（トラッカーの両端）','Draht'),ud), wd=pplank(mat,0.9,0.22,label,ud);
   const n1=pnut(MAT.leather,0.42,0.3,LB('革ナット（回して長さを調整する）','Ledermutter'),ud), n2=pnut(MAT.leather,0.45,0.34,LB('革ナット（鍵や腕の下で受ける）','Ledermutter'),ud);
   const B=V3(0,0,0),Cc=V3(0,0,0),D=V3(0,0,0),dir=V3(0,0,0);
-  return {set(top,bottom,thick){
+  return {set(top,bottom,thick,w1){
       dir.subVectors(bottom,top); const L=dir.length()||1e-3; dir.divideScalar(L);
-      B.copy(top).addScaledVector(dir,Math.min(3,L*0.18)); Cc.copy(bottom).addScaledVector(dir,-Math.min(3.2,L*0.2)); D.copy(bottom).addScaledVector(dir,thick+0.25);
+      B.copy(top).addScaledVector(dir,w1!=null?Math.min(w1,L*0.8):Math.min(3,L*0.18)); Cc.copy(bottom).addScaledVector(dir,-Math.min(3.2,L*0.2)); D.copy(bottom).addScaledVector(dir,thick+0.25);
       w.set(top,D); wd.set(B,Cc); n1.at(V3(0,0,0).copy(top).addScaledVector(dir,-0.15),dir); n2.at(V3(0,0,0).copy(D).addScaledVector(dir,-0.05),dir); },
     hl(a){ wd.hl(a); }};
 }
 // a bore through a board: a dark cylinder slightly longer than the board, so it shows as a hole on both faces and in the cut view
-const G_BOREW=new T.CylinderGeometry(1,1,1,20,1,true);
+const G_BOREW=new T.CylinderGeometry(1,1,1,20,1,true); const BORE_WALL=new WeakMap();
 function bore(par,mat,x,y0,y1,z,r,lab,ends=true){
   // the wall is a half-transparent tube (reads as a hollow bore in the x-ray view); it shares the glow colour of the hole material
-  let w=mat.userData.boreWall; if(!w){ w=mat.clone(); if(CX.own.includes(mat)) CX.own.push(w); w.side=T.DoubleSide; w.transparent=true; w.opacity=0.45; w.depthWrite=false; w.emissive=mat.emissive; mat.userData.boreWall=w; }
+  // the wall material is cached per hole material in a WeakMap: kept in mat.userData it would be copied (as broken JSON)
+  // into every later clone of that material, and bores made with such a clone did not show
+  let w=BORE_WALL.get(mat); if(!w){ w=mat.clone(); if(CX.own.includes(mat)) CX.own.push(w); w.side=T.DoubleSide; w.transparent=true; w.opacity=0.45; w.depthWrite=false; w.emissive=mat.emissive; BORE_WALL.set(mat,w); }
   const c=mk(G_BOREW,w,par,lab); c.scale.set(r,y1-y0,r); c.position.set(x,(y0+y1)/2,z);
   if(ends) for(const [y,rx] of [[y1+0.03,-Math.PI/2],[y0-0.03,Math.PI/2]]){ const d=mk(G_DISC,mat,par,lab); d.rotation.x=rx; d.scale.set(r,r,r); d.position.set(x,y,z); }
+  return c; }
+// the same along any straight line a → b (a horizontal conduit, a slanted passage); ends optional
+function boreAB(par,mat,a,b,r,lab,ends=true){
+  const c=bore(par,mat,0,0,1,0,r,lab,false); _dv.subVectors(b,a); const L=_dv.length()||1e-4;
+  c.position.copy(a).addScaledVector(_dv,.5); c.scale.set(r,L,r); c.quaternion.setFromUnitVectors(UP,_dv.divideScalar(L));
+  if(ends) for(const [p,s] of [[b,1],[a,-1]]){ const d=mk(G_DISC,mat,par,lab); d.quaternion.setFromUnitVectors(V3(0,0,1),_dv.clone().multiplyScalar(s)); d.scale.set(r,r,r); d.position.copy(p).addScaledVector(_dv,0.03*s); }
   return c; }
 function mergeStatic(G,target){
   G.updateMatrixWorld(true); const by=new Map(), nm=new T.Matrix3();
@@ -55,6 +64,6 @@ function mergeStatic(G,target){
   G.parent.remove(G);
   G.traverse(o=>{ if(o.isMesh&&o.geometry&&!o.geometry.__shared) o.geometry.dispose(); });
 }
-[G_BOX,G_CYL,G_CYL_OPEN,G_CONE,G_ROD,G_DISC,G_COIL,G_SPH,G_TRI].forEach(g=>g.__shared=true);
+[G_BOX,G_CYL,G_CYL_OPEN,G_CONE,G_ROD,G_DISC,G_COIL,G_SPH,G_TRI,G_BOREW].forEach(g=>g.__shared=true);
 function rangeAt(rs,f){ let lo=0,hi=rs.length-1; while(lo<hi){ const mid=(lo+hi)>>1; if(rs[mid].end>f) hi=mid; else lo=mid+1; } return rs[lo]; }
 

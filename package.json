@@ -1,7 +1,7 @@
 {
   "name": "organ-atlas",
   "private": true,
-  "description": "パイプオルガン機構図鑑 — interactive Three.js atlas of pipe-organ mechanisms",
+  "description": "パイプオルガンメカニズム図鑑 — interactive Three.js atlas of pipe-organ mechanisms",
   "type": "module",
   "scripts": {
     "build": "node build.mjs",

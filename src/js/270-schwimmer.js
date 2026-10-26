@@ -25,7 +25,7 @@ function buildSchwimmer(){
   box(R,0.6,3,Z1-Z0-1.2,MAT.wood,CH1,oy-1.5,ZC,LCH);
   box(R,CH1-CH0,0.5,Z1-Z0,MAT.wood,(CH0+CH1)/2,oy-0.25,ZC,LCH);
   const seat=mk(G_CYL_OPEN,MAT.dark,R,LB('弁座（入口の穴）','Kegelsitz')); seat.scale.set(HR,0.5,HR); seat.position.set(HX,yFb+0.25,ZC);
-  for(const x of [-6,6,18]){ const d=mk(G_DISC,MAT.dark,R,LB('風箱へ通じる穴','Kanal')); d.rotation.x=Math.PI/2; d.scale.set(2.4,2.4,1); d.position.set(x,yFb-0.01,ZC); }
+  for(const x of [-6,6,18]) bore(R,MAT.dark,x,yFb,yFb+0.5,ZC,2.4,LB('風箱へ通じる穴','Kanal'));
   const disc=cyl(R,HR+0.7,0.35,MAT.leather,HX,yFb+0.7,ZC,LB('入口弁（円板。下がると穴をふさぐ）','Schwimmerventil'));
   const vrod=rod(R,0.13,MAT.iron,LB('弁の棒（可動板とつながる。可動板が下がると弁を閉じる）','Ventilstange'));
   // moving plate, folds, springs, frame below
@@ -49,6 +49,7 @@ function buildSchwimmer(){
   const neck=new Tube([V3(-6,yFb-1,ZC),V3(-6,oy+0.5,ZC),V3(-6,oy+3,ZC+4)],{r:1.2,density:0.8,front:300,state:()=>({open:bel.fill>0.3&&S.p>10,speed:4+1.2*m.n})});
   for(const x of [6,18]) new Tube([V3(x,yFb-1,ZC),V3(x,oy+0.5,ZC),V3(x,oy+3,ZC+4)],{r:1.2,density:0.8,front:300,state:()=>({open:bel.fill>0.3&&S.p>10,speed:4+1.2*m.n})});
   chest=buildChest({y:oy,feed:neck});
+  for(const x of [-6,6,18]) bore(R,MAT.dark,x,oy,oy+1,ZC,2.4,LB('風箱の底板の穴（シュヴィンマーとつながる）','Kanal'));
   const lockPins=[-1,1].map(s=>box(R,1.2,1,1.2,MAT.iron,s*18,yBase,ZC,LB('つっかい棒（可動板を固定してシュヴィンマーを効かなくする）','Anschlag')));
   return {chest,
     controls:[{type:'toggle',id:'blower',label:'送風機',get:()=>m.blower,set:v=>m.blower=v},

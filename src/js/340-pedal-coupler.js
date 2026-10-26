@@ -8,20 +8,25 @@ function buildPedalCoupler(){
   const R=CX.root, m={cpl:true,cu:1,man:0,hs:[true,true,false,true,false,false],ps:[false,true,false]};
   const HWSP=new Float32Array([1,1,0,1,0,0]), PDSP=new Float32Array([0,1,0]);
   const HWST=[5,6,7,8,3,9], HWR=[13.9,6.43,1.46,-2.44,-7.54,-14.58], PDST=[5,11,12], PDR=[13.9,2.32,-10.53];
-  const YM=84, DIP=1.3, MAN={y:YM,zf:52,zt:0,za:20,bed0:2,bed1:53,zfelt:50.5,dip:DIP,man:1,cheek:'手鍵盤（ハウプトヴェルク）の側板'};
+  // console after the AGO standard: manual naturals 29½ in (749 mm, 96 units) above the pedal naturals, the front ends of
+  // the pedal sharps 8½-10 in (216-254 mm) behind a plumb line from the front edge of the manual naturals (here 234 mm),
+  // bench 20½ in (521 mm) above the pedal
+  const YM=101, DIP=1.3, MAN={y:YM,zf:52,zt:0,za:20,bed0:2,bed1:53,zfelt:50.5,dip:DIP,man:1,cheek:'手鍵盤（ハウプトヴェルク）の側板'};
   const mm=[], pm=[]; for(let k=0;k<13;k++){ mm.push(mclone(MAT.woodPale)); pm.push(mclone(MAT.woodPale)); }
   MAN.mat=k=>mm[k];
   const man=buildSuspManual(MAN), pullM=DIP*(MAN.za-MAN.zt)/(MAN.zf-MAN.zt);
   box(R,30,6.5,56,MAT.woodDark,0,YM-6.6,26,LB('演奏台（コンソール）の台','Spieltisch'));
-  for(const s of [-1,1]) for(const z of [4,48]) box(R,2,YM-9.9,2,MAT.woodDark,s*16,(YM-9.9)/2,z,LB('演奏台の脚','Spieltisch'));
+  // the key desk rests on two side frames standing outside the pedalboard (its frame is at x = ±34)
+  for(const s of [-1,1]){ box(R,2,2,56,MAT.woodDark,s*37,YM-9.9,26,LB('演奏台の脚','Spieltisch')); box(R,22,2,4,MAT.woodDark,s*27,YM-9,26,LB('演奏台の腕木','Spieltisch'));
+    for(const z of [4,48]) box(R,2,YM-9.9,2,MAT.woodDark,s*37,(YM-9.9)/2,z,LB('演奏台の脚','Spieltisch')); }
   // ---- pedalboard (as D-05) ----
-  const ZH=62, ZE=-14, ZX=-27, KL=ZH-ZX, KP=ZH-ZE, yK=5, KHp=3.4, DEP=1.9, ZA=-24, ZCP=-17, YS=26, AO=3, AI=AO*DEP*(ZH-ZA)/KL/KPULL;
+  const ZH=80, ZE=4, ZX=-27, KL=ZH-ZX, KP=ZH-ZE, yK=5, KHp=3.4, DEP=1.9, ZA=-24, ZCP=-17, YS=26, AO=3, AI=AO*DEP*(ZH-ZA)/KL/KPULL;
   const xp=k=>((k in SLOT?SLOT[k]:BPOS[k])-3.5)*8;
   const LF=LB('ペダル鍵盤の枠','Pedalklaviatur');
   box(R,66,1.2,3,MAT.woodDark,0,0.6,ZX+2.5,LB('つま先側の桟（ばねと下止めのフェルトを受ける）','Federleiste'));
   box(R,66,yK+1,4,MAT.woodDark,0,(yK+1)/2,ZH+1,LB('蝶番の桟（ペダル鍵のかかと側の支点）','Scharnier'));
   for(const s of [-1,1]) box(R,2,1.6,KL+6,MAT.woodDark,s*34,0.8,(ZH+ZE)/2+1,LF);
-  const LBk=LB('オルガンベンチ','Orgelbank'); box(R,74,2.4,16,MAT.wood,0,62,ZH+12,LBk); for(const s of [-1,1]) box(R,2.4,61,14,MAT.wood,s*35,30.5,ZH+12,LBk);
+  const LBk=LB('オルガンベンチ','Orgelbank'); box(R,74,2.4,16,MAT.wood,0,72.6,ZH+12,LBk); for(const s of [-1,1]) box(R,2.4,71.4,14,MAT.wood,s*35,35.7,ZH+12,LBk);
   const SG=helixGeo(0.8,5,2.2,0.13), ped=[];
   for(let k=0;k<13;k++){
     const w=(k in SLOT), x=xp(k), lm=pm[k], g=new T.Group(); g.position.set(x,yK,ZH); R.add(g);
@@ -44,9 +49,9 @@ function buildPedalCoupler(){
   // ---- chests ----
   const aiM=4*pullM/KPULL, zrM=MAN.za-aiM, zoM=zrM+4, y0M=YM+15;
   const KDH=new Float32Array(13), KDP=new Float32Array(13);
-  const hw=buildChest({y:y0M+13*1.25+22,z:zoM-14,kd:KDH,sp:HWSP,stops:HWST,rows:HWR,mixz:[-2.4,0,2.4],P:9.6,palMat:k=>mm[k]});
+  const hw=buildChest({y:y0M+13*1.25+22,z:zoM-14,kd:KDH,sp:HWSP,stops:HWST,rows:HWR,mixz:[-2.4,0,2.4],P:9.6,palMat:k=>mm[k],inlet:'R'});
   const ozP=hw.oz-19.2-100-19.2, zP=ozP+14, zs1=ZA+AI, zs2=zP+AO, zrP=zP-AO, y0P=32;
-  const pd=buildChest({y:y0P+13*1.25+5,z:ozP,kd:KDP,sp:PDSP,stops:PDST,rows:PDR,P:15,palMat:k=>pm[k],volN:300});
+  const pd=buildChest({y:y0P+13*1.25+5,z:ozP,kd:KDP,sp:PDSP,stops:PDST,rows:PDR,P:15,pedal:true,palMat:k=>pm[k],volN:300,inlet:'R'});
   box(R,64,1.2,1.2,MAT.woodDark,0,YS,zs1+0.9,LB('スクエアの軸受け（ペダル側）','Winkelbalken'));
   box(R,64,1.2,1.2,MAT.woodDark,0,YS,zs2+0.9,LB('スクエアの軸受け（風箱側）','Winkelbalken'));
   for(const s of [-1,1]) for(const z of [zs1+0.9,zs2+0.9]) box(R,1.6,YS,1.6,MAT.woodDark,s*33,YS/2,z,LB('軸受けの支柱','Balgstütze'));
@@ -82,7 +87,7 @@ function buildPedalCoupler(){
       {type:'toggle',id:'m1',label:'手鍵盤を弾く',get:()=>m.man===1,set:()=>setMan(1)}],
     stopRows:[{label:'I ハウプトヴェルク（手鍵盤）',items:HWST.map((si,i)=>({name:STOPS[si].name,ja:STOPS[si].ja,get:()=>m.hs[i],set:v=>m.hs[i]=v}))},{label:'P ペダル',items:PDST.map((si,i)=>({name:STOPS[si].name,ja:STOPS[si].ja,get:()=>m.ps[i],set:v=>m.ps[i]=v}))}],
     ctl:{cpl:v=>m.cpl=v,man:v=>{ m.man=v; },pd:arr=>{ arr.forEach((v,i)=>m.ps[i]=!!v); syncStopUI(); },hw:arr=>{ arr.forEach((v,i)=>m.hs[i]=!!v); syncStopUI(); }},
-    setMan,curMan:()=>m.man,
+    setMan,curMan:()=>m.man,pedKb:true,
     views:{cpl:[[30,YM-4,26],[-4,YM-10,6]],ped:[[90,50,50],[0,22,-20]],chests:[[230,190,260],[0,130,-20]]},
     pins:[{t:'ペダル鍵盤',p:V3(-38,8,30)},{t:'手鍵盤（ハウプトヴェルク）',p:V3(-18,YM+2,50)},{t:'カプラーのウィッペン（手鍵盤の下）',p:V3(17,YU+2,ZPU),max:120},{t:'カプラーのローラーボード',p:V3(-38,y0C+18,zrC)},{t:'ペダル風箱用のローラーボード',p:V3(-90,y0P+18,zrP)},{t:'ハウプトヴェルク',p:V3(66,hw.oy+20,hw.oz+12)},{t:'ペダルの風箱',p:V3(100,pd.oy+20,pd.oz+12)}],
     speaking:()=>hw.speaking().concat(pd.speaking()),

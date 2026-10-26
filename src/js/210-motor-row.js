@@ -4,7 +4,7 @@
 function buildMotorRow(chest,o){
   const R=CX.root, N=13, yB=o.y, B=new Float32Array(N), A1=5, A2=3.5, yW=yB+12, Lb=7, z0=-2;
   const xs=[]; for(let k=0;k<N;k++) xs.push(chest.pos(k)); const xmin=Math.min(...xs)-4, xmax=Math.max(...xs)+4, cx=(xmin+xmax)/2;
-  box(R,xmax-xmin,4,12,MAT.wood,cx,yB-2,2,LB(o.boxLabel[0],o.boxLabel[1]));
+  box(R,xmax-xmin,4,12,hollow(MAT.wood),cx,yB-2,2,LB(o.boxLabel[0],o.boxLabel[1]));
   duct([V3(xmin,yB-2,2),V3(xmin-6,yB-2,2),V3(xmin-6,-12,2)],2.4,MAT.casing,LB('風の供給','Windzufuhr'));
   box(R,xmax-xmin,1,1,MAT.woodDark,cx,yW,0,LB('バックフォールの軸受け','Wippenbalken'));
   new Vol((a,b,c,out)=>out.set(xmin+1+a*(xmax-xmin-2),yB-3.6+b*3.2,-3.4+c*10.8),220,{state:()=>1,rate:3});
@@ -18,6 +18,7 @@ function buildMotorRow(chest,o){
     const exh=new T.Group(); exh.position.set(x-1.9,yB+0.9,z0+Lb-1.4); R.add(exh); box(exh,0.2,1.2,1.4,MAT.leather,0,-0.6,0.7,LB('排気弁（閉じた時に小ふいごの風を外へ逃がす）','Auslassventil'));
     const st=rod(R,0.2,keyMat(k),LB('押し棒','Stecher')), wa=rod(R,0.35,keyMat(k),LB('バックフォール（シーソー形のてこ。前が上がると後ろが下がる）','Wippe')), wb=rod(R,0.35,keyMat(k),LB('バックフォール','Wippe'));
     const tr=makeTracker(keyMat(k),LB('トラッカー（パレットへ）','Abstrakte'));
+    bore(R,MAT.dark,x,yB-1.2,yB,2.2,0.55,LB('入口の穴（入口弁が開くと、ここから風箱の風が小ふいごへ入る）','Luftbohrung'));
     new Tube([V3(x,yB-2,1.8),V3(x,yB-0.2,1.9),V3(x,yB+0.9,2.6)],{r:0.45,density:1.5,front:120,state:()=>({open:o.drive(k)&&B[k]<0.97,speed:14})});
     new Tube([V3(x,yB+0.8,3.6),V3(x-1.9,yB+0.9,z0+Lb-0.8),V3(x-5,yB+1.6,z0+Lb+1)],{kind:'air',r:0.4,density:1.5,front:120,state:()=>({open:!o.drive(k)&&B[k]>0.03,speed:12})});
     U.push({x,top,sides,front,inl,exh,st,wa,wb,tr});

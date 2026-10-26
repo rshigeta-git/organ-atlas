@@ -4,7 +4,7 @@
    the pallets of that stop push the bar back up, so a drawn stop must be held: a hook on the jamb drops behind a
    collar on the draw rod. Lifting the hook (or switching the hooks off here) lets the springs push the knob back in. */
 function buildSpringStopAction(){
-  const R=CX.root, chest=buildChest({spring:true}), oy=chest.oy, oz=chest.oz, xE=chest.ox-chest.W/2-0.5;
+  const R=CX.root, chest=buildChest({spring:true,inlet:'R'}), oy=chest.oy, oz=chest.oz, xE=chest.ox-chest.W/2-0.5;
   const A1=7.2, A2=1.6, TRV=3.6, KZ=34, yP=oy+27.6+0.7+3.2, yT=yP+A1, m={hook:true,tm:new Float32Array(5)};
   const LBS=LB('ストップアクションの台','Winkelbalken');
   box(R,22,1.2,42,MAT.woodDark,xE-12,oy+19.4,oz,LBS);
@@ -18,8 +18,8 @@ function buildSpringStopAction(){
     const ext=box(R,xE-xs+1.2,1.4,1.2,sm,(xE+xs)/2,oy+27.6,zb,LB('ストップバーの延長（風箱の外へ出た端）','Registerbalken'));
     const felt=box(R,1.2,0.4,1.4,MAT.cloth,xs,oy+27.6+0.9,zb,LB('フェルト（押し棒の当たり）','Anschlagfilz'));
     box(R,1.2,yP-oy-20,1.2,MAT.woodDark,xs,(yP+oy+20)/2,zp,LB('スクエアの支え','Wellenböckchen'));
-    const knob=mk(G_CYL,MAT.ebony,R,LB('ストップノブ：'+STOPS[i].name+'（手前に引くと入る）','Registerzug')); knob.rotation.x=Math.PI/2; knob.scale.set(1.3,2.2,1.3);
-    const face=mk(G_CYL,MAT.ivory,R,LB('ストップ名の札：'+STOPS[i].name,'Registerschild')); face.rotation.x=Math.PI/2; face.scale.set(0.95,0.25,0.95);
+    const knob=mk(G_CYL,MAT.ebony,R,LB('ストップノブ：'+stopOf(i).name+'（手前に引くと入る）','Registerzug')); knob.rotation.x=Math.PI/2; knob.scale.set(1.3,2.2,1.3);
+    const face=mk(G_CYL,MAT.ivory,R,LB('ストップ名の札：'+stopOf(i).name,'Registerschild')); face.rotation.x=Math.PI/2; face.scale.set(0.95,0.25,0.95);
     knob.userData.stop=i; face.userData.stop=i;
     const collar=mk(G_CYL,MAT.brass,R,LB('留め輪（フックが後ろに落ちて引いた位置に保つ）','Öse')); collar.rotation.x=Math.PI/2; collar.scale.set(0.7,0.6,0.7);
     box(R,0.6,0.6,0.6,MAT.iron,xs,yT+1.9,KZ-0.3,LB('フックの軸','Achse'));

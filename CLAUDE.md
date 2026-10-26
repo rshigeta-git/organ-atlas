@@ -1,4 +1,4 @@
-# パイプオルガン機構図鑑 (Pipe Organ Mechanism Atlas)
+# パイプオルガンメカニズム図鑑 (Atlas of Pipe Organ Mechanisms)
 
 Interactive Three.js atlas of pipe-organ mechanisms (wind supply, windchests, key/stop actions, couplers, whole organs).
 The owner is an organ builder with a mechanical-design background; he talks in Japanese and expects mechanically

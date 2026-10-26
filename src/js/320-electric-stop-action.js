@@ -6,7 +6,7 @@
 const ELEC_LEG='<span><i style="background:var(--ctrl)"></i>電流（電気信号。表示のため遅くしています）</span>';
 function polyAt(P,cum,s,out){ let i=1; while(i<cum.length-1&&cum[i]<s) i++; const seg=(cum[i]-cum[i-1])||1; return out.lerpVectors(P[i-1],P[i],clamp((s-cum[i-1])/seg,0,1)); }
 function buildElectricStops(){
-  const R=CX.root, SPm=new Float32Array(5), chest=buildChest({y:30,sp:SPm}), oy=chest.oy, oz=chest.oz;
+  const R=CX.root, SPm=new Float32Array(5), chest=buildChest({y:30,sp:SPm,inlet:'R'}), oy=chest.oy, oz=chest.oz;
   const m={st:[false,false,false,false,false],tg:new Float32Array(5),coil:[],pulses:[],set:false,mem:{1:[1,0,1,0,0],2:[1,1,1,1,1]},press:{}};
   for(let i=0;i<5;i++){ m.st[i]=S.stop[i]; m.tg[i]=S.stop[i]?1:0; SPm[i]=m.tg[i]; m.coil.push([0,0]); }
   const xS=chest.ox-5-(chest.W+14)/2, yS=oy+26, HX0=xS-12.5, HX1=xS-5.5;   // slider left end (when drawn); solenoid housing

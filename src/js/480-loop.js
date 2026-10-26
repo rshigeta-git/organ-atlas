@@ -20,7 +20,7 @@ const langSel=$('langSel'); langSel.value=LANG;
 function applyLang(){
   document.documentElement.lang=LANG; i18nDom(document.body);
   if(!inst) return; const def=inst.def;
-  $('mctlLabel').textContent=T_(def.noKeys?'操作':'送風'); $('legend').innerHTML=def.legend==='ctrl'?LEGEND0+CTRL_LEG:def.legend==='elec'?LEGEND0+ELEC_LEG:(def.legend||LEGEND0); i18nDom($('legend'));
+  $('mctlLabel').textContent=T_(def.ctlLabel||(def.noKeys?'操作':'送風')); $('legend').innerHTML=def.legend==='ctrl'?LEGEND0+CTRL_LEG:def.legend==='elec'?LEGEND0+ELEC_LEG:(def.legend||LEGEND0); i18nDom($('legend'));
   $('tag').innerHTML='<span class="tid">'+def.id+'</span><span class="tnm">'+T_(def.name)+'</span>';
   const cur=notes.querySelector('[data-s][aria-current]'), ci=cur?cur.dataset.s:null;
   renderStops(inst.stopRows); renderNotes(def); renderControls(); renderIndex(curId); if(def.console&&inst.buildConsole) inst.buildConsole($('ocon')); syncStopUI(); setupPins();
@@ -28,8 +28,8 @@ function applyLang(){
   const sb=$('sound'); sb.textContent=T_(AU.on?'音を出す':'音を消している');
 }
 langSel.addEventListener('change',()=>{ LANG=langSel.value; try{ localStorage.setItem('oa-lang',LANG); }catch(e){} applyLang(); });
-load(MODELS[start]&&!DEV.has(start)?start:'a-01');
+load(MODELS[start]&&(!DEV.has(start)||DEVOK)?start:'a-01');
 applyLang();
 requestAnimationFrame(frame);
-window.addEventListener('hashchange',()=>{ const h=location.hash.replace('#','').toLowerCase(); if(MODELS[h]&&!DEV.has(h)&&h!==curId) load(h); });
+window.addEventListener('hashchange',()=>{ const h=location.hash.replace('#','').toLowerCase(); if(MODELS[h]&&(!DEV.has(h)||DEVOK)&&h!==curId) load(h); });
 })();

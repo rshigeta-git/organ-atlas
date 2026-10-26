@@ -1,7 +1,7 @@
 /* ---------- F-01: swell box ---------- */
 function buildSwell(){
   const R=CX.root, m={open:0.5,t:0,em:0};
-  const chest=buildChest({y:0});
+  const chest=buildChest({y:0,inlet:'R'});
   const X0=-38, X1=38, Z0=-21, Z1=21, Y0=28, Y1=96, NS=8, sh=(Y1-Y0)/NS;
   const LW=LB('スウェルボックス（パイプを囲む厚い木の箱）','Schwellkasten');
   box(R,X1-X0,Y1-Y0,1.6,MAT.woodDark,0,(Y0+Y1)/2,Z0,LW); box(R,1.6,Y1-Y0,Z1-Z0,MAT.woodDark,X0,(Y0+Y1)/2,0,LW); box(R,1.6,Y1-Y0,Z1-Z0,MAT.woodDark,X1,(Y0+Y1)/2,0,LW);
