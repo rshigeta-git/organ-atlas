@@ -5,7 +5,7 @@
 function buildConeChest(){
   const R=CX.root, N=13, SI=STOPSET, P=pitchFor(SI), W=N*P, ROWC=rowsFor(SI).map(z=>z-3.5), oy=10, pos=k=>-W/2+P*(k+0.5), DZ=4.4;
   const yFl=oy+8, yIn0=oy+8.5, yIn1=oy+15.5, yTop=oy+16, yToe=oy+17.5, base=oy+18;
-  box(R,W+8,1,41,MAT.wood,0,yFl,0,LB('ストップチャンネルの底板（円すい弁の座がある）','Fundamentbrett'));
+  box(R,W+8,1,41,MAT.wood,0,yFl,0,LB('ストップチャンネルの底板（円錐弁の座がある）','Fundamentbrett'));
   box(R,W+8,1,41,MAT.wood,0,yTop,0,LB('ストップチャンネルの天板','Fundamentbrett'));
   box(R,W+8,1.5,41,MAT.wood,0,oy+16.75+0.0,0,LB('上板（パイプを立てる板）','Pfeifenstock'));
   const LK=LB('ストップチャンネル（ストップごとに風箱の長さいっぱいに通る部屋。ストップを入れると風が満ちる）','Registerkanzelle');
@@ -14,7 +14,7 @@ function buildConeChest(){
   const LBK=LB('チャンネルの間の木のブロック（パイプへの導管の穴があけてある）','Schied');
   { const zs=[-20.5,...[...ROWC].sort((a,b)=>a-b).flatMap(z=>[z-DZ/2,z+DZ/2]),20.5];
     for(let j=0;j<zs.length;j+=2) box(R,W+8,7,zs[j+1]-zs[j],MAT.woodDark,0,(yIn0+yIn1)/2,(zs[j]+zs[j+1])/2,LBK); }
-  box(R,W+8,1.5,41,MAT.wood,0,oy+6.75,0,LB('導管の板（底板の下。円すい弁の座からパイプへの導管の穴があけてある）','Kanalbrett'));
+  box(R,W+8,1.5,41,MAT.wood,0,oy+6.75,0,LB('導管の板（底板の下。円錐弁の座からパイプへの導管の穴があけてある）','Kanalbrett'));
   // wind trunk and stop valves at the left end of each stop channel
   const xV=-W/2-4.2;
   box(R,3,9,42,hollow(MAT.wood),xV-3.2,oy+12,0,LB('風箱への風の供給路','Windkanal'));
@@ -24,7 +24,7 @@ function buildConeChest(){
   const trunkV=new Vol((a,b,c,out)=>out.set(xV-3.2+(c-0.5)*2,oy+8+b*8,(a*2-1)*20),160,{state:()=>1,rate:3});
   const chV=[]; for(let i=0;i<5;i++){ const zc=ROWC[i]; chV.push(new Vol((a,b,c,out)=>out.set(-W/2-1+a*(W+3),yIn0+0.4+b*6.2,zc+(c-0.5)*3.4),120,{state:()=>S.sp[i]>0.5?1:0,rate:1.6})); new Tube([V3(xV-3.2,oy+12,zc),V3(xV-0.5,oy+12,zc),V3(-W/2+4,oy+12,zc)],{r:0.6,density:0.6,front:200,state:()=>({open:S.sp[i]>0.5&&chV[i].fill<0.97,speed:16})}); }
   const Pk=new Float32Array(N), tubes=[], bell=[], cones=[], rods=[], pipesT=[];
-  const LB_B=LB('小ふいご（制御風でふくらみ、棒で円すい弁を押し上げる）','Bälgchen'), LB_C=LB('円すい弁（風に押されて座の穴をふさいでいる。持ち上がるとパイプへの道が開く）','Kegel'), LB_R=LB('押し棒','Stecher'), LB_D=LB('パイプへの導管','Kondukt');
+  const LB_B=LB('小ふいご（制御風でふくらみ、棒で円錐弁を押し上げる）','Bälgchen'), LB_C=LB('円錐弁（風に押されて座の穴をふさいでいる。持ち上がるとパイプへの道が開く）','Kegel'), LB_R=LB('押し棒','Stecher'), LB_D=LB('パイプへの導管','Kondukt');
   for(let k=0;k<N;k++){
     const x=pos(k);
     const bk=[], ck=[], rk=[];
@@ -32,7 +32,7 @@ function buildConeChest(){
       const zc=ROWC[i];
       ck.push(mk(G_KEGEL,keyMat(k),R,LB_C));
       // seat bore through the floor, then the conduit bored in its block: along under the floor and up to the pipe toe
-      bore(R,MAT.dark,x,oy+7,yIn0,zc,0.5,LB('円すい弁の座（底板を貫く穴。下で導管につながる）','Kegelsitz'));
+      bore(R,MAT.dark,x,oy+7,yIn0,zc,0.5,LB('円錐弁の座（底板を貫く穴。下で導管につながる）','Kegelsitz'));
       boreAB(R,MAT.dark,V3(x,oy+7,zc),V3(x,oy+7,zc+3.5),0.3,LB_D,false);
       bore(R,MAT.dark,x,oy+7,base,zc+3.5,0.3,LB_D);
       const si=SI[i], nr=nRanks(si), RZ=si===3?MIXZ.map(v=>v*0.8):rankZ(si,0);
@@ -47,7 +47,7 @@ function buildConeChest(){
   }
   // the action under the chest
   const yB=oy+6, yP=yB-3.6, H=3, V=3, zE=W>0?22.5:0, yE=yP-V-4, HE=4, VE=4, zR=i=>ROWC[i]-H, zB=Math.min(...ROWC)-H-1;
-  const LSQ=LB('スクエア（引き棒に引かれて回り、円すい弁の棒を押し上げる）','Winkel'), LSB=LB('スクエアの軸受けの桟','Winkelbalken');
+  const LSQ=LB('スクエア（引き棒に引かれて回り、円錐弁の棒を押し上げる）','Winkel'), LSB=LB('スクエアの軸受けの桟','Winkelbalken');
   for(let i=0;i<5;i++) box(R,W+4,yB-yP-0.6,1.4,MAT.woodDark,0,(yB+yP+0.6)/2,zR(i),LSB);
   box(R,W+4,1.4,1.6,MAT.woodDark,0,yE-1.3,zE,LSB);
   for(const s of [-1,1]) box(R,1.2,yB-yE+2,1.2,MAT.woodDark,s*(W/2+1.4),(yB+yE-2)/2,zE,LB('スクエア E の桟の支柱','Balgstütze'));
@@ -56,15 +56,15 @@ function buildConeChest(){
   for(let k=0;k<N;k++){ const x=pos(k), m=keyMat(k), q={sq:[],stem:[]};
     for(let i=0;i<5;i++){
       for(const s of [-1,1]) box(R,0.3,1.6,1.4,MAT.woodDark,x+s*0.55,yP+0.5,zR(i),LSB);
-      cyl(R,0.5,0.4,MAT.leather,x,yB-0.2,ROWC[i],LB('円すい弁の棒の革のブッシュ（風が漏れないよう棒を通す）','Ventilleder'));
-      q.sq.push([rod(R,0.32,m,LSQ),rod(R,0.32,m,LSQ)]); q.stem.push(rod(R,0.13,MAT.iron,LB('円すい弁の棒（スクエアに押し上げられる）','Ventilstange')));
+      cyl(R,0.5,0.4,MAT.leather,x,yB-0.2,ROWC[i],LB('円錐弁の棒の革のブッシュ（風が漏れないよう棒を通す）','Ventilleder'));
+      q.sq.push([rod(R,0.32,m,LSQ),rod(R,0.32,m,LSQ)]); q.stem.push(rod(R,0.13,MAT.iron,LB('円錐弁の棒（スクエアに押し上げられる）','Ventilstange')));
     }
-    q.tr=rod(R,0.28,m,LB('引き棒（'+KEYNAMES[k]+'。同じ鍵の円すい弁のスクエアをすべてつなぐ）','Zugstange'));
+    q.tr=rod(R,0.28,m,LB('引き棒（'+KEYNAMES[k]+'。同じ鍵の円錐弁のスクエアをすべてつなぐ）','Zugstange'));
     q.e=[rod(R,0.4,m,LB('スクエア E（鍵のトラッカーの引き下げを、引き棒を手前へ引く動きに変える）','Winkel')),rod(R,0.4,m,LB('スクエア E（鍵のトラッカーの引き下げを、引き棒を手前へ引く動きに変える）','Winkel'))];
     q.t=makeTracker(m,LB('トラッカー（'+KEYNAMES[k]+'。下の鍵盤の鍵へ）','Abstrakte'));
     act.push(q); }
   return {
-    pins:[{t:'スクエア E',p:V3(W/2+2,yE,zE+3)},{t:'引き棒',p:V3(-W/2-2,yP-V,0)},{t:'スクエア',p:V3(W/2+2,yP,zR(4))},{t:'円すい弁',p:V3(W/2+3.5,yIn0+1.5,-14)},{t:'パイプへの導管',p:V3(W/2+3.5,oy+12,17.5)},{t:'ストップチャンネル',p:V3(-W/2-1,yIn1+1.5,7)},{t:'ストップ弁',p:V3(xV-2,yIn1+2,-14)}],
+    pins:[{t:'スクエア E',p:V3(W/2+2,yE,zE+3)},{t:'引き棒',p:V3(-W/2-2,yP-V,0)},{t:'スクエア',p:V3(W/2+2,yP,zR(4))},{t:'円錐弁',p:V3(W/2+3.5,yIn0+1.5,-14)},{t:'パイプへの導管',p:V3(W/2+3.5,oy+12,17.5)},{t:'ストップチャンネル',p:V3(-W/2-1,yIn1+1.5,7)},{t:'ストップ弁',p:V3(xV-2,yIn1+2,-14)}],
     speaking:()=>S.p<8?[]:pipesT.filter(t=>Pk[t.k]>0.6&&S.sp[t.j]>0.85&&chV[t.j].fill>0.5),
     update(dt){
       for(let k=0;k<N;k++){

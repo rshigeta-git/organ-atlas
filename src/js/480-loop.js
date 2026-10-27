@@ -2,6 +2,7 @@
 let last=performance.now();
 function frame(now){
   requestAnimationFrame(frame);
+  if(HOME||!inst) return;
   const rdt=Math.min(0.05,Math.max(0,(now-last)/1000)); last=now; const dt=rdt; S.time+=dt;
   for(let k=0;k<64;k++){ const tg=S.key[k]?1:0; S.kd[k]+=(tg-S.kd[k])*Math.min(1,dt*22); }
   for(let i=0;i<5;i++){ const tg=S.stop[i]?1:0; S.sp[i]+=clamp(tg-S.sp[i],-dt*2.5,dt*2.5); }
@@ -18,7 +19,7 @@ function frame(now){
 const start=(location.hash||'').replace('#','').toLowerCase();
 const langSel=$('langSel'); langSel.value=LANG;
 function applyLang(){
-  document.documentElement.lang=LANG; i18nDom(document.body);
+  document.documentElement.lang=LANG; i18nDom(document.body); renderHome();
   if(!inst) return; const def=inst.def;
   $('mctlLabel').textContent=T_(def.ctlLabel||(def.noKeys?'操作':'送風')); $('legend').innerHTML=def.legend==='ctrl'?LEGEND0+CTRL_LEG:def.legend==='elec'?LEGEND0+ELEC_LEG:(def.legend||LEGEND0); i18nDom($('legend'));
   $('tag').innerHTML='<span class="tid">'+def.id+'</span><span class="tnm">'+T_(def.name)+'</span>';
@@ -28,8 +29,15 @@ function applyLang(){
   const sb=$('sound'); sb.textContent=T_(AU.on?'音を出す':'音を消している');
 }
 langSel.addEventListener('change',()=>{ LANG=langSel.value; try{ localStorage.setItem('oa-lang',LANG); }catch(e){} applyLang(); });
-load(MODELS[start]&&(!DEV.has(start)||DEVOK)?start:'a-01');
+/* top page and model pages: the address without a model (#…) shows the top page; a model's #id opens the model page.
+   Links on the top page change the hash (so Back returns to the top page); the title in the header leads back to it. */
+const canOpen=h=>!!MODELS[h]&&(!DEV.has(h)||DEVOK);
+function showHome(){ HOME=true; $('home').hidden=false; $('app').hidden=true; releaseHeld(); window.scrollTo(0,0); }
+function showApp(){ const was=HOME; HOME=false; $('home').hidden=true; $('app').hidden=false; resize(); if(was) window.scrollTo(0,0); }
+function route(){ const h=location.hash.replace('#','').toLowerCase(); if(canOpen(h)){ showApp(); if(h!==curId) load(h); } else showHome(); }
+$('homeLink').addEventListener('click',e=>{ e.preventDefault(); if(HOME) return; try{ history.pushState(null,'',location.pathname+location.search); }catch(_){} showHome(); });
+if(canOpen(start)){ showApp(); load(start); } else showHome();
 applyLang();
 requestAnimationFrame(frame);
-window.addEventListener('hashchange',()=>{ const h=location.hash.replace('#','').toLowerCase(); if(MODELS[h]&&(!DEV.has(h)||DEVOK)&&h!==curId) load(h); });
+window.addEventListener('hashchange',route);
 })();

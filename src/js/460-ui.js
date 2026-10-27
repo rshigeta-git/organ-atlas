@@ -19,8 +19,8 @@ const kup=e=>{ if(S.latch) return; const b=e.target.closest('[data-k]'); if(!b) 
 kbd.addEventListener('pointerup',kup); kbd.addEventListener('pointercancel',kup);
 kbd.addEventListener('keydown',e=>{ if(e.key===' '||e.key==='Enter'){ const b=e.target.closest('[data-k]'); if(b){ e.preventDefault(); audioInit(); const k=+b.dataset.k; S.key[k]=!S.key[k]; syncKeyUI(); } } });
 const PCK='awsedftgyhujk';
-window.addEventListener('keydown',e=>{ if(e.repeat||e.metaKey||e.ctrlKey||e.altKey||(inst&&inst.def.noKeys)) return; const tg=e.target; if(tg&&(tg.tagName==='INPUT'||tg.tagName==='SELECT'||tg.tagName==='TEXTAREA')) return; let k=PCK.indexOf(e.key.toLowerCase()); if(k<0) return; k+=inst&&inst.pcBase?inst.pcBase():0; audioInit(); if(inst.press){ inst.press(inst.curMan(),k,S.latch?'t':true); return; } if(S.latch) S.key[k]=!S.key[k]; else S.key[k]=true; syncKeyUI(); });
-window.addEventListener('keyup',e=>{ if(S.latch) return; let k=PCK.indexOf((e.key||'').toLowerCase()); if(k<0) return; k+=inst&&inst.pcBase?inst.pcBase():0; if(inst.press){ inst.press(inst.curMan(),k,false); return; } S.key[k]=false; syncKeyUI(); });
+window.addEventListener('keydown',e=>{ if(HOME||!inst) return; if(e.repeat||e.metaKey||e.ctrlKey||e.altKey||(inst&&inst.def.noKeys)) return; const tg=e.target; if(tg&&(tg.tagName==='INPUT'||tg.tagName==='SELECT'||tg.tagName==='TEXTAREA')) return; let k=PCK.indexOf(e.key.toLowerCase()); if(k<0) return; k+=inst&&inst.pcBase?inst.pcBase():0; audioInit(); if(inst.press){ inst.press(inst.curMan(),k,S.latch?'t':true); return; } if(S.latch) S.key[k]=!S.key[k]; else S.key[k]=true; syncKeyUI(); });
+window.addEventListener('keyup',e=>{ if(HOME||!inst||S.latch) return; let k=PCK.indexOf((e.key||'').toLowerCase()); if(k<0) return; k+=inst&&inst.pcBase?inst.pcBase():0; if(inst.press){ inst.press(inst.curMan(),k,false); return; } S.key[k]=false; syncKeyUI(); });
 window.addEventListener('blur',()=>{ if(!S.latch){ S.key.fill(false); syncKeyUI(); if(inst&&inst.releaseAll) inst.releaseAll(); } });
 $('latch').addEventListener('click',e=>{ S.latch=!S.latch; e.currentTarget.setAttribute('aria-pressed',S.latch); });
 $('release').addEventListener('click',()=>{ S.key.fill(false); syncKeyUI(); });
@@ -63,6 +63,20 @@ const api={
 window.__oa={api,S,get inst(){ return inst; },get inlets(){ return CX&&CX.inlets||[]; },load:id=>load(id),r:renderer,MAT};
 
 const notes=$('notes'), sel=$('modelSelect'), list=$('indexList');
+// top page: the chapters A–H with a link to every model that can be opened
+function renderHome(){
+  let h='';
+  for(const ch of INDEX){
+    h+='<section class="hchap"><h3><span class="cl">'+ch.c+'</span>'+T_(ch.n)+'</h3><ul>';
+    for(const [id,nm,st] of ch.items){
+      const key=id.toLowerCase(), dev=DEV.has(key), live=!!MODELS[key]&&!dev;
+      h+=live?'<li><a class="hitem" href="#'+key+'"><span class="id">'+id+'</span><span>'+T_(nm)+'</span></a></li>'
+        :'<li><span class="hitem off"><span class="id">'+id+'</span><span>'+T_(nm)+'<span class="stg">'+(dev?T_('開発中'):TF('第{0}段階で公開',st))+'</span></span></span></li>';
+    }
+    h+='</ul></section>';
+  }
+  $('homeList').innerHTML=h;
+}
 function renderIndex(cur){
   let h='', o='';
   for(const ch of INDEX){

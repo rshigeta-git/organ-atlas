@@ -15,5 +15,6 @@ function load(id){
   buildKbdUI(def.nKeys||13,inst.keyLim?inst.keyLim():null);
   i18nDom($('legend')); renderStops(inst.stopRows); renderNotes(def); renderControls(); renderIndex(id); syncKeyUI(); syncStopUI(); setupPins();
   curId=id; try{ if(location.hash!=='#'+id) history.replaceState(null,'','#'+id); }catch(e){}
+  if(window.va) window.va('pageview',{route:'/'+id,path:'/'+id});   // Vercel Web Analytics (website only): one page view per model
 }
 

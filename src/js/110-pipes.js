@@ -25,7 +25,7 @@ function buildPipe(x,z,i,k,r,base,par){
     const cone=mk(G_CONE,MAT.metal,R,LB('ブーツ（リードを囲む足部）','Stiefel')); cone.scale.set(1.15*F,bootH,1.15*F); cone.position.set(x,base+bootH/2,z);
     cyl(R,0.95*F,1.4*F,MAT.brass,x,base+bootH+0.2*F,z,LB('頭部（中でリードが振動して発音する）','Kopf / Zunge'));
     const y0=base+bootH+0.9*F, g1=new T.CylinderGeometry(rt,rb,Lc,F>1.5?14:20,1,true), g2=new T.CylinderGeometry(rt*PR.bell,rt,Lb,F>1.5?14:20,1,true); CX.own.push(g1,g2);
-    const b1=mk(g1,MAT.metal,R,LB('共鳴管（細い円すい：'+STOPS[i].name+'）','Becher')); b1.position.set(x,y0+Lc/2,z);
+    const b1=mk(g1,MAT.metal,R,LB('共鳴管（細い円錐：'+STOPS[i].name+'）','Becher')); b1.position.set(x,y0+Lc/2,z);
     const b2=mk(g2,MAT.metal,R,LB('共鳴管の上の広がり（ベル）','Becher')); b2.position.set(x,y0+Lc+Lb/2,z);
     const top=y0+L;
     return {reed:true,path:[V3(x,base+bootH+0.2*F,z),V3(x,top,z),V3(x,top+6*F,z)],ei:0,top};
@@ -35,7 +35,7 @@ function buildPipe(x,z,i,k,r,base,par){
     const cone=mk(G_CONE,MAT.metal,R,LB('ブーツ（リードを囲む足部）','Stiefel')); cone.scale.set(1.15*F*bs,bootH,1.15*F*bs); cone.position.set(x,base+bootH/2,z);
     cyl(R,0.95*F*(bs>1?1.3:1),1.4*F,MAT.brass,x,base+bootH+0.2*F,z,LB('頭部（中でリードが振動して発音する）','Kopf / Zunge'));
     const g=new T.CylinderGeometry(rt,rb,L,F>1.5?14:20,1,true); CX.own.push(g);
-    const b=mk(g,MAT.metal,R,LB('共鳴管（全長の円すい管：'+STOPS[i].name+'）','Becher')); b.position.set(x,base+bootH+0.9*F+L/2,z);
+    const b=mk(g,MAT.metal,R,LB('共鳴管（全長の円錐管：'+STOPS[i].name+'）','Becher')); b.position.set(x,base+bootH+0.9*F+L/2,z);
     const top=base+bootH+0.9*F+L;
     return {reed:true,path:[V3(x,base+bootH+0.2*F,z),V3(x,top,z),V3(x,top+6*F,z)],ei:0,top};
   }
@@ -57,7 +57,7 @@ function buildPipe(x,z,i,k,r,base,par){
   const G=flueGeos(Rb,footH,Math.min(0.45*F,Rb*0.35),L,P.mw,P.cut); CX.own.push(G.body,G.foot,G.lang);
   const LBu=LB('上唇（平たくつぶした歌口の上側。下の縁が風を切る）','Oberlabium'), LBl=LB('下唇（足の上部をつぶした歌口の下側）','Unterlabium');
   const body=mk(G.body,MAT.metal,R,lab); body.position.set(x,my,z);
-  const foot=mk(G.foot,MAT.metal,R,LB('足（円すい形。下端の穴から風が入る）','Fuß')); foot.position.set(x,my,z);
+  const foot=mk(G.foot,MAT.metal,R,LB('足（円錐形。下端の穴から風が入る）','Fuß')); foot.position.set(x,my,z);
   const lang=mk(G.lang,MAT.metalDark,R,LB('ラングイド（歌口の内側の仕切り板。前縁と下唇のすき間から風が吹き出す）','Kern')); lang.position.set(x,my,z);
   // hover labels for the lips: thin invisible pick plates over the flattened areas
   const pickM=CX.pickM||(CX.pickM=mclone(MAT.metal)); pickM.visible=false;

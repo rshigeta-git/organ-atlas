@@ -1,12 +1,21 @@
 
 <header class="mast">
   <div class="mast-in">
-    <h1>パイプオルガンメカニズム図鑑</h1>
+    <h1><a href="#" id="homeLink" class="homelink">パイプオルガンメカニズム図鑑</a></h1>
     <label class="langpick"><span class="sr">Language</span><select id="langSel" aria-label="Language"><option value="ja">日本語</option><option value="en">English</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="nl">Nederlands</option></select></label>
   </div>
 </header>
 
-<div class="layout">
+<section class="home" id="home" hidden>
+  <div class="home-in">
+    <p class="lead">本ウェブサイトは、パイプオルガンの各種部品の構造などを、3Dモデルで解説しています。</p>
+    <p class="caveat">理解のしやすさを優先し、簡略化したり、実際にはない配置・寸法となっている箇所があります。ご了承ください。</p>
+    <h2 class="home-h">モデル一覧</h2>
+    <div class="home-grid" id="homeList"></div>
+  </div>
+</section>
+
+<div class="layout" id="app">
   <nav class="index" aria-label="モデル一覧">
     <label class="sr" for="modelSelect">モデルを選ぶ</label>
     <select id="modelSelect"></select>
@@ -78,4 +87,11 @@
 
   <aside class="notes" id="notes"></aside>
 </div>
+
+<footer class="foot">
+  <div class="foot-in">
+    <p>© 2026 Shigeta Ryoji. All rights reserved.</p>
+    <p>3D表示には <a href="https://github.com/mrdoob/three.js/blob/r147/LICENSE" target="_blank" rel="noopener">Three.js（MIT ライセンス）</a>を使用しています。</p>
+  </div>
+</footer>
 

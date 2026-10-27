@@ -1,3 +1,4 @@
+let HOME=false;   // the top page is shown (no model on screen; the loop does not render)
 const DEV=new Set(['d-04']);   // built, but not shown yet (in development)
 // with ?dev in the address, models in development can still be opened by their hash (they stay out of the index)
 const DEVOK=/[?&]dev(&|$)/.test(location.search);

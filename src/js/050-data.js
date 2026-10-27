@@ -12,7 +12,7 @@ const STOPS=[
   {name:'Dolce 4′',ja:'ドルチェ 4′（細い開管。柔らかい音）'},{name:'Geigenprinzipal 8′',ja:'ガイゲンプリンツィパル（やや細いプリンツィパル）'},{name:'Gamba 8′',ja:'ガンバ（細い開管。弦の音）'},
   {name:'Salicional 8′',ja:'サリツィオナール（細い開管。柔らかい弦の音）'},{name:'Vox coelestis 8′',ja:'ヴォックス・チェレスティス（少し高く調律した弦。うなりが出る）'},{name:'Traversflöte 4′',ja:'トラヴェルスフレーテ 4′（開管のフルート）'},
   {name:'Flûte harmonique 8′',ja:'フリュート・アルモニック（倍音管のフルート。この音域では普通の開管）'},{name:'Gambe 8′',ja:'ガンブ（細い開管。弦の音）'},{name:'Voix céleste 8′',ja:'ヴォワ・セレスト（少し高く調律した弦。うなりが出る）'},
-  {name:'Flûte octaviante 4′',ja:'フリュート・オクタヴィアント 4′（倍音管のフルート。この音域では普通の開管）'},{name:'Hautbois 8′',ja:'オーボエ（リード。上が広がった円すいの共鳴管）'}
+  {name:'Flûte octaviante 4′',ja:'フリュート・オクタヴィアント 4′（倍音管のフルート。この音域では普通の開管）'},{name:'Hautbois 8′',ja:'オーボエ（リード。上が広がった円錐の共鳴管）'}
 ];
 const ZROW=[0,7,14,-7,-14];          // z of each stop row (front of chest = +z)
 const MIXZ=[-2.6,0,2.6];
