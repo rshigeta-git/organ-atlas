@@ -50,11 +50,11 @@ function buildSchwimmer(){
   const plateY=()=>yFb-2.5-5.5*m.h;
   // particles
   new Tube(W([V3(BX,BY,ZC+18),V3(BX,BY,ZC+7)]),{kind:'air',r:1.3*K,density:0.8/K,state:()=>({open:m.rpm>0.15,speed:26*K*m.rpm})});
-  const sup=new Tube(W(DP.concat([V3(HX,oy-1.75,ZC)])),{r:1*K,density:0.55/K,front:200*K,state:()=>({open:m.rpm>0.2,speed:K*(m.lock?2+1.6*m.n:4+30*m.vo)*m.rpm})});
+  const sup=new Tube(sharpPath(W(DP.concat([V3(HX,oy-1.75,ZC)])),1.5),{r:1*K,density:0.55/K,front:200*K,state:()=>({open:m.rpm>0.2,speed:K*(m.lock?2+1.6*m.n:4+30*m.vo)*m.rpm})});
   new Tube(W([V3(HX,oy-1.6,ZC),V3(HX+0.4,yFb+0.1,ZC),V3(HX+1.2,yFb-2,ZC),V3(HX+4,yFb-3,ZC)]),{r:0.5*K,density:1.4/K,front:200*K,state:()=>({open:sup.full()&&(m.lock||m.vo>0.04),speed:K*(m.lock?18:4+26*m.vo)})});
   const bel=new Vol((a,b,c,out)=>{ const py=plateY(); out.copy(w(X0+1.2+a*(X1-X0-2.4),py+0.2+b*(yFb-py-0.4),Z0+0.8+c*(Z1-Z0-1.6))); },260,{state:()=>sup.head>0?0.2+0.8*clamp(m.h/0.8,0,1):0,rate:2});
-  const neck=new Tube(W([V3(-6,yFb-1,ZC),V3(-6,oy+0.5,ZC),V3(-6,oy+3,ZC+4)]),{r:1.2*K,density:0.8/K,front:300*K,state:()=>({open:bel.fill>0.3&&S.p>10,speed:K*(4+1.2*m.n)})});
-  for(const x of [6,18]) new Tube(W([V3(x,yFb-1,ZC),V3(x,oy+0.5,ZC),V3(x,oy+3,ZC+4)]),{r:1.2*K,density:0.8/K,front:300*K,state:()=>({open:bel.fill>0.3&&S.p>10,speed:K*(4+1.2*m.n)})});
+  const neck=new Tube(sharpPath(W([V3(-6,yFb-1,ZC),V3(-6,oy+0.5,ZC),V3(-6,oy+3,ZC+4)]),1),{r:1.2*K,density:0.8/K,front:300*K,state:()=>({open:bel.fill>0.3&&S.p>10,speed:K*(4+1.2*m.n)})});
+  for(const x of [6,18]) new Tube(sharpPath(W([V3(x,yFb-1,ZC),V3(x,oy+0.5,ZC),V3(x,oy+3,ZC+4)]),1),{r:1.2*K,density:0.8/K,front:300*K,state:()=>({open:bel.fill>0.3&&S.p>10,speed:K*(4+1.2*m.n)})});
   chest=buildFullChest(P,neck);
   for(const x of [-6,6,18]) bore(R,MAT.dark,x,oy,oy+1,ZC,2.4,LB('風箱の底板の穴（シュヴィンマーとつながる）','Kanal'));
   const lockPins=[-1,1].map(s=>box(R,1.2,1,1.2,MAT.iron,s*18,yBase,ZC,LB('つっかい棒（可動板を固定してシュヴィンマーを効かなくする）','Anschlag')));

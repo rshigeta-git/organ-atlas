@@ -52,13 +52,18 @@ function buildMembraneChest(){
       const zc=ROWC[i];
       bore(R,MAT.dark,x,yK1,yBd,zc,1,LB('膜の穴（天板を貫く。下の制御風が膜を押し上げる）','Membranbohrung'));
       const m=mk(mg,mm,R,LBM); m.position.set(x,yBd+0.03,zc); m.userData.key=k;
-      cyl(R,0.75,base-0.3-yRim,MAT.woodPale,x,(yRim+base-0.3)/2,zc,LBP,G_CYL_OPEN);
-      const si=SI[i], nr=nRanks(si), RZ=rankZ(si,0);
+      const si=SI[i], nr=nRanks(si), RZ=rankZ(si,0), yH=base-0.75, ZZ=[...Array(nr).keys()].map(r=>zc+(nr>1?RZ[r]:0));
+      // a multi-rank stop: the one pipe bore ends in a channel across the upper board, and each rank has its own bore from it
+      if(nr<2) cyl(R,0.75,base-0.3-yRim,MAT.woodPale,x,(yRim+base-0.3)/2,zc,LBP,G_CYL_OPEN);
+      else { cyl(R,0.75,yH-yRim,MAT.woodPale,x,(yRim+yH)/2,zc,LBP,G_CYL_OPEN);
+        boreAB(R,MAT.dark,V3(x,yH,Math.min(...ZZ)-0.4),V3(x,yH,Math.max(...ZZ)+0.4),0.5,LB('上板の中の横穴（1つのパイプの穴の風を各列のパイプへ分ける）','Stockbohrung'),false);
+        for(const z of ZZ) bore(R,MAT.dark,x,yH,base,z,0.4,LB('上板の穴（各列のパイプの足へ）','Stockbohrung')); }
       for(let r=0;r<nr;r++){
-        const zz=zc+(nr>1?RZ[r]:0), sp=buildPipe(x,zz,si,k,r,base);
-        const tp=[V3(x,yBd+2.2,zc+1.6),V3(x,yBd+0.25,zc+1.25),V3(x,yRim-0.1,zc+0.2),V3(x,base,zz)].concat(sp.path.slice(1));
+        const zz=ZZ[r], sp=buildPipe(x,zz,si,k,r,base);
+        const pre=[V3(x,yBd+2.2,zc+1.6),V3(x,yBd+0.25,zc+1.25),V3(x,yRim-0.1,zc+0.2)].concat(nr>1?[V3(x,yH,zc),V3(x,yH,zz)]:[]), nb=pre.length;
+        const tp=pre.concat([V3(x,base,zz)],sp.path.slice(1));
         const tb=new Tube(tp,{r:nr>1?0.22:0.3,density:0.3,front:900,state:()=>({open:chV[i].fill>0.5&&Kc[k]<0.5&&S.sp[i]>0.85,speed:20})});
-        tb.exitU=tb.cum[3+sp.ei]/tb.L; tb.mouthAt(sp,3); pipesT.push({k,i:si,j:i,r});
+        tb.exitU=tb.cum[nb+sp.ei]/tb.L; tb.mouthAt(sp,nb); pipesT.push({k,i:si,j:i,r});
       }
     }
   }

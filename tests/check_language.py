@@ -21,5 +21,5 @@ async def main(langs, only):
             print(lg, "done", flush=True)
         print("errors", errs[:5]); await b.close()
 args = sys.argv[1:]
-langs = [a for a in args if a in ("en", "de", "fr", "nl")] or ["en", "de", "fr", "nl"]
+langs = [a for a in args if a in ("en", "de", "fr", "nl", "it", "es")] or ["en", "de", "fr", "nl", "it", "es"]
 asyncio.run(main(langs, set(a for a in args if a not in langs)))

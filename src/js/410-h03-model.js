@@ -22,6 +22,18 @@ function buildH03(){
   const knobTxt=n=>{ const mm=n.match(/^(.*?)\s+((?:\d+\s)?[\d\/]+′|III)$/); return mm?'<b>'+mm[1]+'</b><i>'+mm[2]+'</i>':'<b>'+(n==='Zimbelstern'?'Zimbel-<br>stern':n==='Tremulant'?'Tremu-<br>lant':n)+'</b>'; };
   const kn=it=>({name:it.name,ja:'',get:()=>it.on,set:v=>it.on=v});
   const GR=[[['Positiv',Sx.pos.map(kn)],['Hauptwerk',Sx.hw.map(kn)]],[['Pedal',Sx.ped.map(kn)],['Coupler',[Sx.cPH,Sx.cHP,Sx.cPP].map(kn)],['Accessories',[Sx.trem,Sx.zimb].map(kn),true]]];
+  /* combination action: 5 general combinations, a setter and a cancel (0). Recalling one sets the knobs, so their switches
+     send current to the solenoids of the stops that change. With "Set" on, a combination button stores the knobs instead. */
+  const ALL=[...Sx.hw,...Sx.pos,...Sx.ped,Sx.cPH,Sx.cHP,Sx.cPP,Sx.trem,Sx.zimb];
+  const CM={set:false,mem:{1:[0,1,0,0,0,0, 1,0,0,0,0, 0,0,1,0, 0,0,0, 0,0],2:[0,1,0,0,0,0, 1,1,0,1,0, 0,0,1,0, 0,0,1, 1,0],
+    3:[1,0,1,0,0,0, 1,1,1,0,0, 1,0,1,0, 0,1,0, 0,0],4:[1,0,1,1,1,0, 1,1,1,0,0, 1,1,1,0, 1,1,0, 0,0],5:[1,1,1,1,1,1, 1,1,1,1,0, 1,1,1,1, 1,1,1, 0,0]},last:null};
+  const comb=n=>{ if(n==='s'){ CM.set=!CM.set; syncCons(); return; }
+    if(CM.set&&n!==0){ CM.mem[n]=ALL.map(it=>it.on?1:0); CM.set=false; CM.last=n; syncCons(); return; }
+    const c=n===0?ALL.map(()=>0):CM.mem[n]; ALL.forEach((it,i)=>it.on=!!c[i]); CM.last=n; syncStopUI(); syncCons(); };
+  const PN=['s',1,2,3,4,5,0], PNM={s:'セット',0:'0（全部切る）'}, pnm=n=>PNM[n]||('コンビネーション '+n);
+  // thumb pistons in the key slip under the lower manual (the front of the key desk)
+  PN.forEach((n,j)=>{ const b=mk(G_CYL,n==='s'?MAT.ebony:MAT.ivory,CX.root,LB(n==='s'?'セットボタン（押しながらコンビネーションを押すと、今のストップを記憶する）':n===0?'ゼロ（全部切る）':'コンビネーション '+n,n==='s'?'Setzer':'Kombinationsknopf'));
+    b.rotation.x=Math.PI/2; b.scale.set(0.75,0.6,0.75); b.position.set(-12+4*j,Y0-6.6,55.3); b.userData.act={name:pnm(n),get:()=>n==='s'?CM.set:CM.last===n,fn:()=>comb(n)}; });
   let swIn=null;
   const buildConsole=el=>{
     conEl=el; el.innerHTML='';
@@ -47,17 +59,21 @@ function buildH03(){
     const tl=document.createElement('div'); tl.className='oc-tools';
     const lb=document.createElement('button'); lb.className='btn'; lb.type='button'; lb.textContent=T_('押したまま保持'); lb.setAttribute('aria-pressed',S.latch); lb.addEventListener('click',()=>{ $('latch').click(); lb.setAttribute('aria-pressed',S.latch); });
     const rb=document.createElement('button'); rb.className='btn'; rb.type='button'; rb.textContent=T_('全部離す'); rb.addEventListener('click',releaseAll);
-    tl.append(lb,rb); el.appendChild(tl);
+    const pg=document.createElement('div'); pg.className='oc-pist'; pg.innerHTML='<span>'+T_('コンビネーション')+'</span>';
+    PN.forEach(n=>{ const b=document.createElement('button'); b.className='btn pist'; b.type='button'; b.dataset.p=n; b.textContent=n==='s'?'S':String(n); b.title=T_(pnm(n)); b.setAttribute('aria-label',T_(pnm(n)));
+      b.addEventListener('click',()=>{ audioInit(); comb(n); }); pg.appendChild(b); });
+    tl.append(pg,lb,rb); el.appendChild(tl); syncCons();
     syncKeys();
   };
-  const syncConsole=()=>{ if(!conEl) return; conEl.querySelectorAll('.dk').forEach(b=>b.setAttribute('aria-pressed',!!b._it.get())); };
+  function syncCons(){ if(!conEl) return; conEl.querySelectorAll('.pist').forEach(b=>{ const n=b.dataset.p; b.setAttribute('aria-pressed',n==='s'?CM.set:String(CM.last)===n); }); }
+  const syncConsole=()=>{ if(!conEl) return; conEl.querySelectorAll('.dk').forEach(b=>b.setAttribute('aria-pressed',!!b._it.get())); syncCons(); };
   const allSpeak=()=>hw.speaking().concat(pos.speaking(),tc.speaking(),td.speaking());
   const setArr=(a,arr)=>arr.forEach((v,i)=>{ if(a[i]) a[i].on=!!v; });
   return {stopRows,press,releaseAll,buildConsole,syncConsole,curMan:()=>m.man,pcBase:()=>m.man===0?0:24,
     setKeys:arr=>{ KS.forEach(a=>a.fill(false)); arr.forEach(k=>{ if(k<NK[m.man]) KS[m.man][k]=true; }); syncKeys(); },
     controls:[{type:'toggle',id:'blower',label:'送風機',get:()=>W.mag.blower,set:v=>W.mag.blower=v}],swell2:()=>swV,
     ctl:{man:v=>{ m.man=v; },hw:a=>{ setArr(Sx.hw,a); syncStopUI(); },pos:a=>{ setArr(Sx.pos,a); syncStopUI(); },ped:a=>{ setArr(Sx.ped,a); syncStopUI(); },
-      cpl:a=>{ setArr([Sx.cPH,Sx.cHP,Sx.cPP],a); syncStopUI(); },trem:v=>{ Sx.trem.on=!!v; syncStopUI(); },zimb:v=>{ Sx.zimb.on=!!v; syncStopUI(); },blower:v=>W.mag.blower=v,swell:v=>{ swT=v; if(swIn) swIn.value=Math.round(v*100); },
+      cpl:a=>{ setArr([Sx.cPH,Sx.cHP,Sx.cPP],a); syncStopUI(); },comb:n=>comb(n),trem:v=>{ Sx.trem.on=!!v; syncStopUI(); },zimb:v=>{ Sx.zimb.on=!!v; syncStopUI(); },blower:v=>W.mag.blower=v,swell:v=>{ swT=v; if(swIn) swIn.value=Math.round(v*100); },
       empty:()=>{ W.mag.h=0; }},
     B,
     pins:[{t:'ハウプトヴェルク（I）',p:V3(-150,470,40)},{t:'ポジティフ（II）',p:V3(-150,250,0)},{t:'ペダル塔（C側）',p:V3(-470,720,-40)},{t:'ペダル塔（Cis側）',p:V3(470,720,-40)},
@@ -65,9 +81,9 @@ function buildH03(){
     speaking:allSpeak,
     update(dt){
       for(let i=0;i<3;i++) for(let k=0;k<NK[i];k++){ const tg=KS[i][k]?1:0; KV[i][k]+=(tg-KV[i][k])*Math.min(1,dt*22); }
-      for(const it of B.KN){ it.v+=clamp((it.on?1:0)-it.v,-dt*2.5,dt*2.5); }
+      for(const it of B.KN){ const r=it.rate||2.5; it.v+=clamp((it.on?1:0)-it.v,-dt*r,dt*r); }
       Sx.hw.forEach((it,i)=>SPH[i]=it.v); Sx.pos.forEach((it,i)=>SPP[i]=it.v); Sx.ped.forEach((it,i)=>SPD[i]=it.v);
-      for(const it of B.KN) it.update();
+      for(const it of B.KN) it.update(dt);
       const n=allSpeak().length; W.n=n; W.mag.update(dt,n);
       swV+=clamp(swT-swV,-dt*1.5,dt*1.5); SW.set(swV);
       W.tremUpd(dt,Sx.trem.v); B.setP(S.p*(1-W.trem.dip));

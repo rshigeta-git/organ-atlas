@@ -58,7 +58,7 @@ function buildBedosBellows(R,i,th0){
   };
   // particles (scene coordinates)
   const xe=BB.XB[2]+40;
-  new Tube([bbW(x+W/2+7,F+4,24),bbW(x,F+4,24),bbW(x,yb+3,24),bbW(x,yb+5,14)],{kind:'air',r:1.4*BB.K,density:0.6,state:()=>({open:B.pumping,speed:30*BB.K})});
+  new Tube(sharpPath([bbW(x+W/2+7,F+4,24),bbW(x,F+4,24),bbW(x,yb+3,24),bbW(x,yb+5,14)],1),{kind:'air',r:1.4*BB.K,density:0.6,state:()=>({open:B.pumping,speed:30*BB.K})});
   new Vol((a,b,c,out)=>{ const u=0.1+0.86*a, th=B.th; out.copy(bbW(x+(c-0.5)*(W-6),yb+0.9+b*Math.max(0,u*L*Math.sin(th)-1.6),ZT+u*L*Math.cos(th))); },160,{state:()=>B.th>0.004?0.15+0.85*B.th/BB.thMax:0,rate:3});
   B.out=new Tube(sharpPath([bbW(x,yb+2,-54),bbW(x,yb+1,-62),bbW(x,-1.5,-62),bbW(xe,-1.5,-62)],1),{r:1.1*BB.K,density:0.6,state:()=>({open:B.supplying,speed:B.flow})});
   return B;
@@ -123,8 +123,15 @@ function buildCalcant(R){
    buildFullChest builds it; call chest.finish() once the model is complete (merges the fixed parts). */
 let D01V=[[0,0,0],[0,0,0]];   // D-01: camera of the last step, set when the model is built
 let C01V={cut:0.5,cam:[[0,0,0],[0,0,0]]};   // C-01: section and camera of the last step, set when the model is built
-function fullChestPlan(yC,floor,zF0,stops){
-  const ST=stops||STOPSET, KS=[...Array(13).keys()], CL=h3Layout(KS,k=>Math.max(...ST.map(si=>pipeFoot(si,k)[0]))*7.8,0);
+/* chromatic layout: the notes side by side from C at the left, each channel as wide as in h3Layout (widest pipe of the note) */
+function chromLayout(ks,wfn,x0){
+  const w={}, xs={}; for(const k of ks){ const d=wfn(k); w[k]=H3MM(Math.max(18,d+Math.max(8,0.1*d))); }
+  const tot=ks.reduce((s,k)=>s+w[k],0); let x=x0-tot/2; for(const k of ks){ xs[k]=x+w[k]/2; x+=w[k]; }
+  return {w,xs,L:tot/2,R:tot/2};
+}
+// split: true gives the C/Cis layout (largest pipes at both ends), otherwise the notes are in chromatic order
+function fullChestPlan(yC,floor,zF0,stops,split){
+  const ST=stops||STOPSET, KS=[...Array(13).keys()], CL=(split?h3Layout:chromLayout)(KS,k=>Math.max(...ST.map(si=>pipeFoot(si,k)[0]))*7.8,0);
   const D0=-Math.min(...h3Rows(ST,0,0).map(r=>r.z-r.d/2))+2, zF=zF0!=null?zF0:D0/2;   // zF0: front of the chest (default: centred on z 0)
   return {KS,CL,rows:h3Rows(ST,0,zF),zF,yC,floor,xL:-CL.L,yIn:yC+6.5,zIn:zF-20};
 }
@@ -152,7 +159,7 @@ function buildBedosOrgan(){
   duct([c0,c1],7*BB.K,MAT.wood,LB('ふいごの出口をまとめる管','Sammelkanal'));
   const xT=xL-8, tp=[c1,V3(xT,c1.y,c1.z),V3(xT,c1.y,zIn),V3(xT,yIn,zIn),V3(xL-0.5,yIn,zIn)];
   duct(tp,7,MAT.wood,LB('風導管（ふいごから風箱へ）','Windkanal'));
-  const trunk=new Tube(tp,{r:2,density:0.4,front:400,state:()=>({open:S.p>10,speed:3*(chest?chest.speaking().length:0)})});
+  const trunk=new Tube(sharpPath(tp,1),{r:2,density:0.4,front:400,state:()=>({open:S.p>10,speed:3*(chest?chest.speaking().length:0)})});
   chest=buildFullChest(P,trunk);
   buildBedosFrame(G);
   const C=buildCalcant(G), E0=V3(), E1=V3();
@@ -224,8 +231,15 @@ function buildBlowerMag(o){
   const WL=LB('おもり（この重さで風圧が決まる）','Gewicht');
   box(top,10,4,8,MAT.weight,-10,3.2,-7,WL); box(top,10,4,8,MAT.weight,10,3.2,7,WL); box(top,10,4,8,MAT.weight,10,3.2,-7,WL);
   const RL=LB('リブ（折りたたまれる板と革のひだ）','Falten');
-  const ribs={f1:plank(R,40,0.5,MAT.leather,RL),f2:plank(R,40,0.5,MAT.leather,RL),b1:plank(R,40,0.5,MAT.leather,RL),b2:plank(R,40,0.5,MAT.leather,RL),
-              l1:plank(R,0.5,30,MAT.leather,RL),l2:plank(R,0.5,30,MAT.leather,RL),r1:plank(R,0.5,30,MAT.leather,RL),r2:plank(R,0.5,30,MAT.leather,RL)};
+  // the folded sides: one skin round the reservoir, folding outward on all four sides; at the middle fold the outline is
+  // the bottom board's grown by d, so the corners close as on a real reservoir
+  const rg=new T.BufferGeometry(), rp=new Float32Array(4*2*2*9); rg.setAttribute('position',new T.BufferAttribute(rp,3)); CX.own.push(rg);
+  mk(rg,MAT.leather,R,RL);
+  const ribSet=(ty,hf,d)=>{ const X0=-94.5, X1=-55.5, Z0=-15, Z1=15, ym=11+hf;
+    const ring=(y,e)=>[[X0-e,y,Z0-e],[X1+e,y,Z0-e],[X1+e,y,Z1+e],[X0-e,y,Z1+e]], L=[ring(11,0),ring(ym,d),ring(ty,0)]; let q=0;
+    for(let k=0;k<2;k++) for(let i=0;i<4;i++){ const a=L[k][i], b=L[k][(i+1)%4], c=L[k+1][(i+1)%4], e=L[k+1][i];
+      for(const p of [a,b,c,a,c,e]){ rp[q++]=p[0]; rp[q++]=p[1]; rp[q++]=p[2]; } }
+    rg.attributes.position.needsUpdate=true; rg.computeVertexNormals(); rg.computeBoundingSphere(); };
   const cords=[-1,1].map(()=>rod(R,0.12,MAT.cord,LB('ひも（上板が上がるとローラーを引き上げる）','Zugschnur')));
   const eyes=[-1,1].map(s=>{ const e=mk(G_CYL,MAT.brass,top,LB('ひもの留め金','Öse')); e.scale.set(0.35,0.5,0.35); e.position.set(VX+0.6+75,-0.25,s*5.6); return e; });
   duct(o.trunkPts,o.trunkS||6,MAT.wood,LB('風導管（ふいごから風箱へ）','Windkanal'));
@@ -239,10 +253,7 @@ function buildBlowerMag(o){
     imp.rotation.z-=M.rpm*dt*30;
     const ty=topY(); top.position.set(-75,ty,0);
     const H=ty-11, hf=H/2, d=Math.sqrt(Math.max(0,169-hf*hf));
-    ribs.f1.set(V3(-75,11,15),V3(-75,11+hf,15+d)); ribs.f2.set(V3(-75,11+hf,15+d),V3(-75,ty,15));
-    ribs.b1.set(V3(-75,11,-15),V3(-75,11+hf,-15-d)); ribs.b2.set(V3(-75,11+hf,-15-d),V3(-75,ty,-15));
-    ribs.l1.set(V3(-94.5,11,0),V3(-94.5+d,11+hf,0)); ribs.l2.set(V3(-94.5+d,11+hf,0),V3(-94.5,ty,0));
-    ribs.r1.set(V3(-55.5,11,0),V3(-55.5-d,11+hf,0)); ribs.r2.set(V3(-55.5-d,11+hf,0),V3(-55.5,ty,0));
+    ribSet(ty,hf,d);
     M.d=d;
     const ry=VB+6.6*(1-M.vo)+0.55; roller.position.set(VX+0.6,ry,0);
     const cl=Math.max(0.05,ry-0.55-VB); curtain.scale.y=cl; curtain.position.y=VB+cl/2;
@@ -251,7 +262,7 @@ function buildBlowerMag(o){
   M.intake=new Tube([w(-122,8,26),w(-122,8,8)],{kind:'air',r:1.6*K,density:0.8/K,front:(o.front||40)*K,state:()=>({open:M.rpm>0.15,speed:30*K*M.rpm*M.vo})});
   M.blowOut=new Tube([w(-118,5,0),w(-114,5,0),w(-89,5,0)],{r:1.4*K,density:0.75/K,front:(o.front||40)*K,state:()=>({open:M.rpm>0.25,speed:30*K*M.rpm*M.vo})});
   M.thru=new Tube([w(-89,5,0),w(-89,13,0),w(-89,17.6,0),w(-85.5,17.6,0),w(-81,16.5,0)],{r:1.1*K,density:0.8/K,front:(o.front||40)*K,state:()=>({open:M.blowOut.full()&&M.vo>0.05,speed:30*K*M.rpm*M.vo})});
-  M.vol=new Vol((a,b,c,out)=>{ const ty=topY(), y=11.7+b*(ty-12.4), q=(y-11)/Math.max(1,ty-11), off=(M.d||0)*(1-Math.abs(2*q-1))+1.2; out.copy(w(lerp(-94.5+off,-55.5-off,a),y,(c-0.5)*27)); },320,{state:()=>M.h>0.012?0.15+0.85*M.h:0,rate:o.front?0.5:1.4});
+  M.vol=new Vol((a,b,c,out)=>{ const ty=topY(), y=11.7+b*(ty-12.4), q=(y-11)/Math.max(1,ty-11), off=1.2; out.copy(w(lerp(-94.5+off,-55.5-off,a),y,(c-0.5)*27)); },320,{state:()=>M.h>0.012?0.15+0.85*M.h:0,rate:o.front?0.5:1.4});
   M.trunk=new Tube(o.trunkPts,{r:1.7*(o.trunkS?o.trunkS/6:1),density:0.4,front:o.front||400,state:()=>({open:M.h>0.012&&S.p>10&&(!o.front||M.thru.full()||M.vol.fill>0.5),speed:3*M.n})});
   M.reset=()=>{ M.h=0; M.rpm=0; S.p=0; for(const f of flows) f.reset(); };
   return M;

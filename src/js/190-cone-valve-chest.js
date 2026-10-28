@@ -26,24 +26,30 @@ function buildConeChest(){
     const g=new T.Group(); g.position.set(xV-1.3,yIn1-0.3,zc); R.add(g); box(g,0.35,6.2,DZ-0.6,stopMat(i),0.18,-3.1,0,LB('ストップ弁（'+STOPS[SI[i]].name+'。ストップを入れると開いてチャンネルに風を入れる）','Registerventil')); sv.push(g); }
   const trunkV=new Vol((a,b,c,out)=>out.set(xV-3.2+(c-0.5)*2,oy+8+b*8,ZM+(a*2-1)*(ZD/2-1)),160,{state:()=>1,rate:3});
   const chV=[]; for(let i=0;i<5;i++){ const zc=ROWC[i]; chV.push(new Vol((a,b,c,out)=>out.set(-W/2-1+a*(W+3),yIn0+0.4+b*6.2,zc+(c-0.5)*3.4),120,{state:()=>S.sp[i]>0.5?1:0,rate:1.6})); new Tube([V3(xV-3.2,oy+12,zc),V3(xV-0.5,oy+12,zc),V3(-W/2+4,oy+12,zc)],{r:0.6,density:0.6,front:200,state:()=>({open:S.sp[i]>0.5&&chV[i].fill<0.97,speed:16})}); }
+  const KSk=k=>2-0.5*k/12;   // cones, seats and conduits enlarged by key: 2× the first design in the bass (C), 1.5× at the top (c)
   const Pk=new Float32Array(N), tubes=[], bell=[], cones=[], rods=[], pipesT=[];
   const LB_B=LB('小ふいご（制御風でふくらみ、棒で円錐弁を押し上げる）','Bälgchen'), LB_C=LB('円錐弁（風に押されて座の穴をふさいでいる。持ち上がるとパイプへの道が開く）','Kegel'), LB_R=LB('押し棒','Stecher'), LB_D=LB('パイプへの導管','Kondukt');
   for(let k=0;k<N;k++){
     const x=pos(k);
-    const bk=[], ck=[], rk=[];
+    const bk=[], ck=[], rk=[], KS=KSk(k);
     for(let i=0;i<5;i++){
       const zc=ROWC[i];
-      ck.push(mk(G_KEGEL,keyMat(k),R,LB_C));
+      { const c=mk(G_KEGEL,keyMat(k),R,LB_C); c.scale.setScalar(KS); ck.push(c); }
       // seat bore through the floor, then the conduit bored in its block: along under the floor and up to the pipe toe
-      bore(R,MAT.dark,x,oy+7,yIn0,zc,0.5,LB('円錐弁の座（底板を貫く穴。下で導管につながる）','Kegelsitz'));
-      boreAB(R,MAT.dark,V3(x,oy+7,zc),V3(x,oy+7,zc+3.5),0.3,LB_D,false);
-      bore(R,MAT.dark,x,oy+7,base,zc+3.5,0.3,LB_D);
-      const si=SI[i], nr=nRanks(si), RZ=rankZ(si,0);
+      bore(R,MAT.dark,x,oy+7,yIn0,zc,0.5*KS,LB('円錐弁の座（底板を貫く穴。下で導管につながる）','Kegelsitz'));
+      boreAB(R,MAT.dark,V3(x,oy+7,zc),V3(x,oy+7,zc+3.5),0.3*KS,LB_D,false);
+      const si=SI[i], nr=nRanks(si), RZ=rankZ(si,0), yH=oy+16.9, ZZ=[...Array(nr).keys()].map(r=>zc+3.5+(nr>1?RZ[r]:0));
+      // a multi-rank stop: the conduit ends in a short bore across the upper board, from which each pipe has its own bore
+      if(nr<2) bore(R,MAT.dark,x,oy+7,base,zc+3.5,0.3*KS,LB_D);
+      else { bore(R,MAT.dark,x,oy+7,yH,zc+3.5,0.3*KS,LB_D);
+        boreAB(R,MAT.dark,V3(x,yH,Math.min(...ZZ)-0.3),V3(x,yH,Math.max(...ZZ)+0.3),0.3*KS,LB('上板の中の横穴（1つの導管の風を各列のパイプへ分ける）','Stockbohrung'),false);
+        for(const z of ZZ) bore(R,MAT.dark,x,yH,base,z,0.25*KS,LB('上板の穴（各列のパイプの足へ）','Stockbohrung')); }
       for(let r=0;r<nr;r++){
-        const zz=zc+3.5+(nr>1?RZ[r]:0), sp=buildPipe(x,zz,si,k,r,base);
-        const tp=[V3(x,yIn0+2,zc),V3(x,yIn0+0.2,zc),V3(x,oy+7,zc),V3(x,oy+7,zc+3.5),V3(x,base,zz)].concat(sp.path.slice(1));
-        const tb=new Tube(tp,{r:nr>1?0.22:0.3,density:0.3,front:900,state:()=>({open:chV[i].fill>0.5&&Pk[k]>0.6&&S.sp[i]>0.85,speed:20})});
-        tb.exitU=tb.cum[4+sp.ei]/tb.L; tb.mouthAt(sp,4); pipesT.push({k,i:si,j:i,r});
+        const zz=ZZ[r], sp=buildPipe(x,zz,si,k,r,base);
+        const pre=[V3(x,yIn0+2,zc),V3(x,yIn0+0.2,zc),V3(x,oy+7,zc),V3(x,oy+7,zc+3.5)].concat(nr>1?[V3(x,yH,zc+3.5),V3(x,yH,zz)]:[]), nb=pre.length;
+        const tp=pre.concat([V3(x,base,zz)],sp.path.slice(1));
+        const tb=new Tube(tp,{r:(nr>1?0.22:0.3)*KS,density:0.3,front:900,state:()=>({open:chV[i].fill>0.5&&Pk[k]>0.6&&S.sp[i]>0.85,speed:20})});
+        tb.exitU=tb.cum[nb+sp.ei]/tb.L; tb.mouthAt(sp,nb); pipesT.push({k,i:si,j:i,r});
       }
     }
     bell.push(bk); cones.push(ck); rods.push(rk);
@@ -74,7 +80,7 @@ function buildConeChest(){
       for(let k=0;k<N;k++){
         Pk[k]=S.kd[k];
         const lift=1.2*clamp((Pk[k]-0.2)/0.6,0,1), x=pos(k), q=act[k], th=Math.asin(lift/H), c=Math.cos(th), sn=Math.sin(th);
-        for(let i=0;i<5;i++){ cones[k][i].position.set(x,yIn0+0.75+lift,ROWC[i]);
+        for(let i=0;i<5;i++){ cones[k][i].position.set(x,yIn0+0.75*KSk(k)+lift,ROWC[i]);
           const pv=V3(x,yP,zR(i)), tip=V3(x,yP+lift,zR(i)+H*c);
           q.sq[i][0].set(pv,tip); q.sq[i][1].set(pv,V3(x,yP-V*c,zR(i)+V*sn)); q.stem[i].set(tip,V3(x,yIn0+0.3+lift,ROWC[i])); }
         // E: the rod has moved forward by V·sin(th); E's upright arm follows it, its forward arm goes down and pulls the tracker

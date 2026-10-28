@@ -60,7 +60,7 @@ const api={
   xray:setXray, cut:setCut, cam:camTo, home:()=>camHome(),
   ctl(id,v){ if(inst.ctl&&inst.ctl[id]) inst.ctl[id](v); renderControls(); }
 };
-window.__oa={api,S,get inst(){ return inst; },get inlets(){ return CX&&CX.inlets||[]; },load:id=>load(id),r:renderer,MAT};
+window.__oa={api,S,get inst(){ return inst; },get inlets(){ return CX&&CX.inlets||[]; },get flows(){ return flows; },load:id=>load(id),r:renderer,MAT};
 
 const notes=$('notes'), sel=$('modelSelect'), list=$('indexList');
 // top page: the chapters A–H with a link to every model that can be opened
@@ -95,7 +95,7 @@ list.addEventListener('click',e=>{ const b=e.target.closest('.item'); if(b&&!b.d
 sel.addEventListener('change',()=>load(sel.value));
 
 function renderNotes(def){
-  const TL=['EN','DE','FR']; let h='<div class="nhead"><p class="nid">'+def.id+'</p><h2>'+T_(def.name)+'</h2><dl class="terms">'+def.terms.split(' · ').map((t,i)=>'<dt>'+TL[i]+'</dt><dd>'+t+'</dd>').join('')+'</dl></div><p>'+T_(def.summary)+'</p><h3>'+T_('手順（押すとモデルが動きます）')+'</h3><ol class="steps">';
+  const TL=['EN','DE','FR','NL','IT','ES']; let h='<div class="nhead"><p class="nid">'+def.id+'</p><h2>'+T_(def.name)+'</h2><dl class="terms">'+def.terms.split(' · ').map((t,i)=>'<dt>'+TL[i]+'</dt><dd>'+t+'</dd>').join('')+'</dl></div><p>'+T_(def.summary)+'</p><h3>'+T_('手順（押すとモデルが動きます）')+'</h3><ol class="steps">';
   def.steps.forEach((s,i)=>{ h+='<li><button data-s="'+i+'"><span class="n">'+(i+1)+'</span><span>'+T_(s.t)+'</span></button></li>'; });
   h+='</ol><p class="foot">'+T_(def.foot||(SC>=1?'標準構成：13鍵（C〜c）× 5ストップ。Gedackt 8′（木管）、Rohrflöte 4′、Prinzipal 2′、Mixtur III（1 1/3′・1′・2/3′）、Vox humana 8′。実物のパイプ長（C）：Gedackt 約110 cm、Rohrflöte 約56 cm＋煙突、Prinzipal 約59 cm、Mixtur 約39・30・20 cm、Vox humana 共鳴管 約31 cm。モデルでは長さ・太さとも実物大で表示。音はパレットが開きストップが入った瞬間に鳴る簡易合成です。':'標準構成：13鍵（C〜c）× 5ストップ。Gedackt 8′（木管）、Rohrflöte 4′、Prinzipal 2′、Mixtur III（1 1/3′・1′・2/3′）、Vox humana 8′。実物のパイプ長（C）：Gedackt 約110 cm、Rohrflöte 約56 cm＋煙突、Prinzipal 約59 cm、Mixtur 約39・30・20 cm、Vox humana 共鳴管 約31 cm。モデルでは長さ・太さとも45 %で表示。音はパレットが開きストップが入った瞬間に鳴る簡易合成です。'))+'</p>';
   notes.innerHTML=h;
@@ -157,7 +157,7 @@ function doHover(){
   canvas.style.cursor=hit&&(hit.key!=null||hit.stop!=null||hit.act)?'pointer':'';
   if(!hit||!hit.lab){ tip.hidden=true; return; }
   const act=hit.act?TF(hit.act.get()?'クリックで {0} を切る':'クリックで {0} を入れる',hit.act.name):hit.key!=null?TF('クリックで鍵 {0} を押す',KEYNAMES[hit.key]):hit.stop!=null?TF(S.stop[hit.stop]?'クリックで {0} を切る':'クリックで {0} を入れる',STOPS[hit.stop].name):'';
-  const L=hit.lab, OR=['ja','en','de','fr','nl'], hd=(LANG!=='ja'&&L[LANG])?LANG:'ja'; tip.innerHTML='<b>'+L[hd]+'</b><dl>'+OR.filter(q=>q!==hd&&L[q]).map(q=>'<dt>'+q.toUpperCase()+'</dt><dd>'+L[q]+'</dd>').join('')+'</dl>'+(act?'<em>'+act+'</em>':''); tip.hidden=false;
+  const L=hit.lab, OR=['ja','en','de','fr','nl','it','es'], hd=(LANG!=='ja'&&L[LANG])?LANG:'ja'; tip.innerHTML='<b>'+L[hd]+'</b><dl>'+OR.filter(q=>q!==hd&&L[q]).map(q=>'<dt>'+q.toUpperCase()+'</dt><dd>'+L[q]+'</dd>').join('')+'</dl>'+(act?'<em>'+act+'</em>':''); tip.hidden=false;
   const r=hit.r, x=e.clientX-r.left+14, y=e.clientY-r.top+14; tip.style.left=Math.min(x,r.width-tip.offsetWidth-8)+'px'; tip.style.top=Math.min(y,r.height-tip.offsetHeight-8)+'px';
 }
 /* clicking parts of the model: keys, levers, trackers, pallets play the key; stop knobs, sliders, stop bars toggle the stop */

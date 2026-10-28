@@ -22,6 +22,11 @@ function h3Case(B){
     box(ST,2*nw,yN-y0,1.5,MAT.wood,0,(yN+y0)/2,zN,LN); box(ST,2*nw+3,1.5,25-zN,MAT.wood,0,yN+0.75,(25+zN)/2,LN);
     for(const s of [-1,1]){ box(ST,1.5,yN-yJ,25-zN,MAT.wood,s*(nw+0.75),(yN+yJ)/2,(25+zN)/2,LN); box(ST,1.5,yJ-y0,zJ-zN,MAT.wood,s*(nw+0.75),(yJ+y0)/2,(zJ+zN)/2,LN); } }
   for(const s of [-1,1]) box(ST,6,210,4,MAT.woodDark,s*204,313,23,LB('ブルストの開口の枠','Gehäuse'));
+  // front boards of the lower case beside the Brust opening (from the case sides to the opening's frame), so that one
+  // does not look past the swell box into the case; and the back of the upper case behind the Hauptwerk
+  box(ST,-207-(xa+1.5),214,2,MAT.wood,(xa+1.5-207)/2,312,24,LB('下のケースの前板（ブルストの開口の横）','Gehäuse'));
+  box(ST,xb-1.5-207,214,2,MAT.wood,(xb-1.5+207)/2,312,24,LB('下のケースの前板（ブルストの開口の横）','Gehäuse'));
+  box(ST,wC,398,2,MAT.wood,cxC,621,-98,LB('上のケースの背板','Gehäuse'));
   box(ST,420,6,6,MAT.woodDark,0,207,23,LB('ブルストの開口の枠','Gehäuse'));
   for(const [C,L] of [[B.tc,B.TCL],[B.td,B.TDL]]){
     const x0=C.xL-4, x1=C.xR+4, cx=(x0+x1)/2, w=x1-x0, zf=-44, zb=-142, d=zf-zb;

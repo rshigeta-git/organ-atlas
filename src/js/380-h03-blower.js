@@ -10,7 +10,8 @@ function buildBlowerMagR(ST){
   { const LG=LB('送風機のケース','Gebläsegehäuse'), t=2, o=15;
     box(ST,70,80,t,MAT.casing,BX,BY,BZ-35+t/2,LG); for(const s of [-1,1]){ box(ST,t,80,70,MAT.casing,BX+s*(35-t/2),BY,BZ,LG); box(ST,70,t,70,MAT.casing,BX,BY+s*(40-t/2),BZ,LG); }
     for(const s of [-1,1]){ box(ST,35-o,80,t,MAT.casing,BX+s*(35+o)/2,BY,BZ+35-t/2,LG); box(ST,2*o,40-o,t,MAT.casing,BX,BY+s*(40+o)/2,BZ+35-t/2,LG); } }
-  const imp=new T.Group(); imp.position.set(BX,BY,BZ+18); R.add(imp);   // inside the casing, behind the intake
+  const imp=new T.Group(); imp.position.set(BX,BY,BZ-20); R.add(imp);   // inside the casing, at the motor side, on the motor's shaft
+  rod(ST,2,MAT.iron,LB('モーターの軸（羽根車を回す）','Welle')).set(V3(BX,BY,BZ-35),V3(BX,BY,BZ-20));
   const hub=mk(G_CYL,MAT.iron,imp,LB('羽根車（回転して風を起こす）','Laufrad')); hub.scale.set(26,4,26); hub.rotation.x=Math.PI/2;
   for(let b=0;b<10;b++){ const bl=box(imp,2.4,24,10,MAT.metalDark,0,0,3,LB('羽根車の羽根','Laufradschaufel')); const an=b/10*Math.PI*2; bl.position.set(Math.cos(an)*14,Math.sin(an)*14,3); bl.rotation.z=an-Math.PI/2+0.35; }
   const mot=mk(G_CYL,MAT.iron,ST,LB('電動モーター','Motor')); mot.rotation.x=Math.PI/2; mot.scale.set(16,30,16); mot.position.set(BX,BY,BZ-50);

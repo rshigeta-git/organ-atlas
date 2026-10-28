@@ -3,7 +3,7 @@ let F01V={front:[[0,0,0],[0,0,0]],link:[[0,0,0],[0,0,0]]};   // F-01: views of s
 function buildSwell(){
   const R=CX.root, m={open:0.5,t:0,em:0};
   // full-size chest (as C-01); the box encloses its upper boards and pipes, with 8 shutters across the front
-  const chest=buildFullChest(fullChestPlan(0,-12),null,'R');
+  const chest=buildFullChest(fullChestPlan(0,-12,null,null,true),null,'R');
   const X0=chest.xL-3, X1=chest.xR+3, Z0=chest.zB-2, Z1=chest.zF+2, XC=(X0+X1)/2, ZC=(Z0+Z1)/2, Y0=chest.yS-1.5, Y1=chest.top+8, NS=8, sh=(Y1-Y0)/NS;
   const LW=LB('スウェルボックス（パイプを囲む厚い木の箱）','Schwellkasten');
   box(R,X1-X0,Y1-Y0,1.6,MAT.woodDark,XC,(Y0+Y1)/2,Z0,LW); box(R,1.6,Y1-Y0,Z1-Z0,MAT.woodDark,X0,(Y0+Y1)/2,ZC,LW); box(R,1.6,Y1-Y0,Z1-Z0,MAT.woodDark,X1,(Y0+Y1)/2,ZC,LW);

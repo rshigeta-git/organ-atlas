@@ -8,7 +8,7 @@ const SRC = 'src', OUT = 'dist', THREE = 'three-0.147.0';
 const CDN = 'https://cdn.jsdelivr.net/npm/three@0.147.0/';
 const read = p => readFileSync(join(SRC, p), 'utf8');
 
-// I18N table: src/i18n/strings.json (Japanese → [en, de, fr, nl]), serialized compactly in the page
+// I18N table: src/i18n/strings.json (Japanese → [en, de, fr, nl, it, es]), serialized compactly in the page
 function i18n() {
   const o = JSON.parse(read('i18n/strings.json'));
   return '{' + Object.entries(o).map(([k, v]) => JSON.stringify(k) + ': ' +
@@ -16,7 +16,9 @@ function i18n() {
 }
 
 const js = readdirSync(join(SRC, 'js')).filter(f => f.endsWith('.js')).sort()
-  .map(f => read('js/' + f)).join('').replace('/*@I18N*/', () => i18n());
+  .map(f => read('js/' + f)).join('').replace('/*@I18N*/', () => i18n())
+  // part names in Italian and Spanish: src/i18n/parts-it-es.json (German term → [it, es])
+  .replace('/*@TRIE*/', () => 'const TRIE=' + JSON.stringify(JSON.parse(read('i18n/parts-it-es.json'))) + ';');
 const head = read('head.html'), css = read('style.css'), body = read('body.html');
 const scripts = base => `<script src="${base}build/three.min.js"></script>\n<script src="${base}examples/js/controls/OrbitControls.js"></script>\n`;
 const main = '<script>\n' + js + '</script>\n';

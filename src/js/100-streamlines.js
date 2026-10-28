@@ -20,7 +20,13 @@ void main(){
 /* Each streamline is a thin tube swept along the flow path; K parallel lines for wide passages. */
 function makeStream(tb){
   if(tb.L<0.5) return null;
-  const curve=tb.p.length>2?new T.CatmullRomCurve3(tb.p,false,'centripetal'):new T.LineCurve3(tb.p[0],tb.p[1]);
+  // sharp bends (ducts, bores) get extra points close to the corner, so the smooth curve does not swing out of the passage
+  const p=[tb.p[0]], u=V3(0,0,0), v=V3(0,0,0);
+  for(let i=1;i<tb.p.length-1;i++){ const a=tb.p[i-1],b=tb.p[i],c=tb.p[i+1]; u.subVectors(b,a); v.subVectors(c,b);
+    if(u.lengthSq()>1e-6&&v.lengthSq()>1e-6&&u.angleTo(v)>0.6){ const d=Math.min(0.3,u.length()/3,v.length()/3); p.push(b.clone().addScaledVector(u.normalize(),-d),b,b.clone().addScaledVector(v.normalize(),d)); }
+    else p.push(b); }
+  p.push(tb.p[tb.p.length-1]);
+  const curve=p.length>2?new T.CatmullRomCurve3(p,false,'centripetal'):new T.LineCurve3(p[0],p[1]);
   const ns=Math.max(2,Math.min(300,Math.round(tb.L/0.6)));
   const sp=curve.getSpacedPoints(ns);
   const K=tb.r>=0.8?3:tb.r>=0.4?2:1, rr=tb.r*0.6, rad=tb.r>=1?0.22:tb.r>=0.5?0.16:0.12;

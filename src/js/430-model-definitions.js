@@ -1,5 +1,5 @@
 const MODELS={
-'a-01':{id:'A-01',name:'フルー管の発音',terms:'flue pipe · Lippenpfeife · tuyau à bouche',stops0:[0,0,0,0,0],own:true,noStops:true,noKeys:true,floor:-26,xray0:false,cut0:1,clip:[0.02,6],psize:0.32,
+'a-01':{id:'A-01',name:'フルー管の発音',terms:'flue pipe · Lippenpfeife · tuyau à bouche · labiaalpijp · canna ad anima · tubo labial',stops0:[0,0,0,0,0],own:true,noStops:true,noKeys:true,floor:-26,xray0:false,cut0:1,clip:[0.02,6],psize:0.32,
   cam:{p:[150,30,40],t:[0,22,-9]},
   legend:'<span><i style="background:var(--wind)"></i>噴流・足の中の風</span><span><i style="background:var(--air)"></i>胴の中の空気（上下に往復）</span><span><i style="background:var(--sound)"></i>圧力が高い</span><span><i style="background:var(--wind);opacity:.6"></i>圧力が低い</span>',
   foot:'左のメタルは Prinzipal 2′ の C（約262 Hz、胴の長さ 約59 cm）を想定した開管、右の木管は同じ長さの閉管（約131 Hz）です。歌口まわりは見やすさのため拡大しています。振動は実際の毎秒数百回を、メタルは約5.5回、木管は約2.8回に遅くして表示しています。音は実際の高さで鳴ります。',
@@ -15,7 +15,7 @@ const MODELS={
     {t:'木管の栓を下げると管が短くなって音が高く、上げると長くなって低くなります。下のスライダーで動かすと、空気柱の長さ、振動の速さ、音の高さが一緒に変わります。',run:a=>{a.ctl('wind',true);a.ctl('sw',true);a.cam([40,66,4],[0,66,-18]);a.ctl('stop',65);later(1600,()=>api.ctl('stop',71));later(3200,()=>api.ctl('stop',68));}}
   ],
   build(){ return buildFlueSection(); }},
-'a-02':{id:'A-02',name:'リード管の発音',terms:'reed pipe · Zungenpfeife · tuyau à anche',stops0:[0,0,0,0,0],own:true,noStops:true,noKeys:true,floor:-8,xray0:false,cut0:1,clip:[0.02,6],psize:0.32,
+'a-02':{id:'A-02',name:'リード管の発音',terms:'reed pipe · Zungenpfeife · tuyau à anche · tongwerkpijp · canna ad ancia · tubo de lengüeta',stops0:[0,0,0,0,0],own:true,noStops:true,noKeys:true,floor:-8,xray0:false,cut0:1,clip:[0.02,6],psize:0.32,
   cam:{p:[120,30,40],t:[0,24,0]},
   legend:'<span><i style="background:var(--wind)"></i>風</span><span><i style="background:var(--air)"></i>共鳴管から出た風</span><span><i style="background:var(--sound)"></i>圧力が高い</span><span><i style="background:var(--wind);opacity:.6"></i>圧力が低い</span>',
   foot:'Vox humana 8′ の c（約131 Hz）を想定した断面です。舌とシャロットのまわりは見やすさのため拡大し、舌の開きも誇張しています。振動は実際の毎秒約131回を、約5.5回に遅くして表示しています。音は実際の高さで鳴ります。',
@@ -29,7 +29,7 @@ const MODELS={
     {t:'チューニングワイヤーが舌を押さえる位置で、舌の振動する長さが決まります。ワイヤーを下げると振動する部分が短くなって音が高く、上げると長くなって低くなります。下のスライダーで動かしてください。',run:a=>{a.ctl('wind',true);a.cam([17,24,13],[0,23.5,1]);a.ctl('wire',yWire(-0.9));later(1600,()=>api.ctl('wire',yWire(0.9)));later(3200,()=>api.ctl('wire',yWire(0)));}}
   ],
   build(){ return buildReedSection(); }},
-'b-01':{id:'B-01',name:'くさび型ふいご（人力）',terms:'wedge bellows · Keilbalg · soufflet cunéiforme',stops0:[1,0,1,0,0],own:true,floor:-7,sc:1,gridS:3,maxDist:1600,
+'b-01':{id:'B-01',name:'くさび型ふいご（人力）',terms:'wedge bellows · Keilbalg · soufflet cunéiforme · spaanbalg · mantice a cuneo · fuelle de cuña',stops0:[1,0,1,0,0],own:true,floor:-7,sc:1,gridS:3,maxDist:1600,
   cam:{p:[-480,320,420],t:[-130,70,-100]},clip:[-400,100],
   summary:'ドン・ベドスの本（18世紀）に描かれた形の、床に寝かせたくさび型ふいご3台です。尾の蝶番を中心に上板が扇のように開閉します。カルカント（ふいごを動かす人）が長いレバーの先を引き下げると、支点の反対側の腕が吊り金で上板を持ち上げ、外気を吸い込みます。手を離すと、上板に載せたおもりの重さで風が押し出されます。1人のカルカントが減ったふいごから順にレバーを引くので、風が途切れません。',
   steps:[
@@ -40,7 +40,7 @@ const MODELS={
     {t:'「カルカント自動」を入れて、全部のストップで大きな和音を弾きます。カルカントは一番減ったふいごから順にレバーを引き、たくさん弾くほど速く引くので、風が途切れません。',run:a=>{a.ctl('auto',true);a.stops([1,1,1,1,1]);a.keys([0,2,4,5,7,9,11,12]);}}
   ],
   build(){ return buildBedosOrgan(); }},
-'b-02':{id:'B-02',name:'電動ブロワー＋マガジンふいご',terms:'blower + reservoir · Gebläse + Magazinbalg · ventilateur + réservoir',stops0:[1,0,1,0,0],own:true,floor:0,sc:1,gridS:2,maxDist:1200,
+'b-02':{id:'B-02',name:'電動ブロワー＋マガジンふいご',terms:'blower + reservoir · Gebläse + Magazinbalg · ventilateur + réservoir · windmotor + magazijnbalg · elettroventilatore + serbatoio · ventilador + fuelle depósito',stops0:[1,0,1,0,0],own:true,floor:0,sc:1,gridS:2,maxDist:1200,
   cam:{p:[-40,230,440],t:[-110,70,0]},clip:[-300,80],
   summary:'電動の送風機（ブロワー）が連続して風を送り、マガジンふいご（リザーバー）が上板のおもりで風圧を一定に保ちます。上板が上がると、上板から吊ったひもがカーテン弁のローラーを引き上げ、カーテンが入口のスリットを下からふさいで入る風を絞ります。上板が下がるとローラーも下がり、ばねの力でカーテンが巻き取られてスリットが開く、という自動調整です。',
   steps:[
@@ -61,7 +61,7 @@ const MODELS={
       ctl:{blower:v=>M.blower=v,reset:()=>M.reset()},
       update(dt){ M.update(dt,chest.speaking().length); chest.update(dt); }};
   }},
-'c-01':{id:'C-01',name:'スライダーチェスト',terms:'slider chest · Schleiflade · sommier à gravures',stops0:[1,0,1,0,0],floor:-8,sc:1,gridS:2,maxDist:1200,
+'c-01':{id:'C-01',name:'スライダーチェスト',terms:'slider chest · Schleiflade · sommier à gravures · sleeplade · somiere a tiro · secreto de correderas',stops0:[1,0,1,0,0],floor:-8,sc:1,gridS:2,maxDist:1200,
   cam:{p:[180,165,250],t:[0,80,0]},clip:[-95,95],
   summary:'鍵ごとに「トーンチャンネル」と呼ばれる細長い部屋があり、押鍵でその下のパレットが開きます。部屋の上を横切るスライダー（ストップごとの細長い板）の穴が、上下の穴と一致したストップのパイプだけが鳴ります。機械式オルガンで最も広く使われてきた風箱です。',
   steps:[
@@ -78,14 +78,14 @@ const MODELS={
     const xF=P.CL.xs[6], xp=chest.xR+5, yCh=P.yC+13, z1=P.rows[0].z;
     C01V={cut:(95-(xF+0.6))/190,cam:[[150,48,0],[xF,38,0]]};   // step 6: the section through the Fis channel, seen from the right
     return {chest,pins:[{t:'パレットボックス',p:V3(xp,P.yC+5,chest.zF)},{t:'トーンチャンネル',p:V3(xp,yCh+6,chest.zF)},{t:'スライダー',p:V3(xp,chest.yS+0.5,z1)},{t:'上板',p:V3(xp,chest.base-2,z1)},{t:'パイプ',p:V3(xp,chest.base+60,0)}],update(dt){ chest.update(dt); }}; }},
-'c-02':{id:'C-02',stopSet:[0,17,8,18,19],name:'スプリングチェスト',terms:'spring chest · Springlade · sommier à ressorts',stops0:[1,0,1,0,0],floor:-8,sc:1,gridS:2,maxDist:1200,
+'c-02':{id:'C-02',stopSet:[0,17,8,18,19],name:'スプリングチェスト',terms:'spring chest · Springlade · sommier à ressorts · springlade · somiere a vento · secreto de muelles',stops0:[1,0,1,0,0],floor:-8,sc:1,gridS:2,maxDist:1200,
   cam:{p:[180,165,250],t:[0,80,0]},clip:[-95,95],
   summary:'スライダーの代わりに、パイプごとにばねで閉じた小さな弁（ばね弁）をチャンネルの天井に持つ風箱です。ストップを入れるとストップバーが下がり、ピンでそのストップの弁をまとめて押し開けます。16〜17世紀のオランダや北ドイツ、19世紀までのイタリアなどで使われました。',
   steps:[
     {t:'木部を透かします。チャンネルの天井に、ストップごと・鍵ごとのばね弁が並び、ばねで閉じています。',run:a=>{a.xray(true);a.cut(0);a.keys([]);a.stops([0,0,0,0,0]);a.cam([180,165,250],[0,80,0]);}},
     {t:'鍵Eを押します。チャンネルに風が入りますが、ばね弁が閉じているので止まります。',run:a=>{a.stops([0,0,0,0,0]);a.keys([4]);}},
     {t:'Gedackt 8′ を入れます。ストップバーが下がり、ピンがこのストップの13個の弁をまとめて押し開けます。',run:a=>{a.stops([1,0,0,0,0]);a.keys([4]);}},
-    {t:'鍵を離しても、ばね弁は開いたままです。ストップが入っていても、パレットが開かない限り鳴りません。実物ではストップレバーをフックに掛けて、この位置に保ちます。',run:a=>a.keys([])},
+    {t:'鍵を離しても、ばね弁は開いたままです。ストップが入っていても、パレットが開かない限り鳴りません。実物ではノブの軸の刻みを留めに掛けて、この位置に保ちます（E-02）。',run:a=>a.keys([])},
     {t:'和音を弾きます。パレットとばね弁の両方が開いたパイプだけが鳴ります。スライダーチェスト（C-01）と、止める方法の違いを比べてください。',run:a=>{a.stops([1,1,1,0,0]);a.keys([0,4,7]);}}
   ],
   build(){
@@ -93,7 +93,7 @@ const MODELS={
     const P=fullChestPlan(0,-8), chest=buildFullChest(P,null,'R',true); chest.finish();
     const xp=chest.xR+5, z1=P.rows[0].z;
     return {chest,pins:[{t:'パレットボックス',p:V3(xp,P.yC+5,chest.zF)},{t:'トーンチャンネル',p:V3(xp,P.yC+19,chest.zF)},{t:'ばね弁',p:V3(xp,chest.yS-2,z1)},{t:'ストップバー',p:V3(xp,chest.yS+3,z1-3)},{t:'パイプ',p:V3(xp,chest.base+60,0)}],update(dt){ chest.update(dt); }}; }},
-'c-03':{id:'C-03',stopSet:[20,21,22,23,3],name:'コーンバルブチェスト',terms:'cone-valve chest · Kegellade · sommier à cônes',stops0:[1,0,1,0,0],floor:-10,sc:1,gridS:2,maxDist:1200,
+'c-03':{id:'C-03',stopSet:[20,21,22,23,3],name:'コーンバルブチェスト',terms:'cone-valve chest · Kegellade · sommier à cônes · kegellade · somiere a coni · secreto de conos',stops0:[1,0,1,0,0],floor:-10,sc:1,gridS:2,maxDist:1200,
   cam:{p:[300,230,380],t:[0,90,0]},clip:[-130,130],
   summary:'ストップごとに風箱の長さいっぱいの部屋（ストップチャンネル）があり、パイプ1本ごとに円錐弁が付いた風箱です。鍵を押すとその鍵の円錐弁がいっしょに持ち上がり、風のあるチャンネル（入っているストップ）のパイプだけが鳴ります。円錐弁を持ち上げる方法には、鍵の力で直接持ち上げる機械式と、小ふいごで持ち上げる空気式があります。こちらのモデルは機械式です。',
   steps:[
@@ -104,7 +104,7 @@ const MODELS={
     {t:'和音を弾きます。ここでは鍵の力でスクエアと引き棒を介して円錐弁を持ち上げる機械式です。ほかに、ストップチャンネルの下の小ふいごで持ち上げる空気式もあります。',run:a=>{a.cut(0);a.stops([1,1,1,0,0]);a.keys([0,4,7]);a.home();}}
   ],
   build(){ return buildConeChest(); }},
-'c-04':{id:'C-04',stopSet:[24,25,26,27,28],name:'メンブレンチェスト',terms:'membrane chest · Membranlade · sommier à membranes',stops0:[1,0,1,0,0],floor:4,legend:'ctrl',sc:1,gridS:2,maxDist:1200,
+'c-04':{id:'C-04',stopSet:[24,25,26,27,28],name:'メンブレンチェスト',terms:'membrane chest · Membranlade · sommier à membranes · membraanlade · somiere a membrane · secreto de membranas',stops0:[1,0,1,0,0],floor:4,legend:'ctrl',sc:1,gridS:2,maxDist:1200,
   cam:{p:[300,230,380],t:[0,90,0]},clip:[-130,130],
   summary:'パイプの穴の下端を、下から制御風で押し上げた革の膜でふさぐ風箱です。鍵を押すと、手前の弁室Dの二重弁が下がってDからの制御風を止め、排気口を開け、その鍵の音のチャンネルの風が下へ逃げます。するとストップチャンネルの風が膜を押し下げてパイプへ流れ込みます。風が抜けることで動く「排気式」です。',
   steps:[
@@ -115,7 +115,7 @@ const MODELS={
     {t:'鍵を離すと二重弁が元の位置に上がって排気口が閉じ、弁室Dから再び制御風が送られます。膜が押し上げられ、パイプへの風が止まります。',run:a=>{a.keys([]);a.cam(...C04V.s3);}}
   ],
   build(){ return buildMembraneChest(); }},
-'f-02':{id:'F-02',name:'トレムラント',terms:'tremulant · Tremulant · tremblant',stops0:[0,0,0,0,0],own:true,noStops:true,noKeys:true,floor:-2,sc:1,homeK:1.05,
+'f-02':{id:'F-02',name:'トレムラント',terms:'tremulant · Tremulant · tremblant · tremulant · tremolo · trémolo',stops0:[0,0,0,0,0],own:true,noStops:true,noKeys:true,floor:-2,sc:1,homeK:1.05,
   cam:{p:[110,120,240],t:[-14,58,0]},clip:[-12,12],
   foot:'1本のパイプ（Prinzipal 2′ の C）と、それに風を送る風導管だけの模型です。トレムラントの揺れの速さは実際と同じ（毎秒約4〜8回）で、音も実際の速さで揺れます。右上の水柱計で風圧の揺れが見えます。',
   summary:'トレムラントは、パイプへ送る風の圧力を周期的に揺らして、音に波打つような揺れを付ける装置です。風導管の小ふいごの弁から風を逃がして揺らすヴィップフェーダー・トレムラント（Bock）と、風導管の中の重い板で流れを揺らすトランブラン・ドゥの、2つの型を切り替えて見られます。',
@@ -127,15 +127,15 @@ const MODELS={
     {t:'どちらの型も、おもりの位置で揺れの速さが変わります。下のスライダーで速さを変え、「ヴィップフェーダー型」と「トランブラン・ドゥ」を切り替えて聞き比べてください。',run:a=>{a.ctl('trem',true);a.home();}}
   ],
   build(){ return buildTremulant(); }},
-'d-01':{id:'D-01',name:'サスペンデッドアクション',terms:'suspended action · hängende Traktur · traction suspendue',stops0:[1,0,1,0,0],floor:-12,sc:1,gridS:2,maxDist:1200,
+'d-01':{id:'D-01',name:'サスペンデッドアクション',terms:'suspended action · hängende Traktur · traction suspendue · hangende traktuur · trasmissione sospesa · transmisión suspendida',stops0:[1,0,1,0,0],floor:-12,sc:1,gridS:2,maxDist:1200,
   cam:{p:[260,200,300],t:[0,80,-40]},clip:[-100,100],
-  summary:'鍵が奥の端（尾部のラック）のピンを支点にしてトラッカーに吊られている、サスペンデッド（吊り下げ式）アクションです。鍵を押すと鍵全体が下がり、トラッカーを直接引き下げます。また、鍵盤の幅や音の並びは、風箱のパレットの位置と一致しないことがよくあります。ローラーボードは横軸の棒（ローラー）を回して引く位置を左右に移し、スクエア（L字形の腕木）は引く向きを90度変えます。この風箱は大きいパイプを両端に置く「C側・Cis側」配置です。',
+  summary:'鍵が奥の端（尾部のラック）のピンを支点にしてトラッカーに吊られている、サスペンデッド（吊り下げ式）アクションです。鍵を押すと鍵全体が下がり、トラッカーを直接引き下げます。また、鍵盤の幅や音の並びは、風箱のパレットの位置と一致しないことがよくあります。ローラーボードは横軸の棒（ローラー）を回して引く位置を左右に移し、スクエア（L字形の腕木）は引く向きを90度変えます。この風箱では、パレットは鍵と同じ半音階の順に並び、低い音ほどチャンネルの幅が広くなっています。',
   steps:[
     {t:'鍵盤 → ローラーボード → スクエア → 水平のトラッカー → スクエア → 風箱、と伝わります。風箱は手前の鍵盤より奥・上にあります。',run:a=>{a.keys([]);a.home();}},
     {t:'鍵Cを押します。ローラーが回って引く位置を左端へ移し、スクエアで向きを変えて奥の風箱へ伝えます。',run:a=>{a.stops([1,0,1,0,0]);a.keys([0]);}},
-    {t:'鍵Cisを押します。今度は右端のパレットが開きます。C側とCis側に交互に振り分けられています。',run:a=>a.keys([1])},
+    {t:'鍵Cisを押します。今度はCのすぐ右のパレットが開きます。パレットは鍵と同じ半音階の順に並んでいます。',run:a=>a.keys([1])},
     {t:'鍵とローラーの腕のつなぎ目です。トラッカーの下端のネジ線が鍵の穴を、上端がローラーの腕の穴を通り、革ナットで受けています。ローラーの両端のピンは軸受けで支えられています。',run:a=>{a.keys([0]);a.cam([22,14,40],[-9,7,13]);}},
-    {t:'半音階で順に押すと、開くパレットが左右に振れながら中央へ寄っていきます。',run:a=>{a.keys([]);for(let k=0;k<13;k++) later(k*420,()=>{S.key.fill(false);S.key[k]=true;syncKeyUI();}); later(13*420,()=>{S.key.fill(false);syncKeyUI();});}},
+    {t:'半音階で順に押すと、開くパレットが左から右へ順に移っていきます。',run:a=>{a.keys([]);for(let k=0;k<13;k++) later(k*420,()=>{S.key.fill(false);S.key[k]=true;syncKeyUI();}); later(13*420,()=>{S.key.fill(false);syncKeyUI();});}},
     {t:'鍵Fを押して、縦 → 横 → 縦と力の向きが変わる様子を見ます。',run:a=>{a.keys([]);later(400,()=>{S.key[5]=true;syncKeyUI();});a.cam(...D01V);}}
   ],
   build(){
@@ -147,7 +147,7 @@ const MODELS={
     const xF=chest.pos(5); D01V=[[xF+110,50,-10],[xF,32,-15]];
     return {chest,pins:[{t:'鍵盤',p:V3(-16,3,40)},{t:'ローラーボード',p:V3(chest.xL-6,24,11)},{t:'スクエア',p:V3(chest.xR+4,36,11)},{t:'水平のトラッカー',p:V3(chest.xR+4,37,-18)},{t:'風箱',p:V3(chest.xR+5,chest.base,chest.zF)}],update(dt){ chest.update(dt); kb.update(); rs.update(); }};
   }},
-'d-02':{id:'D-02',name:'バランスアクション',terms:'balanced action · Wippenmechanik · traction à balanciers',stops0:[1,0,1,0,0],floor:-12,sc:1,gridS:2,maxDist:1200,
+'d-02':{id:'D-02',name:'バランスアクション',terms:'balanced action · Wippenmechanik · traction à balanciers · balanstraktuur · trasmissione bilanciata · transmisión equilibrada',stops0:[1,0,1,0,0],floor:-12,sc:1,gridS:2,maxDist:1200,
   cam:{p:[280,210,300],t:[0,80,-70]},clip:[-100,100],
   summary:'バランスアクション（釣り合い式の鍵盤のアクション）では、鍵の中ほどにバランスレールのピンがあり、鍵はそれを支点にシーソーのように動きます。鍵を押すと奥の端が上がるので、そこに立てたスティッカー（押し棒）がバックフォール（ウィッペ）を押し上げ、支点の反対側の腕が下がってトラッカーを引きます。その先は D-01 と同じく、ローラーボードとスクエアで風箱のパレットまで伝えます。鍵は吊られずに支点に載っていて、鍵とアクションを戻すのはパレットばねの力です。',
   steps:[
@@ -155,8 +155,8 @@ const MODELS={
     {t:'鍵Cを押します。鍵の奥の端が上がってスティッカーがバックフォールの手前の腕を押し上げ、奥の腕が下がってトラッカーを引きます。ローラーが引く位置を左端へ移し、スクエアで向きを変えて奥の風箱へ伝えます。',run:a=>{a.stops([1,0,1,0,0]);a.keys([0]);}},
     {t:'鍵の中ほどを見ます。鍵はバランスレールのピンに載っていて、手前を押すと奥の端が持ち上がります。D-01（サスペンデッドアクション）では鍵は奥の端を支点にトラッカーに吊られていましたが、ここでは鍵は自分の支点に載っていて、戻すのはパレットばねの力です。',run:a=>{a.xray(false);a.keys([4]);a.cut(0.515);a.cam([46,16,10],[-3,2,-4]);}},
     {t:'スティッカーとバックフォールです。鍵の奥の端に立てた押し棒（スティッカー）がバックフォール（ウィッペ）の手前の腕を押し上げると、支点の反対側の腕が下がり、そこに掛けたトラッカーがローラーボードの腕を引き下げます。',run:a=>{a.xray(false);a.cut(0);a.keys([5]);a.cam([30,24,-6],[-4,9,-30]);}},
-    {t:'鍵Cisを押します。今度は右端のパレットが開きます。C側とCis側に交互に振り分けられています。',run:a=>{a.xray(true);a.cut(0);a.keys([1]);a.home();}},
-    {t:'半音階で順に押すと、鍵の奥の端とバックフォールが順に動き、開くパレットが左右に振れながら中央へ寄っていきます。',run:a=>{a.xray(true);a.cut(0);a.keys([]);for(let k=0;k<13;k++) later(k*420,()=>{S.key.fill(false);S.key[k]=true;syncKeyUI();}); later(13*420,()=>{S.key.fill(false);syncKeyUI();});}}
+    {t:'鍵Cisを押します。今度はCのすぐ右のパレットが開きます。パレットは鍵と同じ半音階の順に並んでいます。',run:a=>{a.xray(true);a.cut(0);a.keys([1]);a.home();}},
+    {t:'半音階で順に押すと、鍵の奥の端とバックフォールが順に動き、開くパレットが左から右へ順に移っていきます。',run:a=>{a.xray(true);a.cut(0);a.keys([]);for(let k=0;k<13;k++) later(k*420,()=>{S.key.fill(false);S.key[k]=true;syncKeyUI();}); later(13*420,()=>{S.key.fill(false);syncKeyUI();});}}
   ],
   build(){
     // full-size chest (C/Cis layout, built like the H-03 chests) on a stand; its pull-down line stays at z −76
@@ -165,7 +165,7 @@ const MODELS={
     const ba=buildBalancedAction(chest,kb,KD2); chest.finish();
     return {chest,pins:[{t:'鍵盤',p:V3(-16,3,40)},{t:'バランスレール',p:V3(-18,-1,4),max:160},{t:'スティッカーとバックフォール',p:V3(-18,12,-24),max:160},{t:'ローラーボード',p:V3(chest.xL-6,26,-41)},{t:'スクエア',p:V3(chest.xR+4,42,-40)},{t:'水平のトラッカー',p:V3(chest.xR+4,43,-60)},{t:'風箱',p:V3(chest.xR+5,chest.base,chest.zF)}],update(dt){ kb.update(); ba.update(); chest.update(dt); }};
   }},
-'e-01':{id:'E-01',name:'機械式ストップアクション（スライダーチェスト）',terms:'mechanical stop action · mechanische Registertraktur · tirage mécanique des jeux',stops0:[0,0,0,0,0],floor:-8,sc:1,gridS:2,maxDist:1200,
+'e-01':{id:'E-01',name:'機械式ストップアクション（スライダーチェスト）',terms:'mechanical stop action · mechanische Registertraktur · tirage mécanique des jeux · mechanische registertraktuur · trasmissione meccanica dei registri · transmisión mecánica de registros',stops0:[0,0,0,0,0],floor:-8,sc:1,gridS:2,maxDist:1200,
   cam:{p:[-170,80,130],t:[-90,30,0]},clip:[-120,95],
   summary:'ストップノブを引くと、ノブの軸が縦のローラーを回し、上の腕がスライダーを横に動かして穴を一致させます。ノブの引き量とスライダーの移動量は、ローラーの腕の長さの比で決まります。',
   steps:[
@@ -180,7 +180,7 @@ const MODELS={
     const chest=buildFullChest(fullChestPlan(30,-8),null,'R',false,null,{slDir:-1,slOff:s=>-1.8*(1-s)}); const sa=buildStopAction(chest,{ky0:6,kz:chest.zF+2}); chest.finish();
     const xS=chest.xL-15;
     return {chest,pins:[{t:'ストップノブ',p:V3(xS-2,26,chest.zF+4)},{t:'ストップのローラー',p:V3(xS-12,40,chest.rows[0].z+4)},{t:'スライダー',p:V3(xS+4,chest.yS+4,chest.rows[0].z)},{t:'風箱',p:V3(chest.xR+5,chest.base,chest.zF)}],update(dt){ chest.update(dt); sa.update(); }}; }},
-'d-03':{id:'D-03',stopSet:[29,30,31,32,33],name:'バーカーレバー',terms:'Barker lever · Barkerhebel · machine Barker',stops0:[1,0,1,0,0],floor:-12,sc:1,gridS:2,maxDist:1400,
+'d-03':{id:'D-03',stopSet:[29,30,31,32,33],name:'バーカーレバー',terms:'Barker lever · Barkerhebel · machine Barker · Barkermachine · macchina Barker · palanca Barker',stops0:[1,0,1,0,0],floor:-12,sc:1,gridS:2,maxDist:1400,
   cam:{p:[400,300,200],t:[0,90,-130]},clip:[-100,100],
   summary:'重い機械式アクションを風の力で助けるバーカーマシンを、D-02 と同じバランス式の鍵盤とスライダーチェストのあいだに入れたモデルです。鍵が動かすのは各マシンの小さなパレットと弁だけで、パレットが開くと風箱の風が鍵ごとの小ふいごに入り、ふくらむ力で風箱のパレットまでのアクションを引きます。19世紀の大オルガンで、カプラーをつないだ鍵盤を軽くするために使われました。13組のマシンは鍵盤と風箱とは別に立てた櫓に、上の段に7組、下の段に6組並んでいます。',
   steps:[
@@ -188,11 +188,11 @@ const MODELS={
     {t:'鍵 C を押します。バックフォールが下がってローラーボード 1 を引き、ローラーが引く位置を上の段の左端のマシンの位置へ移し、スクエアと水平のトラッカーが櫓の下まで運びます。トラッカー h がマシンのレバー g を引き下げると、マシンのパレットが開いて排気弁が閉じ、小ふいごがふくらみます。',run:a=>{a.xray(true);a.cut(0);a.keys([0]);a.cam([80,140,30],[0,70,-100]);}},
     {t:'鍵 Cis を押します。今度は下の段の左端のマシンが働きます。上の段のマシンへのトラッカーは、下の段のマシンのあいだのすき間を通っています。',run:a=>{a.xray(true);a.cut(0);a.keys([1]);a.cam([80,110,30],[0,55,-100]);}},
     {t:'上の段の左端のマシン（鍵 C）の断面です。手前の風箱にはパレットと排気弁があり、奥の厚い板の上に小ふいごが載っています。鍵を押すとパレットが開き、風が小部屋と板の中の通り道を通って小ふいごに入ります。',run:a=>{a.xray(true);a.cut(0.65);a.keys([0]);a.cam([60,96,-95],[-31,92,-105]);}},
-    {t:'出力側です。小ふいごの腕がトラッカー r を引き上げると、櫓の下のバックフォールの前の腕が上がり、後ろの腕が下がってローラーボード 2 を引きます。ローラーが引く位置を風箱のパレットの位置（C側とCis側に振り分け）へ移し、スクエアと水平のトラッカーで風箱の下まで運んで、上へのトラッカーがパレットを引き下げます。',run:a=>{a.xray(true);a.cut(0);a.keys([0]);a.cam([220,120,-150],[0,60,-200]);}},
+    {t:'出力側です。小ふいごの腕がトラッカー r を引き上げると、櫓の下のバックフォールの前の腕が上がり、後ろの腕が下がってローラーボード 2 を引きます。ローラーが引く位置を風箱のパレットの位置（鍵と同じ半音階の順）へ移し、スクエアと水平のトラッカーで風箱の下まで運んで、上へのトラッカーがパレットを引き下げます。',run:a=>{a.xray(true);a.cut(0);a.keys([0]);a.cam([220,120,-150],[0,60,-200]);}},
     {t:'和音を弾きます。指で動かすのは小さなパレットと弁だけなので、ストップを増やしても鍵の重さは変わりません。',run:a=>{a.xray(true);a.cut(0);a.stops([1,1,1,1,0]);a.keys([0,4,7,12]);a.home();}}
   ],
   build(){ return buildBarkerOrgan(); }},
-'d-04':{id:'D-04',name:'チューブラーニューマチックアクション',terms:'tubular-pneumatic action · pneumatische Traktur · traction tubulaire pneumatique',stops0:[1,0,1,0,0],floor:-26,legend:'ctrl',
+'d-04':{id:'D-04',name:'チューブラーニューマチックアクション',terms:'tubular-pneumatic action · pneumatische Traktur · traction tubulaire pneumatique · buizenpneumatiek · trasmissione pneumatico-tubolare · transmisión neumática tubular',stops0:[1,0,1,0,0],floor:-26,legend:'ctrl',
   cam:{p:[150,60,170],t:[0,10,45]},clip:[-40,40],
   summary:'鍵の動きを、鉛管の中の制御風で風箱へ伝えるアクションです。鍵の弁が制御風を送り（加圧式）または抜き（排気式）、風箱側のリレーが空気式モーターを動かしてパレットを開けます。導管が長いほど、鍵を押してから鳴るまでに遅れが出ます。',
   steps:[
@@ -203,7 +203,7 @@ const MODELS={
     {t:'排気式：導管はふだん制御風で満ちていて、鍵を押すと風が抜けます。風が抜けたことをリレーが受けて、モーターを動かします。',run:a=>{a.ctl('len',10);a.ctl('exh',true);a.keys([4]);a.cam([30,14,104],[0,-2,88]);}}
   ],
   build(){ return buildTubular(); }},
-'f-01':{id:'F-01',name:'スウェルボックス',terms:'swell box · Schwellkasten · boîte expressive',stops0:[1,1,1,0,1],floor:-12,ctlLabel:'スウェル',sc:1,gridS:2,maxDist:1200,
+'f-01':{id:'F-01',name:'スウェルボックス',terms:'swell box · Schwellkasten · boîte expressive · zwelkast · cassa espressiva · caja expresiva',stops0:[1,1,1,0,1],floor:-12,ctlLabel:'スウェル',sc:1,gridS:2,maxDist:1200,
   cam:{p:[230,200,330],t:[-6,90,10]},clip:[-100,100],
   summary:'パイプを厚い木の箱で囲み、前面のシャッター（よろい戸）の開き具合で音量と音色を変える装置です。演奏者はスウェルペダルで開き具合を調節し、音を大きく明るく、または小さくこもった音にします。',
   steps:[
@@ -214,7 +214,7 @@ const MODELS={
     {t:'下のスライダーで開き具合を変えながら弾いてみてください。',run:a=>{a.home();}}
   ],
   build(){ return buildSwell(); }},
-'b-03':{id:'B-03',name:'シュヴィンマー',terms:'schwimmer · Schwimmer · régulateur à ressorts',stops0:[1,0,1,0,0],own:true,floor:0,sc:1,gridS:2,maxDist:1200,
+'b-03':{id:'B-03',name:'シュヴィンマー',terms:'schwimmer · Schwimmer · régulateur à ressorts · schwimmer · regolatore a molle · regulador de muelles',stops0:[1,0,1,0,0],own:true,floor:0,sc:1,gridS:2,maxDist:1200,
   cam:{p:[160,120,260],t:[-40,60,10]},clip:[-250,80],
   summary:'シュヴィンマーは、風箱の真下に取り付ける小さなばね式の調圧ふいごです。おもりの代わりにばねで可動板を押し上げて風に圧力をかけ、可動板に棒でつながった入口弁が、ふくらむと閉じ、しぼむと開きます。風箱のすぐ近くで調圧するので、和音を急に弾いたときの風の揺れを素早く抑えます。20世紀以降のオルガンで広く使われています。',
   steps:[
@@ -225,7 +225,7 @@ const MODELS={
     {t:'「シュヴィンマーを固定する」を入れると、可動板がつっかい棒で止まり、送風機の風が長い風導管から直接届きます。和音を弾くたびに風圧が下がって音が揺れるので、シュヴィンマーの働きがわかります。',run:a=>{a.ctl('lock',true);a.stops([1,1,1,1,1]);a.keys([]);for(let j=0;j<6;j++){ later(400+j*1500,()=>api.keys([0,4,7,12,2,9])); later(1150+j*1500,()=>api.keys([])); }}}
   ],
   build(){ return buildSchwimmer(); }},
-'d-05':{id:'D-05',name:'ペダル鍵盤のアクション',terms:'pedal action · Pedaltraktur · traction du pédalier',stops0:[1,0,1,0,0],floor:0,sc:1,gridS:3,maxDist:1800,
+'d-05':{id:'D-05',name:'ペダル鍵盤のアクション',terms:'pedal action · Pedaltraktur · traction du pédalier · pedaaltraktuur · trasmissione del pedale · transmisión del pedal',stops0:[1,0,1,0,0],floor:0,sc:1,gridS:3,maxDist:1800,
   cam:{p:[380,260,240],t:[0,100,-90]},clip:[-170,170],
   foot:'13鍵（C〜c）のペダル鍵盤。鍵の間隔は実物どおり約62 mm、踏み込みの深さはつま先で約15 mm。鍵はつま先の先から約100 mm オルガンの下へ伸び、その先端でアクションにつながります。演奏台の足元から風箱までは約0.8 m です。風箱とストップは G-03 のペダルと同じで、Subbass 16′（木管・閉管）・Prinzipal 8′・Posaune 16′（全長の円錐共鳴管）。パイプは実物大で、チャンネルの幅は鍵ごとにいちばん太いパイプに合わせています（Subbass 16′ の C は約190×235 mm）。',
   summary:'ペダル鍵盤は足で弾く鍵盤です。鍵はかかと側（ベンチの下）の蝶番を支点に、つま先側が下がります。鍵はつま先の先からさらにオルガンの下へ伸びていて、その先端からトラッカーが下へ引かれます。スクエアで向きを変えた水平のトラッカーがオルガンの下を奥へ進み、風箱の下のローラーボードで鍵の並びをパレットの並びへ広げて、ペダル風箱のパレットを引き下げます。',
@@ -234,22 +234,22 @@ const MODELS={
     {t:'ペダルCを踏みます。鍵はかかと側の蝶番を支点に回り、つま先側が約15 mm下がります。',run:a=>{a.keys([0]);a.cam([70,42,100],[0,4,24]);}},
     {t:'ペダル鍵は、足で踏むつま先の先からさらにオルガンの下へ伸びています。その先端に、ばね・ガイドピン・下止めのフェルトと、トラッカーの留め金があります。黒鍵は、つま先側に高い台が付いています。',run:a=>{a.keys([1]);a.cam([78,40,30],[-6,3,-18]);}},
     {t:'鍵の先が下がるとトラッカーがスクエアを回し、下向きの引きを手前向きの引きに変えます。水平のトラッカーはオルガンの下を奥へ伸び、風箱側のスクエアで再び下向きの引きに変わります。',run:a=>{a.keys([4]);a.cam([100,60,10],[0,24,-62]);}},
-    {t:'風箱の下のローラーボードです。ローラーが回って、鍵の並び（約62 mm 間隔）から幅の広いパレットの並び（C側・Cis側に振り分け。平均 約190 mm 間隔）へ引く位置を移し、トラッカーがパレットを引き下げます。',run:a=>{a.keys([4]);a.cam([125,32,-30],[0,42,-104]);}},
+    {t:'風箱の下のローラーボードです。ローラーが回って、鍵の並び（約62 mm 間隔）から幅の広いパレットの並び（鍵と同じ半音階の順。平均 約190 mm 間隔）へ引く位置を移し、トラッカーがパレットを引き下げます。',run:a=>{a.keys([4]);a.cam([125,32,-30],[0,42,-104]);}},
     {t:'半音階で順に踏みます。',run:a=>{a.keys([]);a.home();for(let k=0;k<13;k++) later(k*420,()=>{S.key.fill(false);S.key[k]=true;syncKeyUI();}); later(13*420,()=>{S.key.fill(false);syncKeyUI();});}}
   ],
   build(){ return buildPedalAction(); }},
-'e-02':{id:'E-02',stopSet:[0,17,8,18,19],name:'機械式ストップアクション（スプリングチェスト）',terms:'stop action for a spring chest · Registertraktur der Springlade · tirage des jeux du sommier à ressorts',stops0:[0,0,0,0,0],floor:-8,sc:1,gridS:2,maxDist:1200,
+'e-02':{id:'E-02',stopSet:[0,17,8,18,19],name:'機械式ストップアクション（スプリングチェスト）',terms:'stop action for a spring chest · Registertraktur der Springlade · tirage des jeux du sommier à ressorts · registertraktuur van de springlade · trasmissione dei registri del somiere a vento · transmisión de registros del secreto de muelles',stops0:[0,0,0,0,0],floor:-8,sc:1,gridS:2,maxDist:1200,
   cam:{p:[-150,95,150],t:[-95,30,0]},clip:[-120,95],
   summary:'スプリングチェスト（C-02）では、ストップを入れるとストップバーが下がり、そのストップのばね弁をまとめて押し開けます。ばね弁のばねはいつもバーを押し戻しているので、ストップノブは引いた位置に引っ掛けて保たなければなりません。ノブの軸がスクエアを回し、短い腕が押し棒でバーの端を押し下げます。',
   steps:[
     {t:'木部を透かします。左の5本のストップノブが、それぞれ風箱の端から出たストップバーにつながっています。',run:a=>{a.xray(true);a.keys([]);a.ctl('hook',true);a.stops([0,0,0,0,0]);a.home();}},
     {t:'Gedackt 8′ を引きます。ノブの軸がスクエアの立った腕を手前に引き、短い腕が押し棒でストップバーの端を押し下げます。',run:a=>{a.stops([1,0,0,0,0]);a.cam(...E02V.side);}},
-    {t:'ノブの移動 約28 mm に対して、バーは約6 mm 下がります（腕の長さの比 7.2：1.6）。そのストップの13個のばね弁のばねに逆らって押し下げるので、てこで力を大きくしています。引ききるとフックが落ちて、ノブを引いた位置に保ちます。',run:a=>{a.stops([1,0,0,0,0]);a.cam(...E02V.knob);}},
-    {t:'「フックで保つ」を切ってストップを入れてみます。手を離すと、ばね弁のばねに押し戻されて、ストップはすぐに戻ってしまいます。',run:a=>{a.ctl('hook',false);a.stops([0,0,0,0,0]);later(300,()=>api.stops([0,0,1,0,0]));a.cam(...E02V.side);}},
-    {t:'フックを使って和音を弾きます。ばね弁とパレットの両方が開いたパイプだけが鳴ります。',run:a=>{a.ctl('hook',true);a.stops([1,0,1,0,0]);a.keys([0,4,7]);a.home();}}
+    {t:'ノブの移動 約28 mm に対して、バーは約6 mm 下がります（腕の長さの比 7.2：1.6）。そのストップの13個のばね弁のばねに逆らって押し下げるので、てこで力を大きくしています。引ききるとノブの軸の下面の刻みが留めの柱の上に来て、軸が少し下がって刻みが柱に掛かり、ばねに押し戻されずに引いた位置に保たれます。',run:a=>{a.stops([1,0,0,0,0]);a.cam(...E02V.knob);}},
+    {t:'「刻みで保つ」を切ってストップを入れてみます。手を離すと、ばね弁のばねに押し戻されて、ストップはすぐに戻ってしまいます。',run:a=>{a.ctl('hook',false);a.stops([0,0,0,0,0]);later(300,()=>api.stops([0,0,1,0,0]));a.cam(...E02V.side);}},
+    {t:'刻みでストップを保って和音を弾きます。ばね弁とパレットの両方が開いたパイプだけが鳴ります。',run:a=>{a.ctl('hook',true);a.stops([1,0,1,0,0]);a.keys([0,4,7]);a.home();}}
   ],
   build(){ return buildSpringStopAction(); }},
-'f-03':{id:'F-03',name:'ツィンベルシュテルン',terms:'cymbelstern · Zimbelstern · étoile à clochettes',stops0:[0,0,0,0,0],noStops:true,noKeys:true,floor:0,
+'f-03':{id:'F-03',name:'ツィンベルシュテルン',terms:'cymbelstern · Zimbelstern · étoile à clochettes · cimbelster · Zimbelstern · estrella de campanillas',stops0:[0,0,0,0,0],noStops:true,noKeys:true,floor:0,
   cam:{p:[60,60,90],t:[0,42,-6]},clip:[-30,30],
   foot:'星の直径 約25 cm、鈴の直径 約2.5 cm。風車が毎秒約1回転すると、鈴は毎秒6回打たれます。',
   summary:'ツィンベルシュテルンは、ケースの正面で金色の星が回り、その裏で小さな鈴が鳴る効果装置です。ストップを引くと弁が開き、風が小さな風車を回します。星と同じ軸にはカム（突起）が並んでいて、回るたびに打ち子の上端を順にはじきます。はじかれた打ち子は戻る勢いで下端の頭を鈴に打ち当て、軸の回転に合わせて「チン、チン、チン」と鈴が鳴ります。17〜18世紀の北ドイツなどで好まれ、祝祭的な曲で使われます。',
@@ -261,7 +261,7 @@ const MODELS={
     {t:'下のスライダーで風の量を変えると、回る速さと鈴の打たれる間隔が変わります。',run:a=>{a.ctl('on',true);a.home();}}
   ],
   build(){ return buildZimbelstern(); }},
-'g-01':{id:'G-01',name:'スライドカプラー',terms:'shove coupler · Schiebekoppel · accouplement à tiroir',stops0:[0,0,0,0,0],floor:-10,homeK:1.0,sc:1,gridS:3,maxDist:2000,
+'g-01':{id:'G-01',name:'スライドカプラー',terms:'shove coupler · Schiebekoppel · accouplement à tiroir · schuifkoppel · unione a cassetto · acoplamiento de cajón',stops0:[0,0,0,0,0],floor:-10,homeK:1.0,sc:1,gridS:3,maxDist:2000,
   cam:{p:[120,50,130],t:[0,60,-20]},clip:[-100,100],
   foot:'ハウプトヴェルク（II）：Prinzipal 8′・Octave 4′・Quinte 2 2/3′・Octave 2′・Mixtur III・Trompete 8′、ポジティフ（I）：Gedackt 8′・Rohrflöte 4′・Blockflöte 2′・Vox humana 8′。ストップは下の「ストップ」欄で、1行目がハウプトヴェルク、2行目がポジティフです。パイプは実物大です。風箱のチャンネルの幅は、鍵ごとにいちばん太いパイプに合わせています（ハウプトヴェルクの Prinzipal 8′ の C は直径 約155 mm）。鍵盤のボタンと画面の鍵は、操作欄で選んだほうの鍵盤を弾きます。下鍵盤は、黒鍵まで上鍵盤より手前に出しています。',
   summary:'2段の手鍵盤をつなぐ機械式の押し込み式カプラー（シーブカプラー）です。どちらの鍵盤もサスペンデッド（吊り下げ式）アクションで、鍵は奥端が支点、トラッカーに吊られていて、押すと鍵全体が下がります。下鍵盤（I・ポジティフ）の鍵に突起が立っていて、下鍵盤を約11 mm奥へ押し込むと、突起が上鍵盤（II・ハウプトヴェルク）の鍵の下に付いた当て木の真下に来ます。突起は上鍵盤の下に隠れていて、下鍵盤の演奏の邪魔にはなりません。上の鍵を押すと当て木が突起を押し下げ、下の鍵もいっしょに下がって、ポジティフも鳴ります（I/II）。',
@@ -276,7 +276,7 @@ const MODELS={
     {t:'全体を見ます。ハウプトヴェルクの風箱はポジティフの上にあり、そのトラッカーはポジティフの風箱の前を通って上へ伸びています。',run:a=>{a.xray(true);a.ctl('man',1);a.ctl('cpl',true);a.keys([0,4,7]);a.cut(0);a.home();}}
   ],
   build(){ return buildCoupler(); }},
-'e-03':{id:'E-03',name:'電気式ストップアクション',terms:'electric stop action · elektrische Registertraktur · tirage électrique des jeux',stops0:[0,0,0,0,0],floor:-8,legend:'elec',sc:1,gridS:2,maxDist:1200,
+'e-03':{id:'E-03',name:'電気式ストップアクション',terms:'electric stop action · elektrische Registertraktur · tirage électrique des jeux · elektrische registertraktuur · trasmissione elettrica dei registri · transmisión eléctrica de registros',stops0:[0,0,0,0,0],floor:-8,legend:'elec',sc:1,gridS:2,maxDist:1200,
   cam:{p:[-40,110,190],t:[-110,40,10]},clip:[-130,95],
   foot:'電流は実際には一瞬で届きますが、流れがわかるよう遅くして表示しています。ソレノイドがスライダーを動かす時間は実物どおり約0.15秒です。',
   summary:'ストップのタブを押すと、中のスイッチから風箱の端のソレノイドへ電流が流れ、スライダーを動かします。ソレノイドには「入り」と「切り」の2つのコイルがあり、短い電流のパルスでプランジャーを引いたり押し戻したりします。動ききると終端スイッチが電流を切ります。電気なので、コンビネーション（セッター）で記憶したストップの組み合わせを、ボタン1つで一度に呼び出せます。',
@@ -288,7 +288,7 @@ const MODELS={
     {t:'コンビネーション 2 で全部のストップ、0 で全部を切ります。「セット」を入れてからコンビネーションを押すと、今のストップの組み合わせを記憶できます。',run:a=>{a.keys([0,4,7]);a.ctl('recall',2);later(2600,()=>api.ctl('recall',0));}}
   ],
   build(){ return buildElectricStops(); }},
-'g-02':{id:'G-02',name:'バックフォールカプラー',terms:'backfall coupler · Wippenkoppel · accouplement à balanciers',stops0:[0,0,0,0,0],floor:-10,homeK:1.0,sc:1,gridS:3,maxDist:2000,
+'g-02':{id:'G-02',name:'バックフォールカプラー',terms:'backfall coupler · Wippenkoppel · accouplement à balanciers · balanskoppel · unione a bilancieri · acoplamiento de balancines',stops0:[0,0,0,0,0],floor:-10,homeK:1.0,sc:1,gridS:3,maxDist:2000,
   cam:{p:[120,50,130],t:[0,60,-20]},clip:[-100,100],
   foot:'カプラー以外は G-01 と同じです。ハウプトヴェルク（II）：Prinzipal 8′・Octave 4′・Quinte 2 2/3′・Octave 2′・Mixtur III・Trompete 8′、ポジティフ（I）：Gedackt 8′・Rohrflöte 4′・Blockflöte 2′・Vox humana 8′。ストップは下の「ストップ」欄で、1行目がハウプトヴェルク、2行目がポジティフです。鍵盤のボタンと画面の鍵は、操作欄で選んだほうの鍵盤を弾きます。',
   summary:'バックフォールカプラー（ウィッペンコッペル）は、鍵盤の上のアクションの中に組み込んだ、ウィッペン（シーソー形のてこ）式のカプラーです。音ごとに上下2本のウィッペンがあり、上鍵盤（II）のトラッカーが上のウィッペンを引くと、上のウィッペンが線で下のウィッペンを引き上げ、下のウィッペンがポジティフ（I）のトラッカーを引きます（I/II）。下鍵盤の鍵は下のウィッペンに吊られているので、上鍵盤を弾くと下鍵盤の鍵もいっしょに下がります。カプラーを切ると、上のウィッペンバルケン（支点の桟）が下がって、ナットがウィッペンに届かなくなります。',
@@ -302,7 +302,7 @@ const MODELS={
     {t:'全体を見ます。カプラーを入れて上鍵盤で和音を弾くと、両方の風箱が鳴ります。',run:a=>{a.xray(true);a.ctl('man',1);a.ctl('cpl',true);a.keys([0,4,7]);a.cut(0);a.home();}}
   ],
   build(){ return buildWippenCoupler(); }},
-'g-03':{id:'G-03',name:'ペダルカプラー',terms:'pedal coupler · Pedalkoppel · tirasse',stops0:[0,0,0,0,0],floor:-2,homeK:1.0,sc:1,gridS:3,maxDist:2500,
+'g-03':{id:'G-03',name:'ペダルカプラー',terms:'pedal coupler · Pedalkoppel · tirasse · pedaalkoppel · unione al pedale · acoplamiento al pedal',stops0:[0,0,0,0,0],floor:-2,homeK:1.0,sc:1,gridS:3,maxDist:2500,
   cam:{p:[330,230,330],t:[0,150,-80]},clip:[-160,160],
   foot:'ハウプトヴェルク（I）：Prinzipal 8′・Octave 4′・Quinte 2 2/3′・Octave 2′・Mixtur III・Trompete 8′、ペダル（P）：Subbass 16′（木管・閉管）・Prinzipal 8′・Posaune 16′。パイプは実物大で、どちらの風箱もチャンネルの幅は鍵ごとにいちばん太いパイプに合わせています（ペダルの風箱はハウプトヴェルクの奥 約80 cm。Subbass 16′ の C は約190×235 mm）。ペダルのアクションは D-05 と同じ形ですが、ペダル鍵をつま先の先へ約10 cm延長し、アクションとカプラーのトラッカー、ばね、ガイドピンをその延長部に付けて、足で踏む部分には何も出ないようにしています。鍵盤のボタンと画面の鍵は、操作欄で選んだほう（ペダルか手鍵盤）を弾きます。',
   summary:'ペダルでハウプトヴェルクを鳴らす、バックフォール式（ウィッペン式）のペダルカプラー（I/P）です。ペダル鍵のつま先からもう1本のトラッカーが上がり、カプラー用のローラーボードでペダル鍵の位置から手鍵盤の鍵の位置へ移され、手鍵盤の下にある上下2本のウィッペンに伝わります。下のウィッペンが引き棒で手鍵盤の鍵を下から引き下げるので、ペダルを踏むと手鍵盤の鍵もいっしょに下がり、ハウプトヴェルクが鳴ります。ペダルの風箱は、ハウプトヴェルクの奥に約80 cm離して、床近くに置いています。',
@@ -316,11 +316,11 @@ const MODELS={
     {t:'全体を見ます。カプラーを入れてペダルを踏むと、両方の風箱が鳴ります。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',0);a.ctl('cpl',true);a.ctl('pd',[1,1,1]);a.keys([0,7]);a.home();}}
   ],
   build(){ return buildPedalCoupler(); }},
-'h-03':{id:'H-03',name:'現代オルガン',terms:'modern tracker organ · moderne Schleifladenorgel · orgue moderne à traction mécanique',console:true,stops0:[0,0,0,0,0],own:true,floor:0,homeK:0.72,
+'h-03':{id:'H-03',name:'現代オルガン',terms:'modern tracker organ · moderne Schleifladenorgel · orgue moderne à traction mécanique · modern mechanisch orgel · organo moderno a trasmissione meccanica · órgano moderno de transmisión mecánica',console:true,stops0:[0,0,0,0,0],own:true,floor:0,homeK:0.72,
   sc:1,flueNA:28,maxDist:3200,gridS:3.2,nKeys:53,audioNorm:10,xray0:true,
   cam:{p:[900,520,1350],t:[0,380,-120]},clip:[-700,700],
   foot:'手鍵盤 C〜e‴（53鍵）2段、ペダル C〜f′（30鍵）。ハウプトヴェルク（I）：Prinzipal 8′・Rohrflöte 8′・Octave 4′・Blockflöte 2′・Mixtur III・Trompete 8′、ポジティフ（II）：Gedackt 8′・Hohlflöte 4′・Octave 2′・Sesquialtera II・Vox humana 8′、ペダル：Subbass 16′（木管・閉管）・Prinzipal 8′・Choralbass 4′・Posaune 16′（全長の円錐共鳴管）。カプラー：Pos/Hw・Hw/P・Pos/P。トレムラント（ヴィップフェーダー型）、ツィンベルシュテルン。ポジティフはスウェルボックスに収め、スウェルペダルでシャッターを開閉します。風は電動の送風機とマガジンふいごから送ります。パイプも風箱も鍵盤もすべて実物大で、縮めていません（Prinzipal 8′ の C は胴の長さ約2.37 m・直径約155 mm、Subbass 16′ の C は約2.2 m・190×235 mm、Posaune 16′ の C の共鳴管は約3.8 m）。風箱のチャンネルの幅は、その音のいちばん太いパイプに合わせています。モデルの下の演奏台では、ストップノブを押すとそのストップが入り（ノブが引き出された状態）、2段の手鍵盤とペダル鍵盤をそれぞれ弾けます。Accessories の Swell のつまみは、スウェルペダルの踏み込みに当たります。PCのキーボードでは、最後に弾いた鍵盤を、手鍵盤なら c′ から、ペダルなら C から1オクターブ分弾けます。',
-  summary:'2段の手鍵盤とペダルを持つ機械式アクションのオルガンを、パイプまで実物大で組み立てたモデルです。現代の多くのオルガン建造家が採る、北ドイツ・バロックの「ヴェルク原理」に基づく構成で、上のケースにハウプトヴェルク（I）、その下にスウェルボックスに入ったポジティフ（II）、左右の塔にペダルがあり、左の塔がC側、右の塔がCis側です。各風箱はC/Cis式（全音ずつ左右に振り分け、太い低音のパイプを外側）で、正面に見えるパイプはハウプトヴェルクとペダルの Prinzipal 8′ です。鍵盤は2段ともバランス式です。下鍵盤は鍵の奥の端に吊ったトラッカーを引き上げ、演奏台の下のスクエアで向きを変えて奥のハウプトヴェルクへ伝えます。上鍵盤はスティッカーでバックフォールを押し上げてトラッカーを引きます（D-02 と同じ）。ローラーボードが鍵の位置を風箱のパレットの位置へ移します。カプラーは Pos/Hw がバックフォール式、ペダルカプラーがスティッカー式で、どれも鍵盤の幅の中に収まっています。風は電動の送風機とマガジンふいごから送られます。B-02（送風機＋マガジンふいご）、C-01（スライダーチェスト）、E-01（ストップアクション）、F-01（スウェルボックス）、F-02（トレムラント）、F-03（ツィンベルシュテルン）を組み合わせています。',
+  summary:'2段の手鍵盤とペダルを持つ機械式アクションのオルガンを、パイプまで実物大で組み立てたモデルです。現代の多くのオルガン建造家が採る、北ドイツ・バロックの「ヴェルク原理」に基づく構成で、上のケースにハウプトヴェルク（I）、その下にスウェルボックスに入ったポジティフ（II）、左右の塔にペダルがあり、左の塔がC側、右の塔がCis側です。各風箱はC/Cis式（全音ずつ左右に振り分け、太い低音のパイプを外側）で、正面に見えるパイプはハウプトヴェルクとペダルの Prinzipal 8′ です。鍵盤は2段ともバランス式です。下鍵盤は鍵の奥の端に吊ったトラッカーを引き上げ、演奏台の下のスクエアで向きを変えて奥のハウプトヴェルクへ伝えます。上鍵盤はスティッカーでバックフォールを押し上げてトラッカーを引きます（D-02 と同じ）。ローラーボードが鍵の位置を風箱のパレットの位置へ移します。カプラーは Pos/Hw がバックフォール式、ペダルカプラーがスティッカー式で、どれも鍵盤の幅の中に収まっています。ストップアクションは電気式で、5つのコンビネーションがあります。風は電動の送風機とマガジンふいごから送られます。B-02（送風機＋マガジンふいご）、C-01（スライダーチェスト）、E-03（電気式ストップアクション）、F-01（スウェルボックス）、F-02（トレムラント）、F-03（ツィンベルシュテルン）を組み合わせています。',
   steps:[
     {t:'全体です。上のケースがハウプトヴェルク（I）、その下のスウェルボックスの中がポジティフ（II）、左右の塔がペダルです。パイプは長さ・太さとも実物どおりで、正面のいちばん大きな Prinzipal 8′ は胴の長さ約2.4 m、塔の奥の Posaune 16′ は共鳴管が約3.8 mあります。「木部を透かす」でケースの中が見えます。',run:a=>{a.xray(true);a.ctl('swell',0.25);a.cut(0);a.ctl('man',1);a.ctl('cpl',[0,0,0]);a.ctl('trem',0);a.ctl('zimb',0);a.ctl('hw',[1,1,0,0,0,0]);a.ctl('pos',[1,0,0,0,0]);a.ctl('ped',[0,0,1,0]);a.keys([]);a.home();}},
     {t:'ケースの奥の送風室に、電動の送風機とマガジンふいごがあります。送風機の風はカーテン弁を通ってふいごに入り、上板が上がるとひもがローラーを引き上げ、カーテンがスリットをふさいで流入を絞ります（B-02 と同じ自動調節）。ふいごの出口から集合管に入り、まん中の立ち上がりの管で手鍵盤の風箱へ、両端の管でペダル塔へ送られます。和音を弾くと消費が増えて上板が下がり、カーテンが開いて流入が増えます。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',1);a.ctl('blower',true);a.ctl('hw',[1,1,1,1,1,0]);a.keys([24,28,31,36]);a.cam([380,300,-860],[-60,40,-470]);}},
@@ -330,7 +330,8 @@ const MODELS={
     {t:'ポジティフ（II）は、ハウプトヴェルクの下のスウェルボックスに収めてあります。ハウプトヴェルクのトラッカーは、この箱の下と後ろを通ります。Gedackt 8′（木管・閉管）・Hohlflöte 4′・Octave 2′・Sesquialtera II・Vox humana 8′ の5列。ポジティフの風箱も、ハウプトヴェルクと同じくパレットボックスが奥側にあります。上鍵盤のトラッカーは演奏台の後ろのスクエアで向きを変え、水平のトラッカーで奥へ進み、風箱の奥の下のスクエアで再び下向きの引きになって、専用のローラーボードを引きます。ローラーボードで C/Cis に振り分けられ、箱の床を通ってパレットの奥の端を引き下げます。箱の前面には窓が2つ並び、それぞれに縦の軸で回るシャッター（羽根板）が入っています。左右の窓の羽根は中心線を挟んで逆向きに回り、左右対称に開きます。ペダル鍵盤の上のスウェルペダルは、閉じているときにつま先が約30°上がっていて、踏み込むとほぼ水平になります。その軸は演奏台の下を通って箱の左右まで延び、両端の腕が引き棒を押し上げます。箱の側板に立つ短いローラーがその動きを横の動きに変え、連結棒が窓ごとの羽根をいっしょに回して、音が大きく明るくなります。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',2);a.ctl('pos',[1,1,1,1,1]);a.ctl('swell',0);a.keys([12,16,19]);a.cam([330,330,330],[0,260,-40]);later(1800,()=>a.ctl('swell',1));later(4500,()=>a.ctl('swell',0.3));}},
     {t:'ペダルのアクションです。ペダル鍵は踏み面の奥に短く（約22 cm）延長してあり、その延長部から2本のトラッカーが上がっています。奥の1本はすぐ上のスクエアに掛かり、床の近くを通る水平のトラッカーで塔の下の奥へ運ばれ、もう一つのスクエアでペダル塔用のローラーボードを引きます。塔の風箱もパレットボックスが奥側にあり、C側の音は左の塔、Cis側の音は右の塔のパレットの奥の端を引き下げます。黒鍵のすぐ奥の1本はペダルカプラー用です。塔の風箱には手前から Prinzipal 8′・Choralbass 4′・Subbass 16′・Posaune 16′ が立っています。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',0);a.ctl('ped',[1,1,1,1]);a.ctl('cpl',[0,0,0]);a.keys([0,1]);a.cam([150,95,120],[-150,25,-70]);}},
     {t:'ペダルカプラー Hw/P と Pos/P です（鍵 C の位置の断面）。カプラー用のトラッカーは、ペダル鍵のすぐ奥のローラーボードで、その音の下鍵盤の鍵の真下へ移されます。ローラーボードにはスウェルペダルのための窓があり、ローラーはその上と下に分けてあります。各音1本のトラッカーが演奏台の下へ上がり、2つの革ナットが Hw/P と Pos/P のバックフォールの前の端をそれぞれ押し下げ、反対側の端が上がります。Hw/P のバックフォールは、後ろの端でハウプトヴェルクのトラッカーの革ナットを直接持ち上げます。このトラッカーは鍵盤のすぐ下で上下2本に分かれていて、上の1本の下端の金具が、下の1本のナットを持ち上げる形でつながっています。Hw/P が持ち上げるのは下の1本だけなので、上の1本と鍵は動きません。Pos/Hw のバックフォールは上の1本に掛かっているので、Pos/Hw が入っていても、ペダルでポジティフが鳴ることはありません。Pos/P のバックフォールはスティッカーを押し上げ、スティッカーは下鍵盤の鍵の穴を通って上鍵盤の鍵の奥を押し上げ、上鍵盤の鍵が下がります。カプラーを切ると、バックフォールを支える枠が下がり、ナットとのすき間がペダルの引きより大きくなります。どの部品も鍵盤の幅の中に収まっています。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',0);a.ctl('cpl',[0,1,1]);a.ctl('ped',[1,0,1,0]);a.keys([0]);a.cut(0.531714);a.cam([105,72,4],[-45,70,-6]);}},
-    {t:'ストップアクションです。鍵盤の両脇のノブを引くと、軸の奥のスクエア（縦の軸で回るL字の腕木）が引きを横向きに変え、トレースが左右に動いて、風箱の端の縦のローラーへ伝わります。ローラーの上の腕がつなぎ棒でスライダーを動かし、穴がそろうとストップが入ります。左のノブがハウプトヴェルクとペダル、右のノブがポジティフとカプラーです。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',1);a.ctl('hw',[1,0,0,1,0,0]);a.keys([]);a.cam([-120,140,110],[-55,102,10]);later(1500,()=>a.ctl('hw',[1,1,1,1,1,0]));later(3500,()=>{ a.cam([-365,480,135],[-272,425,-35]); a.ctl('hw',[1,0,0,1,0,0]); });later(5500,()=>a.ctl('hw',[1,1,1,1,1,0]));}},
+    {t:'ストップアクションは電気式です。鍵盤の両脇のノブは、奥のスイッチを入れ切りするだけです。ノブを引くと、電線を通って風箱の端のソレノイドの「入り」のコイルに短い電流が流れ、鉄心（プランジャー）がスライダーを引いて穴がそろい、ストップが入ります。押し戻すと「切り」のコイルに電流が流れて戻ります（E-03 と同じ）。カプラーとトレムラント、ツィンベルシュテルンも、演奏台の中の小さなソレノイドが腕を動かします。左のノブがハウプトヴェルクとペダル、右のノブがポジティフとカプラーです。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',1);a.ctl('hw',[1,0,0,1,0,0]);a.keys([]);a.cam([-120,140,110],[-55,102,10]);later(1500,()=>a.ctl('hw',[1,1,1,1,1,0]));later(3500,()=>{ a.cam([-365,480,135],[-272,425,-35]); a.ctl('hw',[1,0,0,1,0,0]); });later(5500,()=>a.ctl('hw',[1,1,1,1,1,0]));}},
+    {t:'コンビネーションです。下鍵盤の下の小さなボタンの 1〜5 を押すと、記憶したストップとカプラーの組み合わせになり、変わるノブのスイッチから各ソレノイドへ同時に電流が送られます。0 で全部を切ります。「S」（セット）を押してから番号を押すと、今の組み合わせを記憶します。演奏台の下の操作欄にも同じボタンがあります。',run:a=>{a.xray(false);a.cut(0);a.ctl('man',1);a.ctl('comb',0);a.keys([24,28,31]);a.cam([40,118,120],[0,96,40]);later(1200,()=>a.ctl('comb',1));later(3200,()=>a.ctl('comb',3));later(5200,()=>a.ctl('comb',5));}},
     {t:'トレムラント（ヴィップフェーダー型・F-02）は立ち上がりの風導管の側面にあり、手鍵盤の風を揺らします。ツィンベルシュテルン（F-03）は正面の飾り板に付いていて、ノブを引くと風導管の弁が開き、細い管で風車へ風が送られて星が回り、奥の鈴が鳴ります。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',1);a.ctl('trem',1);a.ctl('zimb',1);a.ctl('hw',[1,1,0,0,0,0]);a.keys([24,28,31]);a.cam([150,700,190],[0,630,0]);}},
     {t:'全体で鳴らします。カプラーを全部入れ、ハウプトヴェルクのプレヌム（Prinzipal 8′ から Mixtur まで）を下鍵盤で弾くと、Pos/Hw でポジティフも鳴ります。',run:a=>{a.xray(true);a.cut(0);a.ctl('trem',0);a.ctl('zimb',0);a.ctl('cpl',[1,1,1]);a.ctl('hw',[1,1,1,1,1,0]);a.ctl('pos',[1,1,1,0,0]);a.ctl('ped',[1,1,1,1]);a.ctl('man',1);a.keys([12,24,28,31]);a.home();}}
   ],

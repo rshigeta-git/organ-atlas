@@ -43,11 +43,12 @@ function h3Wind(B){
   box(ST,12,16,12,hollow(MAT.wood),21,104,-140,LB('ツィンベルシュテルンの弁箱（中は風で満ちている）','Ventilkasten'));
   const zflap=new T.Group(); zflap.position.set(16,112,-144); R.add(zflap);
   box(zflap,8,0.6,8,MAT.leather,4,-0.3,4,LB('弁（ストップを引くと開いて風車へ風を送る）','Spielventil'));
-  const ZO=V3(0,660,14), cd=[V3(22,112,-140),V3(22,742,-140),V3(22,742,ZO.z-18),V3(22,ZO.y-10,ZO.z-18),V3(6,ZO.y-10,ZO.z-18)];
+  // the conduit rises behind the Hauptwerk straight to the height of the nozzle, then runs forward over the short treble pipes
+  const ZO=V3(0,660,14), cd=[V3(22,112,-140),V3(22,ZO.y-10,-140),V3(22,ZO.y-10,ZO.z-18),V3(6,ZO.y-10,ZO.z-18)];
   duct(cd,3,MAT.woodDark,LB('風導管（弁箱から風車のノズルへ）','Windleitung'));
   W.zim={v:0};
   W.zJet=new Tube(cd.concat([V3(6,ZO.y-6.5,ZO.z-18),V3(5.6,ZO.y-2,ZO.z-18),V3(2,ZO.y+3,ZO.z-19)]),{r:0.7,density:0.12,front:400,state:()=>({open:W.zim.v>0.1&&S.p>10,speed:30+40*W.zim.v})});
-  W.zJet.exitU=W.zJet.cum[5]/W.zJet.L;
+  W.zJet.exitU=W.zJet.cum[cd.length]/W.zJet.L;
   W.zimUpd=v=>{ W.zim.v=v; zflap.rotation.z=-0.7*v; };
   W.ZO=ZO;
   return W;

@@ -1,0 +1,1014 @@
+{
+"Gestell": [
+"telaio",
+"bastidor"
+],
+"Registerschalter": [
+"interruttore del registro",
+"interruptor del registro"
+],
+"Rast": [
+"tacca",
+"muesca"
+],
+"Kniebrett": [
+"pannello delle ginocchia",
+"panel de rodillas"
+],
+"Kalkant": [
+"tiramantici",
+"entonador (fuellista)"
+],
+"Galgen": [
+"telaio guida delle leve",
+"bastidor guía de las palancas"
+],
+"Balgeisen": [
+"tirante di ferro del mantice",
+"tirante de hierro del fuelle"
+],
+"Griff": [
+"impugnatura",
+"empuñadura"
+],
+"Balglager": [
+"traversa di appoggio del mantice",
+"durmiente del fuelle"
+],
+"Ladengestell": [
+"basamento del somiere",
+"soporte del secreto"
+],
+"Auslassöffnung": [
+"foro di scarico",
+"orificio de escape"
+],
+"Feder": [
+"molla",
+"muelle"
+],
+"Hebel": [
+"leva",
+"palanca"
+],
+"Hebelarm": [
+"braccio di leva",
+"brazo de palanca"
+],
+"Kanalbrett": [
+"tavola dei canali",
+"tabla de canales"
+],
+"Lager": [
+"supporto",
+"soporte"
+],
+"Ventilöffnung": [
+"apertura del ventilabro",
+"abertura de la válvula"
+],
+"Zugdraht": [
+"tirante",
+"tirante"
+],
+"Jalousiewelle": [
+"rullo delle gelosie",
+"rodillo de las persianas"
+],
+"Schwelltrittstange": [
+"tirante del pedale d’espressione",
+"varilla del pedal de expresión"
+],
+"Vorsatzbrett": [
+"frontalino delle tastiere",
+"frontal de los teclados"
+],
+"Stecherführung": [
+"guida delle catenacciature a spinta",
+"guía de los empujadores"
+],
+"Koppelschiene": [
+"telaio d’unione (telaio delle spinte)",
+"corredera del acoplamiento (marco de empujadores)"
+],
+"Luftbohrung": [
+"passaggio d’aria",
+"paso de aire"
+],
+"Ventilleder": [
+"pelle del ventilabro",
+"piel de la válvula"
+],
+"Kanzellenbohrung": [
+"foro della tavola",
+"taladro de la tabla"
+],
+"Stockbohrung": [
+"foro del crivello",
+"taladro del tablón"
+],
+"Tastenverlängerung": [
+"prolungamento del tasto",
+"prolongación de la tecla"
+],
+"Abstraktenhaken": [
+"gancio della catenacciatura",
+"gancho del varillaje"
+],
+"Ladenstuhl": [
+"basamento del somiere",
+"soporte del secreto"
+],
+"Waagebalkenfilz": [
+"feltro della barra di bilanciamento",
+"fieltro del balancín"
+],
+"Waagestift": [
+"perno di bilanciamento",
+"pasador de equilibrio"
+],
+"Hinterleiste": [
+"barra posteriore",
+"listón trasero"
+],
+"Hinterleistenfilz": [
+"feltro della barra posteriore",
+"fieltro del listón trasero"
+],
+"Stecherfilz": [
+"feltro della spinta",
+"fieltro del empujador"
+],
+"Schwellkasten": [
+"cassa espressiva",
+"caja expresiva"
+],
+"Jalousierahmen": [
+"telaio delle gelosie",
+"marco de las persianas"
+],
+"Jalousiearm": [
+"braccio della gelosia",
+"brazo de la persiana"
+],
+"Jalousiestange": [
+"asta delle gelosie",
+"varilla de las persianas"
+],
+"Schwelltrittachse": [
+"asse del pedale d’espressione",
+"eje del pedal de expresión"
+],
+"Schwelltrittlager": [
+"supporto del pedale",
+"soporte del pedal"
+],
+"Schwelltritt": [
+"pedale d’espressione bilanciato",
+"pedal de expresión equilibrado"
+],
+"Schwelltrittarm": [
+"braccio del pedale d’espressione",
+"brazo del pedal de expresión"
+],
+"Schnitzwerk": [
+"intaglio",
+"talla"
+],
+"Sockel": [
+"zoccolo",
+"zócalo"
+],
+"Flügeltür": [
+"anta",
+"puerta batiente"
+],
+"Balgkammer": [
+"camera dei mantici",
+"cámara de los fuelles"
+],
+"Koppelwelle": [
+"rullo dell’unione",
+"rodillo del acoplamiento"
+],
+"Kranzgesims": [
+"cornicione",
+"cornisa"
+],
+"Kämpfer": [
+"imposta",
+"imposta"
+],
+"Lisene": [
+"lesena",
+"pilastra"
+],
+"Notenpult": [
+"leggio",
+"atril"
+],
+"Pedalturm": [
+"torre del pedale",
+"torre del pedal"
+],
+"Rahmen": [
+"fondo dei canali",
+"fondo de las canales"
+],
+"Schleierbrett": [
+"traforo (gelosia delle canne)",
+"calado (celosía de los tubos)"
+],
+"Sperrventil": [
+"valvola d’arresto",
+"válvula de cierre"
+],
+"Turmkrone": [
+"coronamento della torre",
+"coronamiento de la torre"
+],
+"Ventilkasten": [
+"cassetta della valvola",
+"caja de la válvula"
+],
+"Daumen": [
+"dente",
+"leva"
+],
+"Hammer": [
+"martello",
+"martillo"
+],
+"Glockenleiste": [
+"barra dei campanelli",
+"listón de las campanillas"
+],
+"Koppelwippe": [
+"bilanciere dell’unione",
+"balancín del acoplamiento"
+],
+"Schleifenzugmagnet": [
+"elettromagnete del registro",
+"electroimán del registro"
+],
+"Einschaltspule": [
+"bobina d’inserimento",
+"bobina de conexión"
+],
+"Ausschaltspule": [
+"bobina di disinserimento",
+"bobina de desconexión"
+],
+"Anker": [
+"nucleo mobile",
+"núcleo móvil"
+],
+"Endschalter": [
+"finecorsa",
+"interruptor de fin de carrera"
+],
+"Registerwippe": [
+"placchetta di registro",
+"placa de registro"
+],
+"Kabel": [
+"filo elettrico",
+"cable"
+],
+"Kombinationsknopf": [
+"pistoncino di combinazione",
+"pistón de combinación"
+],
+"Setzer": [
+"pulsante di memorizzazione",
+"botón de memorización"
+],
+"Schwimmer": [
+"Schwimmer (regolatore a molle)",
+"Schwimmer (regulador de muelles)"
+],
+"Schwimmerplatte": [
+"piano mobile",
+"tabla móvil"
+],
+"Schwimmerfeder": [
+"molla del regolatore",
+"muelle del regulador"
+],
+"Schwimmerventil": [
+"valvola d’ingresso",
+"válvula de entrada"
+],
+"Ventilstange": [
+"asta della valvola",
+"varilla de la válvula"
+],
+"Federbock": [
+"supporto delle molle",
+"soporte de los muelles"
+],
+"Einlasskanal": [
+"canale d’ingresso",
+"canal de entrada"
+],
+"Pedalklaviatur": [
+"pedaliera",
+"pedalero"
+],
+"Pedaltaste": [
+"tasto del pedale",
+"tecla del pedal"
+],
+"Scharnier": [
+"cerniera",
+"bisagra"
+],
+"Pedalfeder": [
+"molla del pedale",
+"muelle del pedal"
+],
+"Orgelbank": [
+"panca dell’organo",
+"banco del órgano"
+],
+"Haken": [
+"gancio",
+"gancho"
+],
+"Gehäuse": [
+"cassa",
+"caja"
+],
+"Zimbelstern": [
+"stella dei campanelli (Zimbelstern)",
+"estrella de campanillas (Zimbelstern)"
+],
+"Glocke": [
+"campanello",
+"campanilla"
+],
+"Glockenring": [
+"corona dei campanelli",
+"corona de las campanillas"
+],
+"Klöppel": [
+"battaglio",
+"badajo"
+],
+"Windrad": [
+"ruota a vento",
+"rueda de viento"
+],
+"Düse": [
+"ugello",
+"tobera"
+],
+"Lagerbock": [
+"supporto",
+"soporte"
+],
+"Koppelklotz": [
+"tassello d’unione",
+"taco del acoplamiento"
+],
+"Waagebalken": [
+"barra di bilanciamento",
+"balancín"
+],
+"Magazinbalg": [
+"mantice serbatoio",
+"depósito (fuelle de reserva)"
+],
+"Windlade": [
+"somiere",
+"secreto"
+],
+"Balgbrett": [
+"tavola del mantice",
+"tabla del fuelle"
+],
+"Tremulantventil": [
+"valvola del tremolo",
+"válvula del trémolo"
+],
+"Ventilarm": [
+"braccio della valvola",
+"brazo de la válvula"
+],
+"Anschlag": [
+"arresto",
+"tope"
+],
+"Tremulantklappe": [
+"aletta del tremolo",
+"trampilla del trémolo"
+],
+"Achse": [
+"asse",
+"eje"
+],
+"Gewichtsarm": [
+"braccio del peso",
+"brazo del peso"
+],
+"Schraube": [
+"vite",
+"tornillo"
+],
+"Kernboden": [
+"fondo dell’anima",
+"fondo del bloque"
+],
+"Vorderbrett": [
+"tavola frontale",
+"tabla frontal"
+],
+"Kanal": [
+"canale del vento",
+"canal de viento"
+],
+"Kernspalte": [
+"luce (fessura)",
+"lumbrera (rendija)"
+],
+"Spundleder": [
+"pelle del tappo",
+"piel del tapón"
+],
+"Ventilkammer": [
+"camera della valvola",
+"cámara de la válvula"
+],
+"Doppelventil": [
+"valvola doppia",
+"válvula doble"
+],
+"Abstromöffnung": [
+"apertura di scarico",
+"orificio de escape"
+],
+"Membranbohrung": [
+"foro della membrana",
+"orificio de la membrana"
+],
+"Bälgchenbrett": [
+"tavola dei mantici",
+"tabla de los fuelles"
+],
+"Relaiskanal": [
+"canale del relè",
+"canal del relé"
+],
+"Kegel": [
+"valvola a cono",
+"válvula cónica"
+],
+"Kegelsitz": [
+"sede del cono",
+"asiento del cono"
+],
+"Bälgchen": [
+"piccolo mantice motore",
+"pequeño fuelle motor"
+],
+"Registerkanzelle": [
+"canale di registro",
+"canal de registro"
+],
+"Registerventil": [
+"valvola di registro",
+"válvula de registro"
+],
+"Kondukt": [
+"condotto",
+"conducto"
+],
+"Bleirohr": [
+"tubo di piombo",
+"tubo de plomo"
+],
+"Spielventilkasten": [
+"cassetta delle valvole dei tasti",
+"caja de válvulas de las teclas"
+],
+"Ventilabzug": [
+"tirante della valvola",
+"tirante de la válvula"
+],
+"Windzufuhr": [
+"alimentazione del vento",
+"alimentación de viento"
+],
+"Membrane": [
+"membrana",
+"membrana"
+],
+"Membrankästchen": [
+"camera della membrana",
+"cámara de la membrana"
+],
+"Tonkanzelle": [
+"canale della nota",
+"canal de la nota"
+],
+"Abstromventil": [
+"valvola di scarico",
+"válvula de escape"
+],
+"Relaisbalg": [
+"soffietto relè",
+"fuelle relé"
+],
+"Speisekanal": [
+"condotto di alimentazione",
+"conducto de alimentación"
+],
+"Pfeifenbohrung": [
+"foro della canna",
+"taladro del tubo"
+],
+"Barkerbalg": [
+"motore Barker",
+"motor Barker"
+],
+"Barkerkasten": [
+"cassetta del vento dei motori",
+"caja de viento de los motores"
+],
+"Einlassventil": [
+"valvola d’ingresso",
+"válvula de entrada"
+],
+"Auslassventil": [
+"valvola di scarico",
+"válvula de escape"
+],
+"Wippe": [
+"bilanciere",
+"balancín"
+],
+"Wippenbalken": [
+"barra dei bilancieri",
+"listón de los balancines"
+],
+"Pneumatikmotor": [
+"motore pneumatico",
+"motor neumático"
+],
+"Jalousie": [
+"gelosia",
+"persiana"
+],
+"Jalousiehebel": [
+"braccio della gelosia",
+"brazo de la persiana"
+],
+"Zugstange": [
+"asta di collegamento",
+"biela"
+],
+"Schwelltritthebel": [
+"braccio del pedale",
+"brazo del pedal"
+],
+"Abstrakte": [
+"catenacciatura",
+"varilla (tracker)"
+],
+"Abzugsdraht": [
+"filo di trazione",
+"alambre de tiro"
+],
+"Ansaugöffnung": [
+"presa d’aria",
+"toma de aire"
+],
+"Anschlagfilz": [
+"feltro d’arresto",
+"fieltro de tope"
+],
+"Anschlagleiste": [
+"barra d’arresto",
+"listón de tope"
+],
+"Anschlagleistenstütze": [
+"montante della barra d’arresto",
+"soporte del listón de tope"
+],
+"Aufschnitt": [
+"bocca (taglio)",
+"boca (corte)"
+],
+"Backe": [
+"guancia della tastiera",
+"mejilla del teclado"
+],
+"Balgbock": [
+"cavalletto del mantice",
+"caballete del fuelle"
+],
+"Balghebel": [
+"leva del mantice",
+"palanca del fuelle"
+],
+"Balgkanal": [
+"uscita del mantice",
+"salida del fuelle"
+],
+"Balgstütze": [
+"montante della leva",
+"poste de la palanca"
+],
+"Becher": [
+"risuonatore",
+"resonador"
+],
+"Bohrung": [
+"foro della catenacciatura",
+"orificio del varillaje"
+],
+"Damm": [
+"guida del registro (falso registro)",
+"guía del registro (falso registro)"
+],
+"Deckel": [
+"calotta",
+"sombrerete"
+],
+"Draht": [
+"filo",
+"alambre"
+],
+"Drehstift": [
+"perno",
+"pasador"
+],
+"Falten": [
+"pieghe",
+"pliegues"
+],
+"Federleiste": [
+"barra delle molle",
+"listón de los muelles"
+],
+"Federrolle": [
+"rullo a molla",
+"rodillo de muelle"
+],
+"Federwindung": [
+"spira della molla",
+"espira del muelle"
+],
+"Fundamentbrett": [
+"tavola (coperchio dei canali)",
+"tabla (tapa de las canales)"
+],
+"Fuß": [
+"piede",
+"pie"
+],
+"Fußloch": [
+"foro del piede",
+"orificio del pie"
+],
+"Führungsleiste": [
+"barra di guida",
+"listón guía"
+],
+"Führungsstift": [
+"perno di guida",
+"pasador guía"
+],
+"Gebläsegehäuse": [
+"cassa del ventilatore",
+"carcasa del ventilador"
+],
+"Gewicht": [
+"peso",
+"peso"
+],
+"Gewindedraht": [
+"filo filettato",
+"alambre roscado"
+],
+"Holzgedackt": [
+"canna tappata di legno",
+"tubo tapado de madera"
+],
+"Hut": [
+"cappello",
+"sombrerete"
+],
+"Kehle": [
+"canaletto (anima della lingua)",
+"canaleta"
+],
+"Keil": [
+"cuneo",
+"cuña"
+],
+"Kern": [
+"anima",
+"alma"
+],
+"Kernfase": [
+"smusso dell’anima",
+"bisel del alma"
+],
+"Kernstiche": [
+"dentellature",
+"dentellado"
+],
+"Klaviaturboden": [
+"fondo della tastiera",
+"fondo del teclado"
+],
+"Kopf / Zunge": [
+"noce e linguetta",
+"nuez y lengüeta"
+],
+"Krücke": [
+"filo d’accordatura",
+"alambre de afinación"
+],
+"Körper": [
+"corpo",
+"cuerpo"
+],
+"Labium": [
+"bocca",
+"boca"
+],
+"Laufrad": [
+"girante",
+"rodete"
+],
+"Laufradschaufel": [
+"pala della girante",
+"álabe del rodete"
+],
+"Ledermutter": [
+"dado di cuoio",
+"tuerca de cuero"
+],
+"Luftblatt": [
+"lama d’aria",
+"lámina de aire"
+],
+"Motor": [
+"motore",
+"motor"
+],
+"Nuss": [
+"noce",
+"nuez"
+],
+"Oberlabium": [
+"labbro superiore",
+"labio superior"
+],
+"Oberplatte": [
+"tavola superiore",
+"tabla superior"
+],
+"Obertaste": [
+"tasto cromatico",
+"tecla cromática"
+],
+"Pfeife": [
+"canna",
+"tubo"
+],
+"Pfeifenstock": [
+"crivello",
+"tablón (tapa de tubos)"
+],
+"Pulpete": [
+"borsetta",
+"bolsita (de pelo)"
+],
+"Rechenstäbchen": [
+"lamella del pettine",
+"púa del peine"
+],
+"Registerbalken": [
+"barra di registro",
+"barra de registro"
+],
+"Registerbank": [
+"fianco dei registri",
+"panel de registros"
+],
+"Registerschild": [
+"targhetta del registro",
+"etiqueta del registro"
+],
+"Registerwelle": [
+"rullo di registro",
+"rodillo de registro"
+],
+"Registerzug": [
+"pomello di registro",
+"tirador de registro"
+],
+"Registerzugstange": [
+"asta del registro",
+"varilla del tirador"
+],
+"Registerärmchen": [
+"braccio del rullo di registro",
+"brazo del rodillo de registro"
+],
+"Rollenführung": [
+"guida del rullo",
+"guía del rodillo"
+],
+"Rollventilkasten": [
+"cassetta della valvola a tenda",
+"caja de la válvula de cortina"
+],
+"Röhrchen": [
+"camino",
+"chimenea"
+],
+"Rückschlagventil": [
+"valvola di non ritorno",
+"válvula antirretorno"
+],
+"Sammelkanal": [
+"condotto collettore",
+"conducto colector"
+],
+"Schalldruck": [
+"pressione sonora",
+"presión sonora"
+],
+"Schied": [
+"setto",
+"tabique"
+],
+"Schleife": [
+"stecca (registro)",
+"corredera (registro)"
+],
+"Schleifenbohrung": [
+"foro della stecca",
+"orificio de la corredera"
+],
+"Schleifenzug": [
+"tirante della stecca",
+"biela de la corredera"
+],
+"Schlitz": [
+"fessura",
+"ranura"
+],
+"Schöpfventil": [
+"valvola d’aspirazione",
+"válvula de aspiración"
+],
+"Seil": [
+"corda",
+"cuerda"
+],
+"Seitenbart": [
+"orecchia",
+"oreja"
+],
+"Spieltisch": [
+"consolle",
+"consola"
+],
+"Spielventil": [
+"ventilabro",
+"válvula (ventilla)"
+],
+"Springventil": [
+"valvolina a molla",
+"valvulita de muelle"
+],
+"Spund": [
+"tappo",
+"tapón"
+],
+"Spundgriff": [
+"maniglia del tappo",
+"asa del tapón"
+],
+"Stecher": [
+"spinta",
+"empujador"
+],
+"Stiefel": [
+"stivale (piede)",
+"bota (pie)"
+],
+"Stimmschieber": [
+"anello d’accordatura",
+"anillo de afinación"
+],
+"Sägeschnitt": [
+"taglio di sega",
+"corte de sierra"
+],
+"Tastenfilz": [
+"feltro del tasto",
+"fieltro de la tecla"
+],
+"Tastenhebel": [
+"leva del tasto",
+"palanca de la tecla"
+],
+"Tastenrechen": [
+"pettine posteriore",
+"peine trasero"
+],
+"Tritt": [
+"pedana del tiramantici",
+"pedal del entonador"
+],
+"Unterlabium": [
+"labbro inferiore",
+"labio inferior"
+],
+"Unterplatte": [
+"tavola inferiore",
+"tabla inferior"
+],
+"Untertaste": [
+"tasto diatonico",
+"tecla natural"
+],
+"Ventilfeder": [
+"molla del ventilabro",
+"muelle de la válvula"
+],
+"Ventilführungsstift": [
+"perno di guida del ventilabro",
+"guía de la válvula"
+],
+"Ventilöse": [
+"occhiello del ventilabro",
+"ojal de la válvula"
+],
+"Vorhang": [
+"tenda",
+"cortina"
+],
+"Vorhangleiste": [
+"listello della tenda",
+"listón de la cortina"
+],
+"Vorschlag": [
+"cappello (canna di legno)",
+"frontal (tubo de madera)"
+],
+"Welle": [
+"rullo",
+"rodillo"
+],
+"Wellenbrett": [
+"catenacciatura a rulli (tavola dei rulli)",
+"reducción (tabla de rodillos)"
+],
+"Wellenböckchen": [
+"supporto del rullo",
+"soporte del rodillo"
+],
+"Wellenärmchen": [
+"braccio del rullo",
+"brazo del rodillo"
+],
+"Windkanal": [
+"condotto del vento",
+"conducto de viento"
+],
+"Windkasten": [
+"cassa del vento",
+"caja de viento"
+],
+"Windleitung": [
+"condotto",
+"conducto"
+],
+"Winkel": [
+"squadra",
+"escuadra"
+],
+"Winkelbalken": [
+"barra delle squadre",
+"listón de las escuadras"
+],
+"Zugschnur": [
+"cordicella",
+"cordón"
+],
+"Zunge": [
+"linguetta",
+"lengüeta"
+],
+"Öse": [
+"occhiello",
+"ojal"
+]
+}

@@ -64,13 +64,21 @@ function buildChestR(o,ST){
   /* o.spring: a spring chest (as C-02) instead. Under the table each pipe hole has a small valve hinged behind it and
      held shut by its spring; the stop bar of the row lies in a groove of the upper board, in front of the pipes, and
      its pins go down through the table to the valves' front ends: drawing the stop lowers the bar and opens them all. */
-  const SPV=[], VH=2.6, VL=6, VP=5.6, VD=1, zBar=r=>r.z-3;
+  // the bar lies in front of the pipes of its row (for a multi-rank stop in front of all its ranks); each valve is as long as
+  // needed for its pin to reach it. A multi-rank stop has one table hole and valve per note; in the upper board a short
+  // bore runs from it under the ranks, and each pipe has its own bore up to its foot.
+  const SPV=[], VH=2.6, VD=1, zBar=r=>Math.min(r.z-3,r.z-r.d/2+0.9);
   if(o.spring) rows.forEach((r,i)=>{
-    const st=STOPS[r.si], zb=zBar(r), f0=r.z-r.d/2, b0=r.z+r.d/2, sm=stopMat(i), it={bar:box(CX.root,W+1,1.4,1.2,sm,cx,yS+2.1,zb,LB('ストップバー：'+st.name+'（下がるとピンで弁を押し開ける）','Registerbalken')),v:[],p:[]};
+    const st=STOPS[r.si], zb=zBar(r), VP=r.z+VH-zb, VL=VP+0.4, f0=r.z-r.d/2, b0=r.z+r.d/2, sm=stopMat(i), it={zb,VP,bar:box(CX.root,W+1,1.4,1.2,sm,cx,yS+2.1,zb,LB('ストップバー：'+st.name+'（下がるとピンで弁を押し開ける）','Registerbalken')),v:[],p:[]};
     if(zb-0.7-f0>0.3) box(ST,W+1,sl+ub,zb-0.7-f0,MAT.wood,cx,yS+(sl+ub)/2,(f0+zb-0.7)/2,LB('上板：'+st.name,'Pfeifenstock'));
     box(ST,W+1,sl+ub,b0-zb-0.7,MAT.wood,cx,yS+(sl+ub)/2,(zb+0.7+b0)/2,LB('上板：'+st.name+'（パイプを立てる台。前の溝にストップバーが入る）','Pfeifenstock'));
+    const zz=r.mz?r.mz.map(m=>r.z+m):null, LSB=LB('上板の穴（パイプの足へ風が通る）','Stockbohrung');
     for(const k of ks){ const x=X[k];
-      bore(ST,MAT.dark,x,yT,yT+tb,r.z,0.6,LB('テーブルの穴（ばね弁が下からふさぐ）','Kanzellenbohrung')); bore(ST,MAT.dark,x,yS,base,r.z,0.6,LB('上板の穴（パイプの足へ風が通る）','Stockbohrung'));
+      bore(ST,MAT.dark,x,yT,yT+tb,r.z,0.6,LB('テーブルの穴（ばね弁が下からふさぐ）','Kanzellenbohrung'));
+      if(!zz) bore(ST,MAT.dark,x,yS,base,r.z,0.6,LSB);
+      else { const yH=yS+1.4; bore(ST,MAT.dark,x,yS,yH,r.z,0.6,LSB);
+        boreAB(ST,MAT.dark,V3(x,yH,Math.min(r.z,...zz)-0.45),V3(x,yH,Math.max(r.z,...zz)+0.45),0.5,LB('上板の中の横穴（1つの弁の風を各列のパイプへ分ける）','Stockbohrung'),false);
+        for(const z of zz) bore(ST,MAT.dark,x,yH,base,z,0.45,LB('上板の穴（各列のパイプの足へ）','Stockbohrung')); }
       const pv=new T.Group(); pv.position.set(x,yT-0.4,r.z+VH); CX.root.add(pv);
       box(pv,Math.max(1.2,FIT[k].cw-0.3),0.7,VL,sm,0,0,-VL/2,LB('ばね弁（'+st.name+' / '+KEYNAMES[k]+'。ばねで閉じている）','Springventil'));
       it.v.push(pv); it.p.push(rod(CX.root,0.13,MAT.iron,LB('ピン（ストップバーが弁を押す）','Stecher'))); }
@@ -81,8 +89,16 @@ function buildChestR(o,ST){
     const st=STOPS[r.si], G=new T.Group(); CX.root.add(G); sg.push(G);
     box(G,W+16,sl,sw[i],MAT.woodPale,cx+o.slDir*7,yS+sl/2,r.z,LB('スライダー：'+st.name+'（左右に動いて穴を合わせる）','Schleife'));
     const hm=mclone(MAT.dark); holeMats.push(hm); const TG=new T.Group(); G.add(TG);
-    for(const k of ks){ const nr=nRanks(r.si); for(let q=0;q<nr;q++){ const dd=mk(G_DISC,hm,TG,LB('スライダーの穴','Schleifenbohrung')); dd.rotation.x=-Math.PI/2; const s=nRanks(r.si)>1?0.55:Math.min(0.9,0.35+Wd[k]*0.08); dd.scale.set(s,s,s); dd.position.set(X[k],yS+sl+0.03,r.z+(r.mz?r.mz[q]:0));
-      const zz=r.z+(r.mz?r.mz[q]:0), br=s*0.92; bore(TG,hm,X[k],yS,yS+sl,zz,br,LB('スライダーの穴','Schleifenbohrung'),false); bore(ST,hm,X[k],yT,yT+tb,zz,br,LB('テーブルの穴（トーンチャンネルからスライダーへ風が通る）','Kanzellenbohrung')); bore(ST,hm,X[k],yU,yU+ub,zz,br,LB('上板の穴（スライダーからパイプの足へ風が通る）','Stockbohrung')); } }
+    // one table hole and one slider hole per note, also for a multi-rank stop: then a bore up into the upper board ends in a
+    // channel across it (yH), from which each rank's pipe has its own bore up to its foot
+    for(const k of ks){ const nr=nRanks(r.si), s=Math.min(0.9,0.35+Wd[k]*0.08), br=s*0.92, dd=mk(G_DISC,hm,TG,LB('スライダーの穴','Schleifenbohrung'));
+      dd.rotation.x=-Math.PI/2; dd.scale.set(s,s,s); dd.position.set(X[k],yS+sl+0.03,r.z);
+      bore(TG,hm,X[k],yS,yS+sl,r.z,br,LB('スライダーの穴','Schleifenbohrung'),false); bore(ST,hm,X[k],yT,yT+tb,r.z,br,LB('テーブルの穴（トーンチャンネルからスライダーへ風が通る）','Kanzellenbohrung'));
+      if(nr<2) bore(ST,hm,X[k],yU,yU+ub,r.z,br,LB('上板の穴（スライダーからパイプの足へ風が通る）','Stockbohrung'));
+      else { const ZZ=r.mz.map(m=>r.z+m), yH=yU+ub*0.45;
+        bore(ST,hm,X[k],yU,yH,r.z,br,LB('上板の穴（スライダーから上板の中の横穴へ）','Stockbohrung'));
+        boreAB(ST,hm,V3(X[k],yH,Math.min(...ZZ)-br*0.6),V3(X[k],yH,Math.max(...ZZ)+br*0.6),br*0.8,LB('上板の中の横穴（1つの穴の風を各列のパイプへ分ける）','Stockbohrung'),false);
+        for(const z of ZZ) bore(ST,hm,X[k],yH,yU+ub,z,br*0.7,LB('上板の穴（各列のパイプの足へ）','Stockbohrung')); } }
     mergeStatic(TG,G);
     box(ST,W+1,ub,r.d-0.15,MAT.wood,cx,yU+ub/2,r.z,LB('上板：'+st.name+'（パイプを立てる台）','Pfeifenstock'));
   });
@@ -109,9 +125,11 @@ function buildChestR(o,ST){
     rows.forEach((r,i)=>{ const nr=nRanks(r.si);
       for(let q=0;q<nr;q++){
         const zz=r.z+(r.mz?r.mz[q]:0), sp=buildPipe(x,zz,r.si,k,q,base,ST), d=ch.nearestDist(V3(x,yCh+hc*0.5,zz));
-        const pts=[V3(x,yCh+hc*0.5,zz),V3(x,yU+ub*0.5,zz),V3(x,base,zz)].concat(sp.path);
+        // a multi-rank stop's wind goes up the one hole at r.z, along the channel in the upper board, then up to each pipe
+        const yHb=o.spring?yS+1.4:yU+ub*0.45, pre=nr>1?[V3(x,yCh+hc*0.5,r.z),V3(x,yHb,r.z),V3(x,yHb,zz),V3(x,base,zz)]:[V3(x,yCh+hc*0.5,zz),V3(x,yU+ub*0.5,zz),V3(x,base,zz)], nb=pre.length;
+        const pts=pre.concat(sp.path);
         const tb2=new Tube(pts,{r:nRanks(r.si)>1?0.3:0.45,density:0.22,front:900,state:()=>({open:ch.reached(d)&&SP[i]>0.85&&S.p>4,speed:26})});
-        tb2.exitU=tb2.cum[3+sp.ei]/tb2.L; tb2.mouthAt(sp,3);
+        tb2.exitU=tb2.cum[nb+sp.ei]/tb2.L; tb2.mouthAt(sp,nb);
         C.tubes.push({k,i:r.si,j:i,r:q,tb:tb2,c:o.c,sw:!!o.sw}); C.top=Math.max(C.top,sp.top);
         if(sp.top>(C.tops[k]||0)) C.tops[k]=sp.top;
       } });
@@ -129,11 +147,11 @@ function buildChestR(o,ST){
     for(const t of C.speaking()) C.chanFlow[t.k]+=1;
     for(const k of ks) C.chanFlow[k]=C.chanFlow[k]>0?14+3*C.chanFlow[k]:0;
     if(!o.spring) rows.forEach((r,i)=>{ sg[i].position.x=o.slOff(SP[i]); holeMats[i].emissive.copy(COL.stop).multiplyScalar(SP[i]>0.85?0.9:0); });
-    else rows.forEach((r,i)=>{ const it=SPV[i], dy=VD*SP[i], zb=zBar(r), ph=-Math.asin(clamp(dy/VP,0,1)), c=Math.cos(ph), s=Math.sin(ph);
+    else rows.forEach((r,i)=>{ const it=SPV[i], dy=VD*SP[i], zb=it.zb, VP=it.VP, ph=-Math.asin(clamp(dy/VP,0,1)), c=Math.cos(ph), s=Math.sin(ph);
       it.bar.position.y=yS+2.1-dy;
       ks.forEach((k,j)=>{ const pv=it.v[j]; pv.rotation.x=ph; it.p[j].set(V3(X[k],yS+1.4-dy,zb),V3(X[k],pv.position.y+0.35*c+VP*s,pv.position.z+0.35*s-VP*c)); }); });
   };
-  C.pullDown=k=>V3(X[k],oy-1-KPULL*KD[k],Z(zPd)); C.pos=k=>X[k];
+  C.pullDown=k=>V3(X[k],oy-1-KPULL*KD[k],Z(zPd)); C.pos=k=>X[k]; C.barZ=i=>SPV[i]?SPV[i].zb:null;
   C.speaking=()=>{ const out=[]; if(S.p<8||C.vol.fill<0.3) return out; const p=o.press?o.press():S.p; for(const t of C.tubes) if(KD[t.k]>0.25&&SP[t.j]>0.85){ t.p=p; out.push(t); } return out; };
   return C;
 }
