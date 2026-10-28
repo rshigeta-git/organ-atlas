@@ -44,14 +44,14 @@ function buildBalanceKeyboard(o){
   return KB;
 }
 function buildBalancedAction(chest,kb,KD2){
-  const R=CX.root, items=[], YW=11, ZW=kb.zt-4, BF=6, BR=8, ZWF=ZW+BF, ZWR=ZW-BR, AI=6, AO=3.33, zr=ZWR-AI, a=3, ys1=40, zs2=chest.oz+14-a, y0r=14.5;
+  const R=CX.root, items=[], YW=11, ZW=kb.zt-4, BF=6, BR=8, ZWF=ZW+BF, ZWR=ZW-BR, AI=6, AO=3.33, zr=ZWR-AI, a=3, ys1=40, zs2=chest.pullDown(0).z-a, y0r=14.5;
   box(R,13*TAILP+6,1,1,MAT.woodDark,0,YW,ZW,LB('バックフォールの支点の桟（ウィッペンバルケン）','Wippenbalken'));
   for(const s of [-1,1]) box(R,1.2,YW+0.5,1.6,MAT.woodDark,s*(13*TAILP/2+3),(YW+0.5)/2,ZW,LB('バックフォールの桟の支柱','Balgstütze'));
   const xs=[]; for(let k=0;k<13;k++) xs.push(kb.kx(k),chest.pos(k));
   const xmin=Math.min(...xs)-3, xmax=Math.max(...xs)+3;
   box(R,xmax-xmin,13*1.25+5,0.8,MAT.wood,(xmin+xmax)/2,y0r+13*1.25/2,zr-1.1,LB('ローラーボード（ローラーを支える板）','Wellenbrett'));
   box(R,xmax-xmin,1.2,1.2,MAT.woodDark,(xmin+xmax)/2,ys1,zr+AO-a-0.9,LB('スクエアの軸受け','Winkelbalken'));
-  box(R,chest.W+4,1.2,1.2,MAT.woodDark,chest.ox,ys1,zs2-0.9,LB('スクエアの軸受け','Winkelbalken'));
+  box(R,chest.W+4,1.2,1.2,MAT.woodDark,chest.cx!=null?chest.cx:chest.ox,ys1,zs2-0.9,LB('スクエアの軸受け','Winkelbalken'));
   for(let k=0;k<13;k++){
     const x1=kb.kx(k), x2=chest.pos(k), yk=y0r+k*1.25, m=keyMat(k), zs1=zr+AO-a;
     const roll=mk(G_CYL,m,R,LB('ローラー（'+KEYNAMES[k]+'。回転して引く位置を左右に移す）','Welle')); roll.rotation.z=Math.PI/2; roll.scale.set(0.42,Math.abs(x2-x1)+1.4,0.42); roll.position.set((x1+x2)/2,yk,zr);

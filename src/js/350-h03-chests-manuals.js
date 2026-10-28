@@ -29,6 +29,7 @@ function h3RowDepth(si,k){
   if(si===0) return 135*Math.pow(2,-k/16)*MM; if(si===11) return 235*Math.pow(2,-k/16)*MM;
   if(si===9) return 2*3.17*F*Math.pow(2,-k/24); if(si===12) return 2*5.77*F*Math.pow(2,-k/24);
   if(si===4) return 2*1.15*F;
+  if(PIPE[si].reed) return pipeFoot(si,k)[1];
   if(nRanks(si)>1){ let d=1.2*(nRanks(si)-1); for(let r=0;r<nRanks(si);r++) d+=2*pipeR(si,k,r); return d; }
   return 2*pipeR(si,k,0);
 }
@@ -60,9 +61,23 @@ function buildChestR(o,ST){
   // sliders (moving groups with their holes), dams, upper boards
   const sw=rows.map(r=>Math.min(6,r.d*0.5)), sg=[], holeMats=[];
   const order=rows.map((r,i)=>i).sort((a,b)=>rows[b].z-rows[a].z);
-  let zPrev=zF; for(const i of order){ const zf=rows[i].z+sw[i]/2; if(zPrev-zf>0.05) box(ST,W+2,sl,zPrev-zf,MAT.wood,cx,yS+sl/2,(zPrev+zf)/2,LB('ダム（スライダーの間の固定材）','Damm')); zPrev=rows[i].z-sw[i]/2; }
-  if(zPrev-zB>0.05) box(ST,W+2,sl,zPrev-zB,MAT.wood,cx,yS+sl/2,(zPrev+zB)/2,LB('ダム（スライダーの間の固定材）','Damm'));
-  rows.forEach((r,i)=>{
+  /* o.spring: a spring chest (as C-02) instead. Under the table each pipe hole has a small valve hinged behind it and
+     held shut by its spring; the stop bar of the row lies in a groove of the upper board, in front of the pipes, and
+     its pins go down through the table to the valves' front ends: drawing the stop lowers the bar and opens them all. */
+  const SPV=[], VH=2.6, VL=6, VP=5.6, VD=1, zBar=r=>r.z-3;
+  if(o.spring) rows.forEach((r,i)=>{
+    const st=STOPS[r.si], zb=zBar(r), f0=r.z-r.d/2, b0=r.z+r.d/2, sm=stopMat(i), it={bar:box(CX.root,W+1,1.4,1.2,sm,cx,yS+2.1,zb,LB('ストップバー：'+st.name+'（下がるとピンで弁を押し開ける）','Registerbalken')),v:[],p:[]};
+    if(zb-0.7-f0>0.3) box(ST,W+1,sl+ub,zb-0.7-f0,MAT.wood,cx,yS+(sl+ub)/2,(f0+zb-0.7)/2,LB('上板：'+st.name,'Pfeifenstock'));
+    box(ST,W+1,sl+ub,b0-zb-0.7,MAT.wood,cx,yS+(sl+ub)/2,(zb+0.7+b0)/2,LB('上板：'+st.name+'（パイプを立てる台。前の溝にストップバーが入る）','Pfeifenstock'));
+    for(const k of ks){ const x=X[k];
+      bore(ST,MAT.dark,x,yT,yT+tb,r.z,0.6,LB('テーブルの穴（ばね弁が下からふさぐ）','Kanzellenbohrung')); bore(ST,MAT.dark,x,yS,base,r.z,0.6,LB('上板の穴（パイプの足へ風が通る）','Stockbohrung'));
+      const pv=new T.Group(); pv.position.set(x,yT-0.4,r.z+VH); CX.root.add(pv);
+      box(pv,Math.max(1.2,FIT[k].cw-0.3),0.7,VL,sm,0,0,-VL/2,LB('ばね弁（'+st.name+' / '+KEYNAMES[k]+'。ばねで閉じている）','Springventil'));
+      it.v.push(pv); it.p.push(rod(CX.root,0.13,MAT.iron,LB('ピン（ストップバーが弁を押す）','Stecher'))); }
+    SPV.push(it); });
+  let zPrev=zF; if(!o.spring) for(const i of order){ const zf=rows[i].z+sw[i]/2; if(zPrev-zf>0.05) box(ST,W+2,sl,zPrev-zf,MAT.wood,cx,yS+sl/2,(zPrev+zf)/2,LB('ダム（スライダーの間の固定材）','Damm')); zPrev=rows[i].z-sw[i]/2; }
+  if(!o.spring&&zPrev-zB>0.05) box(ST,W+2,sl,zPrev-zB,MAT.wood,cx,yS+sl/2,(zPrev+zB)/2,LB('ダム（スライダーの間の固定材）','Damm'));
+  if(!o.spring) rows.forEach((r,i)=>{
     const st=STOPS[r.si], G=new T.Group(); CX.root.add(G); sg.push(G);
     box(G,W+16,sl,sw[i],MAT.woodPale,cx+o.slDir*7,yS+sl/2,r.z,LB('スライダー：'+st.name+'（左右に動いて穴を合わせる）','Schleife'));
     const hm=mclone(MAT.dark); holeMats.push(hm); const TG=new T.Group(); G.add(TG);
@@ -113,9 +128,12 @@ function buildChestR(o,ST){
     }
     for(const t of C.speaking()) C.chanFlow[t.k]+=1;
     for(const k of ks) C.chanFlow[k]=C.chanFlow[k]>0?14+3*C.chanFlow[k]:0;
-    rows.forEach((r,i)=>{ sg[i].position.x=o.slOff(SP[i]); holeMats[i].emissive.copy(COL.stop).multiplyScalar(SP[i]>0.85?0.9:0); });
+    if(!o.spring) rows.forEach((r,i)=>{ sg[i].position.x=o.slOff(SP[i]); holeMats[i].emissive.copy(COL.stop).multiplyScalar(SP[i]>0.85?0.9:0); });
+    else rows.forEach((r,i)=>{ const it=SPV[i], dy=VD*SP[i], zb=zBar(r), ph=-Math.asin(clamp(dy/VP,0,1)), c=Math.cos(ph), s=Math.sin(ph);
+      it.bar.position.y=yS+2.1-dy;
+      ks.forEach((k,j)=>{ const pv=it.v[j]; pv.rotation.x=ph; it.p[j].set(V3(X[k],yS+1.4-dy,zb),V3(X[k],pv.position.y+0.35*c+VP*s,pv.position.z+0.35*s-VP*c)); }); });
   };
-  C.pullDown=k=>V3(X[k],oy-1-KPULL*KD[k],Z(zPd));
+  C.pullDown=k=>V3(X[k],oy-1-KPULL*KD[k],Z(zPd)); C.pos=k=>X[k];
   C.speaking=()=>{ const out=[]; if(S.p<8||C.vol.fill<0.3) return out; const p=o.press?o.press():S.p; for(const t of C.tubes) if(KD[t.k]>0.25&&SP[t.j]>0.85){ t.p=p; out.push(t); } return out; };
   return C;
 }

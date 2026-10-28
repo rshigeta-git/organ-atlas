@@ -140,10 +140,10 @@ function buildBarkerOrgan(){
   const seq=[0,2,4,6,8,10,12,11,9,7,5,3,1], order=[]; seq.forEach((k,j)=>order[k]=j);
   // squares S3 (behind roller board 2) and S4 (under the chest) with a horizontal tracker; the chest stands on legs above the frame
   const ys3=32, zs3=zr2+AO2-SA, zs4=zs3-40, KD2=new Float32Array(13), zC=zs4+SA-14, yC=yU+28;
-  const chest=buildChest({y:yC,z:zC,order,kd:KD2,open:0.6,inlet:'R'});
-  for(const z of [zC-5,zC+17]) for(const s of [-1,1]) box(R,2.4,yC+12,2.4,MAT.wood,s*(chest.W/2+2.2),(yC-12)/2,z,LB('風箱の脚','Ladengestell'));
+  // full-size chest (C/Cis layout, built like the H-03 chests) on legs; its pull-down line is at zs4 + SA, as before
+  const chest=buildFullChest(fullChestPlan(yC,-12,zs4+SA+3.5),null,'R',false,KD2);
   const LS=LB('スクエアの軸受け','Winkelbalken'), rail=(y,z,x0,x1)=>{ box(R,x1-x0,1.2,1.2,MAT.woodDark,(x0+x1)/2,y,z-0.9,LS); for(const x of [x0,x1]) box(R,1.2,y+12,1.2,MAT.woodDark,x,(y-12)/2,z-0.9,LB('スクエアの軸受けの支柱','Balgstütze')); };
-  rail(ys1,zs1,-XF+2,XF-2); rail(ys1,zs2,-XF+2,XF-2); rail(ys3,zs3,-chest.W/2-3,chest.W/2+3); rail(ys3,zs4,-chest.W/2-3,chest.W/2+3);
+  rail(ys1,zs1,-XF+2,XF-2); rail(ys1,zs2,-XF+2,XF-2); rail(ys3,zs3,chest.xL-3,chest.xR+3); rail(ys3,zs4,chest.xL-3,chest.xR+3);
   const R2=roller({lab:'バーカーマシン → 風箱',zr:zr2,y0:YB+4,sp:1.35,ai:AI2,ao:AO2,xi:xm,xo:k=>chest.pos(k),order:topo(K,(j,k)=>Math.abs(chest.pos(k)-xm(j))<0.9)});
   const T=K.map(k=>{ const m=keyMat(k);
     return {st:rod(R,0.35,m,LB('スティッカー（押し棒）','Stecher')),bf:rod(R,0.3,m,LB('バックフォール（鍵の側）','Wippe')),bb:rod(R,0.3,m,LB('バックフォール（鍵の側）','Wippe')),
@@ -158,8 +158,9 @@ function buildBarkerOrgan(){
   const sqPair=(q,i,x,y,za,zb,d)=>{ const f=Math.asin(clamp(d/SA,0,1)), c=Math.cos(f), s=Math.sin(f);
     const aT=V3(x,y-SA*s,za+SA*c), bT=V3(x,y+SA*c,za+SA*s), cT=V3(x,y+SA*c,zb+SA*s), dT=V3(x,y-SA*s,zb+SA*c);
     q.sq[i][0].set(V3(x,y,za),aT); q.sq[i][1].set(V3(x,y,za),bT); q.sq[i+1][1].set(V3(x,y,zb),cT); q.sq[i+1][0].set(V3(x,y,zb),dT); return {aT,bT,cT,dT}; };
+  chest.finish();
   return {chest,
-    pins:[{t:'鍵盤',p:V3(-16,3,40)},{t:'ローラーボード 1',p:V3(-30,30,zr)},{t:'バーカーマシン（上の段）',p:V3(-XF,yU+18,z0-10)},{t:'バーカーマシン（下の段）',p:V3(-XF,yL+18,z0-10)},{t:'ローラーボード 2',p:V3(-34,20,zr2)},{t:'風箱',p:V3(36,54,zC)}],
+    pins:[{t:'鍵盤',p:V3(-16,3,40)},{t:'ローラーボード 1',p:V3(-30,30,zr)},{t:'バーカーマシン（上の段）',p:V3(-XF,yU+18,z0-10)},{t:'バーカーマシン（下の段）',p:V3(-XF,yL+18,z0-10)},{t:'ローラーボード 2',p:V3(-34,20,zr2)},{t:'風箱',p:V3(chest.xR+5,chest.base,chest.zF)}],
     update(dt){
       kb.update();
       for(const k of K){ const q=T[k], x1=kb.kx(k), tp=kb.tail(k), rise=tp.y-(kb.y0+KH/2+0.3), ph=Math.asin(clamp(rise/BF,0,1)), c=Math.cos(ph), s=Math.sin(ph);

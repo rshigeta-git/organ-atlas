@@ -10,7 +10,8 @@ function buildPedalAction(){
   const R=CX.root, ZH=62, ZT=-14, ZE=-27, KL=ZH-ZE, KP=ZH-ZT, yK=5, KHp=3.4, DEP=1.9, ZA=-24, LA=ZH-ZA, YS=21.5, AS=4.5, Y2=YS+2*AS, oz=-115, oy=54;
   const DA=LA*DEP/KP, AO=3, AIr=AO*DA/KPULL, zr=oz+14-AO, zs1=ZA-AS, zs2=zr+AIr+AS, yr0=Y2+3;
   const PST=[5,11,12], PSP=new Float32Array([0,1,0]), m={ps:[false,true,false]};
-  const chest=buildChest({y:oy,z:oz,sp:PSP,stops:PST,rows:[13.9,2.32,-10.53],P:15,pedal:true,volN:300,inlet:'R'});
+  // full-size pedal chest (C/Cis layout, built like the H-03 chests) on its own legs; its pull-down line stays at oz + 14
+  const chest=buildFullChest(fullChestPlan(oy,0,oz+17.5,PST),null,'R',false,null,{sp:PSP,pedal:true,volN:300});
   const xp=k=>((k in SLOT?SLOT[k]:BPOS[k])-3.5)*8;
   // frame
   const LF=LB('ペダル鍵盤の枠','Pedalklaviatur');
@@ -58,14 +59,11 @@ function buildPedalAction(){
     const roll=mk(G_CYL,keyMat(k.k),R,LB('ローラー（'+KEYNAMES[k.k]+'。回転して引く位置を左右に移す）','Welle')); roll.rotation.z=Math.PI/2; roll.scale.set(0.42,Math.abs(x2-x1)+1.4,0.42); roll.position.set((x1+x2)/2,yk,zr);
     for(const xx of [Math.min(x1,x2)-0.9,Math.max(x1,x2)+0.9]) box(R,0.7,1.1,1.4,MAT.woodDark,xx,yk,zr-0.4,LB('ローラーの軸受け','Wellenböckchen'));
   }
-  // chest stand
-  const LS=LB('風箱の脚','Ladenstuhl');
-  for(const s of [-1,1]) for(const dz of [-16,16]) box(R,2,oy,2,MAT.woodDark,s*(chest.W/2+2.5),oy/2,oz+dz,LS);
-  for(const dz of [-16,16]) box(R,chest.W+7,1.6,2,MAT.woodDark,0,oy-0.8,oz+dz,LS);
+  chest.finish();
   return {chest,
     stopRows:[{label:'P ペダル',items:PST.map((si,i)=>({name:STOPS[si].name,ja:STOPS[si].ja,get:()=>m.ps[i],set:v=>m.ps[i]=v}))}],
     ctl:{pd:arr=>{ arr.forEach((v,i)=>m.ps[i]=!!v); syncStopUI(); }},
-    pins:[{t:'ペダル鍵盤',p:V3(-36,10,20)},{t:'蝶番（かかと側）',p:V3(38,yK+3,ZH)},{t:'ペダル鍵の延長部',p:V3(-38,5,(ZT+ZE)/2)},{t:'スクエア',p:V3(36,YS+6,zs1)},{t:'水平のトラッカー',p:V3(36,YS+AS+4,(zs1+zs2)/2)},{t:'ローラーボード',p:V3(xmax+4,yr0+8,zr)},{t:'風箱',p:V3(chest.W/2+6,oy+14,oz+12)}],
+    pins:[{t:'ペダル鍵盤',p:V3(-36,10,20)},{t:'蝶番（かかと側）',p:V3(38,yK+3,ZH)},{t:'ペダル鍵の延長部',p:V3(-38,5,(ZT+ZE)/2)},{t:'スクエア',p:V3(36,YS+6,zs1)},{t:'水平のトラッカー',p:V3(36,YS+AS+4,(zs1+zs2)/2)},{t:'ローラーボード',p:V3(xmax+4,yr0+8,zr)},{t:'風箱',p:V3(chest.xR+6,chest.base,chest.zF)}],
     update(dt){
       for(const q of keys){
         const th=Math.asin(DEP*S.kd[q.k]/KP); q.g.rotation.x=-th;

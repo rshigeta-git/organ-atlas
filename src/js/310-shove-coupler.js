@@ -53,9 +53,11 @@ function buildCoupler(){
   const AO=4, pullL=DIP*(LO.za-LO.zt)/(LO.zf-LO.zt), pullU=DIP*(UP.za-UP.zt)/(UP.zf-UP.zt);
   const RB=[{man:lo,o:LO,ai:AO*pullL/KPULL,y0:12,kd:kdL,lab:'下鍵盤（I）',wn:'ポジティフ'},{man:up,o:UP,ai:AO*pullU/KPULL,y0:14,kd:kdU,lab:'上鍵盤（II）',wn:'ハウプトヴェルク'}];
   for(const b of RB){ b.zr=b.o.za-b.ai; b.zo=b.zr+AO; }
-  const pos=buildChest({y:34,z:RB[0].zo-14,kd:kdL,sp:POSSP,stops:POST,rows:POSR,palMat:k=>lmats[k],volN:260,inlet:'R'});
+  // full-size chests (C/Cis layout, built like the H-03 chests); their pull-down lines stay at zo, the Hauptwerk above the Positiv
+  const pos=buildFullChest(fullChestPlan(34,-10,RB[0].zo+3.5,POST),null,'R',false,kdL,{sp:POSSP,volN:260,name:'ポジティフ'});
   RB[1].y0=Math.ceil(pos.top)+3;
-  const hw=buildChest({y:RB[1].y0+13*1.25+6,z:RB[1].zo-14,kd:kdU,sp:HWSP,stops:HWST,rows:HWR,mixz:[-2.4,0,2.4],P:9.6,palMat:k=>umats[k],inlet:'R'});
+  const hw=buildFullChest(fullChestPlan(RB[1].y0+13*1.25+6,-10,RB[1].zo+3.5,HWST),null,'R',false,kdU,{sp:HWSP,noLegs:true,name:'ハウプトヴェルク'});
+  pos.finish(); hw.finish();
   RB[0].ch=pos; RB[1].ch=hw;
   for(const b of RB){
     const xs=[]; for(let k=0;k<13;k++) xs.push(b.man.keys[k].x,b.ch.pos(k)); const xmin=Math.min(...xs)-3, xmax=Math.max(...xs)+3, ytop=b.y0+13*1.25+2;
@@ -78,7 +80,7 @@ function buildCoupler(){
       {type:'toggle',id:'m0',label:'下鍵盤（I）を弾く',get:()=>m.man===0,set:()=>setMan(0)}],
     stopRows:[{label:'II ハウプトヴェルク（上鍵盤・上の風箱）',items:HWST.map((si,i)=>({name:STOPS[si].name,ja:STOPS[si].ja,get:()=>m.hs[i],set:v=>m.hs[i]=v}))},{label:'I ポジティフ（下鍵盤・下の風箱）',items:POST.map((si,i)=>({name:STOPS[si].name,ja:STOPS[si].ja,get:()=>m.ps[i],set:v=>m.ps[i]=v}))}],
     ctl:{cpl:v=>m.cpl=v,man:v=>{ m.man=v; },pos:arr=>{ arr.forEach((v,i)=>m.ps[i]=!!v); syncStopUI(); },hw:arr=>{ arr.forEach((v,i)=>m.hs[i]=!!v); syncStopUI(); }},
-    setMan,curMan:()=>m.man,hwView:[[150,hw.oy+95,hw.oz+175],[0,hw.oy+45,hw.oz]],
+    setMan,curMan:()=>m.man,hwView:[[330,hw.oy+200,hw.zF+330],[0,hw.oy+100,hw.zF-25]],
     pins:[{t:'上鍵盤（II・ハウプトヴェルク）',p:V3(-18,9,30)},{t:'下鍵盤（I・ポジティフ）',p:V3(-18,1,39)},{t:'カプラーの突起',p:V3(16,4,34),max:90},{t:'ローラーボード（ポジティフ用）',p:V3(-36,26,-18)},{t:'ローラーボード（ハウプトヴェルク用）',p:V3(-36,pos.top+14,6)},{t:'ポジティフ',p:V3(40,pos.oy+20,pos.oz+12)},{t:'ハウプトヴェルク',p:V3(40,hw.oy+20,hw.oz+12)}],
     speaking:()=>hw.speaking().concat(pos.speaking()),
     update(dt){

@@ -49,9 +49,12 @@ function buildPedalCoupler(){
   // ---- chests ----
   const aiM=4*pullM/KPULL, zrM=MAN.za-aiM, zoM=zrM+4, y0M=YM+15;
   const KDH=new Float32Array(13), KDP=new Float32Array(13);
-  const hw=buildChest({y:y0M+13*1.25+22,z:zoM-14,kd:KDH,sp:HWSP,stops:HWST,rows:HWR,mixz:[-2.4,0,2.4],P:9.6,palMat:k=>mm[k],inlet:'R'});
-  const ozP=hw.oz-19.2-100-19.2, zP=ozP+14, zs1=ZA+AI, zs2=zP+AO, zrP=zP-AO, y0P=32;
-  const pd=buildChest({y:y0P+13*1.25+5,z:ozP,kd:KDP,sp:PDSP,stops:PDST,rows:PDR,P:15,pedal:true,palMat:k=>pm[k],volN:300,inlet:'R'});
+  // full-size chests (C/Cis layout, built like the H-03 chests): the Hauptwerk over the console (pull-down line at zoM as
+  // before), the pedal chest on its legs 0.78 m behind it
+  const hw=buildFullChest(fullChestPlan(y0M+13*1.25+22,-2,zoM+3.5,HWST),null,'R',false,KDH,{sp:HWSP,noLegs:true,name:'ハウプトヴェルク'});
+  const zFP=hw.zB-100, zP=zFP-3.5, zs1=ZA+AI, zs2=zP+AO, zrP=zP-AO, y0P=32;
+  const pd=buildFullChest(fullChestPlan(y0P+13*1.25+5,-2,zFP,PDST),null,'R',false,KDP,{sp:PDSP,pedal:true,volN:300,name:'ペダル'});
+  hw.finish(); pd.finish();
   box(R,64,1.2,1.2,MAT.woodDark,0,YS,zs1+0.9,LB('スクエアの軸受け（ペダル側）','Winkelbalken'));
   box(R,64,1.2,1.2,MAT.woodDark,0,YS,zs2+0.9,LB('スクエアの軸受け（風箱側）','Winkelbalken'));
   for(const s of [-1,1]) for(const z of [zs1+0.9,zs2+0.9]) box(R,1.6,YS,1.6,MAT.woodDark,s*33,YS/2,z,LB('軸受けの支柱','Balgstütze'));
@@ -89,7 +92,7 @@ function buildPedalCoupler(){
     ctl:{cpl:v=>m.cpl=v,man:v=>{ m.man=v; },pd:arr=>{ arr.forEach((v,i)=>m.ps[i]=!!v); syncStopUI(); },hw:arr=>{ arr.forEach((v,i)=>m.hs[i]=!!v); syncStopUI(); }},
     setMan,curMan:()=>m.man,pedKb:true,
     views:{cpl:[[30,YM-4,26],[-4,YM-10,6]],ped:[[90,50,50],[0,22,-20]],chests:[[230,190,260],[0,130,-20]]},
-    pins:[{t:'ペダル鍵盤',p:V3(-38,8,30)},{t:'手鍵盤（ハウプトヴェルク）',p:V3(-18,YM+2,50)},{t:'カプラーのウィッペン（手鍵盤の下）',p:V3(17,YU+2,ZPU),max:120},{t:'カプラーのローラーボード',p:V3(-38,y0C+18,zrC)},{t:'ペダル風箱用のローラーボード',p:V3(-90,y0P+18,zrP)},{t:'ハウプトヴェルク',p:V3(66,hw.oy+20,hw.oz+12)},{t:'ペダルの風箱',p:V3(100,pd.oy+20,pd.oz+12)}],
+    pins:[{t:'ペダル鍵盤',p:V3(-38,8,30)},{t:'手鍵盤（ハウプトヴェルク）',p:V3(-18,YM+2,50)},{t:'カプラーのウィッペン（手鍵盤の下）',p:V3(17,YU+2,ZPU),max:120},{t:'カプラーのローラーボード',p:V3(-38,y0C+18,zrC)},{t:'ペダル風箱用のローラーボード',p:V3(-90,y0P+18,zrP)},{t:'ハウプトヴェルク',p:V3(hw.xR+6,hw.oy+20,hw.zF)},{t:'ペダルの風箱',p:V3(pd.xR+6,pd.oy+20,pd.zF)}],
     speaking:()=>hw.speaking().concat(pd.speaking()),
     update(dt){
       m.cu+=clamp((m.cpl?1:0)-m.cu,-dt*3,dt*3);

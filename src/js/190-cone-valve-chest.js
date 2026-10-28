@@ -2,26 +2,29 @@
    Under each cone a small square: its forward arm lifts the cone's stem, its hanging arm is pinned to the pull rod of the note,
    which runs front to back under all the cones of that key. At the front the square E turns the downward pull of the key's
    tracker into a forward pull on the rod (rod and tracker are always in tension). Arms 23 mm; cone lift 9 mm. */
+let C03V={s2:[[0,0,0],[0,0,0]],cut:0,s3:[[0,0,0],[0,0,0]],s4:[[0,0,0],[0,0,0]]};   // C-03: views of steps 2–4, set when the model is built
 function buildConeChest(){
   const R=CX.root, N=13, SI=STOPSET, P=pitchFor(SI), W=N*P, ROWC=rowsFor(SI).map(z=>z-3.5), oy=10, pos=k=>-W/2+P*(k+0.5), DZ=4.4;
+  // depth of the chest from the stop rows: the channels (ROWC) and the pipes standing 3.5 in front of them
+  const ZF=Math.max(...SI.map((si,i)=>ROWC[i]+3.5+pipeFoot(si,0)[1]/2))+2, ZB=Math.min(...SI.map((si,i)=>Math.min(ROWC[i]-DZ/2,ROWC[i]+3.5-pipeFoot(si,0)[1]/2)))-2, ZD=ZF-ZB, ZM=(ZF+ZB)/2;
   const yFl=oy+8, yIn0=oy+8.5, yIn1=oy+15.5, yTop=oy+16, yToe=oy+17.5, base=oy+18;
-  box(R,W+8,1,41,MAT.wood,0,yFl,0,LB('ストップチャンネルの底板（円錐弁の座がある）','Fundamentbrett'));
-  box(R,W+8,1,41,MAT.wood,0,yTop,0,LB('ストップチャンネルの天板','Fundamentbrett'));
-  box(R,W+8,1.5,41,MAT.wood,0,oy+16.75+0.0,0,LB('上板（パイプを立てる板）','Pfeifenstock'));
+  box(R,W+8,1,ZD,MAT.wood,0,yFl,ZM,LB('ストップチャンネルの底板（円錐弁の座がある）','Fundamentbrett'));
+  box(R,W+8,1,ZD,MAT.wood,0,yTop,ZM,LB('ストップチャンネルの天板','Fundamentbrett'));
+  box(R,W+8,1.5,ZD,MAT.wood,0,oy+16.75,ZM,LB('上板（パイプを立てる板）','Pfeifenstock'));
   const LK=LB('ストップチャンネル（ストップごとに風箱の長さいっぱいに通る部屋。ストップを入れると風が満ちる）','Registerkanzelle');
   for(let i=0;i<5;i++) box(R,0.6,7,DZ,MAT.woodDark,W/2+3.7,(yIn0+yIn1)/2,ROWC[i],LK);
   // the chest is solid wood between the stop channels and under the floor: the conduits to the pipes are bored in it
   const LBK=LB('チャンネルの間の木のブロック（パイプへの導管の穴があけてある）','Schied');
-  { const zs=[-20.5,...[...ROWC].sort((a,b)=>a-b).flatMap(z=>[z-DZ/2,z+DZ/2]),20.5];
+  { const zs=[ZB,...[...ROWC].sort((a,b)=>a-b).flatMap(z=>[z-DZ/2,z+DZ/2]),ZF];
     for(let j=0;j<zs.length;j+=2) box(R,W+8,7,zs[j+1]-zs[j],MAT.woodDark,0,(yIn0+yIn1)/2,(zs[j]+zs[j+1])/2,LBK); }
-  box(R,W+8,1.5,41,MAT.wood,0,oy+6.75,0,LB('導管の板（底板の下。円錐弁の座からパイプへの導管の穴があけてある）','Kanalbrett'));
+  box(R,W+8,1.5,ZD,MAT.wood,0,oy+6.75,ZM,LB('導管の板（底板の下。円錐弁の座からパイプへの導管の穴があけてある）','Kanalbrett'));
   // wind trunk and stop valves at the left end of each stop channel
   const xV=-W/2-4.2;
-  box(R,3,9,42,hollow(MAT.wood),xV-3.2,oy+12,0,LB('風箱への風の供給路','Windkanal'));
+  box(R,3,9,ZD+1,hollow(MAT.wood),xV-3.2,oy+12,ZM,LB('風箱への風の供給路','Windkanal'));
   const sv=[];
   for(let i=0;i<5;i++){ const zc=ROWC[i]; box(R,0.5,7,DZ,MAT.woodDark,xV-1.6,(yIn0+yIn1)/2,zc,LB('ストップ弁の座','Registerventil'));
     const g=new T.Group(); g.position.set(xV-1.3,yIn1-0.3,zc); R.add(g); box(g,0.35,6.2,DZ-0.6,stopMat(i),0.18,-3.1,0,LB('ストップ弁（'+STOPS[SI[i]].name+'。ストップを入れると開いてチャンネルに風を入れる）','Registerventil')); sv.push(g); }
-  const trunkV=new Vol((a,b,c,out)=>out.set(xV-3.2+(c-0.5)*2,oy+8+b*8,(a*2-1)*20),160,{state:()=>1,rate:3});
+  const trunkV=new Vol((a,b,c,out)=>out.set(xV-3.2+(c-0.5)*2,oy+8+b*8,ZM+(a*2-1)*(ZD/2-1)),160,{state:()=>1,rate:3});
   const chV=[]; for(let i=0;i<5;i++){ const zc=ROWC[i]; chV.push(new Vol((a,b,c,out)=>out.set(-W/2-1+a*(W+3),yIn0+0.4+b*6.2,zc+(c-0.5)*3.4),120,{state:()=>S.sp[i]>0.5?1:0,rate:1.6})); new Tube([V3(xV-3.2,oy+12,zc),V3(xV-0.5,oy+12,zc),V3(-W/2+4,oy+12,zc)],{r:0.6,density:0.6,front:200,state:()=>({open:S.sp[i]>0.5&&chV[i].fill<0.97,speed:16})}); }
   const Pk=new Float32Array(N), tubes=[], bell=[], cones=[], rods=[], pipesT=[];
   const LB_B=LB('小ふいご（制御風でふくらみ、棒で円錐弁を押し上げる）','Bälgchen'), LB_C=LB('円錐弁（風に押されて座の穴をふさいでいる。持ち上がるとパイプへの道が開く）','Kegel'), LB_R=LB('押し棒','Stecher'), LB_D=LB('パイプへの導管','Kondukt');
@@ -35,7 +38,7 @@ function buildConeChest(){
       bore(R,MAT.dark,x,oy+7,yIn0,zc,0.5,LB('円錐弁の座（底板を貫く穴。下で導管につながる）','Kegelsitz'));
       boreAB(R,MAT.dark,V3(x,oy+7,zc),V3(x,oy+7,zc+3.5),0.3,LB_D,false);
       bore(R,MAT.dark,x,oy+7,base,zc+3.5,0.3,LB_D);
-      const si=SI[i], nr=nRanks(si), RZ=si===3?MIXZ.map(v=>v*0.8):rankZ(si,0);
+      const si=SI[i], nr=nRanks(si), RZ=rankZ(si,0);
       for(let r=0;r<nr;r++){
         const zz=zc+3.5+(nr>1?RZ[r]:0), sp=buildPipe(x,zz,si,k,r,base);
         const tp=[V3(x,yIn0+2,zc),V3(x,yIn0+0.2,zc),V3(x,oy+7,zc),V3(x,oy+7,zc+3.5),V3(x,base,zz)].concat(sp.path.slice(1));
@@ -46,7 +49,7 @@ function buildConeChest(){
     bell.push(bk); cones.push(ck); rods.push(rk);
   }
   // the action under the chest
-  const yB=oy+6, yP=yB-3.6, H=3, V=3, zE=W>0?22.5:0, yE=yP-V-4, HE=4, VE=4, zR=i=>ROWC[i]-H, zB=Math.min(...ROWC)-H-1;
+  const yB=oy+6, yP=yB-3.6, H=3, V=3, zE=ZF+2, yE=yP-V-4, HE=4, VE=4, zR=i=>ROWC[i]-H, zB=Math.min(...ROWC)-H-1;
   const LSQ=LB('スクエア（引き棒に引かれて回り、円錐弁の棒を押し上げる）','Winkel'), LSB=LB('スクエアの軸受けの桟','Winkelbalken');
   for(let i=0;i<5;i++) box(R,W+4,yB-yP-0.6,1.4,MAT.woodDark,0,(yB+yP+0.6)/2,zR(i),LSB);
   box(R,W+4,1.4,1.6,MAT.woodDark,0,yE-1.3,zE,LSB);
@@ -63,8 +66,9 @@ function buildConeChest(){
     q.e=[rod(R,0.4,m,LB('スクエア E（鍵のトラッカーの引き下げを、引き棒を手前へ引く動きに変える）','Winkel')),rod(R,0.4,m,LB('スクエア E（鍵のトラッカーの引き下げを、引き棒を手前へ引く動きに変える）','Winkel'))];
     q.t=makeTracker(m,LB('トラッカー（'+KEYNAMES[k]+'。下の鍵盤の鍵へ）','Abstrakte'));
     act.push(q); }
+  { const x4=pos(4); C03V={s2:[[xV-60,60,90],[xV+5,20,ZM]],cut:(130-(x4+2.5))/260,s3:[[x4+120,18,50],[x4,12,0]],s4:[[x4+50,40,70],[x4,20,0]]}; }
   return {
-    pins:[{t:'スクエア E',p:V3(W/2+2,yE,zE+3)},{t:'引き棒',p:V3(-W/2-2,yP-V,0)},{t:'スクエア',p:V3(W/2+2,yP,zR(4))},{t:'円錐弁',p:V3(W/2+3.5,yIn0+1.5,-14)},{t:'パイプへの導管',p:V3(W/2+3.5,oy+12,17.5)},{t:'ストップチャンネル',p:V3(-W/2-1,yIn1+1.5,7)},{t:'ストップ弁',p:V3(xV-2,yIn1+2,-14)}],
+    pins:[{t:'スクエア E',p:V3(W/2+2,yE,zE+3)},{t:'引き棒',p:V3(-W/2-2,yP-V,0)},{t:'スクエア',p:V3(W/2+2,yP,zR(4))},{t:'円錐弁',p:V3(W/2+3.5,yIn0+1.5,Math.min(...ROWC))},{t:'パイプへの導管',p:V3(W/2+3.5,oy+12,Math.max(...ROWC)+3.5)},{t:'ストップチャンネル',p:V3(-W/2-1,yIn1+1.5,7)},{t:'ストップ弁',p:V3(xV-2,yIn1+2,-14)}],
     speaking:()=>S.p<8?[]:pipesT.filter(t=>Pk[t.k]>0.6&&S.sp[t.j]>0.85&&chV[t.j].fill>0.5),
     update(dt){
       for(let k=0;k<N;k++){

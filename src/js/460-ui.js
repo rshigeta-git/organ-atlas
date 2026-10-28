@@ -97,7 +97,7 @@ sel.addEventListener('change',()=>load(sel.value));
 function renderNotes(def){
   const TL=['EN','DE','FR']; let h='<div class="nhead"><p class="nid">'+def.id+'</p><h2>'+T_(def.name)+'</h2><dl class="terms">'+def.terms.split(' · ').map((t,i)=>'<dt>'+TL[i]+'</dt><dd>'+t+'</dd>').join('')+'</dl></div><p>'+T_(def.summary)+'</p><h3>'+T_('手順（押すとモデルが動きます）')+'</h3><ol class="steps">';
   def.steps.forEach((s,i)=>{ h+='<li><button data-s="'+i+'"><span class="n">'+(i+1)+'</span><span>'+T_(s.t)+'</span></button></li>'; });
-  h+='</ol><p class="foot">'+T_(def.foot||'標準構成：13鍵（C〜c）× 5ストップ。Gedackt 8′（木管）、Rohrflöte 4′、Prinzipal 2′、Mixtur III（1 1/3′・1′・2/3′）、Vox humana 8′。実物のパイプ長（C）：Gedackt 約110 cm、Rohrflöte 約56 cm＋煙突、Prinzipal 約59 cm、Mixtur 約39・30・20 cm、Vox humana 共鳴管 約31 cm。モデルでは長さ・太さとも45 %で表示。音はパレットが開きストップが入った瞬間に鳴る簡易合成です。')+'</p>';
+  h+='</ol><p class="foot">'+T_(def.foot||(SC>=1?'標準構成：13鍵（C〜c）× 5ストップ。Gedackt 8′（木管）、Rohrflöte 4′、Prinzipal 2′、Mixtur III（1 1/3′・1′・2/3′）、Vox humana 8′。実物のパイプ長（C）：Gedackt 約110 cm、Rohrflöte 約56 cm＋煙突、Prinzipal 約59 cm、Mixtur 約39・30・20 cm、Vox humana 共鳴管 約31 cm。モデルでは長さ・太さとも実物大で表示。音はパレットが開きストップが入った瞬間に鳴る簡易合成です。':'標準構成：13鍵（C〜c）× 5ストップ。Gedackt 8′（木管）、Rohrflöte 4′、Prinzipal 2′、Mixtur III（1 1/3′・1′・2/3′）、Vox humana 8′。実物のパイプ長（C）：Gedackt 約110 cm、Rohrflöte 約56 cm＋煙突、Prinzipal 約59 cm、Mixtur 約39・30・20 cm、Vox humana 共鳴管 約31 cm。モデルでは長さ・太さとも45 %で表示。音はパレットが開きストップが入った瞬間に鳴る簡易合成です。'))+'</p>';
   notes.innerHTML=h;
 }
 notes.addEventListener('click',e=>{ const b=e.target.closest('[data-s]'); if(!b) return; audioInit(); clearTimers(); notes.querySelectorAll('[data-s]').forEach(x=>x.removeAttribute('aria-current')); b.setAttribute('aria-current','true'); inst.def.steps[+b.dataset.s].run(api); });

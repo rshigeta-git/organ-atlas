@@ -68,12 +68,12 @@ function buildSuspended(chest,kb){
   return {update(){ for(let k=0;k<13;k++) trs[k].set(chest.pullDown(k),kb.attach(k),KH); }};
 }
 function buildRollerSquare(chest,kb){
-  const R=CX.root, items=[], zr=11, a=3, ys1=34, zs2=chest.oz+14-a;
+  const R=CX.root, items=[], zr=11, a=3, ys1=34, zs2=chest.pullDown(0).z-a, cxC=chest.cx!=null?chest.cx:chest.ox;
   const xs=[]; for(let k=0;k<13;k++){ xs.push(kb.kx(k),chest.pos(k)); }
   const xmin=Math.min(...xs)-3, xmax=Math.max(...xs)+3;
   box(R,xmax-xmin,20,0.8,MAT.wood,(xmin+xmax)/2,21.5,zr-1.1,LB('ローラーボード（ローラーを支える板）','Wellenbrett'));
   box(R,xmax-xmin,1.2,1.2,MAT.woodDark,(xmin+xmax)/2,ys1,zr-0.9,LB('スクエアの軸受け','Winkelbalken'));
-  box(R,chest.W+4,1.2,1.2,MAT.woodDark,chest.ox,ys1,zs2-0.9,LB('スクエアの軸受け','Winkelbalken'));
+  box(R,chest.W+4,1.2,1.2,MAT.woodDark,cxC,ys1,zs2-0.9,LB('スクエアの軸受け','Winkelbalken'));
   for(let k=0;k<13;k++){
     const x1=kb.kx(k), x2=chest.pos(k), yk=13.5+k*1.25, m=keyMat(k);
     const roll=mk(G_CYL,m,R,LB('ローラー（'+KEYNAMES[k]+'。回転して引く位置を左右に移す）','Welle')); roll.rotation.z=Math.PI/2; roll.scale.set(0.42,Math.abs(x2-x1)+1.4,0.42); roll.position.set((x1+x2)/2,yk,zr);
@@ -102,12 +102,14 @@ function buildRollerSquare(chest,kb){
     }
   }};
 }
+/* mechanical stop action for a full-size slider chest whose sliders stick out at the left (slDir −1) and move 1.8 to the
+   right when drawn (slOff s => −1.8·(1−s)): knob → trace → vertical roller (arms 8 and 4) → link to the slider's end */
 function buildStopAction(chest,o){
-  const R=CX.root, a1=8, a2=4, xr=chest.ox-chest.W/2-20, xk=xr+a1, yTop=chest.oy+26;
+  const R=CX.root, a1=8, a2=4, xS=chest.xL-15, xr=xS-8, xk=xr+a1, yTop=chest.yS+0.5;
   box(R,5,26,3,MAT.wood,xk,o.ky0+8,o.kz-1.6,LB('ストップノブの板（ストップジャム）','Registerbank'));
   const its=[];
   for(let i=0;i<5;i++){
-    const yk=o.ky0+i*4, zs=chest.oz+ZROW[i], zr=zs+a2, m=stopMat(i);
+    const yk=o.ky0+i*4, zs=chest.rows[i].z, zr=zs+a2, m=stopMat(i);
     const knob=mk(G_CYL,MAT.ebony,R,LB('ストップノブ：'+STOPS[i].name+'（手前に引くと入る）','Registerzug')); knob.rotation.x=Math.PI/2; knob.scale.set(1.3,2.2,1.3);
     const face=mk(G_CYL,MAT.ivory,R,LB('ストップ名の札：'+STOPS[i].name,'Registerschild')); face.rotation.x=Math.PI/2; face.scale.set(0.95,0.25,0.95);
     knob.userData.stop=i; face.userData.stop=i;
@@ -126,7 +128,7 @@ function buildStopAction(chest,o){
       const kz=o.kz+3.6*sp;
       it.knob.position.set(xk,it.yk,kz+1.1); it.face.position.set(xk,it.yk,kz+2.3);
       it.shaft.set(V3(xk,it.yk,kz),tip1); it.arm1.set(V3(xr,it.yk,it.zr),tip1); it.arm2.set(V3(xr,yTop,it.zr),tip2);
-      it.link.set(tip2,V3(chest.ox-chest.W/2-12-1.8*(1-sp),yTop,it.zs));
+      it.link.set(tip2,V3(xS-1.8*(1-sp),yTop,it.zs));
     }
   }};
 }

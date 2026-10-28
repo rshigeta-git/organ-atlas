@@ -5,17 +5,19 @@
    it with one piston, which sends pulses to every coil that has to change. Current is shown slowed down. */
 const ELEC_LEG='<span><i style="background:var(--ctrl)"></i>電流（電気信号。表示のため遅くしています）</span>';
 function polyAt(P,cum,s,out){ let i=1; while(i<cum.length-1&&cum[i]<s) i++; const seg=(cum[i]-cum[i-1])||1; return out.lerpVectors(P[i-1],P[i],clamp((s-cum[i-1])/seg,0,1)); }
+let E03V={sol:[[0,0,0],[0,0,0]],sol2:[[0,0,0],[0,0,0]],con:[[0,0,0],[0,0,0]]};   // E-03: close-up views, set when the model is built
 function buildElectricStops(){
-  const R=CX.root, SPm=new Float32Array(5), chest=buildChest({y:30,sp:SPm,inlet:'R'}), oy=chest.oy, oz=chest.oz;
+  // full-size slider chest (as E-01): the sliders stick out at the left and move 1.8 to the right when drawn
+  const R=CX.root, SPm=new Float32Array(5), chest=buildFullChest(fullChestPlan(30,-8),null,'R',false,null,{sp:SPm,slDir:-1,slOff:s=>-1.8*(1-s)}), oz=(chest.zF+chest.zB)/2, D=chest.zF-chest.zB;
   const m={st:[false,false,false,false,false],tg:new Float32Array(5),coil:[],pulses:[],set:false,mem:{1:[1,0,1,0,0],2:[1,1,1,1,1]},press:{}};
   for(let i=0;i<5;i++){ m.st[i]=S.stop[i]; m.tg[i]=S.stop[i]?1:0; SPm[i]=m.tg[i]; m.coil.push([0,0]); }
-  const xS=chest.ox-5-(chest.W+14)/2, yS=oy+26, HX0=xS-12.5, HX1=xS-5.5;   // slider left end (when drawn); solenoid housing
+  const xS=chest.xL-15, yS=chest.yS+0.5, HX0=xS-12.5, HX1=xS-5.5;   // slider left end (when drawn); solenoid housing
   const LH=LB('スライダー用ソレノイド（2つのコイルでスライダーを出し入れする）','Schleifenzugmagnet');
-  box(R,2,22,40,MAT.woodDark,HX0-1.6,yS-8,oz,LB('ソレノイドの取付け板','Winkelbalken'));
-  for(const z of [oz-19,oz+19]) box(R,1.6,yS-19,1.6,MAT.woodDark,HX0-1.6,(yS-19)/2,z,LB('取付け板の支柱','Balgstütze'));
+  box(R,2,22,D,MAT.woodDark,HX0-1.6,yS-8,oz,LB('ソレノイドの取付け板','Winkelbalken'));
+  for(const z of [oz-D/2+1,oz+D/2-1]) box(R,1.6,yS-19+8,1.6,MAT.woodDark,HX0-1.6,(yS-19-8)/2,z,LB('取付け板の支柱','Balgstütze'));
   const U=[], CM=[];
   for(let i=0;i<5;i++){
-    const z=oz+ZROW[i];
+    const z=chest.rows[i].z;
     box(R,HX1-HX0,3.4,3.6,MAT.casing,(HX0+HX1)/2,yS,z,LH);
     const cm=[0,1].map(j=>{ const c=mclone(MAT.brass); CM.push(c); return c; });
     const cOff=cyl(R,1.25,2.6,cm[0],HX0+1.8,yS,z,LB('切りコイル（電流でプランジャーを押し戻し、スライダーを切る）','Ausschaltspule')); cOff.rotation.z=Math.PI/2;
@@ -24,7 +26,8 @@ function buildElectricStops(){
     U.push({z,cm,pl:rod(R,0.32,MAT.iron,LB('プランジャー（コイルに引かれて動く鉄心。スライダーにつながる）','Anker')),lk:rod(R,0.25,stopMat(i),LB('スライダーへのつなぎ','Schleifenzug'))});
   }
   // console: tabs + setter pistons
-  const CX0=-64, CY=14, CZ=34;
+  const CX0=HX0-7, CY=14, CZ=chest.zF+13.5;
+  { const dx=HX0+57, dy=yS-56, dz=CZ-34; E03V={sol:[[-22+dx,70+dy,48],[-52+dx,50+dy,2]],sol2:[[-34+dx,62+dy,26],[-54+dx,55+dy,0]],con:[[-30+dx,34,72+dz],[-62+dx,14,30+dz]]}; }
   box(R,26,14,2,MAT.wood,CX0,CY,CZ-1,LB('演奏台のストップ板','Registerbank'));
   box(R,26,1.2,8,MAT.wood,CX0,CY-7.6,CZ+2,LB('演奏台のストップ板','Registerbank'));
   box(R,4,CY-8.2,6,MAT.woodDark,CX0,(CY-8.2)/2,CZ+1,LB('演奏台の脚','Spieltisch'));
@@ -50,13 +53,14 @@ function buildElectricStops(){
   const TP=0.45;
   const send=(i,on)=>{ m.pulses.push({i,on,t:0}); };
   const recall=n=>{ if(n==='s') return; if(m.set&&n!==0){ m.mem[n]=S.stop.map(v=>v?1:0); return; } const c=n===0?[0,0,0,0,0]:m.mem[n]; c.forEach((v,i)=>S.stop[i]=!!v); syncStopUI(); };
+  chest.finish();
   return {chest,
     controls:[{type:'toggle',id:'set',label:'セット（記憶）',get:()=>m.set,set:v=>m.set=v},
       {type:'hold',label:'コンビネーション 1',down:()=>{ m.press[1]=1; recall(1); },up:()=>m.press[1]=0},
       {type:'hold',label:'コンビネーション 2',down:()=>{ m.press[2]=1; recall(2); },up:()=>m.press[2]=0},
       {type:'hold',label:'0（全部切る）',down:()=>{ m.press[0]=1; recall(0); },up:()=>m.press[0]=0}],
     ctl:{set:v=>m.set=v,recall:n=>{ m.press[n]=1; recall(n); later(400,()=>m.press[n]=0); }},
-    pins:[{t:'ストップのタブ',p:V3(CX0,CY+6,CZ+1)},{t:'コンビネーション',p:V3(CX0+8,CY-5,CZ+2)},{t:'電線',p:V3(HX0-4,10,CZ-8)},{t:'ソレノイド',p:V3((HX0+HX1)/2,yS+5,oz-16)},{t:'スライダー',p:V3(-20,oy+27,oz+20),max:160}],
+    pins:[{t:'ストップのタブ',p:V3(CX0,CY+6,CZ+1)},{t:'コンビネーション',p:V3(CX0+8,CY-5,CZ+2)},{t:'電線',p:V3(HX0-4,10,CZ-8)},{t:'ソレノイド',p:V3((HX0+HX1)/2,yS+5,oz-16)},{t:'スライダー',p:V3(xS+20,yS+1,chest.zF),max:300}],
     update(dt){
       for(let i=0;i<5;i++) if(S.stop[i]!==m.st[i]){ m.st[i]=S.stop[i]; send(i,S.stop[i]); }
       let k=0;

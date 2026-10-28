@@ -2,11 +2,11 @@
 /* B-01: three wedge bellows after Dom Bédos (L'art du facteur d'orgues). They lie side by side on sleepers, the head toward
    the front. A trestle straddling the bellows carries one lever per bellows: its short arm reaches forward and lifts the head
    of the top board through an iron rod, its long arm runs back over the tail (hinge) and up between the uprights of the
-   gallows, where the calcant pulls it down. Everything is drawn in a group at 45 % (as the pipes); the numbers below are
+   gallows, where the calcant pulls it down. Everything is drawn at full size (the group's scale K = 1); the numbers below are
    full size (1 = 7.8 mm): bellows 1.09 m × 0.47 m, head rise 0.23 m; lever 1.31 m (short arm 0.22 m) on a pivot
    0.57 m above the floor, swinging 60° (55° up to 5° down): the grip goes from 1.47 m down to 0.48 m; calcant 1.57 m.
    The bellows stand one bellows width beside the chest and one bellows length behind it. */
-const BB={K:0.45, O:[-43,-3.85,-66], F:-7, L:140, W:60, ZT:-70, XB:[-228,-152,-76], NF:4, thMax:0.215, UA:118, hA:4.5, ZP:24, YP:66.5, a:28, b:140, ph0:0.96, ZG:-40, ZS:-128};
+const BB={K:1, O:[0,0,0], F:-7, L:140, W:60, ZT:-70, XB:[-228,-152,-76], NF:4, thMax:0.215, UA:118, hA:4.5, ZP:24, YP:66.5, a:28, b:140, ph0:0.96, ZG:-40, ZS:-128};
 BB.yb=BB.F+11.5;   // top of the bottom board = hinge line
 const bbW=(x,y,z)=>V3(BB.O[0]+BB.K*x,BB.O[1]+BB.K*y,BB.O[2]+BB.K*z);   // full-size group coordinates → scene
 const bbS=ph=>[BB.ZP+BB.a*Math.cos(ph),BB.YP-BB.a*Math.sin(ph)];   // short end of the lever (z, y)
@@ -58,9 +58,9 @@ function buildBedosBellows(R,i,th0){
   };
   // particles (scene coordinates)
   const xe=BB.XB[2]+40;
-  new Tube([bbW(x+W/2+7,F+4,24),bbW(x,F+4,24),bbW(x,yb+3,24),bbW(x,yb+5,14)],{kind:'air',r:0.7,density:0.6,state:()=>({open:B.pumping,speed:14})});
+  new Tube([bbW(x+W/2+7,F+4,24),bbW(x,F+4,24),bbW(x,yb+3,24),bbW(x,yb+5,14)],{kind:'air',r:1.4*BB.K,density:0.6,state:()=>({open:B.pumping,speed:30*BB.K})});
   new Vol((a,b,c,out)=>{ const u=0.1+0.86*a, th=B.th; out.copy(bbW(x+(c-0.5)*(W-6),yb+0.9+b*Math.max(0,u*L*Math.sin(th)-1.6),ZT+u*L*Math.cos(th))); },160,{state:()=>B.th>0.004?0.15+0.85*B.th/BB.thMax:0,rate:3});
-  B.out=new Tube(sharpPath([bbW(x,yb+2,-54),bbW(x,yb+1,-62),bbW(x,-1.5,-62),bbW(xe,-1.5,-62)],1),{r:0.5,density:0.6,state:()=>({open:B.supplying,speed:B.flow})});
+  B.out=new Tube(sharpPath([bbW(x,yb+2,-54),bbW(x,yb+1,-62),bbW(x,-1.5,-62),bbW(xe,-1.5,-62)],1),{r:1.1*BB.K,density:0.6,state:()=>({open:B.supplying,speed:B.flow})});
   return B;
 }
 // sleepers under the bellows, the trestle straddling them with the lever beam, and the gallows over the tails
@@ -118,19 +118,46 @@ function buildCalcant(R){
   };
   return C;
 }
+/* full-size slider chest for the B models, built like the H-03 chests: C/Cis layout, channel widths and stop rows from the
+   real pipes of STOPSET, on a stand of four legs. fullChestPlan gives the layout (so the wind supply can be placed first),
+   buildFullChest builds it; call chest.finish() once the model is complete (merges the fixed parts). */
+let D01V=[[0,0,0],[0,0,0]];   // D-01: camera of the last step, set when the model is built
+let C01V={cut:0.5,cam:[[0,0,0],[0,0,0]]};   // C-01: section and camera of the last step, set when the model is built
+function fullChestPlan(yC,floor,zF0,stops){
+  const ST=stops||STOPSET, KS=[...Array(13).keys()], CL=h3Layout(KS,k=>Math.max(...ST.map(si=>pipeFoot(si,k)[0]))*7.8,0);
+  const D0=-Math.min(...h3Rows(ST,0,0).map(r=>r.z-r.d/2))+2, zF=zF0!=null?zF0:D0/2;   // zF0: front of the chest (default: centred on z 0)
+  return {KS,CL,rows:h3Rows(ST,0,zF),zF,yC,floor,xL:-CL.L,yIn:yC+6.5,zIn:zF-20};
+}
+function buildFullChest(P,feed,inlet,spring,kd,o){
+  o=o||{};
+  const ST=new T.Group(); CX.root.add(ST); if(!CX.pool) CX.pool=mkPool();   // several chests in one model share the pool
+  const chest=buildChestR({name:o.name||'手鍵盤',ks:P.KS,xs:P.CL.xs,ws:P.CL.w,y:P.yC,zF:P.zF,rows:P.rows,KD:kd||S.kd,SP:o.sp||S.sp,pedal:!!o.pedal,volN:o.volN,slDir:o.slDir||1,slOff:o.slOff||(s=>3*(1-s)),ud:k=>({key:k}),feed,spring},ST);
+  const h=P.yC-P.floor; if(h>1&&!o.noLegs) for(const x of [chest.xL+3,chest.xR-3]) for(const z of [chest.zF-3,chest.zB+3]) box(ST,4,h,4,MAT.woodDark,x,P.floor+h/2,z,LB('風箱の台の脚','Ladengestell'));
+  // inlet 'L'/'R' (models without a wind supply): the end of the wind trunk entering the pallet box at that side
+  if(inlet){ const sg=inlet==='L'?-1:1, x0=sg<0?chest.xL-0.5:chest.xR+0.5, x1=x0+sg*16, y=P.yIn, z=P.zIn;
+    (CX.inlets||(CX.inlets=[])).push(V3(x1,y,z));
+    duct([V3(x1,y,z),V3(x0,y,z)],8,MAT.wood,LB('風導管（送風機から。ここから風箱に風が入る）','Windkanal'));
+    new Tube([V3(x1,y,z),V3(x0-sg*3,y,z)],{r:2.2,density:0.5,front:400,state:()=>({open:S.p>10,speed:2+3*chest.speaking().length})}); }
+  chest.finish=()=>{ mergeStatic(ST); if(!CX.pool.done){ CX.pool.finish(); CX.pool.done=true; } };   // call once all chests of the model are built
+  return chest;
+}
 function buildBedosOrgan(){
   let chest=null; const thMax=BB.thMax, m={auto:true,force:null,hold:[false,false,false]};
-  const G=new T.Group(); G.position.set(...BB.O); G.scale.setScalar(BB.K); CX.root.add(G);
+  // the chest at full size; the bellows stand one bellows width to its left and one bellows length behind it
+  const R=CX.root, P=fullChestPlan(30,-7), {xL,yIn,zIn}=P;
+  BB.O=[xL-1-(BB.W+4)*BB.K-(BB.XB[2]+(BB.W+4)/2)*BB.K, -7-BB.F*BB.K, -(BB.L+6)*BB.K];
+  const G=new T.Group(); G.position.set(...BB.O); G.scale.setScalar(BB.K); R.add(G);
   const bs=[0.92,0.66,0.4].map((f,i)=>buildBedosBellows(G,i,f*thMax));
   const c0=bbW(BB.XB[0]-36,-1.5,-62), c1=bbW(BB.XB[2]+40,-1.5,-62);   // under the bottom boards
   duct([c0,c1],7*BB.K,MAT.wood,LB('ふいごの出口をまとめる管','Sammelkanal'));
-  const tp=[c1,V3(-40,c1.y,c1.z),V3(-40,c1.y,6),V3(-40,36,6),V3(-33,36,6)];
-  duct(tp,4,MAT.wood,LB('風導管（ふいごから風箱へ）','Windkanal'));
-  const trunk=new Tube(tp,{r:1.2,density:0.4,front:400,state:()=>({open:S.p>10,speed:3*(chest?chest.speaking().length:0)})});
-  chest=buildChest({y:30,feed:trunk});
+  const xT=xL-8, tp=[c1,V3(xT,c1.y,c1.z),V3(xT,c1.y,zIn),V3(xT,yIn,zIn),V3(xL-0.5,yIn,zIn)];
+  duct(tp,7,MAT.wood,LB('風導管（ふいごから風箱へ）','Windkanal'));
+  const trunk=new Tube(tp,{r:2,density:0.4,front:400,state:()=>({open:S.p>10,speed:3*(chest?chest.speaking().length:0)})});
+  chest=buildFullChest(P,trunk);
   buildBedosFrame(G);
   const C=buildCalcant(G), E0=V3(), E1=V3();
   { const t=bs[0].th; bs[0].th=0; bs[0].update(); E0.copy(bs[0].E); bs[0].th=thMax; bs[0].update(); E1.copy(bs[0].E); bs[0].th=t; }
+  chest.finish();
   // the calcant: picks the emptiest bellows (or the one asked for), steps to its lever, reaches up, pulls it down until the
   // bellows is full (the lower rail of the gallows), lets go
   const calcant=(dt,rate)=>{
@@ -149,7 +176,7 @@ function buildBedosOrgan(){
   };
   return {chest,
     pins:[{t:'ふいご1',p:bbW(BB.XB[0],28,10)},{t:'ふいご2',p:bbW(BB.XB[1],28,10)},{t:'ふいご3',p:bbW(BB.XB[2],28,10)},{t:'ふいごレバー',p:bbW(BB.XB[0]-12,150,-60)},
-      {t:'レバーの支点の台',p:bbW(BB.XB[0]-40,BB.YP,BB.ZP)},{t:'レバーの案内枠（ガロウズ）',p:bbW(BB.XB[2]+44,170,BB.ZG)},{t:'カルカント',p:C.pin},{t:'風導管',p:V3(-40,22,8)},{t:'風箱',p:V3(36,44,18)}],
+      {t:'レバーの支点の台',p:bbW(BB.XB[0]-40,BB.YP,BB.ZP)},{t:'レバーの案内枠（ガロウズ）',p:bbW(BB.XB[2]+44,170,BB.ZG)},{t:'カルカント',p:C.pin},{t:'風導管',p:tp[2].clone().add(V3(0,8,0))},{t:'風箱',p:V3(chest.xR+4,chest.base,chest.zF)}],
     controls:[{type:'toggle',id:'auto',label:'カルカント自動',get:()=>m.auto,set:v=>m.auto=v},
       ...[0,1,2].map(i=>({type:'hold',label:'ふいご'+(i+1)+'を引く',down:()=>m.hold[i]=true,up:()=>m.hold[i]=false}))],
     ctl:{auto:v=>m.auto=v,pump0:()=>m.force=0},
@@ -166,15 +193,21 @@ function buildBedosOrgan(){
       C.draw(dt,b&&b.E,blend,b?blend*clamp((E0.y-b.E.y)/(E0.y-E1.y),0,1):0);
     }};
 }
+/* B-02: electric blower and magazine reservoir with roller-curtain valve. The parts are laid out in their own frame (numbers
+   below) and drawn in a group scaled by o.K and placed at o.O; w() maps a point of that frame to the scene (for the flows).
+   At K = 1/0.45 the reservoir is 0.69 m × 0.52 m and the blower casing 0.28 m. */
+let B02V=[[0,0,0],[0,0,0]];   // B-02: camera for the curtain-valve step, set when the model is built
 function buildBlowerMag(o){
-  const R=CX.root, M={h:o.h0==null?0.8:o.h0,blower:o.on!==false,rpm:o.on===false?0:1,vo:0,n:0};
+  const K=o.K||1, O=o.O||[0,0,0], w=(x,y,z)=>V3(O[0]+K*x,O[1]+K*y,O[2]+K*z);
+  const R=new T.Group(); R.position.set(...O); R.scale.setScalar(K); CX.root.add(R);
+  const M={h:o.h0==null?0.8:o.h0,blower:o.on!==false,rpm:o.on===false?0:1,vo:0,n:0,w};
   box(R,16,16,16,MAT.casing,-122,8,0,LB('送風機のケース','Gebläsegehäuse'));
   const imp=new T.Group(); imp.position.set(-122,8,1); R.add(imp);
   const hub=mk(G_CYL,MAT.iron,imp,LB('羽根車（回転して風を起こす）','Laufrad')); hub.scale.set(6.6,1.2,6.6); hub.rotation.x=Math.PI/2; hub.position.z=-1.6;
   for(let b=0;b<8;b++){ const bl=box(imp,0.6,6.2,3,MAT.metalDark,0,0,0,LB('羽根車の羽根','Laufradschaufel')); const an=b/8*Math.PI*2; bl.position.set(Math.cos(an)*3.8,Math.sin(an)*3.8,0); bl.rotation.z=an-Math.PI/2+0.35; }
   const mot=mk(G_CYL,MAT.iron,R,LB('電動モーター','Motor')); mot.rotation.x=Math.PI/2; mot.scale.set(4.5,8,4.5); mot.position.set(-122,8,-12);
   const ring=mk(G_CYL_OPEN,MAT.iron,R,LB('吸気口','Ansaugöffnung')); ring.rotation.x=Math.PI/2; ring.scale.set(4.2,2,4.2); ring.position.set(-122,8,9);
-  duct([V3(-114,5,0),V3(-89,5,0),V3(-89,11,0)],5,MAT.casing,LB('送風管（ふいごの下板を通ってカーテン弁へ）','Windleitung'));
+  duct([w(-114,5,0),w(-89,5,0),w(-89,11,0)],5*K,MAT.casing,LB('送風管（ふいごの下板を通ってカーテン弁へ）','Windleitung'));
   // roller-curtain valve (Rollvorhangventil) standing on the reservoir's bottom board, inside the reservoir
   const VB=11.6, VT=VB+6.6, VX=-87;
   box(R,4,8,12,MAT.woodDark,VX-2,15,0,LB('カーテン弁の箱（送風機の風が下から入る）','Rollventilkasten'));
@@ -195,7 +228,7 @@ function buildBlowerMag(o){
               l1:plank(R,0.5,30,MAT.leather,RL),l2:plank(R,0.5,30,MAT.leather,RL),r1:plank(R,0.5,30,MAT.leather,RL),r2:plank(R,0.5,30,MAT.leather,RL)};
   const cords=[-1,1].map(()=>rod(R,0.12,MAT.cord,LB('ひも（上板が上がるとローラーを引き上げる）','Zugschnur')));
   const eyes=[-1,1].map(s=>{ const e=mk(G_CYL,MAT.brass,top,LB('ひもの留め金','Öse')); e.scale.set(0.35,0.5,0.35); e.position.set(VX+0.6+75,-0.25,s*5.6); return e; });
-  duct(o.trunkPts,6,MAT.wood,LB('風導管（ふいごから風箱へ）','Windkanal'));
+  duct(o.trunkPts,o.trunkS||6,MAT.wood,LB('風導管（ふいごから風箱へ）','Windkanal'));
   const topY=()=>13+22*M.h;
   M.update=(dt,n)=>{
     M.n=n; M.rpm+=((M.blower?1:0)-M.rpm)*Math.min(1,dt*1.2);
@@ -215,12 +248,11 @@ function buildBlowerMag(o){
     const cl=Math.max(0.05,ry-0.55-VB); curtain.scale.y=cl; curtain.position.y=VB+cl/2;
     cords[0].set(V3(VX+0.6,ry,-5.6),V3(VX+0.6,ty,-5.6)); cords[1].set(V3(VX+0.6,ry,5.6),V3(VX+0.6,ty,5.6));
   };
-  M.intake=new Tube([V3(-122,8,26),V3(-122,8,8)],{kind:'air',r:1.6,density:0.8,front:o.front||40,state:()=>({open:M.rpm>0.15,speed:30*M.rpm*M.vo})});
-  M.blowOut=new Tube([V3(-118,5,0),V3(-114,5,0),V3(-89,5,0)],{r:1.4,density:0.75,front:o.front||40,state:()=>({open:M.rpm>0.25,speed:30*M.rpm*M.vo})});
-  M.thru=new Tube([V3(-89,5,0),V3(-89,13,0),V3(-89,17.6,0),V3(-85.5,17.6,0),V3(-81,16.5,0)],{r:1.1,density:0.8,front:o.front||40,state:()=>({open:M.blowOut.full()&&M.vo>0.05,speed:30*M.rpm*M.vo})});
-  M.vol=new Vol((a,b,c,out)=>{ const ty=topY(), y=11.7+b*(ty-12.4), q=(y-11)/Math.max(1,ty-11), off=(M.d||0)*(1-Math.abs(2*q-1))+1.2; out.set(lerp(-94.5+off,-55.5-off,a),y,(c-0.5)*27); },320,{state:()=>M.h>0.012?0.15+0.85*M.h:0,rate:o.front?0.5:1.4});
-  M.trunk=new Tube(o.trunkPts,{r:1.7,density:0.4,front:o.front||400,state:()=>({open:M.h>0.012&&S.p>10&&(!o.front||M.thru.full()||M.vol.fill>0.5),speed:3*M.n})});
+  M.intake=new Tube([w(-122,8,26),w(-122,8,8)],{kind:'air',r:1.6*K,density:0.8/K,front:(o.front||40)*K,state:()=>({open:M.rpm>0.15,speed:30*K*M.rpm*M.vo})});
+  M.blowOut=new Tube([w(-118,5,0),w(-114,5,0),w(-89,5,0)],{r:1.4*K,density:0.75/K,front:(o.front||40)*K,state:()=>({open:M.rpm>0.25,speed:30*K*M.rpm*M.vo})});
+  M.thru=new Tube([w(-89,5,0),w(-89,13,0),w(-89,17.6,0),w(-85.5,17.6,0),w(-81,16.5,0)],{r:1.1*K,density:0.8/K,front:(o.front||40)*K,state:()=>({open:M.blowOut.full()&&M.vo>0.05,speed:30*K*M.rpm*M.vo})});
+  M.vol=new Vol((a,b,c,out)=>{ const ty=topY(), y=11.7+b*(ty-12.4), q=(y-11)/Math.max(1,ty-11), off=(M.d||0)*(1-Math.abs(2*q-1))+1.2; out.copy(w(lerp(-94.5+off,-55.5-off,a),y,(c-0.5)*27)); },320,{state:()=>M.h>0.012?0.15+0.85*M.h:0,rate:o.front?0.5:1.4});
+  M.trunk=new Tube(o.trunkPts,{r:1.7*(o.trunkS?o.trunkS/6:1),density:0.4,front:o.front||400,state:()=>({open:M.h>0.012&&S.p>10&&(!o.front||M.thru.full()||M.vol.fill>0.5),speed:3*M.n})});
   M.reset=()=>{ M.h=0; M.rpm=0; S.p=0; for(const f of flows) f.reset(); };
   return M;
 }
-
