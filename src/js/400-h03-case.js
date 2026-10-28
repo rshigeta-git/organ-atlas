@@ -30,7 +30,8 @@ function h3Case(B){
   box(ST,420,6,6,MAT.woodDark,0,207,23,LB('ブルストの開口の枠','Gehäuse'));
   for(const [C,L] of [[B.tc,B.TCL],[B.td,B.TDL]]){
     const x0=C.xL-4, x1=C.xR+4, cx=(x0+x1)/2, w=x1-x0, zf=-44, zb=-142, d=zf-zb;
-    for(const x of [x0,x1]) box(ST,3,644,d,MAT.wood,x,322,(zf+zb)/2,LB('ペダル塔のケース','Pedalturm'));
+    // the pedal trackers come in low through the inner side wall: it stops 16 above the floor there
+    for(const x of [x0,x1]){ const y0=Math.abs(x)<Math.abs(cx)?16:0; box(ST,3,644-y0,d,MAT.wood,x,(644+y0)/2,(zf+zb)/2,LB('ペダル塔のケース','Pedalturm')); }
     box(ST,w+3,3,d,MAT.wood,cx,645.5,(zf+zb)/2,LB('ペダル塔のケース','Pedalturm'));
     box(ST,w+14,9,7,MAT.woodDark,cx,650,zf+3,LB('コーニス','Kranzgesims')); box(ST,w+20,4,10,MAT.woodDark,cx,656,zf+4,LB('コーニス','Kranzgesims'));
     box(ST,w*0.7,14,6,MAT.woodDark,cx,665,zf+2,LB('塔の冠（飾り）','Turmkrone')); box(ST,w*0.35,12,5,MAT.woodDark,cx,678,zf+2,LB('塔の冠（飾り）','Turmkrone'));

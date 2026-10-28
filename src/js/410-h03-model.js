@@ -4,7 +4,7 @@ function buildH03(){
   const Sx=h3Stops(B), W=h3Wind(B), ZM=h3Zimbel(W.ZO,B.ST), SW=h3Swell(B);
   h3Case(B);
   mergeStatic(B.ST); CX.pool.finish();
-  const {m,ped,lo,up,rbH,rbP,rbA,rbC,cPH,cHP,cPP,TH,TP,KDH,KDP,KDD,SPH,SPP,SPD,hw,pos,tc,td,NM,NP,DIP,Y0,ZH,ZX,KL,DEP,ZAA,ZC,yK,KHp,pullH,pullP,dzH,dzP,aiH,aiP,SQ,kx,UPm,LO,aiA,aoA,aiC,aoC,ZHP,ZPP,hmat,pmat,dmat}=B;
+  const {m,ped,lo,up,rbH,rbP,rbF,rbC,cPH,cHP,cPP,TH,TP,KDH,KDP,KDD,SPH,SPP,SPD,hw,pos,tc,td,NM,NP,DIP,Y0,ZH,ZX,KL,DEP,ZAA,ZC,yK,KHp,pullH,pullP,dzH,dzP,aiH,aiP,SQ,kx,PDX,UPm,LO,aiA,aoA,aiC,aoC,ZHP,ZPP,hmat,pmat,dmat}=B;
   let swT=0.25, swV=0.25;
   const pC=new Float32Array(NP), toC=[];
   /* key state per keyboard: 0 pedal, 1 Hauptwerk (I, lower manual), 2 Positiv (II, upper manual) */
@@ -93,17 +93,26 @@ function buildH03(){
       for(const q of ped){ const k=q.k, kP=KV[0][k], th=Math.asin(clamp(DEP*kP/KL,0,1)), s=Math.sin(th); q.g.rotation.x=-th;
         q.sp.scale.y=(yK-KHp/2-1.2-(ZH-(ZX+5))*s)/2.2;
         const drA=(ZH-ZAA)*s, drC=(ZH-ZC)*s;
-        // P1 behind the key ends: arm toward the player pulled down, upright arm pulls the horizontal tracker forward;
-        // P2 under the back of the towers: hanging arm pulled forward, arm pointing back goes down and pulls the roller's arm
-        const {P1A,P1B,yP1,zP1,yP2,zP2}=SQ, fP=Math.asin(clamp(drA/P1A,0,1)), cP=Math.cos(fP), sP=Math.sin(fP), x=q.x;
-        const a1=V3(x,yP1-P1A*sP,zP1+P1A*cP), b1=V3(x,yP1+P1B*cP,zP1+P1B*sP), c2=V3(x,yP2-P1B*cP,zP2+P1B*sP), d2=V3(x,yP2-P1A*sP,zP2-P1A*cP);
-        q.p1a.set(V3(x,yP1,zP1),a1); q.p1b.set(V3(x,yP1,zP1),b1); q.p2a.set(V3(x,yP2,zP2),c2); q.p2b.set(V3(x,yP2,zP2),d2);
-        const fa=Math.asin(clamp(drA/aiA,0,1)), ra=rbA.set(k,fa); q.ta.set(a1,V3(q.x,q.top-drA,ZAA),0.4); q.thp.set(c2,b1,0.3); q.tvp.set(ra.ti,d2,0.3); KDD[k]=aoA*Math.sin(fa)/KPULL; q.ta2.set((k%2?td:tc).pullDown(k),ra.to,0.6);
+        // P1 behind the key ends: arm toward the player pulled down, upright arm pulls the horizontal tracker forward
+        const {P1A,P1B,yP1,zP1,yP2}=SQ, fP=Math.asin(clamp(drA/P1A,0,1)), cP=Math.cos(fP), sP=Math.sin(fP), x=q.x;
+        const a1=V3(x,yP1-P1A*sP,zP1+P1A*cP), b1=V3(x,yP1+P1B*cP,zP1+P1B*sP);
+        q.p1a.set(V3(x,yP1,zP1),a1); q.p1b.set(V3(x,yP1,zP1),b1);
+        q.ta.set(a1,V3(q.x,q.top-drA,ZAA),0.4);
+        { // P1 → tracker → short roller board → tracker → flat square → long tracker → square under the pallet → pallet
+          const sf=clamp(P1B*sP/aiA,0,1), rf=rbF.set(k,Math.asin(sf)), f=rbF.FD[k], AF=rbF.AF;
+          const sa=clamp(aoA*sf/AF,0,1), ph=f.sgn*Math.asin(sa), cph=Math.cos(ph), sph=Math.sin(ph);
+          const rot=d=>V3(d.x*cph+d.z*sph,0,-d.x*sph+d.z*cph), tA=f.F.clone().addScaledVector(rot(f.dA),AF), tB=f.F.clone().addScaledVector(rot(f.dB),AF);
+          const sq=clamp(AF*sa/P1B,0,1), cq=Math.sqrt(1-sq*sq), u=f.u, pv=f.piv;
+          const c2f=V3(pv.x-u.x*P1B*sq,yP2-P1B*cq,pv.z-u.z*P1B*sq), d2f=V3(pv.x+u.x*P1A*cq,yP2-P1A*sq,pv.z+u.z*P1A*cq);
+          q.fa.set(f.F,tA); q.fb.set(f.F,tB); q.p2a.set(pv,c2f); q.p2b.set(pv,d2f);
+          q.thp.set(rf.ti,b1,0.3); q.tF.set(tA,rf.to,0.3); q.tvp.set(c2f,tB,0.3);
+          KDD[k]=P1A*sq/KPULL; q.ta2.set((k%2?td:tc).pullDown(k),d2f,0.6); rbF.hl(k,kP); for(const t of [q.fa,q.fb,q.tF]) t.hl(kP);
+        }
         // one coupler roller per note; its single tracker carries the nuts of both coupler backfalls
         const fc=Math.asin(clamp(drC/aiC,0,1)), rc=rbC.set(k,fc); q.tc.set(rc.ti,V3(q.x,q.top-drC,ZC),0.4); pC[k]=aoC*Math.sin(fc); toC[k]=rc.to;
         q.tc2.set(V3(rc.to.x,B.cPP.y+1.6-pC[k],rc.to.z),rc.to,0.6);
         cHP.set(k,oHP,pC[k]); cPP.set(k,oPP,pC[k]);
-        hlM(dmat[k],null,kP); for(const t of [q.ta,q.tc,q.ta2,q.tc2,q.thp,q.tvp,q.p1a,q.p1b,q.p2a,q.p2b]) t.hl(kP); rbA.hl(k,kP); rbC.hl(k,kP); cHP.hl(k,oHP>-0.5?kP:0); cPP.hl(k,oPP>-0.5?kP:0);
+        hlM(dmat[k],null,kP); for(const t of [q.ta,q.tc,q.ta2,q.tc2,q.thp,q.tvp,q.p1a,q.p1b,q.p2a,q.p2b]) t.hl(kP); rbC.hl(k,kP); cHP.hl(k,oHP>-0.5?kP:0); cPP.hl(k,oPP>-0.5?kP:0);
       }
       // manuals: the lower key (I) works the Hauptwerk run, the upper key (II) the Positiv run. Pos/Hw joins the two trackers under
       // the key desk, Pos/P lifts the upper key's tail; Hw/P turns square S1 under the console. Only Pos/P moves a key.

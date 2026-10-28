@@ -231,6 +231,24 @@ function mkRollerBoardR(o,ST){
   B.hl=(k,a)=>{ const q=B.it[k]; q.ri.hl(a); q.ro.hl(a); if(q.rc) q.rc.hl(a); };
   return B;
 }
+/* flat roller board lying on the floor: rollers along x at height o.yr, one row per entry of o.rows (rows o.sp apart in z from
+   o.z0; a row may hold two rollers that do not overlap), arms upright: input arm o.ai at xi(k), output arm o.ao at xo(k).
+   A horizontal pull toward the player (+z) on the input arm turns the roller; long rollers get bearings in between. */
+function mkFlatRollerBoardR(o,ST){
+  const B={it:{}}, LW=LB('ローラーボード（'+o.lab+'。床に寝かせた板）','Wellenbrett'), LBr=LB('ローラーの軸受け','Wellenböckchen');
+  let xmin=1e9, xmax=-1e9;
+  o.rows.forEach((row,j)=>{ const zr=o.z0+j*o.sp;
+    for(const k of row){ const xi=o.xi(k), xo=o.xo(k), a=Math.min(xi,xo)-0.9, b=Math.max(xi,xo)+0.9, ud=o.ud?o.ud(k):{}; xmin=Math.min(xmin,a); xmax=Math.max(xmax,b);
+      const roll=mk(G_CYL,MAT.woodPale,ST,LB('ローラー（'+o.lab+'・'+KEYNAMES[k]+'。床の上で回転して、引く位置を左右に移す）','Welle')); roll.rotation.z=Math.PI/2; roll.scale.set(0.42,b-a,0.42); roll.position.set((a+b)/2,o.yr,zr);
+      const n=Math.max(1,Math.round((b-a)/90)); for(let i=0;i<=n;i++) box(ST,0.7,1.7,1.1,MAT.woodDark,a+(b-a)*i/n+(i===0?0.35:i===n?-0.35:0),o.yr-0.25,zr,LBr);   // from the board (yr-1.1) to over the roller
+      B.it[k]={xi,xo,zr,ri:prod(MAT.woodPale,0.32,LB('ローラーの腕（スクエアの側）','Wellenärmchen'),ud),ro:prod(MAT.woodPale,0.32,LB('ローラーの腕（水平のスクエアの側）','Wellenärmchen'),ud)}; } });
+  const z1=o.z0+(o.rows.length-1)*o.sp, zm=(o.z0+z1)/2, D=Math.abs(z1-o.z0)+2.4;
+  box(ST,xmax-xmin+4,0.8,D,MAT.wood,(xmin+xmax)/2,o.yr-1.5,zm,LW);
+  B.set=(k,phi)=>{ const q=B.it[k], c=Math.cos(phi), s=Math.sin(phi), tip=(x,a)=>V3(x,o.yr+a*c,q.zr+a*s);
+    const ti=tip(q.xi,o.ai), to=tip(q.xo,o.ao); q.ri.set(V3(q.xi,o.yr,q.zr),ti); q.ro.set(V3(q.xo,o.yr,q.zr),to); return {ti,to}; };
+  B.hl=(k,a)=>{ const q=B.it[k]; q.ri.hl(a); q.ro.hl(a); };
+  return B;
+}
 /* sticker coupler worked from below (pedal couplers): per note a backfall under the key desk. A nut on the coupler tracker presses
    its front end (zA) down, its back end (zO) rises and pushes a sticker up against the key. The back ends rest on a felted strip;
    the pivot rail and the strip form one frame, which is lowered by OFF to disconnect. r: rise of the back end / drop of the front. */
@@ -445,21 +463,62 @@ function h3Core(){
     const ud={key:k,man:0};
     ped.push({k,x,g,sp,top:yK+KHp/2,lm,ta:ptrk(MAT.woodPale,LB('トラッカー（ペダル鍵 → スクエア）','Abstrakte'),ud),
       p1a:prod(MAT.woodPale,0.32,LB('スクエア（ペダル鍵の奥。下向きの引きを手前向きの引きに変える）','Winkel'),ud),p1b:prod(MAT.woodPale,0.32,LB('スクエア（ペダル鍵の奥）','Winkel'),ud),
-      thp:ptrk(MAT.woodPale,LB('水平のトラッカー（床の近くを塔の風箱の奥へ）','Abstrakte'),ud),
-      p2a:prod(MAT.woodPale,0.32,LB('スクエア（塔の風箱の奥の下。手前向きの引きを下向きの引きに変える）','Winkel'),ud),p2b:prod(MAT.woodPale,0.32,LB('スクエア（塔の風箱の奥の下）','Winkel'),ud),
-      tvp:ptrk(MAT.woodPale,LB('トラッカー（スクエア → ペダル塔の風箱用のローラーボード）','Abstrakte'),ud),
+      fa:prod(MAT.brass,0.25,LB('水平のスクエア（ペダルの後ろ。ローラーの側の腕）','Winkel'),ud),fb:prod(MAT.brass,0.25,LB('水平のスクエア（ペダルの後ろ。塔へ向かうトラッカーの側の腕）','Winkel'),ud),
+      tF:ptrk(MAT.woodPale,LB('短いトラッカー（ローラー → 水平のスクエア）','Abstrakte'),ud),
+      thp:ptrk(MAT.woodPale,LB('水平のトラッカー（スクエア → ペダルの後ろのローラーボード）','Abstrakte'),ud),
+      p2a:prod(MAT.woodPale,0.32,LB('スクエア（塔の風箱のパレットの真下。手前向きの引きを下向きの引きに変える）','Winkel'),ud),p2b:prod(MAT.woodPale,0.32,LB('スクエア（塔の風箱の奥の下）','Winkel'),ud),
+      tvp:ptrk(MAT.woodPale,LB('長いトラッカー（水平のスクエア → 塔のパレットの真下のスクエア。床の上を斜めに走る）','Abstrakte'),ud),
       tc:ptrk(MAT.woodPale,LB('カプラーのトラッカー（ペダル鍵 → カプラーのローラーボード）','Abstrakte'),ud),
-      ta2:ptrk(MAT.woodPale,LB('トラッカー（ローラー → ペダル塔の風箱のパレット）','Abstrakte'),ud),
+      ta2:ptrk(MAT.woodPale,LB('トラッカー（スクエア → ペダル塔の風箱のパレット）','Abstrakte'),ud),
       tc2:ptrk(MAT.woodPale,LB('カプラーのトラッカー（ローラー → Hw/P と Pos/P のバックフォール。2つの革ナットでそれぞれのバックフォールの前の端を押し下げる）','Abstrakte'),ud)});
   }
   /* pedal action to the tower chests, whose pallet boxes are at the back: square P1 just behind the key ends (arm toward the
-     player 6, upright arm 4), a horizontal tracker near the floor, square P2 under the back of the towers (hanging arm 4, arm
-     pointing back 6, so the pull is 1:1), and a tracker up to the roller board under the back of the chests */
-  const P1A=6, P1B=4, yP1=9, zP1=ZAA-P1A, zrA2=tc.zPd-aoA, zP2=zrA2+aiA+P1A, yP2=yP1+2*P1B;
-  const rbA=mkRollerBoardR({lab:'ペダル塔の風箱用',inLab:'スクエアの側',outLab:'パレットの側',zr:zrA2,y0:yP2+2,sp:1.3,ai:aiA,ao:aoA,its:PK.map(k=>({k,xi:pxp(k),xo:PDX[k]})),ud:k=>({key:k,man:0})},ST);
-  const LWp=LB('スクエアの軸受け（ペダル用）','Winkelbalken');
-  box(ST,2*PW,1,1,MAT.woodDark,0,yP1-1,zP1-0.2,LWp); box(ST,2*PW,1,1,MAT.woodDark,0,yP2+1,zP2+1,LWp);
-  for(const s of [-1,1]){ box(ST,1.4,yP1-1.5,1.4,MAT.woodDark,s*(PW+0.7),(yP1-1.5)/2,zP1-0.2,LB('スクエアの軸受けの支柱','Balgstütze')); box(ST,1.4,yP2+0.5,1.4,MAT.woodDark,s*(PW+0.7),(yP2+0.5)/2,zP2+1,LB('スクエアの軸受けの支柱','Balgstütze')); }
+     player 6, upright arm 4), then the short roller board, flat squares and fanned trackers below; square P2 under each
+     pallet (hanging arm 4, arm pointing away 6) */
+  const P1A=6, P1B=4, yP1=9, zP1=ZAA-P1A, LWp=LB('スクエアの軸受け（ペダル用）','Winkelbalken');
+  box(ST,2*PW,1,1,MAT.woodDark,0,yP1-1,zP1-0.2,LWp);
+  for(const s of [-1,1]) box(ST,1.4,yP1-1.5,1.4,MAT.woodDark,s*(PW+0.7),(yP1-1.5)/2,zP1-0.2,LB('スクエアの軸受けの支柱','Balgstütze'));
+  let zP2, yP2, rbF=null;
+  {
+    /* short flat roller board behind the pedal, parallel to it: the rollers lie along x on the floor, inside the pedal's width,
+       and only sort the notes, the C side to the left half and the Cis side to the right half, in the order of their pallets.
+       Behind it, one flat square per note (pivot upright) turns the pull toward the player into a pull along that note's
+       tracker; the trackers fan out over the floor to the towers (long distances by trackers, not by long rollers, which would
+       twist and lag), and a square right under each pallet, turned to face its tracker, turns the pull downward. */
+    const yR=yP1+P1B-aiA, yF=yR+aoA, AF=4; yP2=yF+P1B; zP2=null;
+    const yPal=tc.pullDown(0).y, zPal=tc.zPd, FD={};
+    const grp=(ks,side)=>ks.slice().sort((a,b)=>PDX[a]-PDX[b]).forEach((k,i,a)=>{ const n=a.length;
+      FD[k]={Fx:side<0?-9-(n-1-i)*4.5:9+i*4.5,side}; });
+    grp(PK.filter(k=>k%2===0),-1); grp(PK.filter(k=>k%2===1),1);
+    // arm A of the flat square points toward the middle (x), the roller's output arm pulls it toward the player
+    for(const k of PK){ const f=FD[k]; f.sgn=f.side<0?-1:1; f.dA=V3(-f.sgn,0,0); f.xo=f.Fx-f.sgn*AF; }
+    // roller order front to back: an output tracker going back may not pass over a roller with an arm at its x
+    const before=(m,j)=>Math.abs(pxp(m)-FD[j].xo)<1.1;
+    const ord=(()=>{ const ind=new Map(PK.map(k=>[k,0])), out=new Map(PK.map(k=>[k,[]]));
+      for(const m of PK) for(const j of PK) if(m!==j&&before(m,j)){ out.get(m).push(j); ind.set(j,ind.get(j)+1); }
+      const res=[], q=PK.filter(k=>!ind.get(k)); while(q.length){ q.sort((a,b)=>a-b); const k=q.shift(); res.push(k); for(const j of out.get(k)){ ind.set(j,ind.get(j)-1); if(!ind.get(j)) q.push(j); } }
+      return res.length===PK.length?res:PK; })();
+    const span=k=>[Math.min(pxp(k),FD[k].xo)-1.5,Math.max(pxp(k),FD[k].xo)+1.5], rows=[];
+    for(const k of ord){ const r=rows[rows.length-1], [a,b]=span(k);
+      if(r&&r.every(m=>{ const [c,d]=span(m); return (b<c||d<a)&&!before(m,k)&&!before(k,m); })) r.push(k); else rows.push([k]); }
+    const z0=zP1-5, sp=-1.4;
+    rbF=mkFlatRollerBoardR({lab:'ペダルの後ろ',yr:yR,z0,sp,ai:aiA,ao:aoA,rows,xi:pxp,xo:k=>FD[k].xo,ud:k=>({key:k,man:0})},ST);
+    const zF=Math.min(z0+(rows.length-1)*sp-3.5,-57);
+    // tracker from arm B's tip to the square under the pallet: arm B is square to it; three passes settle the geometry
+    for(const k of PK){ const f=FD[k], F=V3(f.Fx,yF,zF), pal=V3(PDX[k],yF,zPal); let u=V3(0,0,0).subVectors(pal,F).normalize();
+      for(let it=0;it<3;it++){ f.dB=f.sgn>0?V3(u.z,0,-u.x):V3(-u.z,0,u.x); const tB=F.clone().addScaledVector(f.dB,AF); u=V3(0,0,0).subVectors(pal,tB).normalize(); }
+      f.F=F; f.u=u; f.piv=V3(PDX[k],yP2,zPal).addScaledVector(u,-P1A); }
+    rbF.FD=FD; rbF.AF=AF;
+    // the flat squares turn on pins in a rail; the squares under the pallets each sit on a small post
+    const LWF=LB('水平のスクエアの台（ペダルの後ろ。軸は垂直）','Winkelbalken');
+    for(const s of [-1,1]){ const xs=PK.filter(k=>FD[k].side===s).map(k=>FD[k].Fx), x0=Math.min(...xs)-2, x1=Math.max(...xs)+2;
+      box(ST,x1-x0,1,1.6,MAT.woodDark,(x0+x1)/2,yF-1.1,zF,LWF);
+      for(const xx of [x0+0.5,x1-0.5]) box(ST,1,yF-1.6,1.4,MAT.woodDark,xx,(yF-1.6)/2,zF,LB('台の脚','Balgstütze')); }
+    for(const k of PK){ const f=FD[k];
+      const pin=mk(G_CYL,MAT.iron,ST,LB('水平のスクエアの軸','Drehstift')); pin.scale.set(0.25,1.2,0.25); pin.position.set(f.Fx,yF-0.2,zF);
+      const ax=V3(-f.u.z,0,f.u.x).multiplyScalar(1.3);   // the post stands beside the pivot, on the square's axis
+      box(ST,0.9,yP2+0.4,0.9,MAT.woodDark,f.piv.x+ax.x,(yP2+0.4)/2,f.piv.z+ax.z,LB('スクエアの台（パレットの真下）','Balgstütze')); }
+  }
   /* coupler roller board: moves each note from the pedal key to the lower manual key above it. It stands just behind the toes, where
      the swell shoe reaches under the console: the board has an opening for the shoe, the rollers that cross under the shoe lie
      below it or above it, and no tracker rises past another roller's arm (the order below is chosen for that). */
@@ -498,6 +557,6 @@ function h3Core(){
     tv:ptrk(MAT.woodPale,LB('トラッカー（スクエア → ポジティフのローラーボード）','Abstrakte'),{key:k,man:2}),
     t2:ptrk(MAT.woodPale,LB('トラッカー（ローラー → ポジティフのパレット）','Abstrakte'),{key:k,man:2})}));
   const SQ={SA,zS1,yS1,zS2,yS2,ZHK,YJ,YHP,SA3,yS3,zS3,yS4,zS4,P1A,P1B,yP1,zP1,yP2,zP2};
-  const B={hw,pos,tc,td,ST,ped,lo,up,rbH,rbP,rbA,rbC,cPH,cHP,cPP,TH,TP,SQ,KDH,KDP,KDD,SPH,SPP,SPD,HWL,POL,PDX,PDW,TCL,TDL,pxp,kx,m,NM,NP,DIP,Y0,UPm,LO,ZH,ZX,KL,DEP,ZAA,ZC,yK,KHp,pullH,pullP,dzH,dzP,aiH,aiP,aiA,aoA,aiC,aoC,pCmax,zrH,zrP,ZHP,ZPP,hmat,pmat,dmat,setP:v=>{pMan=v;}};
+  const B={hw,pos,tc,td,ST,ped,lo,up,rbH,rbP,rbF,rbC,cPH,cHP,cPP,TH,TP,SQ,KDH,KDP,KDD,SPH,SPP,SPD,HWL,POL,PDX,PDW,TCL,TDL,pxp,kx,m,NM,NP,DIP,Y0,UPm,LO,ZH,ZX,KL,DEP,ZAA,ZC,yK,KHp,pullH,pullP,dzH,dzP,aiH,aiP,aiA,aoA,aiC,aoC,pCmax,zrH,zrP,ZHP,ZPP,hmat,pmat,dmat,setP:v=>{pMan=v;}};
   return B;
 }

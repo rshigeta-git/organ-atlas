@@ -31,8 +31,9 @@ function h3Stops(B){
       for(const t of it.T){ const e=t.end(); t.pl.set(V3(e,t.ys,o.rowz),V3(e+t.out*7,t.ys,o.rowz)); } };
     KN.push(it); return it;
   };
-  // a solenoid that pulls a mechanism's arm toward the player (+z), on the line the knob's rod used to take
-  const drive=(it,o,tip0)=>{ const sw=knob(it,o), p=V3(tip0.x,tip0.y,tip0.z+9); it.coils=[sol(p,'z',LB('ソレノイド（'+o.name+'。腕を手前に引く）','Schleifenzugmagnet'))];
+  // a solenoid that moves a mechanism's arm toward the player (+z), on the line the knob's rod used to take: in front of the arm
+  // it pulls; behind it (back, for arms that end just inside the jamb) it pushes
+  const drive=(it,o,tip0,back)=>{ const sw=knob(it,o), p=V3(tip0.x,tip0.y,tip0.z+(back?-5.5:9)); it.coils=[sol(p,'z',LB('ソレノイド（'+o.name+(back?'。腕を手前に押す）':'。腕を手前に引く）'),'Schleifenzugmagnet'))];
     cable([sw,V3(o.xk,o.yk,p.z+4.5),V3(o.xk,o.yk-2.2,p.z+4.5),V3(p.x,p.y-2.2,p.z)],o.name);
     it.last=it.on?1:0; it.rate=5; return p; };
   // knob heights are laid out for the manuals at Y0 = 94; dY follows the console when it is set higher
@@ -43,7 +44,7 @@ function h3Stops(B){
   tdR.forEach((r,i)=>{ S.ped.push(sq({name:STOPS[r.si].name,xk:-59.5,yk:[95.7,99.1,102.5,105.9][i]+dY,xs:-54.5,rowz:r.z,tr:3,on0:pdOn[i],tgt:[{ch:B.tc,ys:B.tc.yS+0.5,end:()=>B.tc.slEnd+3*(1-B.SPD[i])},{ch:B.td,ys:B.td.yS+0.5,end:()=>B.td.slEnd+3*(1-B.SPD[i])}]})); });
   /* pedal couplers: the knob turns a roller lying along x (Koppelwelle) whose arms raise the backfall frame by o.drop */
   const CW=[];
-  const welle=(o)=>{ const it=Object.assign({v:0,on:false},o); const pS=drive(it,o,V3(o.xk,o.yk,o.zw));
+  const welle=(o)=>{ const it=Object.assign({v:0,on:false},o); const pS=drive(it,o,V3(o.xk,o.yk,o.zw),true);
     const L=o.yk-o.yw, xa=Math.min(...o.xr)-1, xb=Math.max(o.xk,...o.xr)+1;
     const wl=mk(G_CYL,MAT.woodPale,ST,LB('カプラーのローラー（'+o.name+'。ノブで回り、腕でウィッペンバルケンを上げ下げする）','Koppelwelle')); wl.rotation.z=Math.PI/2; wl.scale.set(0.9,xb-xa,0.9); wl.position.set((xa+xb)/2,o.yw,o.zw);
     for(const xx of [xa,xb]) box(ST,1.6,2.2,2.2,MAT.woodDark,xx,o.yw,o.zw,LB('ローラーの軸受け','Wellenböckchen'));
