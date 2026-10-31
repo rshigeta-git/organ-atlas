@@ -45,7 +45,7 @@ function buildChestR(o,ST){
   // back (Z), so the trackers can come up behind whatever stands under the front of the chest
   const W=xR-xL, cx=(xL+xR)/2, zB=Math.min(Math.min(...rows.map(r=>r.z-r.d/2))-2,o.zBmax!=null?o.zBmax:1e9), D=zF-zB, zc=(zF+zB)/2;
   const zPd=zF-3.5, zH=zPd-(Lp-2), zPB=zH-4, Z=z=>o.back?zF+zB-z:z, QB=new T.Quaternion().setFromAxisAngle(UP,o.back?Math.PI:0);
-  const C={xL,xR,W,cx,oy,zF,zB,zPd:Z(zPd),zPB:Z(zPB),base,yS,top:0,tubes:[],chanFlow:{},nm:o.name,inlet:V3(cx,oy+hb/2,o.back?zB:zPB),tops:{},rows,slEnd:o.slDir<0?xL-15:xR+15};
+  const C={xL,xR,W,cx,oy,zF,zB,zPd:Z(zPd),zPB:Z(zPB),base,yS,top:0,tubes:[],chanFlow:{},nm:o.name,inlet:V3(cx,oy+hb/2,o.back?zB:zPB),tops:{},rows,slEnd:o.slDir<0?xL-15:xR+15,slm:[]};
   const nmS=o.name;
   const L1=LB('パレットボックス（'+nmS+'の風箱の下部。常に風で満たされている）','Windkasten');
   box(ST,W+2,1,zF-zPB,MAT.wood,cx,oy+0.5,Z((zF+zPB)/2),L1);
@@ -87,7 +87,8 @@ function buildChestR(o,ST){
   if(!o.spring&&zPrev-zB>0.05) box(ST,W+2,sl,zPrev-zB,MAT.wood,cx,yS+sl/2,(zPrev+zB)/2,LB('ダム（スライダーの間の固定材）','Damm'));
   if(!o.spring) rows.forEach((r,i)=>{
     const st=STOPS[r.si], G=new T.Group(); CX.root.add(G); sg.push(G);
-    box(G,W+16,sl,sw[i],MAT.woodPale,cx+o.slDir*7,yS+sl/2,r.z,LB('スライダー：'+st.name+'（左右に動いて穴を合わせる）','Schleife'));
+    const slm=box(G,W+16,sl,sw[i],MAT.woodPale,cx+o.slDir*7,yS+sl/2,r.z,LB('スライダー：'+st.name+'（左右に動いて穴を合わせる）','Schleife')); C.slm[i]=slm;   // clicking it toggles the stop
+    if(o.slAct) slm.userData.act=o.slAct(i); else if(o.slStop) slm.userData.stop=o.slStop(i);
     const hm=mclone(MAT.dark); holeMats.push(hm); const TG=new T.Group(); G.add(TG);
     // one table hole and one slider hole per note, also for a multi-rank stop: then a bore up into the upper board ends in a
     // channel across it (yH), from which each rank's pipe has its own bore up to its foot

@@ -42,6 +42,8 @@ function buildFlueSection(){
   const LBB=LB('底の部材（足の風室を囲む）','Kernboden');
   prism([[zW-WI,yBt],[zW-0.45,yBt],[zW-0.45,yC],[zW-1.8,yC],[zW-1.8,yT],[zW-WI,yT]],WS,LBB);
   prism([[zW+0.45,yBt],[zCi,yBt],[zCi,yC],[zW+0.45,yC]],WS,LBB);
+  // the slot between the two bottom pieces is open only over the foot (radius 1.4): closed beside it
+  SG.forEach(sg=>box(R,hx-0.9,yC-yBt,0.9,WS,sg*(hx+0.9)/2,(yBt+yC)/2,zW,LBB));
   box2(hx+WT,-yBt,capT,WS,yBt/2,zCi+capT/2,LB('キャップ（歌口の下で管の前面に取り付けた、管と同じ幅の直方体の板。平らな内面とブロックの面取りのあいだがウインドウェイ。上の縁が下唇）','Vorschlag'));
   const wf=mk(G_CYL,WS,R,LB('木管の足（ろくろで挽いた足。足穴から風が入る）','Fuß')); wf.scale.set(1.4,10,1.4); wf.position.set(0,-12.3,zW);
   box(R,0.02,10,0.9,MAT.dark,0.004,-12.3,zW,LB('足の穴','Fußloch'));

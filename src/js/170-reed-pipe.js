@@ -4,15 +4,22 @@ function buildReedSection(){
   const F0=130.8, m={on:false,env:0,ph:0,gap:g0,yc:yC,fr:1}, LV0=yC-yTip;
   const freq=()=>F0*Math.pow(LV0/(m.yc-yTip),0.6), wirePin=V3(0,yC+5,3.4);
   const bootR=y=>y<24?0.8+(3.4-0.8)*y/24:3.4;
-  mk(halfShell(bootR,[0,6,12,18,24,yB]),MAT.metal,R,LB('ブーツ（足。中に風をためる）','Stiefel'));
+  // boot, nut and resonator are built whole, so the cut slider trims them like the shallot and the tongue;
+  // the boot has its own material, which "show parts transparent" makes see-through
+  const BM=mclone(MAT.metal); { const o=XRAY.indexOf(buildReedSection.bm); if(o>=0) XRAY.splice(o,1); } XRAY.push(BM); buildReedSection.bm=BM;
+  const both=(g,mat,lab)=>{ for(const sx of [1,-1]) mk(g,mat,R,lab).scale.x=sx; };
+  both(halfShell(bootR,[0,6,12,18,24,yB]),BM,LB('ブーツ（足。中に風をためる）','Stiefel'));
   const toe=mk(G_CYL_OPEN,MAT.metal,R,LB('足穴（ここから風が入る）','Fußloch')); toe.scale.set(0.8,3,0.8); toe.position.set(0,-1.5,0);
-  // block (Nuss) with its cut face
+  // block (Nuss): a solid brass block, so wherever the cut plane lies its cut face shows (darker). Its bore is round at the
+  // back (r 0.95) and widened into a slot in front for the tongue and the wedge: to z 2.05 up to the clamp, to 1.55 above it
   const BR=mclone(MAT.brass); BR.side=T.DoubleSide; BR.color.multiplyScalar(1.15);
-  const SEC=mclone(BR); SEC.color.multiplyScalar(0.72);
+  const NB=solidify(mclone(BR));
   const LK=LB('ナット（頭部の金属の塊。シャロットと共鳴管を支える）','Nuss');
-  mk(halfShell(()=>3.6,[yB,yK]),BR,R,LK);
-  mk(halfRing(0.95,3.6,yK),BR,R,LK); mk(halfRing(0.95,3.6,yB),BR,R,LK);
-  sectionFace(-3.6,-0.95,yB,yK,SEC,LK); sectionFace(2.05,3.6,yB,yK,SEC,LK); sectionFace(0.95,1.55,yClamp+0.2,yK,SEC,LK);
+  const nut=(y0,y1,zs)=>{ const sh=new T.Shape(); sh.absarc(0,0,3.6,0,2*Math.PI,false);
+    const ho=new T.Path(), a0=Math.asin(0.75/0.95);   // shape (x, -z): the slot is toward -y of the shape
+    ho.moveTo(0.75,-zs); ho.lineTo(0.75,-0.95*Math.cos(a0)); ho.absarc(0,0,0.95,-Math.PI/2+a0,3*Math.PI/2-a0,false); ho.lineTo(-0.75,-zs); ho.lineTo(0.75,-zs);
+    sh.holes.push(ho); const g=new T.ExtrudeGeometry(sh,{depth:y1-y0,bevelEnabled:false,curveSegments:32}); g.rotateX(-Math.PI/2); g.translate(0,y0,0); CX.own.push(g); mk(g,NB,R,LK); };
+  nut(yB,yClamp+0.2,2.05); nut(yClamp+0.2,yK,1.55);
   // shallot: tube closed at the bottom, with an opening in its front face under the tongue
   const LS=LB('シャロット（下を閉じた管。前面の開口を舌が覆う）','Kehle');
   // shallot section: round at the back, flat face at the front where the tongue lies; the opening is cut in that face
@@ -35,7 +42,7 @@ function buildReedSection(){
   const wknee=[]; for(let i=0;i<4;i++){ const sph=mk(G_SPH,MAT.iron,R,LW); sph.scale.set(WR,WR,WR); wknee.push(sph); }
   // resonator (Vox humana: short cylinder, half-covered top)
   const LR=LB('共鳴管（短い円筒。上を半分ふさいだVox humana型）','Becher');
-  mk(halfShell(()=>1.15,[yK,yRT]),MAT.metal,R,LR); mk(halfRing(0.55,1.15,yRT),MAT.metalDark,R,LB('共鳴管の上の半ぶた','Deckel'));
+  both(halfShell(()=>1.15,[yK,yRT]),MAT.metal,LR); mk(halfRing(0.55,1.15,yRT),MAT.metalDark,R,LB('共鳴管の上の半ぶた','Deckel'));   // only half the top is covered
   const P=pressurePlane(-1.05,1.05,yK,yRT,1);
   // boot full of wind under pressure
   new Tube([V3(-0.15,-7,0),V3(-0.15,0,0),V3(-0.15,9,0)],{r:0.5,density:1.2,front:60,state:()=>({open:m.env>0.05,speed:6*m.env})});

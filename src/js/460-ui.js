@@ -132,9 +132,9 @@ const gwl=$('gwl'), gwr=$('gwr'), gv=$('gv'); let gLast=-1;
 function gaugeUpdate(){ const p=Math.round(S.p); const d=clamp(S.p,0,110)*0.225; gwl.setAttribute('y',60+d); gwl.setAttribute('height',64-d); gwr.setAttribute('y',60-d); gwr.setAttribute('height',64+d); if(p!==gLast){ gv.textContent=p+' mm'; gLast=p; } }
 
 /* hover labels */
-const tip=$('tip'), ray=new T.Raycaster(), mv=new T.Vector2(); let hovEvt=null, hovQ=false;
+const tip=$('tip'), ray=new T.Raycaster(), mv=new T.Vector2(), TIPMS=1000; let hovEvt=null, hovQ=false, tipLab=null, tipReady=false, tipTimer=0;   // the label shows after the pointer rests 1 s on a part
 canvas.addEventListener('pointermove',e=>{ hovEvt=e; if(!hovQ){ hovQ=true; requestAnimationFrame(doHover); } });
-canvas.addEventListener('pointerleave',()=>{ tip.hidden=true; hovEvt=null; });
+canvas.addEventListener('pointerleave',()=>{ tip.hidden=true; hovEvt=null; tipLab=null; clearTimeout(tipTimer); });
 function pickAt(e){
   if(!CX) return null;
   const r=canvas.getBoundingClientRect(); mv.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1); ray.setFromCamera(mv,camera);
@@ -155,7 +155,9 @@ function doHover(){
   hovQ=false; const e=hovEvt; if(!e||!CX) return; if(e.buttons){ tip.hidden=true; return; }
   const hit=pickAt(e);
   canvas.style.cursor=hit&&(hit.key!=null||hit.stop!=null||hit.act)?'pointer':'';
-  if(!hit||!hit.lab){ tip.hidden=true; return; }
+  if(!hit||!hit.lab){ tip.hidden=true; tipLab=null; clearTimeout(tipTimer); return; }
+  if(hit.lab!==tipLab){ tipLab=hit.lab; tipReady=false; tip.hidden=true; clearTimeout(tipTimer); const L0=hit.lab; tipTimer=setTimeout(()=>{ if(tipLab===L0){ tipReady=true; doHover(); } },TIPMS); return; }
+  if(!tipReady) return;
   const act=hit.act?TF(hit.act.get()?'クリックで {0} を切る':'クリックで {0} を入れる',hit.act.name):hit.key!=null?TF('クリックで鍵 {0} を押す',KEYNAMES[hit.key]):hit.stop!=null?TF(S.stop[hit.stop]?'クリックで {0} を切る':'クリックで {0} を入れる',STOPS[hit.stop].name):'';
   const L=hit.lab, OR=['ja','en','de','fr','nl','it','es'], hd=(LANG!=='ja'&&L[LANG])?LANG:'ja'; tip.innerHTML='<b>'+L[hd]+'</b><dl>'+OR.filter(q=>q!==hd&&L[q]).map(q=>'<dt>'+q.toUpperCase()+'</dt><dd>'+L[q]+'</dd>').join('')+'</dl>'+(act?'<em>'+act+'</em>':''); tip.hidden=false;
   const r=hit.r, x=e.clientX-r.left+14, y=e.clientY-r.top+14; tip.style.left=Math.min(x,r.width-tip.offsetWidth-8)+'px'; tip.style.top=Math.min(y,r.height-tip.offsetHeight-8)+'px';
@@ -165,7 +167,7 @@ let heldKey=-1;
 canvas.addEventListener('pointerdown',e=>{
   if(e.button!==0) return;
   const hit=pickAt(e); if(!hit||(hit.key==null&&hit.stop==null&&!hit.act)) return;
-  audioInit(); controls.enabled=false; tip.hidden=true;
+  audioInit(); controls.enabled=false; tip.hidden=true; tipLab=null;
   if(hit.key!=null&&inst.press){ const k=hit.key, mm=hit.man!=null?hit.man:inst.curMan(); if(S.latch) inst.press(mm,k,'t'); else { inst.press(mm,k,true); heldKey={mm,k}; } }
   else if(hit.key!=null){ const k=hit.key; if(hit.man!=null&&inst.setMan&&hit.man!==inst.curMan()) inst.setMan(hit.man); if(S.latch) S.key[k]=!S.key[k]; else { S.key[k]=true; heldKey=k; } syncKeyUI(); }
   else if(hit.act){ hit.act.fn(); syncStopUI(); tip.hidden=true; }

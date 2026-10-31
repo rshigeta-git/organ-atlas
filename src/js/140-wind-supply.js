@@ -138,7 +138,7 @@ function fullChestPlan(yC,floor,zF0,stops,split){
 function buildFullChest(P,feed,inlet,spring,kd,o){
   o=o||{};
   const ST=new T.Group(); CX.root.add(ST); if(!CX.pool) CX.pool=mkPool();   // several chests in one model share the pool
-  const chest=buildChestR({name:o.name||'手鍵盤',ks:P.KS,xs:P.CL.xs,ws:P.CL.w,y:P.yC,zF:P.zF,rows:P.rows,KD:kd||S.kd,SP:o.sp||S.sp,pedal:!!o.pedal,volN:o.volN,slDir:o.slDir||1,slOff:o.slOff||(s=>3*(1-s)),ud:k=>({key:k}),feed,spring},ST);
+  const chest=buildChestR({name:o.name||'手鍵盤',ks:P.KS,xs:P.CL.xs,ws:P.CL.w,y:P.yC,zF:P.zF,rows:P.rows,KD:kd||S.kd,SP:o.sp||S.sp,pedal:!!o.pedal,volN:o.volN,slDir:o.slDir||1,slOff:o.slOff||(s=>3*(1-s)),ud:k=>({key:k}),feed,spring,slAct:o.act,slStop:o.act?null:(o.sp&&o.sp!==S.sp&&!o.spStop?null:(i=>i))},ST);
   const h=P.yC-P.floor; if(h>1&&!o.noLegs) for(const x of [chest.xL+3,chest.xR-3]) for(const z of [chest.zF-3,chest.zB+3]) box(ST,4,h,4,MAT.woodDark,x,P.floor+h/2,z,LB('風箱の台の脚','Ladengestell'));
   // inlet 'L'/'R' (models without a wind supply): the end of the wind trunk entering the pallet box at that side
   if(inlet){ const sg=inlet==='L'?-1:1, x0=sg<0?chest.xL-0.5:chest.xR+0.5, x1=x0+sg*16, y=P.yIn, z=P.zIn;
@@ -163,6 +163,14 @@ function buildBedosOrgan(){
   chest=buildFullChest(P,trunk);
   buildBedosFrame(G);
   const C=buildCalcant(G), E0=V3(), E1=V3();
+  // a small bell on a bracket at the end post of the gallows next to the organ: the organist rings it to call the calcant
+  const BL=LB('呼び鈴（カルカントに合図する）','Kalkantenglocke'), bx=BB.XB[2]+43, by=150, bz=BB.ZG-3;
+  box(G,2,2,16,MAT.woodDark,bx,by,bz-8,BL); box(G,2,8,2,MAT.woodDark,bx,by-4,bz-15,BL);
+  const bell=new T.Group(); bell.position.set(bx,by-2,bz-15); G.add(bell);
+  const cup=mk(G_CONE,MAT.brass,bell,BL); cup.rotation.x=Math.PI; cup.scale.set(4.2,6,4.2); cup.position.y=-7;
+  const crown=mk(G_SPH,MAT.brass,bell,BL); crown.scale.set(1.6,1.4,1.6); crown.position.y=-3.6;
+  const clap=mk(G_SPH,MAT.iron,bell,LB('呼び鈴の舌','Kalkantenglocke')); clap.scale.setScalar(1.1); clap.position.y=-10.5;
+  const ring={t:9}, ding=()=>{ ring.t=0; bellStrike(2093,0.9); later(130,()=>bellStrike(2093,0.55)); };
   { const t=bs[0].th; bs[0].th=0; bs[0].update(); E0.copy(bs[0].E); bs[0].th=thMax; bs[0].update(); E1.copy(bs[0].E); bs[0].th=t; }
   chest.finish();
   // the calcant: picks the emptiest bellows (or the one asked for), steps to its lever, reaches up, pulls it down until the
@@ -179,17 +187,17 @@ function buildBedosOrgan(){
     else if(C.st==='pull'){ const b=bs[C.tgt]; b.pumping=true; b.th=Math.min(thMax,b.th+rate*dt);
       if(C.man?!m.hold[C.tgt]:(b.th>=thMax||!m.auto)){ C.st='release'; C.t=1; b.pumping=false; } }
     else if(C.st==='release'){ C.t=Math.max(0,C.t-dt/0.35); if(C.t<=0) C.st='idle'; }
-    C.g.visible=m.auto||held>=0||m.force!=null||C.st!=='idle';
   };
   return {chest,
     pins:[{t:'ふいご1',p:bbW(BB.XB[0],28,10)},{t:'ふいご2',p:bbW(BB.XB[1],28,10)},{t:'ふいご3',p:bbW(BB.XB[2],28,10)},{t:'ふいごレバー',p:bbW(BB.XB[0]-12,150,-60)},
       {t:'レバーの支点の台',p:bbW(BB.XB[0]-40,BB.YP,BB.ZP)},{t:'レバーの案内枠（ガロウズ）',p:bbW(BB.XB[2]+44,170,BB.ZG)},{t:'カルカント',p:C.pin},{t:'風導管',p:tp[2].clone().add(V3(0,8,0))},{t:'風箱',p:V3(chest.xR+4,chest.base,chest.zF)}],
-    controls:[{type:'toggle',id:'auto',label:'カルカント自動',get:()=>m.auto,set:v=>m.auto=v},
-      ...[0,1,2].map(i=>({type:'hold',label:'ふいご'+(i+1)+'を引く',down:()=>m.hold[i]=true,up:()=>m.hold[i]=false}))],
+    controls:[{type:'toggle',id:'auto',label:'カルカント',get:()=>m.auto,set:v=>{ m.auto=v; ding(); }},
+      ...[0,1,2].map(i=>({type:'hold',label:'ふいご'+(i+1),down:()=>m.hold[i]=true,up:()=>m.hold[i]=false}))],
     ctl:{auto:v=>m.auto=v,pump0:()=>m.force=0},
     update(dt){
       const n=chest.speaking().length, cons=thMax*(0.004+0.005*n), rate=Math.max(thMax*0.55,cons*3.5);   // he pulls faster as consumption rises
       calcant(dt,rate);
+      ring.t+=dt; bell.rotation.z=ring.t<3?0.45*Math.sin(ring.t*17)*Math.exp(-ring.t*1.8):0;   // the bell swings and dies away
       const sup=bs.filter(b=>!b.pumping&&b.th>0.003);
       bs.forEach(b=>{ b.supplying=sup.includes(b); b.flow=2.5*n; });
       sup.forEach(b=>b.th=Math.max(0,b.th-cons/sup.length*dt));

@@ -11,7 +11,7 @@ function buildPedalAction(){
   const DA=LA*DEP/KP, AO=3, AIr=AO*DA/KPULL, zr=oz+14-AO, zs1=ZA-AS, zs2=zr+AIr+AS, yr0=Y2+3;
   const PST=[5,11,12], PSP=new Float32Array([0,1,0]), m={ps:[false,true,false]};
   // full-size pedal chest (C/Cis layout, built like the H-03 chests) on its own legs; its pull-down line stays at oz + 14
-  const chest=buildFullChest(fullChestPlan(oy,0,oz+17.5,PST),null,'R',false,null,{sp:PSP,pedal:true,volN:300});
+  const chest=buildFullChest(fullChestPlan(oy,0,oz+17.5,PST),null,'R',false,null,{sp:PSP,pedal:true,volN:300,act:stopActs(PST,m.ps)});
   const xp=k=>((k in SLOT?SLOT[k]:BPOS[k])-3.5)*8;
   // frame
   const LF=LB('ペダル鍵盤の枠','Pedalklaviatur');

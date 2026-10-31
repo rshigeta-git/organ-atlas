@@ -8,7 +8,7 @@ function polyAt(P,cum,s,out){ let i=1; while(i<cum.length-1&&cum[i]<s) i++; cons
 let E03V={sol:[[0,0,0],[0,0,0]],sol2:[[0,0,0],[0,0,0]],con:[[0,0,0],[0,0,0]]};   // E-03: close-up views, set when the model is built
 function buildElectricStops(){
   // full-size slider chest (as E-01): the sliders stick out at the left and move 1.8 to the right when drawn
-  const R=CX.root, SPm=new Float32Array(5), chest=buildFullChest(fullChestPlan(30,-8),null,'R',false,null,{sp:SPm,slDir:-1,slOff:s=>-1.8*(1-s)}), oz=(chest.zF+chest.zB)/2, D=chest.zF-chest.zB;
+  const R=CX.root, SPm=new Float32Array(5), chest=buildFullChest(fullChestPlan(30,-8),null,'R',false,null,{sp:SPm,spStop:true,slDir:-1,slOff:s=>-1.8*(1-s)}), oz=(chest.zF+chest.zB)/2, D=chest.zF-chest.zB;
   const m={st:[false,false,false,false,false],tg:new Float32Array(5),coil:[],pulses:[],set:false,mem:{1:[1,0,1,0,0],2:[1,1,1,1,1]},press:{}};
   for(let i=0;i<5;i++){ m.st[i]=S.stop[i]; m.tg[i]=S.stop[i]?1:0; SPm[i]=m.tg[i]; m.coil.push([0,0]); }
   const xS=chest.xL-15, yS=chest.yS+0.5, HX0=xS-12.5, HX1=xS-5.5;   // slider left end (when drawn); solenoid housing

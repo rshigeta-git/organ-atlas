@@ -30,7 +30,8 @@ button,select,input{font:inherit;color:inherit}
 /* title about as tall as the language menu, so the plate gets the height */
 h1{margin:0;font-family:var(--f-display);font-weight:900;font-size:22px;letter-spacing:.02em;line-height:1.2}
 .count{margin:0;font-size:14px;color:var(--muted)}
-.langpick{margin-left:auto;align-self:center}
+.langpick{margin-left:auto;align-self:center;display:flex;align-items:center;gap:8px}
+.langlab{color:var(--muted);flex:none}
 .langpick select{font-size:14px;padding:5px 10px;border:1px solid var(--line);border-radius:3px;background:var(--panel);color:var(--ink)}
 
 /* top page: introduction and the list of models (chapters A–H) */

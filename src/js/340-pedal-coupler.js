@@ -51,9 +51,9 @@ function buildPedalCoupler(){
   const KDH=new Float32Array(13), KDP=new Float32Array(13);
   // full-size chests (C/Cis layout, built like the H-03 chests): the Hauptwerk over the console (pull-down line at zoM as
   // before), the pedal chest on its legs 0.78 m behind it
-  const hw=buildFullChest(fullChestPlan(y0M+13*1.25+22,-2,zoM+3.5,HWST,true),null,'R',false,KDH,{sp:HWSP,noLegs:true,name:'ハウプトヴェルク'});
+  const hw=buildFullChest(fullChestPlan(y0M+13*1.25+22,-2,zoM+3.5,HWST,true),null,'R',false,KDH,{sp:HWSP,noLegs:true,name:'ハウプトヴェルク',act:stopActs(HWST,m.hs)});
   const zFP=hw.zB-100, zP=zFP-3.5, zs1=ZA+AI, zs2=zP+AO, zrP=zP-AO, y0P=32;
-  const pd=buildFullChest(fullChestPlan(y0P+13*1.25+5,-2,zFP,PDST,true),null,'R',false,KDP,{sp:PDSP,pedal:true,volN:300,name:'ペダル'});
+  const pd=buildFullChest(fullChestPlan(y0P+13*1.25+5,-2,zFP,PDST,true),null,'R',false,KDP,{sp:PDSP,pedal:true,volN:300,name:'ペダル',act:stopActs(PDST,m.ps)});
   hw.finish(); pd.finish();
   box(R,64,1.2,1.2,MAT.woodDark,0,YS,zs1+0.9,LB('スクエアの軸受け（ペダル側）','Winkelbalken'));
   box(R,64,1.2,1.2,MAT.woodDark,0,YS,zs2+0.9,LB('スクエアの軸受け（風箱側）','Winkelbalken'));

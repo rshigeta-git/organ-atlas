@@ -2,6 +2,8 @@
 function buildH03(){
   const B=h3Core(); B.MK=[...Array(B.NM).keys()];
   const Sx=h3Stops(B), W=h3Wind(B), ZM=h3Zimbel(W.ZO,B.ST), SW=h3Swell(B);
+  // a click on a slider works like its drawknob (the pedal sliders of both towers belong to one knob)
+  for(const [C,L] of [[B.hw,Sx.hw],[B.pos,Sx.pos],[B.tc,Sx.ped],[B.td,Sx.ped]]) C.slm.forEach((sm,i)=>{ const it=L[i]; if(it) sm.userData.act={name:it.name,get:()=>it.on,fn:()=>{ it.on=!it.on; }}; });
   h3Case(B);
   mergeStatic(B.ST); CX.pool.finish();
   const {m,ped,lo,up,rbH,rbP,rbF,rbC,cPH,cHP,cPP,TH,TP,KDH,KDP,KDD,SPH,SPP,SPD,hw,pos,tc,td,NM,NP,DIP,Y0,ZH,ZX,KL,DEP,ZAA,ZC,yK,KHp,pullH,pullP,dzH,dzP,aiH,aiP,SQ,kx,PDX,UPm,LO,aiA,aoA,aiC,aoC,ZHP,ZPP,hmat,pmat,dmat}=B;

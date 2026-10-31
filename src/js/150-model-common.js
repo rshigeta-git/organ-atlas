@@ -45,4 +45,5 @@ class Field{
   write(pos,col,base,t){ for(let i=0;i<this.n;i++){ const o=(base+i)*3; const c=this.fn(i,t,_v,this); if(!c){ pos[o]=0; pos[o+1]=-1e5; pos[o+2]=0; continue; } pos[o]=_v.x; pos[o+1]=_v.y; pos[o+2]=_v.z; col[o]=c.r; col[o+1]=c.g; col[o+2]=c.b; } }
 }
 function windEnv(m,dt){ const on=m.on; m.env+=((on?1:0)-m.env)*Math.min(1,dt*(on?1.6:2.5)); S.p+=((on?75:0)-S.p)*Math.min(1,dt*5); if(on||m.env>0.01) m.ph+=dt*OMEGA*(m.fr||1); return m.env; }
-
+// click action for a slider of a model with its own stop list: name, state and toggle of stop i of list a (STOPS indices st)
+const stopActs=(st,a)=>i=>({name:STOPS[st[i]].name,get:()=>a[i],fn:()=>{ a[i]=!a[i]; }});
