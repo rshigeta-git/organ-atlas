@@ -4,7 +4,7 @@
    pulls the tracker from the roller board; roller board, squares and horizontal trackers as in D-01. The keys are carried
    by the balance rail, not hung from the action; the pallet spring brings everything back. */
 function buildBalanceKeyboard(o){
-  const R=CX.root, KB={piv:[]}, FA=30, zt=o.z-KLEN, zb=o.z-FA, RA=zb-zt, y0=o.y+KH/2, OZ=-RA, DIPF=KPULL*KLEN/(KLEN-KATT);
+  const R=CX.root, CUT=o.cut||0, KB={piv:[]}, FA=30, zt=o.z-KLEN, zb=o.z-FA, RA=zb-zt, y0=o.y+KH/2, OZ=-RA, DIPF=KPULL*KLEN/(KLEN-KATT);
   const xp=k=>o.x+((k in SLOT?SLOT[k]:BPOS[k])-3.5)*3;
   KB.kx=k=>o.x+(k-6)*TAILP;
   KB.th=k=>Math.asin(clamp(DIPF*S.kd[k]/FA,0,1));
@@ -17,16 +17,16 @@ function buildBalanceKeyboard(o){
   box(R,rw+2,1.6,2.4,MAT.wood,o.x,o.y-KH/2-0.8,zb,LB('バランスレール（鍵の中ほどの支点を受ける桟）','Waagebalken'));
   box(R,rw+2,0.2,2.2,MAT.cloth,o.x,o.y-KH/2+0.1,zb,LB('バランスレールのフェルト','Waagebalkenfilz'));
   for(let k=0;k<13;k++){ const g=rod(R,0.13,MAT.brass,LB('バランスピン（鍵の中ほどの穴に入り、鍵はこれを支点にシーソーのように動く）','Waagestift')); g.set(V3(KB.kx(k),o.y-KH/2-0.4,zb),V3(KB.kx(k),y0+KH/2+0.4,zb)); }
-  box(R,rw,1.2,2.4,MAT.wood,o.x,o.y-KH/2-0.6,zt+2,LB('尾部の受け桟（鍵が戻ったとき奥の端が載る）','Hinterleiste'));
-  box(R,rw,0.3,2.2,MAT.cloth,o.x,o.y-KH/2+0.1,zt+2,LB('尾部の受け桟のフェルト','Hinterleistenfilz'));
-  box(R,rw,KH+5,1.2,MAT.wood,o.x,y0+1.5,zt-1.2,LB('尾部のラック（鍵の奥の端を1本ずつ案内する）','Tastenrechen'));
-  for(let j=0;j<=13;j++) box(R,0.22,KH+4,2.2,MAT.woodDark,o.x+(j-6.5)*TAILP,y0+1.5,zt+0.4,LB('ラックの仕切り（鍵の奥端を1本ずつ案内する）','Rechenstäbchen'));
+  box(R,rw,1.2,2.4,MAT.wood,o.x,o.y-KH/2-0.6,zt+CUT+2,LB('尾部の受け桟（鍵が戻ったとき奥の端が載る）','Hinterleiste'));
+  box(R,rw,0.3,2.2,MAT.cloth,o.x,o.y-KH/2+0.1,zt+CUT+2,LB('尾部の受け桟のフェルト','Hinterleistenfilz'));
+  if(!o.noRack){ box(R,rw,KH+5,1.2,MAT.wood,o.x,y0+1.5,zt-1.2,LB('尾部のラック（鍵の奥の端を1本ずつ案内する）','Tastenrechen'));
+    for(let j=0;j<=13;j++) box(R,0.22,KH+4,2.2,MAT.woodDark,o.x+(j-6.5)*TAILP,y0+1.5,zt+0.4,LB('ラックの仕切り（鍵の奥端を1本ずつ案内する）','Rechenstäbchen')); }
   for(const s of [-1,1]) box(R,1.4,7,19,MAT.wood,o.x+s*13.6,o.y+0.5,o.z-9,LB('鍵盤の側板','Backe'));
   for(let k=0;k<13;k++){
     const w=(k in SLOT), pv=new T.Group(); pv.position.set(0,y0,zb); R.add(pv);
     const lm=keyMat(k), xt=KB.kx(k), xk=xp(k), hm=mclone(w?MAT.ivory:MAT.ebony);
     const lab=LB('鍵のレバー（'+KEYNAMES[k]+'。中ほどのバランスピンを支点にシーソーのように動く）','Tastenhebel');
-    box(pv,1.45,KH,KLEN-19.5,lm,xt,0,OZ+(KLEN-19.5)/2,lab);
+    box(pv,1.45,KH,KLEN-19.5-CUT,lm,xt,0,OZ+CUT+(KLEN-19.5-CUT)/2,lab);
     const cr=plank(pv,1.45,KH,lm,lab); cr.set(V3(xt,0,OZ+KLEN-19.6),V3(xk,0,OZ+KLEN-16.9));
     const fEnd=w?KLEN:KLEN-6;
     box(pv,1.45,KH,fEnd-(KLEN-17),lm,xk,0,OZ+(fEnd+KLEN-17)/2,lab);
@@ -35,7 +35,7 @@ function buildBalanceKeyboard(o){
       const L=(k-1>=0&&!(k-1 in SLOT))?xp(k-1)+0.85:xk-1.4, Rr=(k+1<13&&!(k+1 in SLOT))?xp(k+1)-0.85:xk+1.4;
       box(pv,Rr-L,0.6,11.1,hm,(L+Rr)/2,KH/2+0.3,OZ+KLEN-11.5,LB('鍵 '+KEYNAMES[k]+'（白鍵の表面）','Untertaste'));
     } else box(pv,1.6,2,11,hm,xk,KH/2+1,OZ+KLEN-11.5,LB('鍵 '+KEYNAMES[k]+'（黒鍵）','Obertaste'));
-    box(pv,1.3,0.3,1.3,MAT.cloth,xt,KH/2+0.15,OZ+2,LB('スティッカーの受け（フェルト）','Stecherfilz'));
+    if(!CUT) box(pv,1.3,0.3,1.3,MAT.cloth,xt,KH/2+0.15,OZ+2,LB('スティッカーの受け（フェルト）','Stecherfilz'));
     pv.traverse(c=>c.userData.key=k);
     KB.piv.push({pv,hm,xt});
   }

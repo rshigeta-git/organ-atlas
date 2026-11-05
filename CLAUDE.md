@@ -29,7 +29,7 @@ Set `git config user.name "Shigeta Ryoji"` and `user.email` locally if Git asks.
 node build.mjs                          # build + syntax check
 python tests/check_all_models.py        # load every model, run step 1, report page errors (~10 min in software GL)
 python tests/check_all_models.py d-05   # just some models
-python tests/shots.py tests/scenarios/d-05.json   # scripted screenshots → tests/out/
+python tests/shots.py tests/scenarios/d-06.json   # scripted screenshots → tests/out/
 python tests/check_language.py nl d-05  # Japanese text left on the page in a language
 ```
 Setup for tests: `pip install playwright` then `python -m playwright install chromium`.

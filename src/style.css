@@ -1,7 +1,7 @@
 /* Layout: organ-builder's atlas — chapter index | live 3D plate with a playing console under it | plate notes */
 :root{
   --bg:#e4e7e5; --panel:#eef0ee; --ink:#1f2a33; --muted:#5b6670; --line:#c2c9cc; --chip:#d7dddd; --oak:#8f5f33; --ivory:#f6f2e6;
-  --stage:#d8ddd6; --gridc:#a3ada5; --wind:#2867ad; --air:#6f7d8a; --sound:#c98a00; --ctrl:#cf5a24; --keyglow:#e0a200; --stopc:#2a8457; --accent:#2867ad;
+  --stage:#d8ddd6; --gridc:#a3ada5; --wind:#2867ad; --air:#6f7d8a; --sound:#c98a00; --ctrl:#cf5a24; --lead:#9a18e6; --keyglow:#e0a200; --stopc:#2a8457; --accent:#2867ad;
   --keyw:#f7f5ef; --keyb:#2b2725; --onink:#ffffff;
   --f-display:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
   --f-body:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
@@ -9,13 +9,13 @@
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#14181b; --panel:#1b2024; --ink:#e3e8ea; --muted:#99a4ab; --line:#2f373d; --chip:#252c31; --oak:#c99a66; --ivory:#2a2722;
-    --stage:#0e1210; --gridc:#36413b; --wind:#62a4e8; --air:#c9d3dc; --sound:#f0bf4c; --ctrl:#f28a52; --keyglow:#f2b928; --stopc:#4fc283; --accent:#62a4e8;
+    --stage:#0e1210; --gridc:#36413b; --wind:#62a4e8; --air:#c9d3dc; --sound:#f0bf4c; --ctrl:#f28a52; --lead:#cf7dff; --keyglow:#f2b928; --stopc:#4fc283; --accent:#62a4e8;
     --keyw:#e4e0d7; --keyb:#151312; --onink:#0e1210; color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#14181b; --panel:#1b2024; --ink:#e3e8ea; --muted:#99a4ab; --line:#2f373d; --chip:#252c31; --oak:#c99a66; --ivory:#2a2722;
-  --stage:#0e1210; --gridc:#36413b; --wind:#62a4e8; --air:#c9d3dc; --sound:#f0bf4c; --ctrl:#f28a52; --keyglow:#f2b928; --stopc:#4fc283; --accent:#62a4e8;
+  --stage:#0e1210; --gridc:#36413b; --wind:#62a4e8; --air:#c9d3dc; --sound:#f0bf4c; --ctrl:#f28a52; --lead:#cf7dff; --keyglow:#f2b928; --stopc:#4fc283; --accent:#62a4e8;
   --keyw:#e4e0d7; --keyb:#151312; --onink:#0e1210; color-scheme:dark;
 }
 html,body{background:var(--bg)}

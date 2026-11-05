@@ -1,4 +1,32 @@
 {
+"Batterie": [
+"batteria",
+"batería"
+],
+"Steuerventil": [
+"valvola di comando",
+"válvula de control"
+],
+"Tastenkontakt": [
+"contatto del tasto",
+"contacto de tecla"
+],
+"Elektromagnet": [
+"elettromagnete",
+"electroimán"
+],
+"Tonkanal": [
+"canale di nota",
+"canal de nota"
+],
+"Relaisventil": [
+"valvola del relè",
+"válvula del relé"
+],
+"Relaiskasten": [
+"cassa del relè",
+"caja del relé"
+],
 "Kalkantenglocke": [
 "campanello del tiramantici",
 "campanilla del entonador"

@@ -16,10 +16,10 @@ renderer.clippingPlanes=[clipPlane];
 function resize(){ const w=wrap.clientWidth||600,h=wrap.clientHeight||400; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); }
 new ResizeObserver(resize).observe(wrap); resize();
 
-const COL={ctrl:new T.Color(),wind:new T.Color(),air:new T.Color(),sound:new T.Color(),key:new T.Color(),stop:new T.Color()};
+const COL={ctrl:new T.Color(),lead:new T.Color(),wind:new T.Color(),air:new T.Color(),sound:new T.Color(),key:new T.Color(),stop:new T.Color()};
 function readTheme(){
   const cs=getComputedStyle(document.documentElement); const g=n=>(cs.getPropertyValue(n)||'').trim()||'#888888';
-  COL.wind.set(g('--wind')); COL.ctrl.set(g('--ctrl')); COL.air.set(g('--air')); COL.sound.set(g('--sound')); COL.key.set(g('--keyglow')); COL.stop.set(g('--stopc'));
+  COL.wind.set(g('--wind')); COL.ctrl.set(g('--ctrl')); COL.lead.set(g('--lead')); COL.air.set(g('--air')); COL.sound.set(g('--sound')); COL.key.set(g('--keyglow')); COL.stop.set(g('--stopc'));
   scene.background=new T.Color(g('--stage')); grid.material.color.set(g('--gridc')); grid.material.needsUpdate=true;
 }
 readTheme();

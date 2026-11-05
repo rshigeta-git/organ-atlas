@@ -45,7 +45,7 @@ function buildChestR(o,ST){
   // back (Z), so the trackers can come up behind whatever stands under the front of the chest
   const W=xR-xL, cx=(xL+xR)/2, zB=Math.min(Math.min(...rows.map(r=>r.z-r.d/2))-2,o.zBmax!=null?o.zBmax:1e9), D=zF-zB, zc=(zF+zB)/2;
   const zPd=zF-3.5, zH=zPd-(Lp-2), zPB=zH-4, Z=z=>o.back?zF+zB-z:z, QB=new T.Quaternion().setFromAxisAngle(UP,o.back?Math.PI:0);
-  const C={xL,xR,W,cx,oy,zF,zB,zPd:Z(zPd),zPB:Z(zPB),base,yS,top:0,tubes:[],chanFlow:{},nm:o.name,inlet:V3(cx,oy+hb/2,o.back?zB:zPB),tops:{},rows,slEnd:o.slDir<0?xL-15:xR+15,slm:[]};
+  const C={xL,xR,W,cx,oy,zF,zB,zPd:Z(zPd),zPB:Z(zPB),base,yS,top:0,tubes:[],chanFlow:{},nm:o.name,inlet:V3(cx,oy+hb/2,o.back?zB:zPB),tops:{},rows,slEnd:o.slDir<0?xL-15:xR+15,slm:[],zH:Z(zH),Lp};
   const nmS=o.name;
   const L1=LB('パレットボックス（'+nmS+'の風箱の下部。常に風で満たされている）','Windkasten');
   box(ST,W+2,1,zF-zPB,MAT.wood,cx,oy+0.5,Z((zF+zPB)/2),L1);
@@ -104,6 +104,7 @@ function buildChestR(o,ST){
     box(ST,W+1,ub,r.d-0.15,MAT.wood,cx,yU+ub/2,r.z,LB('上板：'+st.name+'（パイプを立てる台）','Pfeifenstock'));
   });
   // pallets, pull-down wires, springs (pooled), guide pins and purses (fixed)
+  // o.ep: the action is inside the pallet box (D-05): no spring here, no purse; the wire is hooked at ep.L from the hinge and goes to ep.wireTo(k)
   const PL={}, pw={}, PG=palGeo(Lp,Lp-2);
   for(const k of ks){
     const x=X[k]; pw[k]=FIT[k].pw;
@@ -111,12 +112,13 @@ function buildChestR(o,ST){
       face:CX.pool.add(PG.face,MAT.palLeather,LB('パレットの革（上面に貼った革。チャンネルの口に密着して風を止める。奥の端は蝶番になる）','Ventilleder'),o.ud(k)),
       wire:prod(MAT.metalDark,0.1,LB('引き下げ線（パレットの前端から底板を貫いて下へ出る）','Abzugsdraht'),o.ud(k)),
       eye:pnut(MAT.brass,0.3,0.5,LB('パレットの目金（引き下げ線を掛ける）','Ventilöse'),o.ud(k)),
-      spr:palSpring(ST,x,oy+3.1,Z(zH+1.4),oy+2,Z(zH+(Lp-2)*0.55),prod(MAT.brass,SPR_W,LB('パレットばね（パレットを押し上げて閉じる）','Ventilfeder')))};
-    const purse=mk(G_CONE,MAT.leather,ST,LB('パルペーテ（引き下げ線が底板を通る穴をふさぐ革袋）','Pulpete')); purse.scale.set(0.75,1.1,0.75); purse.position.set(x,oy-0.55,Z(zPd));
+      spr:o.ep?null:palSpring(ST,x,oy+3.1,Z(zH+1.4),oy+2,Z(zH+(Lp-2)*0.55),prod(MAT.brass,SPR_W,LB('パレットばね（パレットを押し上げて閉じる）','Ventilfeder')))};
+    if(!o.ep){ const purse=mk(G_CONE,MAT.leather,ST,LB('パルペーテ（引き下げ線が底板を通る穴をふさぐ革袋）','Pulpete')); purse.scale.set(0.75,1.1,0.75); purse.position.set(x,oy-0.55,Z(zPd)); }
     const sx=pw[k]/2+0.2;
     for(const s of [-1,1]) rod(ST,0.1,MAT.brass,LB('パレットのガイドピン','Ventilführungsstift')).set(V3(x+s*sx,yCh,Z(zPd+0.8)),V3(x+s*sx,yCh-3.6,Z(zPd+0.8)));
   }
-  box(ST,W,1,1.4,MAT.woodDark,cx,oy+1.5,Z(zH+(Lp-2)*0.55),LB('ばね受けの桟','Federleiste'));
+  if(!o.ep) box(ST,W,1,1.4,MAT.woodDark,cx,oy+1.5,Z(zH+(Lp-2)*0.55),LB('ばね受けの桟','Federleiste'));
+  C.pw=pw;
   C.vol=new Vol((a,b,c,out)=>out.set(xL+1+a*(W-2),oy+1.5+b*(hb-3.5),Z(zPB+1+c*(zF-zPB-2))),o.volN||420,{state:()=>(S.p>4&&(!o.feed||o.feed.full()))?clamp(0.35+0.65*S.p/75,0,1):0});
   C.chan={};
   for(const k of ks){
@@ -140,9 +142,9 @@ function buildChestR(o,ST){
       const x=X[k], q=PL[k], ph=palH(pw[k]), th=Math.asin(clamp(KPULL*KD[k]/(Lp-2),0,1)), c=Math.cos(th), s=Math.sin(th);
       // pallet: hinged at zH under the channel, front end at the pull-down line goes down
       _mv.set(x,yCh-0.1,Z(zH)); _q.setFromAxisAngle(V3(1,0,0),th).premultiply(QB); _sv.set(pw[k],ph,1); q.pal.m.compose(_mv,_q,_sv); q.face.m.copy(q.pal.m);
-      const ey=yCh-0.1-ph*c-(Lp-2)*s, ez=Z(zH-ph*s+(Lp-2)*c);
-      q.wire.set(V3(x,ey,ez),V3(x,oy-1-KPULL*KD[k],Z(zPd))); q.eye.at(V3(x,ey-0.1,ez));
-      const sy=yCh-0.1-(ph-0.25)*c-(Lp-2)*0.55*s, sz=Z(zH-(ph-0.25)*s+(Lp-2)*0.55*c); q.spr.u.set(q.spr.a,V3(x-SPR_W,sy,sz));
+      const Lq=o.ep?o.ep.L:Lp-2, ey=yCh-0.1-ph*c-Lq*s, ez=Z(zH-ph*s+Lq*c);
+      q.wire.set(V3(x,ey,ez),o.ep?o.ep.wireTo(k):V3(x,oy-1-KPULL*KD[k],Z(zPd))); q.eye.at(V3(x,ey-0.1,ez));
+      const sy=yCh-0.1-(ph-0.25)*c-(Lp-2)*0.55*s, sz=Z(zH-(ph-0.25)*s+(Lp-2)*0.55*c); if(q.spr) q.spr.u.set(q.spr.a,V3(x-SPR_W,sy,sz));
       C.chanFlow[k]=0;
     }
     for(const t of C.speaking()) C.chanFlow[t.k]+=1;

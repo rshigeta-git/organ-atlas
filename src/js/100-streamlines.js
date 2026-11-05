@@ -17,6 +17,7 @@ void main(){
  float f=clamp((head-vU)*len/1.5,0.0,1.0);
  gl_FragColor=vec4(col,a*alpha*(0.35+0.65*f));
 }`;
+const kindCol=k=>k==='air'?COL.air:k==='ctrl'?COL.ctrl:k==='lead'?COL.lead:COL.wind;
 /* Each streamline is a thin tube swept along the flow path; K parallel lines for wide passages. */
 function makeStream(tb){
   if(tb.L<0.5) return null;
@@ -27,8 +28,9 @@ function makeStream(tb){
     else p.push(b); }
   p.push(tb.p[tb.p.length-1]);
   const curve=p.length>2?new T.CatmullRomCurve3(p,false,'centripetal'):new T.LineCurve3(p[0],p[1]);
-  const ns=Math.max(2,Math.min(300,Math.round(tb.L/0.6)));
-  const sp=curve.getSpacedPoints(ns);
+  const ns=Math.max(2,Math.min(tb.exact?800:300,Math.round(tb.L/(tb.exact?0.35:0.6))));
+  // exact: follow the path point by point (a smooth curve swings out where a long straight meets a bend, out of a thin tube)
+  const sp=tb.exact?[...Array(ns+1).keys()].map(i=>tb.at(tb.L*i/ns,V3(0,0,0))):curve.getSpacedPoints(ns);
   const K=tb.r>=0.8?3:tb.r>=0.4?2:1, rr=tb.r*0.6, rad=tb.r>=1?0.22:tb.r>=0.5?0.16:0.12;
   const t_=V3(0,0,0),n1=V3(0,0,0),n2=V3(0,0,0),ref=V3(0,0,0);
   const P=[],UV=[],I=[];
@@ -46,9 +48,9 @@ function makeStream(tb){
     g.dispose();
   }
   const g=new T.BufferGeometry(); g.setAttribute('position',new T.Float32BufferAttribute(P,3)); g.setAttribute('uv',new T.Float32BufferAttribute(UV,2)); g.setIndex(I);
-  const air=tb.kind==='air', ctl=tb.kind==='ctrl';
+  const air=tb.kind==='air';
   const m=new T.ShaderMaterial({vertexShader:SL_VS,fragmentShader:SL_FS,transparent:true,depthWrite:false,clipping:true,
-    uniforms:{head:{value:0},tail:{value:0},phase:{value:Math.random()},moving:{value:0},exitU:{value:2},len:{value:tb.L},alpha:{value:air?0.8:0.95},c0:{value:air?COL.air:ctl?COL.ctrl:COL.wind},c1:{value:COL.sound}}});
+    uniforms:{head:{value:0},tail:{value:0},phase:{value:Math.random()},moving:{value:0},exitU:{value:2},len:{value:tb.L},alpha:{value:air?0.8:0.95},c0:{value:kindCol(tb.kind)},c1:{value:COL.sound}}});
   const L=new T.Mesh(g,m); L.frustumCulled=false; L.visible=false; L.renderOrder=2; CX.root.add(L); CX.own.push(g,m);
   return L;
 }
@@ -58,8 +60,8 @@ class Tube{
     this.p=pts.map(a=>a.isVector3?a.clone():V3(a[0],a[1],a[2]));
     this.cum=[0]; for(let i=1;i<this.p.length;i++) this.cum.push(this.cum[i-1]+this.p[i].distanceTo(this.p[i-1]));
     this.L=this.cum[this.cum.length-1];
-    this.n=o.n||Math.max(4,Math.round(this.L*(o.density||0.45)));
-    this.r=o.r==null?0.5:o.r; this.kind=o.kind||'wind'; this.exitU=o.exitU; this.state=o.state; this.front=o.front||40;
+    this.n=o.noPts?0:o.n||Math.max(4,Math.round(this.L*(o.density||0.45)));
+    this.r=o.r==null?0.5:o.r; this.kind=o.kind||'wind'; this.exact=!!o.exact; this.exitU=o.exitU; this.state=o.state; this.front=o.front||40;
     this.head=0; this.tail=0; this.spd=0;
     this.s=new Float32Array(this.n); this.j=new Float32Array(this.n*4);
     for(let i=0;i<this.n;i++){ this.s[i]=Math.random()*this.L; this.j[i*4]=Math.random()*2-1; this.j[i*4+1]=Math.random()*2-1; this.j[i*4+2]=Math.random()*2-1; this.j[i*4+3]=Math.random(); }
@@ -110,7 +112,7 @@ class Tube{
   at(s,out){ let i=1; while(i<this.cum.length-1&&this.cum[i]<s) i++; const seg=(this.cum[i]-this.cum[i-1])||1; return out.lerpVectors(this.p[i-1],this.p[i],(s-this.cum[i-1])/seg); }
   nearestDist(q){ let best=1e9,bd=0; for(let i=1;i<this.p.length;i++){ const a=this.p[i-1],b=this.p[i]; const ab=V3(0,0,0).subVectors(b,a); const l2=ab.lengthSq()||1; const t=clamp(V3(0,0,0).subVectors(q,a).dot(ab)/l2,0,1); const pt=a.clone().addScaledVector(ab,t); const dd=pt.distanceTo(q); if(dd<best){best=dd; bd=this.cum[i-1]+t*Math.sqrt(l2);} } return bd; }
   write(pos,col,base,t){
-    const show=this.head>0, c0=this.kind==='air'?COL.air:this.kind==='ctrl'?COL.ctrl:COL.wind, still=this.spd<=0.01, r=this.r;
+    const show=this.head>0, c0=kindCol(this.kind), still=this.spd<=0.01, r=this.r;
     for(let i=0;i<this.n;i++){
       const o=(base+i)*3, s=this.s[i];
       if(!show||s<this.tail||s>this.head){ pos[o]=0; pos[o+1]=-1e5; pos[o+2]=0; continue; }
@@ -132,7 +134,7 @@ class Vol{
   idle(){ return Math.round(this.fill*this.n)<=0; }
   update(dt){ const t=clamp(this.state(),0,1); this.fill+=clamp(t-this.fill,-this.rate*dt,this.rate*dt); }
   write(pos,col,base,t){
-    const m=Math.round(this.fill*this.n), c=this.kind==='air'?COL.air:this.kind==='ctrl'?COL.ctrl:COL.wind;
+    const m=Math.round(this.fill*this.n), c=kindCol(this.kind);
     for(let i=0;i<this.n;i++){
       const o=(base+i)*3; if(i>=m){ pos[o]=0; pos[o+1]=-1e5; pos[o+2]=0; continue; }
       const j=i*4, ph=this.sd[j+3]*6.283;

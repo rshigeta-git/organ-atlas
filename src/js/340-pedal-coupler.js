@@ -19,7 +19,7 @@ function buildPedalCoupler(){
   // the key desk rests on two side frames standing outside the pedalboard (its frame is at x = ±34)
   for(const s of [-1,1]){ box(R,2,2,56,MAT.woodDark,s*37,YM-9.9,26,LB('演奏台の脚','Spieltisch')); box(R,22,2,4,MAT.woodDark,s*27,YM-9,26,LB('演奏台の腕木','Spieltisch'));
     for(const z of [4,48]) box(R,2,YM-9.9,2,MAT.woodDark,s*37,(YM-9.9)/2,z,LB('演奏台の脚','Spieltisch')); }
-  // ---- pedalboard (as D-05) ----
+  // ---- pedalboard (as D-06) ----
   const ZH=80, ZE=4, ZX=-27, KL=ZH-ZX, KP=ZH-ZE, yK=5, KHp=3.4, DEP=1.9, ZA=-24, ZCP=-17, YS=26, AO=3, AI=AO*DEP*(ZH-ZA)/KL/KPULL;
   const xp=k=>((k in SLOT?SLOT[k]:BPOS[k])-3.5)*8;
   const LF=LB('ペダル鍵盤の枠','Pedalklaviatur');

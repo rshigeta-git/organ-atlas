@@ -3,7 +3,8 @@
    which runs front to back under all the cones of that key. At the front the square E turns the downward pull of the key's
    tracker into a forward pull on the rod (rod and tracker are always in tension). Arms 23 mm; cone lift 9 mm. */
 let C03V={s2:[[0,0,0],[0,0,0]],cut:0,s3:[[0,0,0],[0,0,0]],s4:[[0,0,0],[0,0,0]]};   // C-03: views of steps 2–4, set when the model is built
-function buildConeChest(){
+// the chest itself, shared with D-04 (tubular-pneumatic): everything above the action
+function coneChest(){
   const R=CX.root, N=13, SI=STOPSET, P=pitchFor(SI), W=N*P, ROWC=rowsFor(SI).map(z=>z-3.5), oy=10, pos=k=>-W/2+P*(k+0.5), DZ=4.4;
   // depth of the chest from the stop rows: the channels (ROWC) and the pipes standing 3.5 in front of them
   const ZF=Math.max(...SI.map((si,i)=>ROWC[i]+3.5+pipeFoot(si,0)[1]/2))+2, ZB=Math.min(...SI.map((si,i)=>Math.min(ROWC[i]-DZ/2,ROWC[i]+3.5-pipeFoot(si,0)[1]/2)))-2, ZD=ZF-ZB, ZM=(ZF+ZB)/2;
@@ -54,6 +55,10 @@ function buildConeChest(){
     }
     bell.push(bk); cones.push(ck); rods.push(rk);
   }
+  return {R,N,W,P,pos,ROWC,oy,ZF,ZB,ZD,ZM,yIn0,yIn1,xV,KSk,Pk,cones,pipesT,chV,sv};
+}
+function buildConeChest(){
+  const {R,N,W,pos,ROWC,oy,ZF,ZM,yIn0,yIn1,xV,KSk,Pk,cones,pipesT,chV,sv}=coneChest();
   // the action under the chest
   const yB=oy+6, yP=yB-3.6, H=3, V=3, zE=ZF+2, yE=yP-V-4, HE=4, VE=4, zR=i=>ROWC[i]-H, zB=Math.min(...ROWC)-H-1;
   const LSQ=LB('スクエア（引き棒に引かれて回り、円錐弁の棒を押し上げる）','Winkel'), LSB=LB('スクエアの軸受けの桟','Winkelbalken');

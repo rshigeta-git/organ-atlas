@@ -1,4 +1,4 @@
-/* ---------- D-05: pedal action ----------
+/* ---------- D-06: pedal action ----------
    Pedal keys hinged at the heel end (under the bench); the toe end, under the console, goes down. A coil spring under
    the toe end returns the key, a guide pin in a slot keeps it straight, a felt pad limits its travel. The tracker runs UP
    from the toe end to a square, a horizontal tracker runs back under the console floor... here: inside the console base,

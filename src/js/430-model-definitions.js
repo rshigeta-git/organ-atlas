@@ -192,15 +192,17 @@ const MODELS={
     {t:'和音を弾きます。指で動かすのは小さなパレットと弁だけなので、ストップを増やしても鍵の重さは変わりません。',run:a=>{a.xray(true);a.cut(0);a.stops([1,1,1,1,0]);a.keys([0,4,7,12]);a.home();}}
   ],
   build(){ return buildBarkerOrgan(); }},
-'d-04':{id:'D-04',name:'チューブラーニューマチックアクション',terms:'tubular-pneumatic action · pneumatische Traktur · traction tubulaire pneumatique · buizenpneumatiek · trasmissione pneumatico-tubolare · transmisión neumática tubular',stops0:[1,0,1,0,0],floor:-26,legend:'ctrl',
-  cam:{p:[150,60,170],t:[0,10,45]},clip:[-40,40],
-  summary:'鍵の動きを、鉛管の中の制御風で風箱へ伝えるアクションです。鍵の弁が制御風を送り（加圧式）または抜き（排気式）、風箱側のリレーが空気式モーターを動かしてパレットを開けます。導管が長いほど、鍵を押してから鳴るまでに遅れが出ます。',
+'d-04':{id:'D-04',stopSet:[20,21,22,23,3],name:'チューブラーニューマチックアクション',terms:'tubular-pneumatic action · pneumatische Traktur · traction tubulaire pneumatique · buizenpneumatiek · trasmissione pneumatico-tubolare · transmisión neumática tubular',stops0:[1,0,1,0,0],floor:-10,legend:'tube',sc:1,gridS:2,maxDist:1400,
+  cam:{p:[330,240,520],t:[0,70,70]},clip:[-130,130],
+  summary:'鍵の動きを、鉛管の中の風で風箱へ伝えるアクションです。風箱は C-03 と同じコーンバルブチェストで、ストップとパイプの並びも同じです。鍵の奥の端が弁箱 B の二重弁を持ち上げると、風が鉛管を通って風箱の手前のリレーへ届きます。リレーは小ふいご A と E、2つの二重弁で大きな風の流れを作って音のチャンネルへ送り、チャンネルの小ふいご G が円錐弁を押し上げます。鍵を離すと、どの二重弁も下がって風が外へ抜けます。指が動かすのは小さな弁だけなので鍵は軽く、演奏台を風箱から離して置けますが、鍵を押してから鳴るまでにわずかな遅れが出ます。',
   steps:[
-    {t:'演奏台と風箱を、鉛管の導管が結んでいます。風箱の手前に、鍵ごとのリレーと空気式モーターがあります。',run:a=>{a.ctl('exh',false);a.keys([]);a.xray(true);a.home();}},
-    {t:'加圧式：鍵を押すと鍵の弁が開き、制御風（橙）が導管を通って風箱側のリレーへ送られます。',run:a=>{a.ctl('exh',false);a.keys([4]);a.cam([30,14,104],[0,-2,88]);}},
-    {t:'リレーが制御風で動くと、モーターの入口弁が開いてモーターがふくらみ、バックフォールとトラッカーでパレットを引きます。',run:a=>{a.keys([4]);a.cam([46,32,34],[-10,22,2]);}},
-    {t:'導管が長いほど制御風が届くまでに時間がかかり、鍵を押してから鳴るまでに遅れが出ます。下のスライダーで導管の長さを変えると、遅れの時間が表示されます。',run:a=>{a.ctl('len',20);a.keys([]);later(500,()=>api.keys([0,4,7]));a.home();}},
-    {t:'排気式：導管はふだん制御風で満ちていて、鍵を押すと風が抜けます。風が抜けたことをリレーが受けて、モーターを動かします。',run:a=>{a.ctl('len',10);a.ctl('exh',true);a.keys([4]);a.cam([30,14,104],[0,-2,88]);}}
+    {t:'チューブラーニューマチックアクションです。風箱は C-03 と同じコーンバルブチェストですが、円錐弁を動かすのはトラッカーやスクエアではなく風です。演奏台の弁箱から、鍵ごとに1本の鉛管（内径約5 mm）が風箱の手前のリレーへ延びています。',run:a=>{a.cut(0);a.xray(true);a.stops([1,0,1,0,0]);a.keys([]);a.home();}},
+    {t:'鍵の弁です。鍵を押すと奥の端が上がり、棒が弁箱 B の二重弁を押し上げます。上の弁が開いて弁箱の風が鉛管に入り、下の弁が排気口をふさぎます。',run:a=>{a.xray(false);a.stops([1,0,1,0,0]);a.keys([]);a.cut(D04V.cutK);a.cam(...D04V.s2);later(900,()=>api.keys([4]));}},
+    {t:'リレーです。鉛管の風が小ふいご A をふくらませ、A が小さな二重弁を持ち上げます。リレーの箱の風が床の通路を通って小ふいご E へ入り、E が大きな二重弁 F を持ち上げます。小さなふいごと弁で、順に大きな弁を動かすしくみです。どの二重弁も、上の円板が風を通し、下の円板が排気口をふさぎます。',run:a=>{a.xray(false);a.stops([1,0,1,0,0]);a.keys([]);a.cut(D04V.cut);a.cam(...D04V.s3);later(900,()=>api.keys([4]));}},
+    {t:'弁 F が開くと、リレーの箱の風が床の通路を通って、下の音のチャンネルへ流れ込みます。音のチャンネルは鍵ごとの木の桟で、中の通路が同じ音の小ふいご G をすべて結んでいます。',run:a=>{a.xray(false);a.stops([1,0,1,0,0]);a.keys([]);a.cut(D04V.cut);a.cam(...D04V.s5);later(900,()=>api.keys([4]));}},
+    {t:'小ふいご G が5つ同時にふくらみ、棒で円錐弁を押し上げます。風のあるチャンネル（入っているストップ）のパイプだけが鳴ります。円錐弁から先は C-03 と同じです。',run:a=>{a.cut(0);a.xray(true);a.stops([1,0,1,0,0]);a.keys([4]);a.cam(...D04V.s6);}},
+    {t:'鍵を離します。鍵の弁の上の弁が閉じ、下の弁が開いて鉛管の風が抜けます。A がしぼんで小さな弁が下がり、E の風が抜けて F が下がります。音のチャンネルの風は F の下の排気口から外へ抜け、G がしぼんで円錐弁が座に戻ります。',run:a=>{a.xray(false);a.stops([1,0,1,0,0]);a.cut(D04V.cut);a.cam(...D04V.s3);a.keys([4]);later(2600,()=>api.keys([]));}},
+    {t:'風が鉛管の中を伝わるので、鍵を押してから鳴るまでにわずかな遅れが出ます。鉛管が長いほど遅れは大きくなります。このモデルの鉛管は約2 mです。',run:a=>{a.cut(0);a.xray(true);a.stops([1,0,1,0,0]);a.keys([]);later(500,()=>api.keys([0,4,7]));a.home();}}
   ],
   build(){ return buildTubular(); }},
 'f-01':{id:'F-01',name:'スウェルボックス',terms:'swell box · Schwellkasten · boîte expressive · zwelkast · cassa espressiva · caja expresiva',stops0:[1,1,1,0,1],floor:-12,ctlLabel:'スウェル',sc:1,gridS:2,maxDist:1200,
@@ -225,7 +227,20 @@ const MODELS={
     {t:'「シュヴィンマーを固定する」を入れると、可動板がつっかい棒で止まり、送風機の風が長い風導管から直接届きます。和音を弾くたびに風圧が下がって音が揺れるので、シュヴィンマーの働きがわかります。',run:a=>{a.ctl('lock',true);a.stops([1,1,1,1,1]);a.keys([]);for(let j=0;j<6;j++){ later(400+j*1500,()=>api.keys([0,4,7,12,2,9])); later(1150+j*1500,()=>api.keys([])); }}}
   ],
   build(){ return buildSchwimmer(); }},
-'d-05':{id:'D-05',name:'ペダル鍵盤のアクション',terms:'pedal action · Pedaltraktur · traction du pédalier · pedaaltraktuur · trasmissione del pedale · transmisión del pedal',stops0:[1,0,1,0,0],floor:0,sc:1,gridS:3,maxDist:1800,
+'d-05':{id:'D-05',name:'エレクトロニューマチックアクション',terms:'electro-pneumatic action · elektropneumatische Traktur · traction électropneumatique · elektropneumatische traktuur · trasmissione elettropneumatica · transmisión electroneumática',stops0:[1,0,1,0,0],floor:-12,legend:'epneu',sc:1,gridS:2,maxDist:1200,
+  cam:{p:[280,210,300],t:[0,80,-70]},clip:[-120,120],
+  summary:'鍵の動きを電気で風箱へ伝え、風の力でパレットを開くアクションです。風箱とストップは D-02 と同じスライダーチェストです。パレットの下、風箱の中に音ごとのくさび型ふいご A があり、ふだんは風箱の風で膨らんでいて、ばねの力でパレットは閉じています。鍵を押すと接点が閉じて電磁石が働き、弁 S が上がります。A の風が外へ抜けると、A は風箱の風圧でつぶれ、棒でパレットを引き開けます。電線は長さも向きも自由なので、演奏台を風箱から離して自由な場所に置けます。',
+  steps:[
+    {t:'エレクトロニューマチックアクションです。風箱とストップは D-02 と同じスライダーチェストですが、鍵とパレットの間にトラッカーはありません。鍵の接点から電線が風箱の下の電磁石へ延び、パレットは風箱の中のくさび型ふいご A が動かします。',run:a=>{a.cut(0);a.xray(true);a.stops([1,0,1,0,0]);a.keys([]);a.home();}},
+    {t:'電気の回路です。鍵盤のそばの電池の＋は、鍵の奥に並ぶ下の接点板に共通につながり、−は電磁石を横断する共通線につながっています。鍵を少し押すだけで、鍵の突起が下の接点板を押し上げ、しなった板が上の接点板に触れます。上の板も少したわみます。電流は電池の＋から2枚の接点板、電線、電磁石を通り、共通線を戻って電池の−へ流れます。',run:a=>{a.xray(false);a.stops([1,0,1,0,0]);a.keys([]);a.cut(D05V.cutK);a.cam(...D05V.s1);later(900,()=>api.keys([4]));}},
+    {t:'鍵を押していないときの断面です。風箱の中の風が穴 E から入り、台板の中の通路を通って、くさび型ふいご A を膨らませています。A の内と外の圧力が釣り合っているので、A は動かず、ばねの力でパレットは閉じています。',run:a=>{a.xray(false);a.stops([1,0,1,0,0]);a.keys([]);a.cut(D05V.cut);a.cam(...D05V.s2);}},
+    {t:'鍵を押すと鍵の奥の端が上がって接点が閉じ、電線を通って電流が電磁石に流れます。電磁石が接極子 D を引き上げ、棒が弁 S を押し上げます。S は穴 E をふさいで風の供給を止めると同時に、床の穴 F を開きます。',run:a=>{a.xray(false);a.stops([1,0,1,0,0]);a.keys([]);a.cut(D05V.cut);a.cam(...D05V.s3);later(900,()=>api.keys([4]));}},
+    {t:'A の中の風は穴 F から外へ抜けます。すると A は風箱の風圧で押しつぶされ、ぺちゃんこになります。A の上板が下がると、棒がパレットを引き下げて開きます。パレットを開ける力は、指ではなく風箱の風圧から得ています。',run:a=>{a.xray(false);a.stops([1,0,1,0,0]);a.keys([]);a.cut(D05V.cut);a.cam(...D05V.s4);later(900,()=>api.keys([4]));}},
+    {t:'鍵を離すと電流が切れ、接極子 D と弁 S が落ちます。S が穴 F をふさぎ、穴 E が開いて風が入ります。A が再び膨らんで内と外の圧力が釣り合うと、ばねがパレットを閉じます。',run:a=>{a.xray(false);a.stops([1,0,1,0,0]);a.cut(D05V.cut);a.cam(...D05V.s4);a.keys([4]);later(1800,()=>api.keys([]));}},
+    {t:'和音を弾きます。電線は長さも向きも自由で、電流はほとんど遅れずに届くので、演奏台を風箱から離して自由な場所に置くことができます。',run:a=>{a.cut(0);a.xray(true);a.stops([1,1,1,0,0]);a.keys([0,4,7]);a.home();}}
+  ],
+  build(){ return buildElectroPneu(); }},
+'d-06':{id:'D-06',name:'ペダル鍵盤のアクション',terms:'pedal action · Pedaltraktur · traction du pédalier · pedaaltraktuur · trasmissione del pedale · transmisión del pedal',stops0:[1,0,1,0,0],floor:0,sc:1,gridS:3,maxDist:1800,
   cam:{p:[380,260,240],t:[0,100,-90]},clip:[-170,170],
   foot:'13鍵（C〜c）のペダル鍵盤。鍵の間隔は実物どおり約62 mm、踏み込みの深さはつま先で約15 mm。鍵はつま先の先から約100 mm オルガンの下へ伸び、その先端でアクションにつながります。演奏台の足元から風箱までは約0.8 m です。風箱とストップは G-03 のペダルと同じで、Subbass 16′（木管・閉管）・Prinzipal 8′・Posaune 16′（全長の円錐共鳴管）。パイプは実物大で、チャンネルの幅は鍵ごとにいちばん太いパイプに合わせています（Subbass 16′ の C は約190×235 mm）。',
   summary:'ペダル鍵盤は足で弾く鍵盤です。鍵はかかと側（ベンチの下）の蝶番を支点に、つま先側が下がります。鍵はつま先の先からさらにオルガンの下へ伸びていて、その先端からトラッカーが下へ引かれます。スクエアで向きを変えた水平のトラッカーがオルガンの下を奥へ進み、風箱の下のローラーボードで鍵の並びをパレットの並びへ広げて、ペダル風箱のパレットを引き下げます。',
@@ -304,7 +319,7 @@ const MODELS={
   build(){ return buildWippenCoupler(); }},
 'g-03':{id:'G-03',name:'ペダルカプラー',terms:'pedal coupler · Pedalkoppel · tirasse · pedaalkoppel · unione al pedale · acoplamiento al pedal',stops0:[0,0,0,0,0],floor:-2,homeK:1.0,sc:1,gridS:3,maxDist:2500,
   cam:{p:[330,230,330],t:[0,150,-80]},clip:[-160,160],
-  foot:'ハウプトヴェルク（I）：Prinzipal 8′・Octave 4′・Quinte 2 2/3′・Octave 2′・Mixtur III・Trompete 8′、ペダル（P）：Subbass 16′（木管・閉管）・Prinzipal 8′・Posaune 16′。パイプは実物大で、どちらの風箱もチャンネルの幅は鍵ごとにいちばん太いパイプに合わせています（ペダルの風箱はハウプトヴェルクの奥 約80 cm。Subbass 16′ の C は約190×235 mm）。ペダルのアクションは D-05 と同じ形ですが、ペダル鍵をつま先の先へ約10 cm延長し、アクションとカプラーのトラッカー、ばね、ガイドピンをその延長部に付けて、足で踏む部分には何も出ないようにしています。鍵盤のボタンと画面の鍵は、操作欄で選んだほう（ペダルか手鍵盤）を弾きます。',
+  foot:'ハウプトヴェルク（I）：Prinzipal 8′・Octave 4′・Quinte 2 2/3′・Octave 2′・Mixtur III・Trompete 8′、ペダル（P）：Subbass 16′（木管・閉管）・Prinzipal 8′・Posaune 16′。パイプは実物大で、どちらの風箱もチャンネルの幅は鍵ごとにいちばん太いパイプに合わせています（ペダルの風箱はハウプトヴェルクの奥 約80 cm。Subbass 16′ の C は約190×235 mm）。ペダルのアクションは D-06 と同じ形ですが、ペダル鍵をつま先の先へ約10 cm延長し、アクションとカプラーのトラッカー、ばね、ガイドピンをその延長部に付けて、足で踏む部分には何も出ないようにしています。鍵盤のボタンと画面の鍵は、操作欄で選んだほう（ペダルか手鍵盤）を弾きます。',
   summary:'ペダルでハウプトヴェルクを鳴らす、バックフォール式（ウィッペン式）のペダルカプラー（I/P）です。ペダル鍵のつま先からもう1本のトラッカーが上がり、カプラー用のローラーボードでペダル鍵の位置から手鍵盤の鍵の位置へ移され、手鍵盤の下にある上下2本のウィッペンに伝わります。下のウィッペンが引き棒で手鍵盤の鍵を下から引き下げるので、ペダルを踏むと手鍵盤の鍵もいっしょに下がり、ハウプトヴェルクが鳴ります。ペダルの風箱は、ハウプトヴェルクの奥に約80 cm離して、床近くに置いています。',
   steps:[
     {t:'手鍵盤1段（ハウプトヴェルク）とペダル鍵盤、それぞれの風箱です。ペダルの風箱はハウプトヴェルクの奥に約80 cm離れた床近くにあり、Subbass 16′・Prinzipal 8′・Posaune 16′ が立っています。',run:a=>{a.xray(true);a.cut(0);a.ctl('man',0);a.ctl('cpl',false);a.ctl('hw',[1,1,0,1,0,0]);a.ctl('pd',[0,1,0]);a.keys([]);a.home();}},

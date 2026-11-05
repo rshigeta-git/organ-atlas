@@ -138,7 +138,7 @@ function fullChestPlan(yC,floor,zF0,stops,split){
 function buildFullChest(P,feed,inlet,spring,kd,o){
   o=o||{};
   const ST=new T.Group(); CX.root.add(ST); if(!CX.pool) CX.pool=mkPool();   // several chests in one model share the pool
-  const chest=buildChestR({name:o.name||'手鍵盤',ks:P.KS,xs:P.CL.xs,ws:P.CL.w,y:P.yC,zF:P.zF,rows:P.rows,KD:kd||S.kd,SP:o.sp||S.sp,pedal:!!o.pedal,volN:o.volN,slDir:o.slDir||1,slOff:o.slOff||(s=>3*(1-s)),ud:k=>({key:k}),feed,spring,slAct:o.act,slStop:o.act?null:(o.sp&&o.sp!==S.sp&&!o.spStop?null:(i=>i))},ST);
+  const chest=buildChestR({name:o.name||'手鍵盤',ks:P.KS,xs:P.CL.xs,ws:P.CL.w,y:P.yC,zF:P.zF,rows:P.rows,KD:kd||S.kd,SP:o.sp||S.sp,pedal:!!o.pedal,volN:o.volN,slDir:o.slDir||1,slOff:o.slOff||(s=>3*(1-s)),ud:k=>({key:k}),feed,spring,ep:o.ep,slAct:o.act,slStop:o.act?null:(o.sp&&o.sp!==S.sp&&!o.spStop?null:(i=>i))},ST);
   const h=P.yC-P.floor; if(h>1&&!o.noLegs) for(const x of [chest.xL+3,chest.xR-3]) for(const z of [chest.zF-3,chest.zB+3]) box(ST,4,h,4,MAT.woodDark,x,P.floor+h/2,z,LB('風箱の台の脚','Ladengestell'));
   // inlet 'L'/'R' (models without a wind supply): the end of the wind trunk entering the pallet box at that side
   if(inlet){ const sg=inlet==='L'?-1:1, x0=sg<0?chest.xL-0.5:chest.xR+0.5, x1=x0+sg*16, y=P.yIn, z=P.zIn;
