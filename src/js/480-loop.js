@@ -21,7 +21,7 @@ const langSel=$('langSel'); langSel.value=LANG;
 function applyLang(){
   document.documentElement.lang=LANG; i18nDom(document.body); renderHome();
   if(!inst) return; const def=inst.def;
-  $('mctlLabel').textContent=T_(def.ctlLabel||(def.noKeys?'操作':'送風')); $('legend').innerHTML=def.legend==='ctrl'?LEGEND0+CTRL_LEG:def.legend==='tube'?LEGEND0+TUBE_LEG:def.legend==='epneu'?LEGEND0+EP_LEG:def.legend==='elec'?LEGEND0+ELEC_LEG:(def.legend||LEGEND0); i18nDom($('legend'));
+  $('mctlLabel').textContent=T_(def.ctlLabel||(def.noKeys?'操作':'送風')); $('legend').innerHTML=legendFor(def); i18nDom($('legend'));
   $('tag').innerHTML='<span class="tid">'+def.id+'</span><span class="tnm">'+T_(def.name)+'</span>';
   const cur=notes.querySelector('[data-s][aria-current]'), ci=cur?cur.dataset.s:null;
   renderStops(inst.stopRows); renderNotes(def); renderControls(); renderIndex(curId); if(def.console&&inst.buildConsole) inst.buildConsole($('ocon')); syncStopUI(); setupPins();

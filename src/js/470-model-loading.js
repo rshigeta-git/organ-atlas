@@ -10,7 +10,7 @@ function load(id){
   inst=def.build(); inst.def=def; grid.position.y=def.floor;
   CX.root.traverse(ob=>{ if(!ob.isMesh) return; const k=CX.keyMats.indexOf(ob.material); if(k>=0&&ob.userData.key==null) ob.userData.key=k; const i=CX.stopMats.indexOf(ob.material); if(i>=0&&ob.userData.stop==null) ob.userData.stop=i; });
   setXray(def.xray0!==false); setCut(def.cut0||0); pMat.size=def.psize||1.8; camHome();
-  $('stops').closest('.drow').hidden=!!def.noStops||!!def.console; $('kbd').closest('.drow').hidden=!!def.noKeys||!!def.console; $('consoleRow').hidden=!def.console; if(def.console&&inst.buildConsole) inst.buildConsole($('ocon')); $('mctlLabel').textContent=T_(def.ctlLabel||(def.noKeys?'操作':'送風')); $('legend').innerHTML=def.legend==='ctrl'?LEGEND0+CTRL_LEG:def.legend==='elec'?LEGEND0+ELEC_LEG:(def.legend||LEGEND0);
+  $('stops').closest('.drow').hidden=!!def.noStops||!!def.console; $('kbd').closest('.drow').hidden=!!def.noKeys||!!def.console; $('consoleRow').hidden=!def.console; if(def.console&&inst.buildConsole) inst.buildConsole($('ocon')); $('mctlLabel').textContent=T_(def.ctlLabel||(def.noKeys?'操作':'送風')); $('legend').innerHTML=legendFor(def);
   $('tag').innerHTML='<span class="tid">'+def.id+'</span><span class="tnm">'+T_(def.name)+'</span>';
   buildKbdUI(def.nKeys||13,inst.keyLim?inst.keyLim():null);
   i18nDom($('legend')); renderStops(inst.stopRows); renderNotes(def); renderControls(); renderIndex(id); syncKeyUI(); syncStopUI(); setupPins();

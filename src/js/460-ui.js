@@ -120,6 +120,9 @@ function renderControls(){
 
 const pinsEl=$('pins'); let pinEls=[];
 const LEGEND0=document.getElementById('legend').innerHTML;
+// a model's legend: the base one plus an extra by name, or its own HTML
+const LEG_EXTRA={ctrl:CTRL_LEG,tube:TUBE_LEG,epneu:EP_LEG,elec:ELEC_LEG};
+const legendFor=def=>LEG_EXTRA[def.legend]?LEGEND0+LEG_EXTRA[def.legend]:(def.legend||LEGEND0);
 const JPRE=/[\u3040-\u30ff\u4e00-\u9fff]/;
 function i18nDom(root){ const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT); const ns=[]; while(w.nextNode()) ns.push(w.currentNode);
   for(const n of ns){ if(n.__ja==null){ if(!JPRE.test(n.nodeValue)) continue; n.__ja=n.nodeValue; } const t=n.__ja.trim(); const tr=T_(t); n.nodeValue=n.__ja.replace(t,tr); }
