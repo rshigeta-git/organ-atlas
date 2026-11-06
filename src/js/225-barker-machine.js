@@ -128,9 +128,9 @@ function buildBarkerOrgan(){
   box(R,2*XF+2.4,1.2,31,MAT.wood,0,yU+24,z0-16,LB('櫓の天板','Gestell'));
   // wind: a trunk under each tier, fed by a riser at the side of the frame
   const LW=LB('風導管（送風機 → バーカーマシンの風箱）','Windkanal'), XW=XF+5;
-  duct([V3(XW,-12,z0+12),V3(XW,yU-6,z0+12)],4,MAT.casing,LW);
+  duct([V3(XW+14,-8,z0+12),V3(XW,-8,z0+12),V3(XW,yU-6,z0+12)],5,MAT.casing,LW,'a');
   for(const yT of [yL,yU]){ duct([V3(XW,yT-6,z0+12),V3(-XF+3,yT-6,z0+12)],3,MAT.casing,LW);
-    new Tube(sharpPath([V3(XW,-10,z0+12),V3(XW,yT-6,z0+12),V3(-XF+4,yT-6,z0+12)],1),{r:1,density:0.5,front:300,state:()=>({open:S.p>4,speed:6})}); }
+    new Tube(sharpPath([V3(XW+18,-8,z0+12),V3(XW,-8,z0+12),V3(XW,yT-6,z0+12),V3(-XF+4,yT-6,z0+12)],1),{r:1,density:0.5,front:300,state:()=>({open:S.p>4,speed:6})}); }
   // the machines
   const U=K.map(k=>{ const x=xm(k), y=up(k)?yU:yL; duct([V3(x+2.6,y-4.5,z0+12),V3(x+2.6,y,z0+12)],1.4,MAT.casing,LW); return makeBarkerUnit({x,y,z:z0,k}); });
   // output: under the frame each tracker r lifts the front arm of a backfall, whose back arm pulls down the input of roller board 2

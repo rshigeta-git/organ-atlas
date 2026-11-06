@@ -54,8 +54,8 @@ const MODELS={
     // everything at full size: the blower and reservoir (laid out at 45 %) drawn 1/0.45 larger, 0.3 m to the left of the chest
     let chest=null;
     const P=fullChestPlan(30,0), K=1/0.45, O=[P.xL-40+55*K,0,0], w=(x,y,z)=>V3(O[0]+K*x,O[1]+K*y,O[2]+K*z), a=w(-60,4,6), xT=P.xL-10;
-    const M=buildBlowerMag({K,O,trunkS:7,trunkPts:[w(-60,11.5,6),a,V3(xT,a.y,a.z),V3(xT,a.y,P.zIn),V3(xT,P.yIn,P.zIn),V3(P.xL-0.5,P.yIn,P.zIn)]});
-    chest=buildFullChest(P,M.trunk); chest.finish();
+    const M=buildBlowerMag({K,O,trunkS:7,trunkPts:[w(-60,11.5,6),a,V3(xT,a.y,a.z),V3(xT,a.y,P.zIn),V3(xT,P.yIn,P.zIn),V3(P.xL-1,P.yIn,P.zIn)]});
+    chest=buildFullChest(P,M.trunk,null,false,null,{hole:{side:-1,y:P.yIn,z:P.zIn,s:7-2*DUCT_T}}); chest.finish();
     B02V=[w(-62,27,34).toArray(),w(-87,16,0).toArray()];
     return {chest,pins:[{t:'送風機',p:w(-122,19,0)},{t:'マガジンふいご',p:w(-75,42,17)},{t:'カーテン弁',p:w(-87,22,-4),max:160*K},{t:'風導管',p:V3(xT,P.yIn+8,P.zIn)},{t:'風箱',p:V3(chest.xR+4,chest.base,chest.zF)}],controls:[{type:'toggle',id:'blower',label:'送風機',get:()=>M.blower,set:v=>M.blower=v}],
       ctl:{blower:v=>M.blower=v,reset:()=>M.reset()},
@@ -98,7 +98,7 @@ const MODELS={
   summary:'ストップごとに風箱の長さいっぱいの部屋（ストップチャンネル）があり、パイプ1本ごとに円錐弁が付いた風箱です。鍵を押すとその鍵の円錐弁がいっしょに持ち上がり、風のあるチャンネル（入っているストップ）のパイプだけが鳴ります。円錐弁を持ち上げる方法には、鍵の力で直接持ち上げる機械式と、小ふいごで持ち上げる空気式があります。こちらのモデルは機械式です。',
   steps:[
     {t:'コーンバルブチェストです。ストップごとに風箱の長さいっぱいの部屋（ストップチャンネル）があり、パイプ1本ごとに円錐弁があります。',run:a=>{a.cut(0);a.xray(true);a.keys([]);a.stops([0,0,0,0,0]);a.home();}},
-    {t:'ストップを入れると、左端のストップ弁が開いて、そのストップのチャンネルにだけ風が満ちます。',run:a=>{a.cut(0);a.keys([]);a.stops([1,0,0,0,0]);a.cam(...C03V.s2);}},
+    {t:'風は左端の風のダクトにまとめて入り、溜まっています。ストップを入れると、ダクトとチャンネルの間のストップ弁が開いて、そのストップのチャンネルにだけ風が流れ込みます。',run:a=>{a.cut(0);a.xray(true);a.keys([]);a.stops([1,0,0,0,0]);a.cam(...C03V.s2);}},
     {t:'円錐弁は、チャンネルの底板の座に、風に押されて閉じています。鍵を押すとトラッカーがスクエア E を回し、E がその鍵の引き棒を手前へ引きます。引き棒につながった小さなスクエアが回り、5つの円錐弁の棒をいっしょに押し上げて、座の穴が開きます。',run:a=>{a.stops([0,0,0,0,0]);a.keys([4]);a.xray(false);a.cut(C03V.cut);a.cam(...C03V.s3);}},
     {t:'風のあるチャンネル（入っているストップ）のパイプだけが鳴ります。風は円錐弁の座から導管を通ってパイプへ届きます。',run:a=>{a.stops([1,0,1,0,0]);a.keys([4]);a.cam(...C03V.s4);}},
     {t:'和音を弾きます。ここでは鍵の力でスクエアと引き棒を介して円錐弁を持ち上げる機械式です。ほかに、ストップチャンネルの下の小ふいごで持ち上げる空気式もあります。',run:a=>{a.cut(0);a.stops([1,1,1,0,0]);a.keys([0,4,7]);a.home();}}
@@ -109,10 +109,10 @@ const MODELS={
   summary:'パイプの穴の下端を、下から制御風で押し上げた革の膜でふさぐ風箱です。鍵を押すと、手前の弁室Dの二重弁が下がってDからの制御風を止め、排気口を開け、その鍵の音のチャンネルの風が下へ逃げます。するとストップチャンネルの風が膜を押し下げてパイプへ流れ込みます。風が抜けることで動く「排気式」です。',
   steps:[
     {t:'メンブレンチェストです。鍵ごとの音のチャンネル（いちばん下の管路）の上に、パイプの穴ごとに革の膜があり、その上がストップチャンネルです。パイプの穴の管はストップチャンネルの中を下へ通り、下端が膜の真上で開いています。',run:a=>{a.xray(true);a.keys([]);a.stops([1,0,1,0,0]);a.home();}},
-    {t:'ふだんは、手前の弁室Dから制御風（橙）が音のチャンネルに送られ、膜を押し上げてパイプの穴の下端をふさいでいます。ストップを入れても鳴りません。',run:a=>{a.keys([]);a.stops([1,0,1,0,0]);a.cam(...C04V.s2);}},
-    {t:'鍵を押すと二重弁が下がります。上の弁が弁室Dの出口をふさいで制御風を止め、同じだけ下がった下の弁と排気口のあいだにすき間ができて、音のチャンネルにたまっていた制御風が外へ逃げます。',run:a=>{a.keys([4]);a.cam(...C04V.s3);}},
-    {t:'膜を押し上げていた風が抜けると、ストップチャンネルの風が膜を押し下げ、パイプの穴へ流れ込んでパイプが鳴ります。',run:a=>{a.keys([4]);a.cam(...C04V.s2);}},
-    {t:'鍵を離すと二重弁が元の位置に上がって排気口が閉じ、弁室Dから再び制御風が送られます。膜が押し上げられ、パイプへの風が止まります。',run:a=>{a.keys([]);a.cam(...C04V.s3);}}
+    {t:'ふだんは、手前の弁室Dから制御風（橙）が音のチャンネルに送られ、膜を押し上げてパイプの穴の下端をふさいでいます。ストップを入れても鳴りません。',run:a=>{a.xray(true);a.cut(0);a.keys([]);a.stops([1,0,1,0,0]);a.cam(...C04V.s2);}},
+    {t:'鍵を押すと二重弁が下がります。上の弁が弁室Dの出口をふさいで制御風を止め、同じだけ下がった下の弁と排気口のあいだにすき間ができて、音のチャンネルにたまっていた制御風が外へ逃げます。',run:a=>{a.xray(false);a.cut(C04V.cut);a.keys([4]);a.cam(...C04V.s3);}},
+    {t:'膜を押し上げていた風が抜けると、ストップチャンネルの風が膜を押し下げ、パイプの穴へ流れ込んでパイプが鳴ります。',run:a=>{a.xray(true);a.cut(0);a.keys([4]);a.cam(...C04V.s2);}},
+    {t:'鍵を離すと二重弁が元の位置に上がって排気口が閉じ、弁室Dから再び制御風が送られます。膜が押し上げられ、パイプへの風が止まります。',run:a=>{a.xray(false);a.cut(C04V.cut);a.keys([]);a.cam(...C04V.s3);}}
   ],
   build(){ return buildMembraneChest(); }},
 'f-02':{id:'F-02',name:'トレムラント',terms:'tremulant · Tremulant · tremblant · tremulant · tremolo · trémolo',stops0:[0,0,0,0,0],own:true,noStops:true,noKeys:true,floor:-2,sc:1,homeK:1.05,

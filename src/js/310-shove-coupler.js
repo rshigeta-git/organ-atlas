@@ -56,7 +56,7 @@ function buildCoupler(){
   // full-size chests (C/Cis layout, built like the H-03 chests); their pull-down lines stay at zo, the Hauptwerk above the Positiv
   const pos=buildFullChest(fullChestPlan(34,-10,RB[0].zo+3.5,POST,true),null,'R',false,kdL,{sp:POSSP,volN:260,name:'ポジティフ',act:stopActs(POST,m.ps)});
   RB[1].y0=Math.ceil(pos.top)+3;
-  const hw=buildFullChest(fullChestPlan(RB[1].y0+13*1.25+6,-10,RB[1].zo+3.5,HWST,true),null,'R',false,kdU,{sp:HWSP,noLegs:true,name:'ハウプトヴェルク',act:stopActs(HWST,m.hs)});
+  const hw=buildFullChest(fullChestPlan(RB[1].y0+13*1.25+6,-10,RB[1].zo+3.5,HWST,true),null,'R',false,kdU,{sp:HWSP,name:'ハウプトヴェルク',act:stopActs(HWST,m.hs)});
   pos.finish(); hw.finish();
   RB[0].ch=pos; RB[1].ch=hw;
   for(const b of RB){

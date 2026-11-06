@@ -39,4 +39,16 @@ function cyl(p,r,h,mat,x,y,z,label,geo){ const m=mk(geo||G_CYL,mat,p,label); m.s
 const UP=V3(0,1,0), _d=V3(0,0,0), _v=V3(0,0,0), _c=new T.Color();
 function rod(p,r,mat,label){ const m=mk(G_ROD,mat,p,label); m.set=function(a,b){ _d.subVectors(b,a); const L=_d.length()||1e-4; m.position.copy(a).addScaledVector(_d,.5); m.scale.set(r,L,r); m.quaternion.setFromUnitVectors(UP,_d.divideScalar(L)); }; return m; }
 function plank(p,sx,sz,mat,label){ const m=mk(G_BOX,mat,p,label); m.set=function(a,b){ _d.subVectors(b,a); const L=_d.length()||1e-4; m.position.copy(a).addScaledVector(_d,.5); m.scale.set(sx,L,sz); m.quaternion.setFromUnitVectors(UP,_d.divideScalar(L)); }; return m; }
-function duct(pts,s,mat,label){ for(let i=1;i<pts.length;i++){ const a=pts[i-1],b=pts[i]; const m=mk(G_BOX,hollow(mat),CX.root,label); const L=a.distanceTo(b); m.position.addVectors(a,b).multiplyScalar(.5); m.scale.set(s,s,L+s); m.lookAt(b); } }
+/* a square duct along pts, s wide outside. open: 'a' leaves the first end open, 'b' the last (where the wind comes in): that length is
+   four boards DUCT_T thick, so the opening shows the thickness of the wood */
+const DUCT_T=10/7.8;
+function duct(pts,s,mat,label,open){ const n=pts.length-1, oa=!!open&&open.includes('a'), ob=!!open&&open.includes('b');
+  for(let i=1;i<=n;i++){ const a=pts[i-1],b=pts[i], fa=i===1&&oa, fb=i===n&&ob, L=a.distanceTo(b), ea=fa?0:s/2, eb=fb?0:s/2, Ls=L+ea+eb, t=Math.min(DUCT_T,s*0.3), mid=V3(0,0,0).addVectors(a,b).multiplyScalar(.5).addScaledVector(V3(0,0,0).subVectors(b,a).normalize(),(eb-ea)/2);
+    if(!fa&&!fb){ const m=mk(G_BOX,hollow(mat),CX.root,label); m.position.copy(mid); m.scale.set(s,s,Ls); m.lookAt(b); continue; }
+    const g=new T.Group(); g.position.copy(mid); CX.root.add(g); g.lookAt(b);
+    for(const q of [-1,1]){ box(g,s,t,Ls,mat,0,q*(s-t)/2,0,label); box(g,t,s-2*t,Ls,mat,q*(s-t)/2,0,0,label); }
+    if(!fa) box(g,s,s,t,mat,0,0,-(Ls-t)/2,label); if(!fb) box(g,s,s,t,mat,0,0,(Ls-t)/2,label); } }
+/* a wall across x (th thick, at x) from ya to yb and za to zb, with a square opening of side q at (yc, zc) */
+function wallHole(p,x,th,ya,yb,za,zb,yc,zc,q,mat,label){ const h=q/2, z0=Math.min(za,zb), z1=Math.max(za,zb);
+  box(p,th,yb-ya,zc-h-z0,mat,x,(ya+yb)/2,(z0+zc-h)/2,label); box(p,th,yb-ya,z1-zc-h,mat,x,(ya+yb)/2,(zc+h+z1)/2,label);
+  box(p,th,yc-h-ya,q,mat,x,(ya+yc-h)/2,zc,label); box(p,th,yb-yc-h,q,mat,x,(yb+yc+h)/2,zc,label); }

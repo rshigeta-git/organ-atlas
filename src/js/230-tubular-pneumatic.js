@@ -8,7 +8,7 @@
    floor of the chest; A, E and the G bellows all stand on the same level. */
 let D04V={cut:0,cutK:0,s2:[[0,0,0],[0,0,0]],s3:[[0,0,0],[0,0,0]],s5:[[0,0,0],[0,0,0]],s6:[[0,0,0],[0,0,0]]};   // views of the steps, set when the model is built
 function buildTubular(){
-  const {R,N,W,pos,ROWC,oy,ZF,ZM,yIn0,xV,KSk,Pk,cones,pipesT,chV,sv}=coneChest();
+  const {R,N,W,pos,ROWC,oy,ZF,ZM,yIn0,xC,KSk,Pk,cones,pipesT,chV,sv}=coneChest();
   // levels: the note channels and the block under the relay; the relay floor is level with the chest's conduit board
   const yC0=oy-1.5, yC1=oy+1, yCc=oy-0.25, yF0=oy+6, yF1=oy+8.5, yFc=oy+7.25, yR1=oy+15.5;
   // along the note: the rise from F to the note channel, F and E, the rise from the small valve to E, the small valve and A
@@ -21,25 +21,23 @@ function buildTubular(){
   for(const z of [zW+0.4,zEnd-0.4]) box(R,W+8,yR1-yF1,0.8,MAT.wood,0,(yF1+yR1)/2,z,LRK);
   for(const s of [-1,1]) box(R,0.8,yR1-yF1,zEnd-zW-1.6,MAT.wood,s*(W/2+3.6),(yF1+yR1)/2,(zW+zEnd)/2,LRK);
   box(R,W+8,yC1-yC0,zEnd-(zV+3.2),MAT.wood,0,(yC0+yC1)/2,(zV+3.2+zEnd)/2,LB('小ふいごの台（A と E が載る。風の通路の穴があけてある）','Relaiskasten'));
-  // the chest stands on legs; rails carry the note channels; posts carry the relay
-  const LL=LB('風箱の台の脚','Ladengestell');
-  for(const s of [-1,1]){ for(const z of [zBk+2,ZF-2,zEnd-3]) box(R,3,yF0+10,3,MAT.woodDark,s*(W/2+5.5),(yF0-10)/2,z,LL); }
+  // rails carry the note channels
   for(const z of [zBk+6,ZM,zV+1]) box(R,W+11,1.2,2,MAT.woodDark,0,yC0-0.6,z,LB('音のチャンネルを受ける桟','Ladengestell'));
   // wind: the trunk beside the chest goes on to the end of the relay box
-  box(R,3,9,zEnd-2-ZF,hollow(MAT.wood),xV-3.2,oy+12,(ZF+zEnd-2)/2,LB('風箱への風の供給路','Windkanal'));
-  duct([V3(xV-1.7,oy+12,zFv+6),V3(-xE-2,oy+12,zFv+6)],5,MAT.wood,LB('リレーの箱への風の供給','Windzufuhr'));
-  new Tube([V3(xV-3.2,oy+12,ZF-2),V3(xV-3.2,oy+12,zFv+6),V3(-xE,oy+12,zFv+6)],{kind:'ctrl',r:0.7,density:0.5,front:200,state:()=>({open:S.p>4,speed:6})});
+  box(R,3,9,zEnd-2-ZF,hollow(MAT.wood),xC,oy+12,(ZF+zEnd-2)/2,LB('リレーの箱への風の供給','Windzufuhr'));
+  duct([V3(xC+1.5,oy+12,zFv+6),V3(-xE-2,oy+12,zFv+6)],5,MAT.wood,LB('リレーの箱への風の供給','Windzufuhr'));
+  new Tube([V3(xC,oy+12,ZF-2),V3(xC,oy+12,zFv+6),V3(-xE,oy+12,zFv+6)],{kind:'ctrl',r:0.7,density:0.5,front:200,state:()=>({open:S.p>4,speed:6})});
   new Vol((a,b,c,out)=>out.set(-W/2-2+a*(W+4),yF1+0.4+b*(yR1-yF1-0.8),zW+1.2+c*(zEnd-zW-2.4)),420,{kind:'ctrl',state:()=>S.p>4?1:0,rate:2});
   // the console: balanced keys, a wind box with a double valve over each key's tail
   // the console stands so that the middle key's lead tube is 2 m long (two bends of radius RL on the way)
   const RL=50*MM, yK=86, zK=zEnd+57.5+2000*MM-(yK+9.2-yCc)+2*RL*(2-Math.PI/2), kb=buildBalanceKeyboard({x:0,y:yK,z:zK}), zc=kb.zt+2, yB0=yK+8, yB1=yB0+2.4, yB2=yB1+3.6, HW=13*TAILP/2+2;
   box(R,30,8.5,61,MAT.woodDark,0,yK-7.75,zK-28.5,LB('演奏台（コンソール）の台','Spieltisch'));
-  for(const s of [-1,1]) box(R,2,yK-12+10,61,MAT.woodDark,s*14,(yK-12-10)/2,zK-28.5,LB('演奏台の側板','Spieltisch'));
   const LVK=LB('鍵の弁箱 B（中は風で満ちている。鍵ごとの二重弁が鉛管への風を開け閉めする）','Spielventilkasten');
   box(R,2*HW,yB1-yB0,7,MAT.wood,0,(yB0+yB1)/2,zc,LB('弁箱の底の板（弁の座と、鉛管へ通じる穴があけてある）','Spielventilkasten'));
   box(R,2*HW,0.6,7,MAT.wood,0,yB2+0.3,zc,LVK); for(const z of [zc-3.2,zc+3.2]) box(R,2*HW,yB2-yB1,0.6,MAT.wood,0,(yB1+yB2)/2,z,LVK);
-  for(const s of [-1,1]){ box(R,0.6,yB2-yB1,5.8,MAT.wood,s*(HW-0.3),(yB1+yB2)/2,zc,LVK); box(R,1.2,yB0-(yK+2),6,MAT.woodDark,s*(HW+0.2),(yB0+yK+2)/2,zc,LB('弁箱の支え','Balgstütze')); }
-  duct([V3(-HW,yB1+1.8,zc),V3(-HW-6,yB1+1.8,zc),V3(-HW-6,-10,zc)],2,MAT.casing,LB('弁箱への風の供給','Windzufuhr'));
+  for(const s of [-1,1]){ if(s>0) box(R,0.6,yB2-yB1,5.8,MAT.wood,s*(HW-0.3),(yB1+yB2)/2,zc,LVK); else wallHole(R,s*(HW-0.3),0.6,yB1,yB2,zc-2.9,zc+2.9,yB1+1.8,zc,1.04,MAT.wood,LVK); box(R,1.2,yB0-(yK+2),6,MAT.woodDark,s*(HW+0.2),(yB0+yK+2)/2,zc,LB('弁箱の支え','Balgstütze')); }
+  duct([V3(-HW-14,yB1+1.8,zc),V3(-HW,yB1+1.8,zc)],3.6,MAT.casing,LB('弁箱への風の供給（ここから風が入る）','Windzufuhr'),'ab');
+  new Tube([V3(-HW-17,yB1+1.8,zc),V3(-HW+1,yB1+1.8,zc)],{kind:'lead',r:0.5,density:0.5,front:60,state:()=>({open:S.p>4,speed:5})});
   new Vol((a,b,c,out)=>out.set(-HW+0.8+a*(2*HW-1.6),yB1+0.3+b*(yB2-yB1-0.6),zc-2.5+c*5),160,{kind:'lead',state:()=>S.p>4?1:0,rate:2});
   const RISE=kb.RA*(KPULL*KLEN/(KLEN-KATT))/30, tail0=[];
   for(let k=0;k<N;k++) tail0.push(kb.tail(k).y);

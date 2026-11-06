@@ -138,12 +138,11 @@ function fullChestPlan(yC,floor,zF0,stops,split){
 function buildFullChest(P,feed,inlet,spring,kd,o){
   o=o||{};
   const ST=new T.Group(); CX.root.add(ST); if(!CX.pool) CX.pool=mkPool();   // several chests in one model share the pool
-  const chest=buildChestR({name:o.name||'手鍵盤',ks:P.KS,xs:P.CL.xs,ws:P.CL.w,y:P.yC,zF:P.zF,rows:P.rows,KD:kd||S.kd,SP:o.sp||S.sp,pedal:!!o.pedal,volN:o.volN,slDir:o.slDir||1,slOff:o.slOff||(s=>3*(1-s)),ud:k=>({key:k}),feed,spring,ep:o.ep,slAct:o.act,slStop:o.act?null:(o.sp&&o.sp!==S.sp&&!o.spStop?null:(i=>i))},ST);
-  const h=P.yC-P.floor; if(h>1&&!o.noLegs) for(const x of [chest.xL+3,chest.xR-3]) for(const z of [chest.zF-3,chest.zB+3]) box(ST,4,h,4,MAT.woodDark,x,P.floor+h/2,z,LB('風箱の台の脚','Ladengestell'));
+  const chest=buildChestR({name:o.name||'手鍵盤',ks:P.KS,xs:P.CL.xs,ws:P.CL.w,y:P.yC,zF:P.zF,rows:P.rows,KD:kd||S.kd,SP:o.sp||S.sp,pedal:!!o.pedal,volN:o.volN,slDir:o.slDir||1,slOff:o.slOff||(s=>3*(1-s)),ud:k=>({key:k}),feed,spring,ep:o.ep,hole:o.hole||(inlet?{side:inlet==='L'?-1:1,y:P.yIn,z:P.zIn,s:8-2*DUCT_T}:null),slAct:o.act,slStop:o.act?null:(o.sp&&o.sp!==S.sp&&!o.spStop?null:(i=>i))},ST);
   // inlet 'L'/'R' (models without a wind supply): the end of the wind trunk entering the pallet box at that side
-  if(inlet){ const sg=inlet==='L'?-1:1, x0=sg<0?chest.xL-0.5:chest.xR+0.5, x1=x0+sg*16, y=P.yIn, z=P.zIn;
+  if(inlet){ const sg=inlet==='L'?-1:1, x0=sg<0?chest.xL-1:chest.xR+1, x1=x0+sg*16, y=P.yIn, z=P.zIn;
     (CX.inlets||(CX.inlets=[])).push(V3(x1,y,z));
-    duct([V3(x1,y,z),V3(x0,y,z)],8,MAT.wood,LB('風導管（送風機から。ここから風箱に風が入る）','Windkanal'));
+    duct([V3(x1,y,z),V3(x0,y,z)],8,MAT.wood,LB('風導管（送風機から。ここから風箱に風が入る）','Windkanal'),'ab');
     new Tube([V3(x1,y,z),V3(x0-sg*3,y,z)],{r:2.2,density:0.5,front:400,state:()=>({open:S.p>10,speed:2+3*chest.speaking().length})}); }
   chest.finish=()=>{ mergeStatic(ST); if(!CX.pool.done){ CX.pool.finish(); CX.pool.done=true; } };   // call once all chests of the model are built
   return chest;
@@ -157,10 +156,10 @@ function buildBedosOrgan(){
   const bs=[0.92,0.66,0.4].map((f,i)=>buildBedosBellows(G,i,f*thMax));
   const c0=bbW(BB.XB[0]-36,-1.5,-62), c1=bbW(BB.XB[2]+40,-1.5,-62);   // under the bottom boards
   duct([c0,c1],7*BB.K,MAT.wood,LB('ふいごの出口をまとめる管','Sammelkanal'));
-  const xT=xL-8, tp=[c1,V3(xT,c1.y,c1.z),V3(xT,c1.y,zIn),V3(xT,yIn,zIn),V3(xL-0.5,yIn,zIn)];
-  duct(tp,7,MAT.wood,LB('風導管（ふいごから風箱へ）','Windkanal'));
+  const xT=xL-8, tp=[c1,V3(xT,c1.y,c1.z),V3(xT,c1.y,zIn),V3(xT,yIn,zIn),V3(xL-1,yIn,zIn)];
+  duct(tp,7,MAT.wood,LB('風導管（ふいごから風箱へ）','Windkanal'),'b');
   const trunk=new Tube(sharpPath(tp,1),{r:2,density:0.4,front:400,state:()=>({open:S.p>10,speed:3*(chest?chest.speaking().length:0)})});
-  chest=buildFullChest(P,trunk);
+  chest=buildFullChest(P,trunk,null,false,null,{hole:{side:-1,y:yIn,z:zIn,s:7-2*DUCT_T}});
   buildBedosFrame(G);
   const C=buildCalcant(G), E0=V3(), E1=V3();
   // a small bell on a bracket at the end post of the gallows next to the organ: the organist rings it to call the calcant
@@ -250,7 +249,7 @@ function buildBlowerMag(o){
     rg.attributes.position.needsUpdate=true; rg.computeVertexNormals(); rg.computeBoundingSphere(); };
   const cords=[-1,1].map(()=>rod(R,0.12,MAT.cord,LB('ひも（上板が上がるとローラーを引き上げる）','Zugschnur')));
   const eyes=[-1,1].map(s=>{ const e=mk(G_CYL,MAT.brass,top,LB('ひもの留め金','Öse')); e.scale.set(0.35,0.5,0.35); e.position.set(VX+0.6+75,-0.25,s*5.6); return e; });
-  duct(o.trunkPts,o.trunkS||6,MAT.wood,LB('風導管（ふいごから風箱へ）','Windkanal'));
+  duct(o.trunkPts,o.trunkS||6,MAT.wood,LB('風導管（ふいごから風箱へ）','Windkanal'),'b');
   const topY=()=>13+22*M.h;
   M.update=(dt,n)=>{
     M.n=n; M.rpm+=((M.blower?1:0)-M.rpm)*Math.min(1,dt*1.2);

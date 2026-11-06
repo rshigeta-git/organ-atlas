@@ -51,7 +51,8 @@ function buildChestR(o,ST){
   box(ST,W+2,1,zF-zPB,MAT.wood,cx,oy+0.5,Z((zF+zPB)/2),L1);
   box(ST,W+2,hb-1,1,MAT.wood,cx,oy+1+(hb-1)/2,Z(zF-0.5),LB('パレットボックスの前板（点検のため外せる）','Spund'));
   box(ST,W+2,hb-1,1,MAT.wood,cx,oy+1+(hb-1)/2,Z(zPB+0.5),L1);
-  for(const xx of [xL-0.5,xR+0.5]) box(ST,1,hb-1,zF-zPB,MAT.wood,xx,oy+1+(hb-1)/2,Z((zF+zPB)/2),L1);
+  // o.hole {side,y,z,s}: the opening in the end wall where the wind trunk comes in
+  for(const [xx,sd] of [[xL-0.5,-1],[xR+0.5,1]]){ if(o.hole&&o.hole.side===sd) wallHole(ST,xx,1,oy+1,oy+hb,zF,zPB,o.hole.y,o.hole.z,o.hole.s,MAT.wood,L1); else box(ST,1,hb-1,zF-zPB,MAT.wood,xx,oy+1+(hb-1)/2,Z((zF+zPB)/2),L1); }
   box(ST,W+2,1,zPB-zB,MAT.wood,cx,yCh-0.5,Z((zPB+zB)/2),LB('チャンネルの底板','Rahmen'));
   const LC=LB('チャンネルの仕切り（鍵ごとの部屋＝トーンチャンネルを分ける）','Schied');
   const FIT={}; for(const k of ks) FIT[k]=palFit(k,!!o.pedal,Wd[k]);

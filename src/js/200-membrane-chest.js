@@ -3,7 +3,7 @@
    lies a leather membrane. Control wind from valve chamber D at the front fills the channel and pushes the membranes up
    against the bores. Pressing the key lifts a double valve: it shuts D and opens the exhaust below, the channel empties
    downward, and the stop-channel wind pushes the membrane down and flows into the bore. */
-let C04V={s2:[[0,0,0],[0,0,0]],s3:[[0,0,0],[0,0,0]]};   // C-04: views of the close-up steps, set when the model is built
+let C04V={cut:0,s2:[[0,0,0],[0,0,0]],s3:[[0,0,0],[0,0,0]]};   // C-04: views of the close-up steps, set when the model is built
 function buildMembraneChest(){
   const R=CX.root, N=13, SI=STOPSET, P=pitchFor(SI), W=N*P, ROWC=rowsFor(SI).map(z=>z), oy=10, pos=k=>-W/2+P*(k+0.5), DZ=4.4;
   // depth of the chest from the stop rows (the pipes stand right over their membranes); valve chambers D in front of it
@@ -19,27 +19,29 @@ function buildMembraneChest(){
   for(let i=0;i<5;i++){ const zc=ROWC[i]; for(const s of [-1,1]) box(R,W+8,yIn1-yBd,0.5,MAT.woodDark,0,(yBd+yIn1)/2,zc+s*(DZ/2+0.25),LK); box(R,0.6,yIn1-yBd,DZ,MAT.woodDark,W/2+3.7,(yBd+yIn1)/2,zc,LK); }
   // stop valves and main wind at the left end
   const xV=-W/2-4.2;
-  box(R,3,yIn1-yBd+2,ZD+1,hollow(MAT.wood),xV-3.2,(yBd+yIn1)/2,ZM,LB('風箱への風の供給路','Windkanal'));
-  const sv=[], chV=[];
+  const {xC,sv}=stopDuct(R,W,ROWC,DZ,SI,yBd,yIn1,ZF,ZB);
+  const chV=[];
   for(let i=0;i<5;i++){ const zc=ROWC[i];
-    const g=new T.Group(); g.position.set(xV-1.3,yIn1-0.3,zc); R.add(g); box(g,0.35,yIn1-yBd-0.8,DZ-0.6,stopMat(i),0.18,-(yIn1-yBd-0.8)/2,0,LB('ストップ弁（'+STOPS[SI[i]].name+'）','Registerventil')); sv.push(g);
     chV.push(new Vol((a,b,c,out)=>{ const side=a<0.5?-1:1; out.set(-W/2-1+((a*2)%1)*(W+3),yBd+0.4+b*(yIn1-yBd-0.8),zc+side*(1.15+c*0.85)); },130,{state:()=>S.sp[i]>0.5?1:0,rate:1.6}));
-    new Tube([V3(xV-3.2,oy+7,zc),V3(xV-0.5,oy+7,zc),V3(-W/2+4,oy+7,zc)],{r:0.6,density:0.6,front:200,state:()=>({open:S.sp[i]>0.5&&chV[i].fill<0.97,speed:16})}); }
-  new Vol((a,b,c,out)=>out.set(xV-3.2+(c-0.5)*2,yBd+b*(yIn1-yBd),ZM+(a*2-1)*(ZD/2-0.5)),160,{state:()=>1,rate:3});
-  // control-wind supply to all valve chambers D
-  box(R,W+4,1.6,2.4,hollow(MAT.wood),0,oy+6.2,zD,LB('制御風の供給路（各鍵の弁室Dへ制御風を送る）','Speisekanal'));
-  new Vol((a,b,c,out)=>out.set(-W/2-1+a*(W+2),oy+5.7+b*1,zD+(c-0.5)*1.6),120,{kind:'ctrl',state:()=>1,rate:3});
+    new Tube([V3(xC,oy+7,zc),V3(xV-0.5,oy+7,zc),V3(-W/2+4,oy+7,zc)],{r:0.6,density:0.6,front:200,state:()=>({open:S.sp[i]>0.5&&chV[i].fill<0.97,speed:16})}); }
+  // valve chamber D: one closed duct along the front of the chest, full of control wind, over all the double valves; the wind comes in at its right end
+  const LDD=LB('弁室D（1本のダクト。すべての鍵の二重弁につながり、中は制御風で満ちている）','Ventilkammer'), xD=W/2+2.5, DW=2*xD, yD0=yK1, yD1=yK1+3.8, yDm=yK1+2, HQ=2;
+  box(R,DW,0.4,4,MAT.woodDark,0,yD0+0.2,zD,LDD); box(R,DW,0.4,4,MAT.woodDark,0,yD1-0.2,zD,LDD);
+  for(const z of [zD-1.8,zD+1.8]) box(R,DW,yD1-yD0-0.8,0.4,MAT.woodDark,0,(yD0+yD1)/2,z,LDD);
+  box(R,0.4,yD1-yD0-0.8,3.2,MAT.woodDark,-xD+0.2,(yD0+yD1)/2,zD,LDD);
+  wallHole(R,xD-0.2,0.4,yD0+0.4,yD1-0.4,zD-1.6,zD+1.6,yDm,zD,HQ-0.4,MAT.woodDark,LDD);
+  duct([V3(xD+14,yDm,zD),V3(xD,yDm,zD)],HQ+2*DUCT_T,MAT.wood,LB('制御風の入口（ここから弁室Dへ風が入る）','Speisekanal'),'ab');
+  new Tube([V3(xD+18,yDm,zD),V3(xD-3,yDm,zD)],{kind:'ctrl',r:0.5,density:0.5,front:60,state:()=>({open:S.p>4,speed:5})});
+  new Vol((a,b,c,out)=>out.set(-xD+0.8+a*(DW-1.6),yD0+0.6+b*(yD1-yD0-1.2),zD+(c-0.5)*2.6),260,{kind:'ctrl',state:()=>S.p>4?1:0,rate:3});
   const Kc=new Float32Array(N).fill(1), mem=[], vu=[], vd=[], stems=[], pipesT=[], MR=1.05;
   const LBM=LB('膜（革の膜。下の制御風に押し上げられてパイプの穴の下端をふさぐ）','Membrane'), LBP=LB('パイプの穴（ストップチャンネルの中を下へ通る管。下端は膜の真上で開いている）','Pfeifenbohrung');
-  const LD=LB('弁室D（制御風が入っている。ここから音のチャンネルへ制御風が送られる）','Ventilkammer'), LV=LB('二重弁（鍵を押すと下がり、上の弁がDの出口をふさぎ、下の弁が排気口から離れて口を開ける）','Doppelventil');
+  const LV=LB('二重弁（鍵を押すと下がり、上の弁がDの出口をふさぎ、下の弁が排気口から離れて口を開ける）','Doppelventil');
   for(let k=0;k<N;k++){
     const x=pos(k);
-    // valve chamber D and the vestibule under it, at the front end of the control channel
-    box(R,3.4,0.4,3.6,MAT.woodDark,x,yK1+0.2,zD,LD); box(R,3.4,3,0.4,MAT.woodDark,x,yK1+1.9,zD+1.8,LD); box(R,3.4,3,0.4,MAT.woodDark,x,yK1+1.9,zD-1.8,LD);
+    // the exhaust under D, at the front end of the control channel
     box(R,3.4,0.4,3.6,MAT.woodDark,x,yK0-0.8,zD,LB('排気口のある底板（二重弁の下の弁が外側から口をふさぐ）','Abstromöffnung'));
     bore(R,MAT.dark,x,yK1,yK1+0.4,zD,0.7,LB('弁室Dの出口（音のチャンネルへ制御風が入る穴）','Ventilkammer'));
     bore(R,MAT.dark,x,yK0-1,yK0-0.6,zD,0.7,LB('排気口','Abstromöffnung'));
-    new Vol((a,b,c,out)=>out.set(x+(a-0.5)*2.6,yK1+0.6+b*2.2,zD+(c-0.5)*2.8),18,{kind:'ctrl',state:()=>1,rate:6});
     new Vol((a,b,c,out)=>{ const z=ZB+1.5+c*(zD-3.5-ZB); out.set(x+(a-0.5)*2.2,yK0+0.3+b*1.4,z); },60,{kind:'ctrl',state:()=>Kc[k],rate:10});
     new Tube([V3(x,yK1+1.6,zD),V3(x,yK1+0.1,zD-0.6),V3(x,yK0+1,zD-2),V3(x,yK0+1,zD-11)],{kind:'ctrl',r:0.45,density:1.2,front:300,state:()=>({open:S.kd[k]<0.3&&Kc[k]<0.98,speed:16})});
     new Tube([V3(x,yK0+1,zD-9),V3(x,yK0+1,zD-0.4),V3(x,yK0-0.7,zD),V3(x,yK0-1.35,zD+1.3),V3(x,yK0-3.5,zD+2.4)],{kind:'ctrl',r:0.45,density:1.2,front:300,state:()=>({open:S.kd[k]>0.3&&Kc[k]>0.03,speed:16})});
@@ -67,7 +69,7 @@ function buildMembraneChest(){
       }
     }
   }
-  { const x4=pos(4); C04V={s2:[[x4+40,40,ZF+45],[x4,14,ZM]],s3:[[x4+16,11,zD+22],[x4,9,zD-1]]}; }
+  { const x4=pos(4); C04V={s2:[[x4+40,40,ZF+45],[x4,14,ZM]],s3:[[x4+24,yK1+2,zD+3],[x4,yK1,zD-1]],cut:(130-(x4+0.02))/260}; }
   return {
     pins:[{t:'弁室D（制御風）',p:V3(W/2+3.5,oy+5,zD+1)},{t:'排気口',p:V3(W/2+3.5,yK0-1.6,zD)},{t:'音のチャンネル',p:V3(W/2+3.5,yK0+1,ZM+4)},{t:'膜',p:V3(W/2+3.5,yBd+1,ROWC[0])},{t:'パイプの穴',p:V3(W/2+3.5,oy+8,ROWC[1])},{t:'ストップチャンネル',p:V3(-W/2-1,yIn1+1.5,ROWC[2])}],
     speaking:()=>S.p<8?[]:pipesT.filter(t=>Kc[t.k]<0.5&&S.sp[t.j]>0.85&&chV[t.j].fill>0.5),

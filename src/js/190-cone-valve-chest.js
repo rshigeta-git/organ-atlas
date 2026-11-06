@@ -3,6 +3,24 @@
    which runs front to back under all the cones of that key. At the front the square E turns the downward pull of the key's
    tracker into a forward pull on the rod (rod and tracker are always in tension). Arms 23 mm; cone lift 9 mm. */
 let C03V={s2:[[0,0,0],[0,0,0]],cut:0,s3:[[0,0,0],[0,0,0]],s4:[[0,0,0],[0,0,0]]};   // C-03: views of steps 2–4, set when the model is built
+/* wind duct along the left end of a chest with stop channels (C-03, C-04, D-04): the wind comes up into it and stays there. Its inner
+   wall is the seat board with one opening per channel; the stop valves hang on the duct side, held shut by the wind, and swing
+   into the duct, which is deep enough for them. y0, y1: height of the channels. */
+function stopDuct(R,W,ROWC,DZ,SI,y0,y1,ZF,ZB){
+  const H=y1-y0, xS=-W/2-4.3, DW=Math.max(8,0.9*H+1.5), TW=0.8, xI=xS-0.3, xC=xI-DW/2, xO=xI-DW, ym=(y0+y1)/2, zm=(ZF+ZB)/2, D=ZF-ZB, oh=DZ/2-0.5, sv=[];
+  const LS=LB('ストップ弁の座（チャンネルの口。ふだんは弁がふさいでいる）','Registerventil'), LD=LB('風のダクト（風がまとめて入って溜まり、ストップ弁が開くとチャンネルへ流れ込む）','Windkanal');
+  let z=ZB; for(const zc of [...ROWC].sort((a,b)=>a-b)){ box(R,0.6,H,zc-oh-z,MAT.wood,xS,ym,(z+zc-oh)/2,LS); for(const y of [y0+0.3,y1-0.3]) box(R,0.6,0.6,2*oh,MAT.wood,xS,y,zc,LS); z=zc+oh; }
+  box(R,0.6,H,ZF-z,MAT.wood,xS,ym,(z+ZF)/2,LS);
+  // the outer wall has the opening where the wind comes in
+  const FS=4; wallHole(R,xO-TW/2,TW,y0-TW,y1+TW,ZB-TW,ZF+TW,ym,zm,FS,MAT.wood,LD);
+  for(const y of [y0-TW/2,y1+TW/2]) box(R,DW+0.6,TW,D+2*TW,MAT.wood,xO+(DW+0.6)/2,y,zm,LD);
+  for(const zz of [ZB-TW/2,ZF+TW/2]) box(R,DW+0.6,H,TW,MAT.wood,xO+(DW+0.6)/2,ym,zz,LD);
+  ROWC.forEach((zc,i)=>{ const g=new T.Group(); g.position.set(xI,y1-0.2,zc); R.add(g); box(g,0.35,H-0.4,DZ-0.4,stopMat(i),-0.18,-(H-0.4)/2,0,LB('ストップ弁（'+STOPS[SI[i]].name+'。ストップを入れると開いてチャンネルに風を入れる）','Registerventil')); sv.push(g); });
+  duct([V3(xO-16,ym,zm),V3(xO-TW,ym,zm)],FS+2*DUCT_T,MAT.wood,LB('風のダクトの入口（ここから風が入る）','Windzufuhr'),'ab');
+  new Tube([V3(xO-20,ym,zm),V3(xC,ym,zm)],{r:1.2,density:0.4,front:60,state:()=>({open:S.p>4,speed:5})});
+  new Vol((a,b,c,out)=>out.set(xO+0.4+c*(DW-0.8),y0+0.3+b*(H-0.6),ZB+0.5+a*(D-1)),260,{state:()=>S.p>4?1:0,rate:3});
+  return {xC,sv};
+}
 // the chest itself, shared with D-04 (tubular-pneumatic): everything above the action
 function coneChest(){
   const R=CX.root, N=13, SI=STOPSET, P=pitchFor(SI), W=N*P, ROWC=rowsFor(SI).map(z=>z-3.5), oy=10, pos=k=>-W/2+P*(k+0.5), DZ=4.4;
@@ -21,12 +39,8 @@ function coneChest(){
   box(R,W+8,1.5,ZD,MAT.wood,0,oy+6.75,ZM,LB('導管の板（底板の下。円錐弁の座からパイプへの導管の穴があけてある）','Kanalbrett'));
   // wind trunk and stop valves at the left end of each stop channel
   const xV=-W/2-4.2;
-  box(R,3,9,ZD+1,hollow(MAT.wood),xV-3.2,oy+12,ZM,LB('風箱への風の供給路','Windkanal'));
-  const sv=[];
-  for(let i=0;i<5;i++){ const zc=ROWC[i]; box(R,0.5,7,DZ,MAT.woodDark,xV-1.6,(yIn0+yIn1)/2,zc,LB('ストップ弁の座','Registerventil'));
-    const g=new T.Group(); g.position.set(xV-1.3,yIn1-0.3,zc); R.add(g); box(g,0.35,6.2,DZ-0.6,stopMat(i),0.18,-3.1,0,LB('ストップ弁（'+STOPS[SI[i]].name+'。ストップを入れると開いてチャンネルに風を入れる）','Registerventil')); sv.push(g); }
-  const trunkV=new Vol((a,b,c,out)=>out.set(xV-3.2+(c-0.5)*2,oy+8+b*8,ZM+(a*2-1)*(ZD/2-1)),160,{state:()=>1,rate:3});
-  const chV=[]; for(let i=0;i<5;i++){ const zc=ROWC[i]; chV.push(new Vol((a,b,c,out)=>out.set(-W/2-1+a*(W+3),yIn0+0.4+b*6.2,zc+(c-0.5)*3.4),120,{state:()=>S.sp[i]>0.5?1:0,rate:1.6})); new Tube([V3(xV-3.2,oy+12,zc),V3(xV-0.5,oy+12,zc),V3(-W/2+4,oy+12,zc)],{r:0.6,density:0.6,front:200,state:()=>({open:S.sp[i]>0.5&&chV[i].fill<0.97,speed:16})}); }
+  const {xC,sv}=stopDuct(R,W,ROWC,DZ,SI,yIn0,yIn1,ZF,ZB);
+  const chV=[]; for(let i=0;i<5;i++){ const zc=ROWC[i]; chV.push(new Vol((a,b,c,out)=>out.set(-W/2-1+a*(W+3),yIn0+0.4+b*6.2,zc+(c-0.5)*3.4),120,{state:()=>S.sp[i]>0.5?1:0,rate:1.6})); new Tube([V3(xC,oy+12,zc),V3(xV-0.5,oy+12,zc),V3(-W/2+4,oy+12,zc)],{r:0.6,density:0.6,front:200,state:()=>({open:S.sp[i]>0.5&&chV[i].fill<0.97,speed:16})}); }
   const KSk=k=>2-0.5*k/12;   // cones, seats and conduits enlarged by key: 2× the first design in the bass (C), 1.5× at the top (c)
   const Pk=new Float32Array(N), tubes=[], bell=[], cones=[], rods=[], pipesT=[];
   const LB_B=LB('小ふいご（制御風でふくらみ、棒で円錐弁を押し上げる）','Bälgchen'), LB_C=LB('円錐弁（風に押されて座の穴をふさいでいる。持ち上がるとパイプへの道が開く）','Kegel'), LB_R=LB('押し棒','Stecher'), LB_D=LB('パイプへの導管','Kondukt');
@@ -55,10 +69,10 @@ function coneChest(){
     }
     bell.push(bk); cones.push(ck); rods.push(rk);
   }
-  return {R,N,W,P,pos,ROWC,oy,ZF,ZB,ZD,ZM,yIn0,yIn1,xV,KSk,Pk,cones,pipesT,chV,sv};
+  return {R,N,W,P,pos,ROWC,oy,ZF,ZB,ZD,ZM,yIn0,yIn1,xV,xC,KSk,Pk,cones,pipesT,chV,sv};
 }
 function buildConeChest(){
-  const {R,N,W,pos,ROWC,oy,ZF,ZM,yIn0,yIn1,xV,KSk,Pk,cones,pipesT,chV,sv}=coneChest();
+  const {R,N,W,pos,ROWC,oy,ZF,ZM,yIn0,yIn1,xV,xC,KSk,Pk,cones,pipesT,chV,sv}=coneChest();
   // the action under the chest
   const yB=oy+6, yP=yB-3.6, H=3, V=3, zE=ZF+2, yE=yP-V-4, HE=4, VE=4, zR=i=>ROWC[i]-H, zB=Math.min(...ROWC)-H-1;
   const LSQ=LB('スクエア（引き棒に引かれて回り、円錐弁の棒を押し上げる）','Winkel'), LSB=LB('スクエアの軸受けの桟','Winkelbalken');
@@ -77,9 +91,9 @@ function buildConeChest(){
     q.e=[rod(R,0.4,m,LB('スクエア E（鍵のトラッカーの引き下げを、引き棒を手前へ引く動きに変える）','Winkel')),rod(R,0.4,m,LB('スクエア E（鍵のトラッカーの引き下げを、引き棒を手前へ引く動きに変える）','Winkel'))];
     q.t=makeTracker(m,LB('トラッカー（'+KEYNAMES[k]+'。下の鍵盤の鍵へ）','Abstrakte'));
     act.push(q); }
-  { const x4=pos(4); C03V={s2:[[xV-60,60,90],[xV+5,20,ZM]],cut:(130-(x4+2.5))/260,s3:[[x4+120,18,50],[x4,12,0]],s4:[[x4+50,40,70],[x4,20,0]]}; }
+  { const x4=pos(4); C03V={s2:[[xC-38,50,ZF+50],[xC+7,oy+12,ZM]],cut:(130-(x4+2.5))/260,s3:[[x4+120,18,50],[x4,12,0]],s4:[[x4+50,40,70],[x4,20,0]]}; }
   return {
-    pins:[{t:'スクエア E',p:V3(W/2+2,yE,zE+3)},{t:'引き棒',p:V3(-W/2-2,yP-V,0)},{t:'スクエア',p:V3(W/2+2,yP,zR(4))},{t:'円錐弁',p:V3(W/2+3.5,yIn0+1.5,Math.min(...ROWC))},{t:'パイプへの導管',p:V3(W/2+3.5,oy+12,Math.max(...ROWC)+3.5)},{t:'ストップチャンネル',p:V3(-W/2-1,yIn1+1.5,7)},{t:'ストップ弁',p:V3(xV-2,yIn1+2,-14)}],
+    pins:[{t:'スクエア E',p:V3(W/2+2,yE,zE+3)},{t:'引き棒',p:V3(-W/2-2,yP-V,0)},{t:'スクエア',p:V3(W/2+2,yP,zR(4))},{t:'円錐弁',p:V3(W/2+3.5,yIn0+1.5,Math.min(...ROWC))},{t:'パイプへの導管',p:V3(W/2+3.5,oy+12,Math.max(...ROWC)+3.5)},{t:'ストップチャンネル',p:V3(-W/2-1,yIn1+1.5,7)},{t:'ストップ弁',p:V3(xC+3,yIn1+2.5,-14)},{t:'風のダクト',p:V3(xC,yIn1+3,ZF-6)}],
     speaking:()=>S.p<8?[]:pipesT.filter(t=>Pk[t.k]>0.6&&S.sp[t.j]>0.85&&chV[t.j].fill>0.5),
     update(dt){
       for(let k=0;k<N;k++){

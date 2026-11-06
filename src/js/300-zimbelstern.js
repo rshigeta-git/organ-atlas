@@ -58,7 +58,7 @@ function buildZimbelstern(){
   const DPT=[V3(VX,VY+3,VZ),V3(VX,30,VZ),V3(6,30,VZ),V3(6,36.2,VZ)];
   duct(DPT,2.2,MAT.wood,LB('風導管（弁箱から風車のノズルへ）','Windleitung'));
   const noz=mk(G_CONE,MAT.metalDark,R,LB('ノズル（風を細く絞って羽根に吹き付ける）','Düse')); noz.scale.set(1.1,2.2,1.1); noz.rotation.x=Math.PI; noz.position.set(6,37.3,VZ);
-  duct([V3(-52,VY,VZ),V3(VX-4,VY,VZ)],4,MAT.wood,LB('風導管（ふいごから）','Windkanal'));
+  duct([V3(-52,VY,VZ),V3(VX-4,VY,VZ)],5,MAT.wood,LB('風導管（ふいごから）','Windkanal'),'ab');
   const knob=mk(G_CYL,MAT.ebony,R,LB('ストップノブ：Zimbelstern（引くと星が回る）','Registerzug')); knob.rotation.x=Math.PI/2; knob.scale.set(1.3,2.2,1.3);
   const face=mk(G_CYL,MAT.ivory,R,LB('ストップ名の札：Zimbelstern','Registerschild')); face.rotation.x=Math.PI/2; face.scale.set(0.95,0.25,0.95);
   const drod=rod(R,0.3,MAT.woodPale,LB('ノブの軸（弁を引き開ける）','Registerzugstange'));

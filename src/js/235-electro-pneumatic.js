@@ -11,10 +11,9 @@ let D05V={cut:0,cutK:0,s1:[[0,0,0],[0,0,0]],s2:[[0,0,0],[0,0,0]],s3:[[0,0,0],[0,
 const EP_LEG='<span><i style="background:var(--ctrl)"></i>電流（鍵の接点から電磁石へ）</span>';
 function buildElectroPneu(){
   const R=CX.root, N=13, KD=new Float32Array(N), U=[], oy=48;
-  const chest=buildFullChest(fullChestPlan(oy,-12,34-1000*MM),null,'R',false,KD,{noLegs:true,ep:{L:27,wireTo:k=>U[k].hook}});
+  const chest=buildFullChest(fullChestPlan(oy,-12,34-1000*MM),null,'R',false,KD,{ep:{L:27,wireTo:k=>U[k].hook}});
   const kb=buildBalanceKeyboard({x:0,y:0,z:34,noRack:true,cut:9}); box(R,30,8.5,61,MAT.woodDark,0,-7.75,5.5,LB('演奏台（コンソール）の台','Spieltisch'));
   const {zH,xL,xR,zF,zB,Lp,pw}=chest, cx=(xL+xR)/2, zPd=zF-3.5;
-  for(const x of [xL-3,xR+3]) for(const z of [zF-3,zB+3]) box(R,4,oy+12,4,MAT.woodDark,x,(oy-12)/2,z,LB('風箱の台の脚','Ladengestell'));
   // along the note: the spring's block, A's hinge, the rod to the pallet, A's free end, the valve S
   const zhA=zH+8, zR=zH+27, zTip=zR+3, zS=zPd-2.5, zIn=zTip-5, yFl=oy+1, yB=oy+1.7, yP=oy+1.35, PT=0.5, H1=1.3, H0=0.3, rA=zR-zhA, LA=zTip-zhA, LS=0.55;
   // armature D under the floor: hinged behind the magnet, its free end under the rod

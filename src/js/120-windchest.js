@@ -114,7 +114,7 @@ function buildChest(o){
   // o.inlet ('L'/'R'): the end of the wind trunk entering the pallet box at that side (as in B-01), so that one sees where the wind comes in
   if(o.inlet){ const s=o.inlet==='L'?-1:1, x0=ox+s*(W/2+0.5), x1=x0+s*7, y=oy+6, z=oz+6;
     (CX.inlets||(CX.inlets=[])).push(V3(x1,y,z));
-    duct([V3(x1,y,z),V3(x0,y,z)],6,MAT.wood,LB('風導管（送風機から。ここから風箱に風が入る）','Windkanal'));
+    duct([V3(x1,y,z),V3(x0,y,z)],6,MAT.wood,LB('風導管（送風機から。ここから風箱に風が入る）','Windkanal'),'ab');
     new Tube([V3(x1,y,z),V3(x0-s*2,y,z)],{r:1.7,density:0.6,front:400,state:()=>({open:S.p>10,speed:2+3*C.speaking().length})}); }
   C.vol=new Vol((a,b,c,out)=>out.set(ox-W/2+1+a*(W-2),oy+1.8+b*8.6,oz-4.4+c*21.4),o.volN||380,{state:()=>(S.p>4&&(!o.feed||o.feed.full()))?clamp(0.35+0.65*S.p/75,0,1):0});
   C.chan=[];
